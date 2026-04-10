@@ -1,0 +1,15 @@
+models/models.yaml
+test-output-*/
+test-output/
+**/.env
+**/__pycache__/
+**/.venv/
+venv/
+*.pyc
+.DS_Store
+dist/
+build/
+*.egg-info/
+.idea/
+.vscode/
+*.log

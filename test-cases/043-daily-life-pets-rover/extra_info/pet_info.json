@@ -1,0 +1,12 @@
+{
+  "name": "Maple",
+  "species": "Dog",
+  "breed": "Golden Retriever",
+  "age_years": 4,
+  "weight_lbs": 35,
+  "sex": "Female (spayed)",
+  "date_of_birth": "2022-03-15",
+  "vaccinations_up_to_date": true,
+  "microchip_id": "985121012345678",
+  "dietary_notes": "Grain-free kibble, sensitive stomach"
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 403,
+    "metaclass": "personal-management",
+    "class": "account-security",
+    "description": "Add 5 login entries to 1Password",
+    "sites_involved": [
+      "1password.com"
+    ],
+    "platform": "1password-web",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Add 5 login entries to 1Password",
+  "eval_schema": {
+    "url_pattern": "my\\.1password\\.com/api/v3/vault/[a-z0-9]+/\\d+/items",
+    "method": "PATCH"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/credentials.json",
+      "description": "Login credentials for 5 services to add to password manager"
+    }
+  ]
+}

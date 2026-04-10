@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 867,
+    "metaclass": "entertainment-hobbies",
+    "class": "movies",
+    "description": "On Fandango, purchase 3 tickets for any currently showing thriller at Regal Union Square in New York, select an upcoming Friday evening showtime after 6 PM, choose 3 adjacent seats in rows D–F center section",
+    "sites_involved": [
+      "fandango.com"
+    ],
+    "platform": "fandango",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Fandango, purchase 3 tickets for any currently showing thriller at Regal Union Square in New York, select an upcoming Friday evening showtime after 6 PM, choose 3 adjacent seats in rows D–F center section",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

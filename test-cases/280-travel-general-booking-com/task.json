@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 280,
+    "metaclass": "travel",
+    "class": "general",
+    "description": "Booking.com: Book a hotel in central Paris for 3 nights next August, double room, breakfast included, free cancellation",
+    "sites_involved": [
+      "booking.com"
+    ],
+    "platform": "booking-com",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Booking.com: Book a hotel in central Paris for 3 nights next August, double room, breakfast included, free cancellation",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

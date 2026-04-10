@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 559,
+    "metaclass": "finance-investment",
+    "class": "crowdfunding",
+    "description": "Register an account on FrontFundr, browse active startup investment offerings, select one, and submit an expression of interest (soft commitment)",
+    "sites_involved": [
+      "frontfundr.com"
+    ],
+    "platform": "frontfundr",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Register an account on FrontFundr, browse active startup investment offerings, select one, and submit an expression of interest (soft commitment)",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

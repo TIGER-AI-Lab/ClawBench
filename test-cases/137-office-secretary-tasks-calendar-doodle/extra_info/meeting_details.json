@@ -1,0 +1,30 @@
+{
+  "participants": [
+    {
+      "name": "Alex Green",
+      "email": "alex.green.uoft@clawbench.cc"
+    },
+    {
+      "name": "Jordan Peters",
+      "email": "jordan.peters@pinecresttech.com"
+    },
+    {
+      "name": "Emily Green",
+      "email": "emily.green@example.com"
+    },
+    {
+      "name": "Sam Chen",
+      "email": "sam.chen@example.com"
+    },
+    {
+      "name": "Taylor Kim",
+      "email": "taylor.kim@example.com"
+    }
+  ],
+  "time_options": [
+    "2026-04-07 10:00 AM ET",
+    "2026-04-08 2:00 PM ET",
+    "2026-04-09 11:00 AM ET",
+    "2026-04-10 3:00 PM ET"
+  ]
+}

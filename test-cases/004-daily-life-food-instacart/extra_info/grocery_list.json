@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "name": "Whole milk (1 gallon)",
+      "quantity": 1,
+      "category": "dairy"
+    },
+    {
+      "name": "Large eggs (dozen)",
+      "quantity": 1,
+      "category": "dairy"
+    },
+    {
+      "name": "Whole wheat bread",
+      "quantity": 1,
+      "category": "bakery"
+    },
+    {
+      "name": "Chicken breast (boneless, skinless)",
+      "quantity": "2 lbs",
+      "category": "meat"
+    },
+    {
+      "name": "Broccoli (fresh)",
+      "quantity": "1 bunch",
+      "category": "produce"
+    },
+    {
+      "name": "Bananas",
+      "quantity": "1 bunch (6-7)",
+      "category": "produce"
+    }
+  ],
+  "delivery_preference": "cheapest available window",
+  "store_preference": "nearest"
+}

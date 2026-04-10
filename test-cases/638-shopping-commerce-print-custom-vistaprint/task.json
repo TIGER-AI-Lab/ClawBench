@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 638,
+    "metaclass": "shopping-commerce",
+    "class": "print-custom",
+    "description": "On Vistaprint, design 250 standard business cards using a template, enter custom name, job title, and phone number, then add to cart",
+    "sites_involved": [
+      "vistaprint.com"
+    ],
+    "platform": "vistaprint",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Vistaprint, design 250 standard business cards using a template, enter custom name, job title, and phone number, then add to cart",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

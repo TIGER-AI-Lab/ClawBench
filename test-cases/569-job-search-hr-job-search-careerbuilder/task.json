@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 569,
+    "metaclass": "job-search-hr",
+    "class": "job-apply",
+    "description": "Upload a resume to CareerBuilder, set a job alert for \"Product Manager\" in Chicago, and complete the job seeker profile",
+    "sites_involved": [
+      "careerbuilder.com"
+    ],
+    "platform": "careerbuilder",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Upload a resume to CareerBuilder, set a job alert for \"Product Manager\" in Chicago, and complete the job seeker profile",
+  "eval_schema": {
+    "url_pattern": "appsapi\\.monster\\.io/profiles-profile-app-service/v3/me/job-preferences",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

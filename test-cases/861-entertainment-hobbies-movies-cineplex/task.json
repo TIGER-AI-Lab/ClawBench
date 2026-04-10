@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 861,
+    "metaclass": "entertainment-hobbies",
+    "class": "movies",
+    "description": "On Cineplex, purchase 2 adult evening tickets for any currently showing action or sci-fi movie at Scotiabank Theatre Toronto (259 Richmond St W), choose a showtime after 7 PM on the upcoming Saturday, and select two adjacent seats in row G or H in the center section",
+    "sites_involved": [
+      "cineplex.com"
+    ],
+    "platform": "cineplex",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Cineplex, purchase 2 adult evening tickets for any currently showing action or sci-fi movie at Scotiabank Theatre Toronto (259 Richmond St W), choose a showtime after 7 PM on the upcoming Saturday, and select two adjacent seats in row G or H in the center section",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 782,
+    "metaclass": "beauty-personal-care",
+    "class": "skincare-purchase",
+    "description": "On Paula's Choice, use the routine finder to get a personalized skincare plan, then add the recommended BHA exfoliant to cart and complete purchase",
+    "sites_involved": [
+      "paulaschoice.com"
+    ],
+    "platform": "paulas-choice",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Paula's Choice, use the routine finder to get a personalized skincare plan, then add the recommended BHA exfoliant to cart and complete purchase",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30
+}

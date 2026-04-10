@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 750,
+    "metaclass": "automotive-vehicle-services",
+    "class": "car-insurance-compare",
+    "description": "Get an auto insurance comparison quote on Kanetix for a vehicle registered in Ontario, fill in vehicle and driver details, and submit",
+    "sites_involved": [
+      "kanetix.ca"
+    ],
+    "platform": "kanetix",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Get an auto insurance comparison quote on Kanetix for a vehicle registered in Ontario, fill in vehicle and driver details, and submit",
+  "eval_schema": {
+    "url_pattern": "ratesinsuranceservices\\.rates\\.ca/autoquote/.*/discounts",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

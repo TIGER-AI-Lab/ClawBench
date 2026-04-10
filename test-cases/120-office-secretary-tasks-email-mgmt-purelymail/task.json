@@ -1,0 +1,28 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 120,
+    "metaclass": "office-secretary-tasks",
+    "class": "email-mgmt",
+    "description": "On Purelymail, send an email to jordan.peters@clawbench.cc with subject \"Meeting Reschedule\"",
+    "sites_involved": [
+      "mail.google.com"
+    ],
+    "platform": "purelymail",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Purelymail, send an email to jordan.peters@clawbench.cc with subject \"Meeting Reschedule\"",
+  "eval_schema": {
+    "url_pattern": "inbox\\.purelymail\\.com",
+    "method": "POST",
+    "body": {
+      "_action": "send"
+    }
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

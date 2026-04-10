@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 862,
+    "metaclass": "entertainment-hobbies",
+    "class": "movies",
+    "description": "On AMC Theatres, buy 2 IMAX tickets for the highest-rated movie currently showing at AMC Empire 25 in New York, select an upcoming Friday evening showtime, and choose two adjacent center seats in rows E–H",
+    "sites_involved": [
+      "amctheatres.com"
+    ],
+    "platform": "amc-theatres",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On AMC Theatres, buy 2 IMAX tickets for the highest-rated movie currently showing at AMC Empire 25 in New York, select an upcoming Friday evening showtime, and choose two adjacent center seats in rows E–H",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

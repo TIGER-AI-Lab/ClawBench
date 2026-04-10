@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 607,
+    "metaclass": "education-learning",
+    "class": "art-courses",
+    "description": "Sign up for the Creativebug free trial, browse Drawing & Illustration classes, select a beginner course, and begin watching the first lesson",
+    "sites_involved": [
+      "creativebug.com"
+    ],
+    "platform": "creativebug",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Sign up for the Creativebug free trial, browse Drawing & Illustration classes, select a beginner course, and begin watching the first lesson",
+  "eval_schema": {
+    "url_pattern": "creativebug\\.com/trial/confirmation",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

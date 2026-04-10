@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 134,
+    "metaclass": "office-secretary-tasks",
+    "class": "calendar",
+    "description": "Set up availability on Calendly: Mon-Fri 10-12 and 2-4",
+    "sites_involved": [
+      "calendly.com"
+    ],
+    "platform": "calendly",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Set up availability on Calendly: Mon-Fri 10-12 and 2-4",
+  "eval_schema": {
+    "url_pattern": "calendly\\.com/app/intro/api/availability",
+    "method": "PUT"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

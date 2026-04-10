@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 872,
+    "metaclass": "daily-life",
+    "class": "food",
+    "description": "On OpenTable, book a dinner reservation at a Japanese omakase restaurant in San Francisco for 2 people, the upcoming Thursday at 8 PM, with counter/bar seating preference, rating 4.5+",
+    "sites_involved": [
+      "opentable.com"
+    ],
+    "platform": "opentable",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On OpenTable, book a dinner reservation at a Japanese omakase restaurant in San Francisco for 2 people, the upcoming Thursday at 8 PM, with counter/bar seating preference, rating 4.5+",
+  "eval_schema": {
+    "url_pattern": "opentable\\.com/dapi/fe/gql\\?optype=mutation&opname=BookDetailsExperienceSlotLock",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

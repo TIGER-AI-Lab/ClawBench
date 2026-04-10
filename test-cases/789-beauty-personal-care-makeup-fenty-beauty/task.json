@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 789,
+    "metaclass": "beauty-personal-care",
+    "class": "makeup",
+    "description": "On Fenty Beauty's website, add Pro Filt'r Soft Matte Foundation (shade 185N) and Invisible Setting Powder to cart and begin checkout",
+    "sites_involved": [
+      "fentybeauty.com"
+    ],
+    "platform": "fenty-beauty",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Fenty Beauty's website, add Pro Filt'r Soft Matte Foundation (shade 185N) and Invisible Setting Powder to cart and begin checkout",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

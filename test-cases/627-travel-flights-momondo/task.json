@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 627,
+    "metaclass": "travel",
+    "class": "flights",
+    "description": "Search for a one-way economy flight from Toronto to Barcelona departing 2026-09-01 on Momondo, select the cheapest option and proceed to the passenger information page",
+    "sites_involved": [
+      "momondo.com"
+    ],
+    "platform": "momondo",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Search for a one-way economy flight from Toronto to Barcelona departing 2026-09-01 on Momondo, select the cheapest option and proceed to the passenger information page",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

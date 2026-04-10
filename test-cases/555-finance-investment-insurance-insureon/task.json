@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 555,
+    "metaclass": "finance-investment",
+    "class": "insurance",
+    "description": "Apply for a general liability insurance quote on Insureon for a small consulting firm, enter company name, 5 employees, $200,000 annual revenue, and submit to get a quote",
+    "sites_involved": [
+      "insureon.com"
+    ],
+    "platform": "insureon",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Apply for a general liability insurance quote on Insureon for a small consulting firm, enter company name, 5 employees, $200,000 annual revenue, and submit to get a quote",
+  "eval_schema": {
+    "url_pattern": "ua\\.apps\\.insureon\\.com/api/primary_ua/api/success/",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

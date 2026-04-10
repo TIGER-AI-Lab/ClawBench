@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 700,
+    "metaclass": "deletion-revocation",
+    "class": "data-deletion",
+    "description": "On DeleteMe's website, select the Individual (1 person) subscription plan, submit personal information for data removal, and complete checkout",
+    "sites_involved": [
+      "joindeleteme.com"
+    ],
+    "platform": "deleteme",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On DeleteMe's website, select the Individual (1 person) subscription plan, submit personal information for data removal, and complete checkout",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

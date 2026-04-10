@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 821,
+    "metaclass": "education-learning",
+    "class": "reading-self-study",
+    "description": "Register on Blinkist with email reader2026@example.com, subscribe to the Premium annual plan, then search for Atomic Habits and add it to My Library (favorites)",
+    "sites_involved": [
+      "blinkist.com"
+    ],
+    "platform": "blinkist",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Register on Blinkist with email reader2026@example.com, subscribe to the Premium annual plan, then search for Atomic Habits and add it to My Library (favorites)",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

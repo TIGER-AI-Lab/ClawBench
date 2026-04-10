@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 781,
+    "metaclass": "beauty-personal-care",
+    "class": "beauty-booking",
+    "description": "On the Bluemercury website, purchase a skincare product, add to cart, and proceed to checkout",
+    "sites_involved": [
+      "bluemercury.com"
+    ],
+    "platform": "bluemercury",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On the Bluemercury website, purchase a skincare product, add to cart, and proceed to checkout",
+  "eval_schema": {
+    "url_pattern": "zenoti\\.prod\\.bluemercuryio\\.com/v1/bookings/[^/]+/slots/confirm",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/email_info.json",
+      "description": "Email credentials reference"
+    }
+  ]
+}

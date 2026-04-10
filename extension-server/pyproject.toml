@@ -1,0 +1,7 @@
+[project]
+name = "extension-server"
+version = "0.1.0"
+description = "ClawBench extension server"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["fastapi[standard]>=0.115", "websocket-client>=1.8"]

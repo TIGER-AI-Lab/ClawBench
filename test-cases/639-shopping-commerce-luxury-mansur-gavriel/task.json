@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 639,
+    "metaclass": "shopping-commerce",
+    "class": "luxury",
+    "description": "On Mansur Gavriel, add a Bucket Bag to cart with a selected color and size, then proceed to the checkout page",
+    "sites_involved": [
+      "mansurgavriel.com"
+    ],
+    "platform": "mansur-gavriel",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Mansur Gavriel, add a Bucket Bag to cart with a selected color and size, then proceed to the checkout page",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

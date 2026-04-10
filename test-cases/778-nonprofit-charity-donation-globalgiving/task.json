@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 778,
+    "metaclass": "nonprofit-charity",
+    "class": "donation",
+    "description": "On GlobalGiving, select an environmental conservation project, enter a $30 donation amount, and proceed to the checkout page with donor and payment information filled in.",
+    "sites_involved": [
+      "globalgiving.org"
+    ],
+    "platform": "globalgiving",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On GlobalGiving, select an environmental conservation project, enter a $30 donation amount, and proceed to the checkout page with donor and payment information filled in.",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/payment_info.json",
+      "description": "Payment information reference"
+    }
+  ]
+}

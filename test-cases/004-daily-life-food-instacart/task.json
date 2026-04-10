@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 4,
+    "metaclass": "daily-life",
+    "class": "food",
+    "description": "Place an Instacart order for a week's groceries: milk, eggs, whole wheat bread, chicken breast, broccoli, bananas; select the cheapest delivery window",
+    "sites_involved": [
+      "instacart.com"
+    ],
+    "platform": "instacart",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Place an Instacart order for a week's groceries: milk, eggs, whole wheat bread, chicken breast, broccoli, bananas; select the cheapest delivery window",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/grocery_list.json",
+      "description": "Weekly grocery list with items, quantities, and categories"
+    }
+  ]
+}

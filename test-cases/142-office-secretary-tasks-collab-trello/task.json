@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 142,
+    "metaclass": "office-secretary-tasks",
+    "class": "collab",
+    "description": "Create a Trello board \"Q3 Sprint Planning\" with 3 lists + 5 cards",
+    "sites_involved": [
+      "trello.com"
+    ],
+    "platform": "trello",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Create a Trello board \"Q3 Sprint Planning\" with 3 lists + 5 cards",
+  "eval_schema": {
+    "url_pattern": "trello\\.com/1/boards",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/task_list.json",
+      "description": "Task list with names, assignees, due dates, and priorities"
+    }
+  ]
+}

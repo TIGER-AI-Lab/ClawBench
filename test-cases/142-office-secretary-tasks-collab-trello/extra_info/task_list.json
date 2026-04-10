@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "name": "Define Q3 OKRs",
+      "list": "Today"
+    },
+    {
+      "name": "Review architecture RFC",
+      "list": "Today"
+    },
+    {
+      "name": "Set up CI/CD pipeline",
+      "list": "This Week"
+    },
+    {
+      "name": "Write integration tests",
+      "list": "This Week"
+    },
+    {
+      "name": "Prepare sprint demo",
+      "list": "This Week"
+    }
+  ],
+  "lists": [
+    {"name": "Next Week"},
+    {"name": "Next Next Week"},
+    {"name": "Next Month"}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 45,
+    "metaclass": "daily-life",
+    "class": "personal-care",
+    "description": "Book a women's haircut on Booksy for the upcoming Saturday afternoon",
+    "sites_involved": [
+      "booksy.com"
+    ],
+    "platform": "booksy",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Book a women's haircut on Booksy for the upcoming Saturday afternoon",
+  "eval_schema": {
+    "url_pattern": "booksy\\.com/core/v\\d+/customer_api/me/appointments/business/\\d+/?$",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

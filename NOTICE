@@ -1,0 +1,12 @@
+ClawBench
+Copyright 2026 ClawBench Authors
+
+This product includes the following third-party software:
+
+noVNC - Copyright (C) 2024 The noVNC Authors
+Licensed under the Mozilla Public License 2.0 (MPL 2.0)
+https://github.com/novnc/noVNC
+
+websockify - Copyright (C) 2024 The websockify Authors
+Licensed under the GNU Lesser General Public License v3.0 (LGPL 3.0)
+https://github.com/novnc/websockify

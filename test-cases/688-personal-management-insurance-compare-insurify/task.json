@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 688,
+    "metaclass": "personal-management",
+    "class": "insurance-compare",
+    "description": "On Insurify, enter basic personal information and auto insurance preferences to receive quotes from at least 3 insurance companies",
+    "sites_involved": [
+      "insurify.com"
+    ],
+    "platform": "insurify",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Insurify, enter basic personal information and auto insurance preferences to receive quotes from at least 3 insurance companies",
+  "eval_schema": {
+    "url_pattern": "insurify\\.com/(?!cdn-cgi/)(?!.*static_user_pageview)(?!.*analytics)(?!.*tracking).*(quote|funnel|lead|insurance|compare|application)",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

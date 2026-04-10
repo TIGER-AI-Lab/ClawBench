@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 542,
+    "metaclass": "daily-life",
+    "class": "pets",
+    "description": "On Wag!, book a 30-minute Solo Walk dog walking service, fill in pet info (dog name, breed, weight), select the next day 8–10 AM, and submit the booking",
+    "sites_involved": [
+      "wagwalking.com"
+    ],
+    "platform": "wag",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Wag!, book a 30-minute Solo Walk dog walking service, fill in pet info (dog name, breed, weight), select the next day 8–10 AM, and submit the booking",
+  "eval_schema": {
+    "url_pattern": "wagwalking\\.com/(api|graphql).*(book|walk|request|order|checkout|schedule)",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 885,
+    "metaclass": "entertainment-hobbies",
+    "class": "experience",
+    "description": "On Bowlero, reserve a bowling lane for 6 people at the nearest location to Midtown Manhattan, the upcoming Friday night at 8 PM, add the 2-hour unlimited bowling package",
+    "sites_involved": [
+      "bowlero.com"
+    ],
+    "platform": "bowlero",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Bowlero, reserve a bowling lane for 6 people at the nearest location to Midtown Manhattan, the upcoming Friday night at 8 PM, add the 2-hour unlimited bowling package",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

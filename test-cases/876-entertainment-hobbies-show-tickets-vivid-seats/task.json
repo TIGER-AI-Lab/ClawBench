@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 876,
+    "metaclass": "entertainment-hobbies",
+    "class": "show-tickets",
+    "description": "On Vivid Seats, purchase 2 orchestra center tickets for Hamilton on Broadway at the Richard Rodgers Theatre, select the earliest available performance date",
+    "sites_involved": [
+      "vividseats.com"
+    ],
+    "platform": "vivid-seats",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Vivid Seats, purchase 2 orchestra center tickets for Hamilton on Broadway at the Richard Rodgers Theatre, select the earliest available performance date",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

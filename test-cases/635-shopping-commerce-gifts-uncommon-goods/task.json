@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 635,
+    "metaclass": "shopping-commerce",
+    "class": "gifts",
+    "description": "On Uncommon Goods, add one item under $50 from the \"Gifts for Him\" section to cart and enter a shipping address",
+    "sites_involved": [
+      "uncommongoods.com"
+    ],
+    "platform": "uncommon-goods",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Uncommon Goods, add one item under $50 from the \"Gifts for Him\" section to cart and enter a shipping address",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

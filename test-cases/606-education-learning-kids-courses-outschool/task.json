@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 606,
+    "metaclass": "education-learning",
+    "class": "kids-courses",
+    "description": "Search for a beginner Python coding class for kids ages 10\u201312 on Outschool, select a session, and complete enrollment with payment",
+    "sites_involved": [
+      "outschool.com"
+    ],
+    "platform": "outschool",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Search for a beginner Python coding class for kids ages 10\u201312 on Outschool, select a session, and complete enrollment with payment",
+  "eval_schema": {
+    "url_pattern": "outschool\\.com/graphql/AcceptPaymentWithStripe",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

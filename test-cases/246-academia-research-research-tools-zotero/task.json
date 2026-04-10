@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 246,
+    "metaclass": "academia-research",
+    "class": "research-tools",
+    "description": "Zotero Web: Batch import papers from 5 URLs with auto metadata",
+    "sites_involved": [
+      "zotero.org"
+    ],
+    "platform": "zotero",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Zotero Web: Batch import papers from 5 URLs with auto metadata",
+  "eval_schema": {
+    "url_pattern": "api\\.zotero\\.org/users/\\d+/items",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 674,
+    "metaclass": "entertainment-hobbies",
+    "class": "masterclass",
+    "description": "On MasterClass, select the Annual All-Access Pass plan, create an account, and reach the payment page with account and payment details filled in.",
+    "sites_involved": [
+      "masterclass.com"
+    ],
+    "platform": "masterclass",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On MasterClass, select the Annual All-Access Pass plan, create an account, and reach the payment page with account and payment details filled in.",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

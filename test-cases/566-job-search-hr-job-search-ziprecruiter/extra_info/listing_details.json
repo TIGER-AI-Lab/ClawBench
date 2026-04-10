@@ -1,0 +1,26 @@
+{
+  "listing_title": "Bright 1BR in Toronto Annex, Furnished, July-August Sublet",
+  "description": "Spacious furnished one-bedroom apartment in the heart of Toronto's Annex neighborhood. Walking distance to U of T campus, TTC subway, and Bloor Street shops and restaurants. The unit features hardwood floors, in-suite laundry, a fully equipped kitchen, and a sunny south-facing balcony. Perfect for visiting scholars or summer interns.",
+  "price": 2400,
+  "currency": "CAD",
+  "period": "monthly",
+  "available_from": "2026-07-01",
+  "available_to": "2026-08-31",
+  "furnished": true,
+  "bedrooms": 1,
+  "bathrooms": 1,
+  "amenities": [
+    "In-suite laundry",
+    "Dishwasher",
+    "Balcony",
+    "Air conditioning",
+    "WiFi included"
+  ],
+  "photos": [
+    "living_room.jpg",
+    "bedroom.jpg",
+    "kitchen.jpg",
+    "balcony.jpg"
+  ],
+  "contact_email": "alex.green.uoft@clawbench.cc"
+}

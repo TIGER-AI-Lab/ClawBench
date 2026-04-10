@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 712,
+    "metaclass": "creation-init",
+    "class": "website-create",
+    "description": "On Squarespace, register a new account and create a personal portfolio website using the \"Portfolio\" template, set the site title to \"My Portfolio\", complete initialization and enter the editor",
+    "sites_involved": [
+      "squarespace.com"
+    ],
+    "platform": "squarespace",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Squarespace, register a new account and create a personal portfolio website using the \"Portfolio\" template, set the site title to \"My Portfolio\", complete initialization and enter the editor",
+  "eval_schema": {
+    "url_pattern": "squarespace\\.com/api/create-website/enqueue",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

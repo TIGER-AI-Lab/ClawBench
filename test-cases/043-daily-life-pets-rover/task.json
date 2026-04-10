@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 43,
+    "metaclass": "daily-life",
+    "class": "pets",
+    "description": "Book 5-day pet boarding next month on Rover (medium-sized dog), sitter rated 4.8+",
+    "sites_involved": [
+      "rover.com"
+    ],
+    "platform": "rover",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Book 5-day pet boarding next month on Rover (medium-sized dog), sitter rated 4.8+",
+  "eval_schema": {
+    "url_pattern": "rover\\.com/api/v\\d+/people/[^/]+/services/overnight-boarding/contactability",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/pet_info.json",
+      "description": "Pet information for Alex Green's dog Maple (Golden Retriever, 4 years, 35 lbs)"
+    }
+  ]
+}

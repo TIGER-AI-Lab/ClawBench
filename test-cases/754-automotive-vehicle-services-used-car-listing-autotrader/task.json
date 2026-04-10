@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 754,
+    "metaclass": "automotive-vehicle-services",
+    "class": "used-car-listing",
+    "description": "List a used car for sale on AutoTrader, fill in vehicle details (make, year, mileage, price), and submit the listing",
+    "sites_involved": [
+      "autotrader.co.uk"
+    ],
+    "platform": "autotrader",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "List a used car for sale on AutoTrader, fill in vehicle details (make, year, mileage, price), and submit the listing",
+  "eval_schema": {
+    "url_pattern": "autotrader\\.co\\.uk/selling/.*advert|autotrader\\.co\\.uk/selling/find-car|autotrader\\.co\\.uk.*/sell-my-car.*/advertise|autotrader\\.co\\.uk.*/sell-my-car.*/create",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

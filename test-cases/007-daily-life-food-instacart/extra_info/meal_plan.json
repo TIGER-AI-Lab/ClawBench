@@ -1,0 +1,21 @@
+{
+  "week_plan": [
+    {
+      "day": "Monday",
+      "breakfast": "Greek yogurt with granola",
+      "lunch": "Grilled chicken salad",
+      "dinner": "Salmon with steamed broccoli and brown rice"
+    },
+    {
+      "day": "Tuesday",
+      "breakfast": "Overnight oats with bananas",
+      "lunch": "Turkey wrap with veggies",
+      "dinner": "Pasta primavera with garlic bread"
+    }
+  ],
+  "dietary_restrictions": [
+    "no shellfish (allergy)",
+    "low sodium preferred"
+  ],
+  "servings_per_meal": 1
+}

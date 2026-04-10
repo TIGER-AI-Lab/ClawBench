@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 877,
+    "metaclass": "entertainment-hobbies",
+    "class": "show-tickets",
+    "description": "On StubHub, buy 2 NHL Toronto Maple Leafs home game tickets at Scotiabank Arena, select seats in sections 118–122 (behind the goal), rows 10 or closer",
+    "sites_involved": [
+      "stubhub.ca"
+    ],
+    "platform": "stubhub",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On StubHub, buy 2 NHL Toronto Maple Leafs home game tickets at Scotiabank Arena, select seats in sections 118–122 (behind the goal), rows 10 or closer",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

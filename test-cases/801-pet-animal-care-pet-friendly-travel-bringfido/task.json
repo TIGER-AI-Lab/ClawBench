@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 801,
+    "metaclass": "pet-animal-care",
+    "class": "pet-friendly-travel",
+    "description": "On BringFido, search for pet-friendly hotels in San Francisco that allow large dogs, select one, and complete a booking reservation",
+    "sites_involved": [
+      "bringfido.com"
+    ],
+    "platform": "bringfido",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On BringFido, search for pet-friendly hotels in San Francisco that allow large dogs, select one, and complete a booking reservation",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

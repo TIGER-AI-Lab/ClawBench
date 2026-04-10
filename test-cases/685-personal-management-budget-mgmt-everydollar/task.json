@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 685,
+    "metaclass": "personal-management",
+    "class": "budget-mgmt",
+    "description": "Create a monthly budget on EveryDollar: income $5000, add three expense categories \u2014 Housing $1500, Food $400, Transportation $300",
+    "sites_involved": [
+      "everydollar.com"
+    ],
+    "platform": "everydollar",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Create a monthly budget on EveryDollar: income $5000, add three expense categories \u2014 Housing $1500, Food $400, Transportation $300",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

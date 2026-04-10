@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 796,
+    "metaclass": "pet-animal-care",
+    "class": "pet-supplies-grooming",
+    "description": "On PetSmart, order dog food for same-day delivery and book a professional grooming appointment for the upcoming Saturday",
+    "sites_involved": [
+      "petsmart.com"
+    ],
+    "platform": "petsmart",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On PetSmart, order dog food for same-day delivery and book a professional grooming appointment for the upcoming Saturday",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/pet_info.json",
+      "description": "Pet information for Alex Green's dog Maple (Golden Retriever, 4 years, 65 lbs)"
+    }
+  ]
+}

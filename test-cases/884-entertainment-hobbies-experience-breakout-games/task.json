@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 884,
+    "metaclass": "entertainment-hobbies",
+    "class": "experience",
+    "description": "On Breakout Games, book an escape room for 4 people at the nearest location to downtown Toronto, select a horror/thriller themed room, the upcoming Saturday evening time slot between 7–9 PM",
+    "sites_involved": [
+      "breakoutgames.com"
+    ],
+    "platform": "breakout-games",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Breakout Games, book an escape room for 4 people at the nearest location to downtown Toronto, select a horror/thriller themed room, the upcoming Saturday evening time slot between 7–9 PM",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 785,
+    "metaclass": "beauty-personal-care",
+    "class": "skincare",
+    "description": "On Curology, complete the skin condition questionnaire (skin type, acne, aging concerns) and reach the checkout or subscription page with payment details filled in.",
+    "sites_involved": [
+      "curology.com"
+    ],
+    "platform": "curology",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Curology, complete the skin condition questionnaire (skin type, acne, aging concerns) and reach the checkout or subscription page with payment details filled in.",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 7,
+    "metaclass": "daily-life",
+    "class": "food",
+    "description": "On Instacart, purchase all ingredients for 2-day meal plan recipes, with the nearest supermarket auto-selected",
+    "sites_involved": [
+      "instacart.com"
+    ],
+    "platform": "instacart",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Instacart, purchase all ingredients for 2-day meal plan recipes, with the nearest supermarket auto-selected",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": [
+    {
+      "path": "extra_info/meal_plan.json",
+      "description": "2-day meal plan with recipes and dietary restrictions"
+    }
+  ]
+}

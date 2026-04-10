@@ -1,0 +1,28 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 809,
+    "metaclass": "pet-animal-care",
+    "class": "pet-adopt",
+    "description": "Search for adoptable medium-sized dogs on Petfinder and submit an adoption inquiry form",
+    "sites_involved": [
+      "petfinder.com"
+    ],
+    "platform": "petfinder",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Search for adoptable medium-sized dogs on Petfinder and submit an adoption inquiry form",
+  "eval_schema": {
+    "url_pattern": "psl\\.petfinder\\.com/graphql",
+    "method": "POST",
+    "body": {
+      "operationName": "CreateAdoptionInquiry"
+    }
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

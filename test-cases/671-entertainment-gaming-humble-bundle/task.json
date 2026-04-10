@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 671,
+    "metaclass": "entertainment-hobbies",
+    "class": "gaming",
+    "description": "Register an account on Humble Bundle, add a currently active game bundle to cart, set custom price to $15, and proceed to checkout",
+    "sites_involved": [
+      "humblebundle.com"
+    ],
+    "platform": "humble-bundle",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Register an account on Humble Bundle, add a currently active game bundle to cart, set custom price to $15, and proceed to checkout",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

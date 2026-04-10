@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 625,
+    "metaclass": "travel",
+    "class": "camping-outdoor",
+    "description": "Register an account on the Parks Canada reservation portal, search for a 3-night campsite at Banff National Park (2 persons, electrical), select an available site and submit the reservation",
+    "sites_involved": [
+      "reservation.pc.gc.ca"
+    ],
+    "platform": "parks-canada-reservations",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Register an account on the Parks Canada reservation portal, search for a 3-night campsite at Banff National Park (2 persons, electrical), select an available site and submit the reservation",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

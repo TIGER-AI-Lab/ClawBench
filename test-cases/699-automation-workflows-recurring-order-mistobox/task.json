@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 699,
+    "metaclass": "automation-workflows",
+    "class": "recurring-order",
+    "description": "On Mistobox, complete a coffee subscription signup: select preferences (roast=medium-dark, grind=whole bean), choose a biweekly delivery plan, fill in shipping info, and submit",
+    "sites_involved": [
+      "mistobox.com"
+    ],
+    "platform": "mistobox",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Mistobox, complete a coffee subscription signup: select preferences (roast=medium-dark, grind=whole bean), choose a biweekly delivery plan, fill in shipping info, and submit",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

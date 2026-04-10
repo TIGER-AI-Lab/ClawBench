@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 709,
+    "metaclass": "rating-voting",
+    "class": "service-review",
+    "description": "Submit a 5-star review for a home improvement provider on Angi with service type \"Plumbing\" and exactly this text: \"On time, clean work, fair price.\"",
+    "sites_involved": [
+      "angi.com"
+    ],
+    "platform": "angi",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Submit a 5-star review for a home improvement provider on Angi with service type \"Plumbing\" and exactly this text: \"On time, clean work, fair price.\"",
+  "eval_schema": {
+    "url_pattern": "request\\.angi\\.com/directory/graphql",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

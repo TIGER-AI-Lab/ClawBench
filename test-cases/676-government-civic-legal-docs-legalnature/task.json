@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 676,
+    "metaclass": "government-civic",
+    "class": "legal-docs",
+    "description": "On LegalNature, select Rental/Lease Agreement, choose California, fill in property address, landlord name, tenant name, monthly rent, and lease term, then generate the agreement",
+    "sites_involved": [
+      "legalnature.com"
+    ],
+    "platform": "legalnature",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On LegalNature, select Rental/Lease Agreement, choose California, fill in property address, landlord name, tenant name, monthly rent, and lease term, then generate the agreement",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

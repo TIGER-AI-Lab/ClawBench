@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 552,
+    "metaclass": "finance-investment",
+    "class": "business-payment",
+    "description": "Register a business payments account on Plooto by filling in company information (company name, industry, monthly payment volume) and completing the sign-up submission",
+    "sites_involved": [
+      "plooto.com"
+    ],
+    "platform": "plooto",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "Register a business payments account on Plooto by filling in company information (company name, industry, monthly payment volume) and completing the sign-up submission",
+  "eval_schema": {
+    "url_pattern": "api\\.plooto\\.com/v1/user/registerFull",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

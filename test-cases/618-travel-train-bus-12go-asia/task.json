@@ -1,0 +1,25 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 618,
+    "metaclass": "travel",
+    "class": "train-bus",
+    "description": "On 12Go Asia, book a train ticket from Bangkok to Chiang Mai (sleeper class), fill in passenger details, and proceed to the payment page",
+    "sites_involved": [
+      "12go.asia"
+    ],
+    "platform": "12go-asia",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On 12Go Asia, book a train ticket from Bangkok to Chiang Mai (sleeper class), fill in passenger details, and proceed to the payment page",
+  "eval_schema": {
+    "url_pattern": "__PLACEHOLDER_WILL_NOT_MATCH__",
+    "method": "POST"
+  },
+  "time_limit": 30,
+  "extra_info": []
+}

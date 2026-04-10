@@ -1,0 +1,28 @@
+{
+  "$schema": "../task.schema.json",
+  "metadata": {
+    "task_id": 873,
+    "metaclass": "daily-life",
+    "class": "food",
+    "description": "On Resy, find and book a Michelin-recommended Italian restaurant in Manhattan for 2 people, the upcoming Friday at 8:30 PM, specify dining room (not bar) seating",
+    "sites_involved": [
+      "resy.com"
+    ],
+    "platform": "resy",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    }
+  },
+  "instruction": "On Resy, find and book a Michelin-recommended Italian restaurant in Manhattan for 2 people, the upcoming Friday at 8:30 PM, specify dining room (not bar) seating",
+  "eval_schema": {
+    "url_pattern": "api\\.resy\\.com/3/details",
+    "method": "POST",
+    "body": {
+      "commit": 1
+    }
+  },
+  "time_limit": 30,
+  "extra_info": []
+}
