@@ -48,6 +48,13 @@ cp .env.example .env
 
 The menu will guide you through configuring models, selecting test cases, and running benchmarks.
 
+### What's under the hood?
+If you choose the `run_single`, the program will start the the `test-driver/run.py` to run on the docker sandbox:
+```
+uv run --project test-driver test-driver/run.py test-cases/[test-case] [model]
+```
+This will trigger the `run.py main()` function. This function will fetch the email and then save the personal login information to the sandbox and start run `docker_run` in the run.py. 
+
 ## Architecture
 
 ```
