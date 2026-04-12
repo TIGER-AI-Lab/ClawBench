@@ -7,6 +7,7 @@ import re
 import secrets
 import shutil
 import signal
+import ssl
 import subprocess
 import sys
 import time
@@ -17,7 +18,6 @@ from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 import yaml
-
 from generate_resume_pdf import generate_resume_pdf
 from hf_upload import hf_upload_enabled, upload_run
 
@@ -29,12 +29,10 @@ def _detect_engine() -> str:
     env = os.environ.get("CONTAINER_ENGINE", "").strip().lower()
     if env:
         if env not in ("docker", "podman"):
-            print(
-                f"ERROR: CONTAINER_ENGINE must be 'docker' or 'podman', got '{env}'")
+            print(f"ERROR: CONTAINER_ENGINE must be 'docker' or 'podman', got '{env}'")
             sys.exit(1)
         if not shutil.which(env):
-            print(
-                f"ERROR: CONTAINER_ENGINE={env} but '{env}' not found on PATH")
+            print(f"ERROR: CONTAINER_ENGINE={env} but '{env}' not found on PATH")
             sys.exit(1)
         return env
     for cmd in ("docker", "podman"):
@@ -46,6 +44,27 @@ def _detect_engine() -> str:
 
 ENGINE = _detect_engine()
 PURELYMAIL_API = "https://purelymail.com/api/v0"
+
+
+def _make_ssl_context() -> ssl.SSLContext:
+    """Create an SSL context that can find CA certs on macOS / Linux."""
+    ctx = ssl.create_default_context()
+    # If the default context already has certs loaded, use it as-is.
+    if ctx.get_ca_certs():
+        return ctx
+    # Try common CA bundle paths (macOS, Homebrew, Linux).
+    for path in (
+        "/etc/ssl/cert.pem",
+        "/opt/homebrew/etc/openssl@3/cert.pem",
+        "/etc/pki/tls/certs/ca-bundle.crt",
+    ):
+        if os.path.isfile(path):
+            ctx.load_verify_locations(path)
+            return ctx
+    return ctx
+
+
+_SSL_CTX = _make_ssl_context()
 
 
 def load_dotenv(path: Path) -> dict[str, str]:
@@ -69,7 +88,9 @@ MODELS_YAML = PROJECT_ROOT / "models" / "models.yaml"
 def load_models_yaml() -> dict:
     """Load all model definitions from models/models.yaml."""
     if not MODELS_YAML.exists():
-        print(f"ERROR: {MODELS_YAML} not found (copy models.example.yaml and fill in your keys)")
+        print(
+            f"ERROR: {MODELS_YAML} not found (copy models.example.yaml and fill in your keys)"
+        )
         sys.exit(1)
     return yaml.safe_load(MODELS_YAML.read_text()) or {}
 
@@ -86,8 +107,10 @@ def load_model_config(model: str) -> dict:
         sys.exit(1)
 
     # Validate model name characters
-    if any(c in model for c in "/ \\:*?\"<>|"):
-        print(f"ERROR: model name '{model}' contains illegal characters (/ \\ : * ? \" < > | or spaces)")
+    if any(c in model for c in '/ \\:*?"<>|'):
+        print(
+            f"ERROR: model name '{model}' contains illegal characters (/ \\ : * ? \" < > | or spaces)"
+        )
         sys.exit(1)
 
     config = dict(all_models[model])
@@ -125,29 +148,33 @@ def run(cmd: list[str], **kwargs):  # type: ignore[no-untyped-def]
 
 # -- PurelyMail --
 
+
 def purelymail_request(endpoint: str, body: dict, api_key: str) -> dict:
     data = json.dumps(body).encode()
     req = Request(
         f"{PURELYMAIL_API}/{endpoint}",
         data=data,
-        headers={"Purelymail-Api-Token": api_key,
-                 "Content-Type": "application/json"},
+        headers={"Purelymail-Api-Token": api_key, "Content-Type": "application/json"},
         method="POST",
     )
-    with urlopen(req, timeout=15) as resp:
+    with urlopen(req, timeout=15, context=_SSL_CTX) as resp:
         return json.loads(resp.read())
 
 
 def create_email(api_key: str, domain: str) -> tuple[str, str]:
     local = f"cb{uuid.uuid4().hex[:12]}"
     password = secrets.token_urlsafe(16)
-    purelymail_request("createUser", {
-        "userName": local,
-        "domainName": domain,
-        "password": password,
-        "enablePasswordReset": False,
-        "sendWelcomeEmail": False,
-    }, api_key)
+    purelymail_request(
+        "createUser",
+        {
+            "userName": local,
+            "domainName": domain,
+            "password": password,
+            "enablePasswordReset": False,
+            "sendWelcomeEmail": False,
+        },
+        api_key,
+    )
     email = f"{local}@{domain}"
     print(f"  Created email: {email}")
     print(f"  Password: {password}")
@@ -167,8 +194,9 @@ def delete_email(api_key: str, email: str) -> None:
 RESUME_TEMPLATE = Path(__file__).resolve().parent / "resume_template.json"
 
 
-def prepare_personal_info(shared_src: Path, email: str, password: str,
-                          output_dir: Path) -> Path:
+def prepare_personal_info(
+    shared_src: Path, email: str, password: str, output_dir: Path
+) -> Path:
     """Create a temp directory with personal info files, email fields updated."""
     tmp = output_dir / ".my-info-tmp"
     tmp.mkdir(parents=True, exist_ok=True)
@@ -178,8 +206,7 @@ def prepare_personal_info(shared_src: Path, email: str, password: str,
     pi_data = json.loads(pi_src.read_text())
     pi_data["contact"]["email"] = email
     pi_data.pop("online_accounts", None)
-    (tmp / "alex_green_personal_info.json").write_text(
-        json.dumps(pi_data, indent=2))
+    (tmp / "alex_green_personal_info.json").write_text(json.dumps(pi_data, indent=2))
 
     # -- email credentials (separate file) --
     creds = {
@@ -215,10 +242,7 @@ def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> None
         print(f"  Copied extra_info: {src.name}")
 
 
-
-
 # -- Prompt --
-
 def build_instruction(task: dict) -> str:
     parts = [task["instruction"]]
     parts.append(
@@ -253,9 +277,11 @@ def build_instruction(task: dict) -> str:
         "If an account registration is required, you can use the email and password provided, and you can receive emails at that address if needed. "
         "---"
     )
-    extras = [(Path(info["path"]).name, info["description"])
-              for info in task.get("extra_info", [])
-              if info.get("path") and info.get("description")]
+    extras = [
+        (Path(info["path"]).name, info["description"])
+        for info in task.get("extra_info", [])
+        if info.get("path") and info.get("description")
+    ]
     if extras:
         parts.append(
             "\nAdditional files are also available under /my-info/ for this task:"
@@ -266,7 +292,6 @@ def build_instruction(task: dict) -> str:
 
 
 # -- Docker --
-
 def docker_build() -> None:
     run([ENGINE, "build", "-t", IMAGE, str(PROJECT_ROOT)])
 
@@ -278,38 +303,70 @@ def _network_flags() -> list[str]:
     return []
 
 
-def docker_run_human(name: str, instruction: str, schema_path: Path,
-                     personal_info_dir: Path,
-                     time_limit_s: int = 1800) -> None:
+def docker_run_human(
+    name: str,
+    instruction: str,
+    schema_path: Path,
+    personal_info_dir: Path,
+    time_limit_s: int = 1800,
+) -> None:
     cmd = [
-        ENGINE, "run", "-d", "--name", name,
+        ENGINE,
+        "run",
+        "-d",
+        "--name",
+        name,
         *_network_flags(),
-        "-e", "HUMAN_MODE=1",
-        "-e", f"INSTRUCTION={instruction}",
-        "-e", f"TIME_LIMIT_S={time_limit_s}",
-        "-p", "6080:6080",
-        "-v", f"{schema_path.resolve()}:/eval-schema.json:ro",
-        "-v", f"{personal_info_dir.resolve()}:/my-info:ro",
+        "-e",
+        "HUMAN_MODE=1",
+        "-e",
+        f"INSTRUCTION={instruction}",
+        "-e",
+        f"TIME_LIMIT_S={time_limit_s}",
+        "-p",
+        "6080:6080",
+        "-v",
+        f"{schema_path.resolve()}:/eval-schema.json:ro",
+        "-v",
+        f"{personal_info_dir.resolve()}:/my-info:ro",
         IMAGE,
     ]
     run(cmd)
 
 
-def docker_run(name: str, instruction: str, schema_path: Path,
-               personal_info_dir: Path, model_cfg: dict,
-               time_limit_s: int = 1800) -> None:
+def docker_run(
+    name: str,
+    instruction: str,
+    schema_path: Path,
+    personal_info_dir: Path,
+    model_cfg: dict,
+    time_limit_s: int = 1800,
+) -> None:
     env_flags = [
-        ENGINE, "run", "-d", "--name", name,
+        ENGINE,
+        "run",
+        "-d",
+        "--name",
+        name,
         *_network_flags(),
-        "-e", f"MODEL_NAME={model_cfg['model']}",
-        "-e", f"BASE_URL={model_cfg['base_url']}",
-        "-e", f"API_TYPE={model_cfg['api_type']}",
-        "-e", f"API_KEYS={json.dumps(model_cfg.get('api_keys', []))}",
-        "-e", f"API_KEY={model_cfg.get('api_key', '')}",
-        "-e", f"INSTRUCTION={instruction}",
-        "-e", f"TIME_LIMIT_S={time_limit_s}",
-        "-v", f"{schema_path.resolve()}:/eval-schema.json:ro",
-        "-v", f"{personal_info_dir.resolve()}:/my-info:ro",
+        "-e",
+        f"MODEL_NAME={model_cfg['model']}",
+        "-e",
+        f"BASE_URL={model_cfg['base_url']}",
+        "-e",
+        f"API_TYPE={model_cfg['api_type']}",
+        "-e",
+        f"API_KEYS={json.dumps(model_cfg.get('api_keys', []))}",
+        "-e",
+        f"API_KEY={model_cfg.get('api_key', '')}",
+        "-e",
+        f"INSTRUCTION={instruction}",
+        "-e",
+        f"TIME_LIMIT_S={time_limit_s}",
+        "-v",
+        f"{schema_path.resolve()}:/eval-schema.json:ro",
+        "-v",
+        f"{personal_info_dir.resolve()}:/my-info:ro",
     ]
     # host.docker.internal needs explicit mapping on Linux (not Docker Desktop)
     if "host.docker.internal" in model_cfg["base_url"]:
@@ -346,12 +403,12 @@ def docker_rm(name: str) -> None:
 
 
 # -- Results --
-
 def ensure_interception(output_dir: Path):
     """If the interceptor didn't produce interception.json, create one with the stop reason."""
     stop_reason_file = output_dir / "data" / ".stop-reason"
-    reason = stop_reason_file.read_text().strip(
-    ) if stop_reason_file.exists() else "unknown"
+    reason = (
+        stop_reason_file.read_text().strip() if stop_reason_file.exists() else "unknown"
+    )
     stop_reason_file.unlink(missing_ok=True)
     interception_file = output_dir / "data" / "interception.json"
     if interception_file.exists():
@@ -384,8 +441,9 @@ def print_results(output_dir: Path) -> bool:
     # Actions
     actions_file = data_dir / "actions.jsonl"
     if actions_file.exists():
-        actions = [json.loads(
-            l) for l in actions_file.read_text().splitlines() if l.strip()]
+        actions = [
+            json.loads(l) for l in actions_file.read_text().splitlines() if l.strip()
+        ]
         print(f"Actions recorded: {len(actions)}")
         for a in actions:
             print(f"  {a['type']:10s}  {a.get('url', '')[:70]}")
@@ -395,8 +453,7 @@ def print_results(output_dir: Path) -> bool:
     # HTTP Requests
     requests_file = data_dir / "requests.jsonl"
     if requests_file.exists():
-        request_lines = [
-            l for l in requests_file.read_text().splitlines() if l.strip()]
+        request_lines = [l for l in requests_file.read_text().splitlines() if l.strip()]
         print(f"HTTP requests logged: {len(request_lines)}")
 
     # Interception
@@ -415,20 +472,41 @@ def print_results(output_dir: Path) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Run a single ClawBench test case")
-    parser.add_argument("test_case_dir", type=Path,
-                        help="Path to the test case directory")
-    parser.add_argument("model", type=str, nargs="?", default=None,
-                        help="Model name (key in models/models.yaml, required for agent mode)")
-    parser.add_argument("--human", action="store_true",
-                        help="Human mode: expose Chrome via noVNC instead of running an agent")
-    parser.add_argument("--output-dir", dest="output_dir", type=Path, default=None,
-                        help="Directory to write output data to (default: <project>/test-output)")
-    parser.add_argument("--no-build", dest="no_build", action="store_true",
-                        help="Skip building the container image (assumes it already exists)")
-    parser.add_argument("--no-upload", dest="no_upload", action="store_true",
-                        help="Skip HuggingFace upload even if HF_TOKEN is configured")
+    parser = argparse.ArgumentParser(description="Run a single ClawBench test case")
+    parser.add_argument(
+        "test_case_dir", type=Path, help="Path to the test case directory"
+    )
+    parser.add_argument(
+        "model",
+        type=str,
+        nargs="?",
+        default=None,
+        help="Model name (key in models/models.yaml, required for agent mode)",
+    )
+    parser.add_argument(
+        "--human",
+        action="store_true",
+        help="Human mode: expose Chrome via noVNC instead of running an agent",
+    )
+    parser.add_argument(
+        "--output-dir",
+        dest="output_dir",
+        type=Path,
+        default=None,
+        help="Directory to write output data to (default: <project>/test-output)",
+    )
+    parser.add_argument(
+        "--no-build",
+        dest="no_build",
+        action="store_true",
+        help="Skip building the container image (assumes it already exists)",
+    )
+    parser.add_argument(
+        "--no-upload",
+        dest="no_upload",
+        action="store_true",
+        help="Skip HuggingFace upload even if HF_TOKEN is configured",
+    )
     args = parser.parse_args()
 
     if not args.human and args.model is None:
@@ -446,8 +524,10 @@ def main():
     pm_domain: str = env["PURELY_MAIL_DOMAIN"]
 
     # HuggingFace upload (optional)
-    hf_env = {"HF_TOKEN": env.get("HF_TOKEN", ""),
-              "HF_REPO_ID": env.get("HF_REPO_ID", "")}
+    hf_env = {
+        "HF_TOKEN": env.get("HF_TOKEN", ""),
+        "HF_REPO_ID": env.get("HF_REPO_ID", ""),
+    }
     do_upload = hf_upload_enabled(hf_env) and not args.no_upload
 
     # Load task
@@ -467,16 +547,18 @@ def main():
         safe_model = "human"
     else:
         model_cfg = load_model_config(args.model)
-        safe_model = re.sub(r'[/:]+', '--', args.model)
+        safe_model = re.sub(r"[/:]+", "--", args.model)
 
     container = f"clawbench-{case_name}-{safe_model}-{int(time.time())}"
 
     if args.output_dir is not None:
-        output_dir = args.output_dir.resolve() / safe_model / \
-            f"{case_name}-{safe_model}-{ts}"
+        output_dir = (
+            args.output_dir.resolve() / safe_model / f"{case_name}-{safe_model}-{ts}"
+        )
     else:
-        output_dir = PROJECT_ROOT / "test-output" / \
-            safe_model / f"{case_name}-{safe_model}-{ts}"
+        output_dir = (
+            PROJECT_ROOT / "test-output" / safe_model / f"{case_name}-{safe_model}-{ts}"
+        )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if not args.no_build:
@@ -492,7 +574,8 @@ def main():
 
         step("Preparing personal info")
         personal_info_tmp = prepare_personal_info(
-            PROJECT_ROOT / "shared", email, email_pw, output_dir)
+            PROJECT_ROOT / "shared", email, email_pw, output_dir
+        )
         copy_extra_info(task, task_dir, personal_info_tmp)
         print(f"  Personal info dir: {personal_info_tmp}")
 
@@ -506,14 +589,16 @@ def main():
 
         if args.human:
             step("Starting container (human mode)")
-            docker_run_human(container, instruction, schema_path,
-                             personal_info_tmp, time_limit_s)
+            docker_run_human(
+                container, instruction, schema_path, personal_info_tmp, time_limit_s
+            )
 
             # Graceful stop on Ctrl+C: give container time to flush recording
             def handle_sigint(sig, frame):
                 print("\nCtrl+C received, stopping container gracefully...")
-                subprocess.run([ENGINE, "stop", "-t", "20", container],
-                               capture_output=True)
+                subprocess.run(
+                    [ENGINE, "stop", "-t", "20", container], capture_output=True
+                )
 
             signal.signal(signal.SIGINT, handle_sigint)
 
@@ -527,9 +612,14 @@ def main():
         else:
             step("Starting container")
             assert model_cfg is not None
-            docker_run(container, instruction, schema_path,
-                       personal_info_tmp, model_cfg,
-                       time_limit_s=time_limit_s)
+            docker_run(
+                container,
+                instruction,
+                schema_path,
+                personal_info_tmp,
+                model_cfg,
+                time_limit_s=time_limit_s,
+            )
 
             step(f"Waiting for container (max {task['time_limit']}min)")
 

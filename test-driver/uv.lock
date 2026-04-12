@@ -45,9 +45,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fpdf2" },
-    { name = "huggingface-hub" },
-    { name = "pyyaml" },
+    { name = "fpdf2", specifier = ">=2.8" },
+    { name = "huggingface-hub", specifier = ">=0.27" },
+    { name = "pyyaml", specifier = ">=6.0" },
 ]
 
 [[package]]

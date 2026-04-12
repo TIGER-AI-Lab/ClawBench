@@ -36,7 +36,8 @@ COPY --from=ghcr.io/astral-sh/uv:0.11.6 /uv /usr/local/bin/uv
 
 WORKDIR /app
 COPY extension-server/ ./extension-server/
-RUN cd extension-server && UV_PYTHON_PREFERENCE=only-system uv sync
+# RUN cd extension-server && UV_PYTHON_PREFERENCE=only-system uv sync
+RUN cd extension-server && uv sync
 
 COPY chrome-extension/ ./chrome-extension/
 
