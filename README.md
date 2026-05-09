@@ -77,6 +77,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
 
+- **[2026.05.09]** <img src="static/icons/globe.svg" width="14" height="14"> Added support for the **pi** harness — Pi coding agent + `pi-browser-harness`.
 - **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;We have updated our release pipeline and published the package to PyPI under [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) for easier usage.
 - **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;Refactored the codebase to improve project structure, streamline the CI/CD pipeline, make it easier to extend ClawBench to additional test suites, and deliver more stable builds across **V1**, **V1-Lite**, and **V2**. The FAQ section was also updated based on user feedback.
 - **[2026.05.01]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;Added the full **V2** 130-task corpus and one-command Hermes launch:
@@ -240,7 +241,7 @@ uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats claude-sonnet-4
 ```
 Once the container starts, the script prints a **noVNC URL** (e.g. `http://localhost:6080/vnc.html`) — open it in your browser to watch the agent operate in real-time. If port 6080 is already in use, an alternative port is chosen automatically.
 
-Results land in `./test-output/<model>/<harness>-<case>-<model>-<timestamp>/` with the full five-layer recording. The default harness is `openclaw`; pass `--harness opencode` to use [opencode](https://opencode.ai), `--harness claude-code` to use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), `--harness claude-code-chrome-extension` to use Claude Code + the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension (Microsoft Edge + local bridge, bypass stack so any LiteLLM-routed provider works), `--harness codex` to use [OpenAI Codex CLI](https://github.com/openai/codex), `--harness claw-code` to use [claw-code](https://github.com/ultraworkers/claw-code), `--harness browser-use` to use [browser-use](https://github.com/browser-use/browser-use) (Python framework, routed via LiteLLM), or `--harness hermes` to use [Hermes Agent](https://github.com/NousResearch/hermes-agent) with native browser tools attached to ClawBench Chrome via CDP.
+Results land in `./test-output/<model>/<harness>-<case>-<model>-<timestamp>/` with the full five-layer recording. The default harness is `openclaw`; pass `--harness opencode` to use [opencode](https://opencode.ai), `--harness claude-code` to use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), `--harness claude-code-chrome-extension` to use Claude Code + the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension (Microsoft Edge + local bridge, bypass stack so any LiteLLM-routed provider works), `--harness codex` to use [OpenAI Codex CLI](https://github.com/openai/codex), `--harness claw-code` to use [claw-code](https://github.com/ultraworkers/claw-code), `--harness browser-use` to use [browser-use](https://github.com/browser-use/browser-use) (Python framework, routed via LiteLLM), `--harness hermes` to use [Hermes Agent](https://github.com/NousResearch/hermes-agent) with native browser tools attached to ClawBench Chrome via CDP, or `--harness pi` to use [Pi](https://pi.dev/) with pinned [pi-browser-harness](https://pi.dev/packages/pi-browser-harness) browser tools attached to the same ClawBench Chrome CDP endpoint.
 
 **(c) Drive the browser yourself via noVNC** — produces a human reference run:
 ```bash
@@ -485,6 +486,10 @@ Each session records five layers of synchronized data under `/data/`:
 | HTTP traffic       | `requests.jsonl`       | Every HTTP request with headers, body, and query params         |
 | Agent messages     | `agent-messages.jsonl` | Full agent conversation transcript (thinking, text, tool calls) |
 
+For the Pi harness, `agent-messages.jsonl` is filtered Pi JSON mode output, including `message_start`/`message_end` events, `tool_execution_*` events, tool-call content blocks, and `thinking` blocks when the selected model emits reasoning. Streaming `message_update` fragments, including `*_delta` rows, are omitted because complete assistant messages are already preserved in `message_end` events.
+
+Harness diagnostic logs such as Pi's `agent.log` and `proxy.log` are not copied into the final `data/` directory.
+
 The interceptor result is saved to `interception.json`.
 
 </details>
@@ -519,7 +524,7 @@ Yes. Set `export CONTAINER_ENGINE=podman`. The framework auto-detects whichever 
 <details>
 <summary><b>What tools can the agent use?</b></summary>
 
-All supported harnesses run inside the same container recording and interception environment. CLI/MCP harnesses expose the browser tool plus a restricted set of read-only shell commands (`ls`, `cat`, `find`, `grep`, `head`, `tail`, `jq`, `wc`, etc.); commands that could bypass the browser (`curl`, `python`, `node`, `wget`) are blocked. Hermes uses native browser/file tools attached to the same ClawBench Chrome CDP endpoint. The agent instruction also explicitly requires browser-only task completion.
+All supported harnesses run inside the same container recording and interception environment. CLI/MCP harnesses expose the browser tool plus a restricted set of read-only shell commands (`ls`, `cat`, `find`, `grep`, `head`, `tail`, `jq`, `wc`, etc.); commands that could bypass the browser (`curl`, `python`, `node`, `wget`) are blocked. Hermes and Pi use native browser/file tools attached to the same ClawBench Chrome CDP endpoint. The Pi harness intentionally allowlists only read-only file tools and browser interaction tools; `bash`, `write`, `edit`, `browser_http_get`, and `browser_run_script` are not enabled. The agent instruction also explicitly requires browser-only task completion.
 
 </details>
 
@@ -740,4 +745,4 @@ Open to contributions — new test cases, bug fixes, or evaluation submissions f
 
 Apache 2.0 -- see [LICENSE](LICENSE).
 
-Built with [OpenClaw](https://github.com/openclaw/openclaw), [opencode](https://opencode.ai), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension, [OpenAI Codex CLI](https://github.com/openai/codex), [browser-use](https://github.com/browser-use/browser-use), [claw-code](https://github.com/ultraworkers/claw-code), and [Hermes Agent](https://github.com/NousResearch/hermes-agent) (selectable harnesses), [Microsoft Playwright MCP](https://github.com/microsoft/playwright-mcp) (browser control bridge for the opencode, claude-code, codex, and claw-code harnesses), [LiteLLM](https://github.com/BerriAI/litellm) (API translation proxy for the claude-code, claude-code-chrome-extension, codex, browser-use, and claw-code harnesses), [noVNC](https://github.com/novnc/noVNC) (MPL 2.0), and [websockify](https://github.com/novnc/websockify) (LGPL 3.0).
+Built with [OpenClaw](https://github.com/openclaw/openclaw), [opencode](https://opencode.ai), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension, [OpenAI Codex CLI](https://github.com/openai/codex), [browser-use](https://github.com/browser-use/browser-use), [claw-code](https://github.com/ultraworkers/claw-code), [Hermes Agent](https://github.com/NousResearch/hermes-agent), and [Pi](https://pi.dev/) with [pi-browser-harness](https://pi.dev/packages/pi-browser-harness) (selectable harnesses), [Microsoft Playwright MCP](https://github.com/microsoft/playwright-mcp) (browser control bridge for the opencode, claude-code, codex, and claw-code harnesses), [LiteLLM](https://github.com/BerriAI/litellm) (API translation proxy for the claude-code, claude-code-chrome-extension, codex, browser-use, claw-code, and pi harnesses), [noVNC](https://github.com/novnc/noVNC) (MPL 2.0), and [websockify](https://github.com/novnc/websockify) (LGPL 3.0).

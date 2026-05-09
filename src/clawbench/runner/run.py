@@ -46,6 +46,7 @@ HARNESSES = (
     "browser-use",
     "claw-code",
     "hermes",
+    "pi",
 )
 DEFAULT_HARNESS = "openclaw"
 BASE_IMAGE = "clawbench-base"
@@ -69,6 +70,7 @@ _HARNESS_DOCKERFILES: dict[str, Path] = {
     "browser-use": HARNESS_ROOT / "browser-use" / "Dockerfile.browser-use",
     "claw-code": HARNESS_ROOT / "claw-code" / "Dockerfile.claw-code",
     "hermes": HARNESS_ROOT / "hermes" / "Dockerfile.hermes",
+    "pi": HARNESS_ROOT / "pi" / "Dockerfile.pi",
 }
 
 # Kept for back-compat with old callers / scripts that imported IMAGE.
@@ -83,6 +85,7 @@ INFRA_STOP_REASONS = {
     "codex_failed",
     "browser_use_failed",
     "hermes_failed",
+    "pi_failed",
     "proxy_failed",
     "missing_harness",
 }
@@ -1019,7 +1022,9 @@ def collect_run_metrics(output_dir: Path) -> dict[str, Any]:
         metrics["stop_reason"] = interception.get("stop_reason")
 
     explicit_api_calls: int | None = None
-    derived_api_calls = 0
+    derived_api_call_keys: set[str] = set()
+    derived_api_start_keys: set[tuple[str, str, str]] = set()
+    derived_api_response_start_keys: set[tuple[str, str, str]] = set()
     if messages_file.exists():
         try:
             with messages_file.open(errors="replace") as f:
@@ -1042,7 +1047,40 @@ def collect_run_metrics(output_dir: Path) -> dict[str, Any]:
                         if role == "assistant" and (
                             msg.get("api") or msg.get("provider") or msg.get("usage")
                         ):
-                            derived_api_calls += 1
+                            provider = str(msg.get("provider") or "")
+                            model = str(msg.get("model") or "")
+                            timestamp = str(msg.get("timestamp") or "")
+                            response_id = msg.get("responseId")
+                            if response_id:
+                                key = "|".join(
+                                    [
+                                        provider,
+                                        model,
+                                        str(response_id),
+                                    ]
+                                )
+                                if timestamp:
+                                    derived_api_response_start_keys.add(
+                                        (provider, model, timestamp)
+                                    )
+                            elif (
+                                event.get("type") == "message_start"
+                                and not msg.get("content")
+                                and timestamp
+                            ):
+                                key = ""
+                                derived_api_start_keys.add((provider, model, timestamp))
+                            else:
+                                key = "|".join(
+                                    [
+                                        provider,
+                                        model,
+                                        timestamp,
+                                        str(event.get("id") or ""),
+                                    ]
+                                )
+                            if key:
+                                derived_api_call_keys.add(key)
                         err = msg.get("errorMessage") or msg.get("error")
                         if (
                             err
@@ -1055,8 +1093,10 @@ def collect_run_metrics(output_dir: Path) -> dict[str, Any]:
 
     if explicit_api_calls is not None:
         metrics["api_calls"] = explicit_api_calls
-    elif derived_api_calls:
-        metrics["api_calls"] = derived_api_calls
+    elif derived_api_call_keys or derived_api_start_keys:
+        for key in derived_api_start_keys - derived_api_response_start_keys:
+            derived_api_call_keys.add("message_start|" + "|".join(key))
+        metrics["api_calls"] = len(derived_api_call_keys)
 
     if metrics["api_or_credit_evidence"] is None and data_dir.exists():
         for log_file in data_dir.glob("*.log"):
@@ -1217,6 +1257,7 @@ def ensure_interception(output_dir: Path):
         "codex_failed": "Session stopped: Codex CLI process died on startup.",
         "browser_use_failed": "Session stopped: browser-use process died on startup.",
         "hermes_failed": "Session stopped: Hermes Agent process died on startup.",
+        "pi_failed": "Session stopped: Pi coding agent process died on startup.",
         "proxy_failed": "Session stopped: LiteLLM API translation proxy failed to start.",
         "missing_harness": "Session stopped: container image was built without a harness layer.",
     }
