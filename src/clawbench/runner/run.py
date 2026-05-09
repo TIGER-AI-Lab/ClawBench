@@ -1556,8 +1556,11 @@ def main():
             step("LLM judge")
             try:
                 from clawbench.runner.judge import judge_request
+
                 judge_cfg = load_model_config(args.judge)
-                instruction_text = (task.get("instruction") if isinstance(task, dict) else "") or ""
+                instruction_text = (
+                    task.get("instruction") if isinstance(task, dict) else ""
+                ) or ""
                 interception_path = output_dir / "data" / "interception.json"
                 if interception_path.exists():
                     intercept_blob = json.loads(interception_path.read_text())
@@ -1612,7 +1615,11 @@ def main():
             meta["judge_match"] = judge_result.get("match")
         meta["pass"] = bool(
             intercepted
-            and (args.no_judge or judge_result is None or judge_result.get("match") is True)
+            and (
+                args.no_judge
+                or judge_result is None
+                or judge_result.get("match") is True
+            )
         )
         write_run_meta(output_dir, meta)
 
@@ -1666,7 +1673,11 @@ def main():
     if not intercepted:
         print(f"\nNOT INTERCEPTED — results in {output_dir}")
         sys.exit(1)
-    if not args.no_judge and judge_result is not None and judge_result.get("match") is not True:
+    if (
+        not args.no_judge
+        and judge_result is not None
+        and judge_result.get("match") is not True
+    ):
         verdict = judge_result.get("match")
         reason = judge_result.get("reason", "")
         print(

@@ -11,6 +11,7 @@ Uses only stdlib (urllib.request) so no extra deps. Loads model config from mode
 the same way run.py does, supports api_type in
 {openai-completions, openai-responses, anthropic-messages}.
 """
+
 from __future__ import annotations
 
 import json
@@ -58,9 +59,13 @@ def _build_user_msg(instruction: str, intercept: dict[str, Any]) -> str:
     )
 
 
-def _post_json(url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int = 60) -> dict[str, Any]:
+def _post_json(
+    url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int = 60
+) -> dict[str, Any]:
     data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={**headers, "Content-Type": "application/json"})
+    req = urllib.request.Request(
+        url, data=data, headers={**headers, "Content-Type": "application/json"}
+    )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read())
 
@@ -85,7 +90,9 @@ def _call_openai_chat(model_cfg: dict, model_name: str, system: str, user: str) 
     return resp["choices"][0]["message"].get("content") or ""
 
 
-def _call_openai_responses(model_cfg: dict, model_name: str, system: str, user: str) -> str:
+def _call_openai_responses(
+    model_cfg: dict, model_name: str, system: str, user: str
+) -> str:
     base = model_cfg["base_url"].rstrip("/")
     url = f"{base}/responses"
     payload = {
@@ -108,7 +115,9 @@ def _call_openai_responses(model_cfg: dict, model_name: str, system: str, user: 
     return "".join(pieces)
 
 
-def _call_anthropic_messages(model_cfg: dict, model_name: str, system: str, user: str) -> str:
+def _call_anthropic_messages(
+    model_cfg: dict, model_name: str, system: str, user: str
+) -> str:
     base = model_cfg["base_url"].rstrip("/")
     url = f"{base}/v1/messages"
     payload = {
@@ -141,7 +150,11 @@ def _parse_verdict(text: str) -> tuple[bool | None, str]:
     except (ValueError, json.JSONDecodeError):
         # Heuristic fallback
         low = text.lower()
-        if "match" in low and "true" in low and "false" not in low.split("true")[-1][:30]:
+        if (
+            "match" in low
+            and "true" in low
+            and "false" not in low.split("true")[-1][:30]
+        ):
             return True, text[:200]
         if "match" in low and "false" in low:
             return False, text[:200]
@@ -169,7 +182,9 @@ def judge_request(
             elif api_type == "openai-responses":
                 raw = _call_openai_responses(model_cfg, judge_model_name, system, user)
             elif api_type == "anthropic-messages":
-                raw = _call_anthropic_messages(model_cfg, judge_model_name, system, user)
+                raw = _call_anthropic_messages(
+                    model_cfg, judge_model_name, system, user
+                )
             else:
                 return {
                     "match": None,
@@ -189,7 +204,7 @@ def judge_request(
         except Exception as e:
             last_err = e
             if attempt < retries:
-                time.sleep(2 ** attempt)
+                time.sleep(2**attempt)
     return {
         "match": None,
         "reason": f"judge_call_failed: {last_err}",
