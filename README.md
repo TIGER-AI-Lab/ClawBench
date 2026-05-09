@@ -77,6 +77,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
 
+- **[2026.05.09]** <img src="static/icons/robot.svg" width="14" height="14"> &nbsp;Added an **inline LLM judge** as the second scoring stage. Pass = (1) the agent's final HTTP request is intercepted and matches the task's URL/method schema, AND (2) an LLM judge confirms the request body actually fulfills the natural-language instruction. Default judge: `deepseek-v4-pro`. Disable with `--no-judge`. This means **runs now produce a final pass/fail score automatically** — no separate trajectory inspection step.
 - **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;We have updated our release pipeline and published the package to PyPI under [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) for easier usage.
 - **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;Refactored the codebase to improve project structure, streamline the CI/CD pipeline, make it easier to extend ClawBench to additional test suites, and deliver more stable builds across **V1**, **V1-Lite**, and **V2**. The FAQ section was also updated based on user feedback.
 - **[2026.05.01]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;Added the full **V2** 130-task corpus and one-command Hermes launch:

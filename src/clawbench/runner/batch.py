@@ -227,6 +227,8 @@ async def run_job(
     batch_start: float,
     no_upload: bool = False,
     harness: str | None = None,
+    judge: str | None = None,
+    no_judge: bool = False,
 ) -> None:
     assert shutdown_event is not None
     try:
@@ -267,6 +269,10 @@ async def run_job(
                     cmd_parts.append("--no-upload")
                 if harness:
                     cmd_parts += ["--harness", harness]
+                if no_judge:
+                    cmd_parts.append("--no-judge")
+                elif judge:
+                    cmd_parts += ["--judge", judge]
                 proc = await asyncio.create_subprocess_exec(
                     *cmd_parts,
                     stdout=asyncio.subprocess.PIPE,
@@ -634,6 +640,8 @@ async def async_main(args: argparse.Namespace) -> int:
                 batch_start,
                 no_upload=args.no_upload,
                 harness=args.harness,
+                judge=args.judge,
+                no_judge=args.no_judge,
             )
         )
         for j in jobs
@@ -738,6 +746,21 @@ def main() -> None:
         choices=HARNESSES,
         default=DEFAULT_HARNESS,
         help=f"Coding-agent harness (default: {DEFAULT_HARNESS})",
+    )
+    p.add_argument(
+        "--judge",
+        default="deepseek-v4-pro",
+        help=(
+            "Model name (key in models/models.yaml) used as LLM judge over "
+            "intercepted HTTP requests. Pass = intercepted AND judge says match. "
+            "Default: deepseek-v4-pro. Use --no-judge to disable."
+        ),
+    )
+    p.add_argument(
+        "--no-judge",
+        dest="no_judge",
+        action="store_true",
+        help="Skip the LLM judge stage; pass = intercepted (stage 1 only)",
     )
     args = p.parse_args()
     if args.cases_dir is None:
