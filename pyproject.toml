@@ -3,8 +3,8 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "clawbenchmark"
-version = "0.2.1"
+name = "clawbench-eval"
+version = "0.2.2"
 description = "Benchmarking framework for evaluating AI web agents on real-world online tasks"
 readme = "README.md"
 requires-python = ">=3.11"

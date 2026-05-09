@@ -16,8 +16,8 @@
 [![Discord](https://img.shields.io/badge/Discord-%E5%8A%A0%E5%85%A5-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
 [![Codespaces](https://img.shields.io/badge/Codespaces-%E4%B8%80%E9%94%AE%E6%89%93%E5%BC%80-181717?style=flat-square&logo=github&logoColor=white)](https://codespaces.new/reacher-z/ClawBench?quickstart=1)
 
-[![PyPI downloads](https://img.shields.io/pypi/dm/clawbenchmark?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbenchmark/)
-[![PyPI version](https://img.shields.io/pypi/v/clawbenchmark?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbenchmark/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbench-eval/)
+[![PyPI version](https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbench-eval/)
 [![Last commit](https://img.shields.io/github/last-commit/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/commits/main)
 [![Contributors](https://img.shields.io/github/contributors/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/contributors)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
@@ -128,10 +128,10 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 日常使用建议直接从 PyPI 安装 ClawBench:
 
 ```bash
-uv tool install clawbenchmark
+uv tool install clawbench-eval
 ```
 
-也可以使用 `pipx install clawbenchmark` 或 `python -m pip install clawbenchmark`。
+也可以使用 `pipx install clawbench-eval` 或 `python -m pip install clawbench-eval`。
 安装后的命令仍然是 `clawbench`、`clawbench-run` 和 `clawbench-batch`。
 
 如果你想要更细粒度的控制或参与贡献，可以克隆仓库并运行根目录 `uv` 包入口:
