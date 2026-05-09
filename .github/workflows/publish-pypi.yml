@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/clawbenchmark/${{ needs.build.outputs.version }}/
+      url: https://test.pypi.org/project/clawbench-eval/${{ needs.build.outputs.version }}/
     permissions:
       contents: read
       id-token: write
@@ -118,7 +118,7 @@ jobs:
           python -m pip install \
             --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple/ \
-            "clawbenchmark==${PACKAGE_VERSION}"
+            "clawbench-eval==${PACKAGE_VERSION}"
 
       - name: Verify console scripts
         run: |
@@ -135,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/clawbenchmark/${{ needs.build.outputs.version }}/
+      url: https://pypi.org/project/clawbench-eval/${{ needs.build.outputs.version }}/
     permissions:
       contents: read
       id-token: write

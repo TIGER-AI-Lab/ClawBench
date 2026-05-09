@@ -16,8 +16,8 @@
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
 [![Codespaces](https://img.shields.io/badge/Codespaces-Open-181717?style=flat-square&logo=github&logoColor=white)](https://codespaces.new/reacher-z/ClawBench?quickstart=1)
 
-[![PyPI downloads](https://img.shields.io/pypi/dm/clawbenchmark?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbenchmark/)
-[![PyPI version](https://img.shields.io/pypi/v/clawbenchmark?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbenchmark/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbench-eval/)
+[![PyPI version](https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbench-eval/)
 [![Last commit](https://img.shields.io/github/last-commit/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/commits/main)
 [![Contributors](https://img.shields.io/github/contributors/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/contributors)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
@@ -134,10 +134,10 @@ Point your coding agent (Claude Code, Cursor, Copilot, etc.) at [`AGENTS.md`](AG
 Install ClawBench from PyPI for normal use:
 
 ```bash
-uv tool install clawbenchmark
+uv tool install clawbench-eval
 ```
 
-You can also use `pipx install clawbenchmark` or `python -m pip install clawbenchmark`.
+You can also use `pipx install clawbench-eval` or `python -m pip install clawbench-eval`.
 The installed commands are still `clawbench`, `clawbench-run`, and
 `clawbench-batch`.
 
