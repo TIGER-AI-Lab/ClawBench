@@ -73,6 +73,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> 动态
 
+- **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;我们更新了发布流水线，并将包以 [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) 的名称发布到 PyPI，便于安装和使用。
 - **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;重构了代码库，以优化项目结构、提升 CI/CD 流水线效率、增强对更多测试套件的扩展能力，并为 **V1**、**V1-Lite** 和 **V2** 提供更稳定的构建行为；同时根据用户反馈更新了常见问题部分。
 - **[2026.04.25]** <img src="static/icons/rocket.svg" width="14" height="14">新增对 **hermes** Harness 的支持 —— 基于 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 原生 CDP 浏览器工具接入 ClawBench Chrome。
 - **[2026.04.22]** <img src="static/icons/rocket.svg" width="14" height="14">新增对 **claude-code-chrome-extension** Harness 的支持 —— Claude Code CLI + [Claude in Chrome](https://code.claude.com/docs/en/chrome) 扩展，本地桥接使任意 LiteLLM 代理的模型（Qwen、OpenAI、Gemini、OpenRouter 等）都可直接运行。
