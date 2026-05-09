@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "clawbenchmark"
-version = "0.2.0"
+version = "0.2.1"
 description = "Benchmarking framework for evaluating AI web agents on real-world online tasks"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -35,6 +35,8 @@ packages = ["src/clawbench"]
 "models/models.example.yaml" = "clawbench/_bundled/models/models.example.yaml"
 "models/model.schema.json" = "clawbench/_bundled/models/model.schema.json"
 "test-cases" = "clawbench/_bundled/test-cases"
+"static" = "static"
+"README.zh-CN.md" = "README.zh-CN.md"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -44,8 +46,10 @@ include = [
     "/test-cases",
     "/src/clawbench",
     "/README.md",
+    "/README.zh-CN.md",
     "/LICENSE",
     "/NOTICE",
+    "/static",
 ]
 exclude = [
     "/models/models.yaml",

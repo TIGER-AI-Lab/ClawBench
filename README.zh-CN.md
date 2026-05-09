@@ -530,11 +530,11 @@ uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
 <table>
 <tr>
 <td align="center" width="33%">
-<a href="docs/community.md#%E5%BE%AE%E4%BF%A1%E7%BE%A4-chinese">
+<a href="static/community/wechat_grp_422.jpg">
 <img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E7%BE%A4-%E5%8A%A0%E5%85%A5-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="微信群">
 </a>
 <br/>
-<sub><b>中文社区</b><br/>二维码 + 群规见 docs/community.md</sub>
+<sub><b>中文社区</b><br/>二维码见上方链接</sub>
 </td>
 <td align="center" width="33%">
 <a href="https://discord.gg/clawbench">
@@ -553,7 +553,7 @@ uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
 </tr>
 </table>
 
-详情(频道划分、群规、微信群加入方式)见 [docs/community.md](docs/community.md)。
+Discord 和 GitHub Discussions 可用于持续交流；微信群请使用上方二维码链接。
 
 ## 常见问题
 

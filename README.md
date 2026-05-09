@@ -558,7 +558,7 @@ Come hang out with researchers, builders, and contributors working on real-world
 <sub><b>English community</b><br/>Agent builders, researchers, contributors</sub>
 </td>
 <td align="center" width="33%">
-<a href="docs/community.md#%E5%BE%AE%E4%BF%A1%E7%BE%A4-chinese">
+<a href="static/community/wechat_grp_422.jpg">
 <img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E7%BE%A4-%E5%8A%A0%E5%85%A5-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="微信群">
 </a>
 <br/>
@@ -574,7 +574,7 @@ Come hang out with researchers, builders, and contributors working on real-world
 </tr>
 </table>
 
-See [docs/community.md](docs/community.md) for channel layout, house rules, and 微信群 加入方式.
+Use the Discord and GitHub Discussions links for ongoing community support. For 微信群, use the QR link above.
 
 ## Frequently Asked Questions
 

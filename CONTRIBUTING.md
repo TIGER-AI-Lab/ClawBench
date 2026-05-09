@@ -126,7 +126,7 @@ Please use the [issue templates](https://github.com/reacher-z/ClawBench/issues/n
 Questions, task ideas, model submissions, or just want to chat about browser agents?
 
 - **Discord:** [discord.gg/clawbench](https://discord.gg/clawbench) — English, agent-builder-friendly, `#contributors` channel
-- **微信群:** see [docs/community.md](docs/community.md) for the QR code and join flow
+- **微信群:** use the [QR code](./static/community/wechat_grp_422.jpg)
 - **GitHub Discussions:** [github.com/reacher-z/ClawBench/discussions](https://github.com/reacher-z/ClawBench/discussions) — asynchronous, searchable
 - **Email:** open an issue; we respond there first
 
