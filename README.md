@@ -78,7 +78,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
 
-- **[2026.05.09]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Released **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** — the full 5-layer execution traces (DOM, network, screenshots, action trace, console) for every V1 model run, so anyone can reproduce, re-grade, or post-hoc analyze our results. Pairs with the existing [task-definition dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench).
+- **[2026.05.09]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Released **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** — the full execution trace for every V1 model run: session recording (`recording.mp4`), HTTP traffic (`requests.jsonl`), browser actions (`actions.jsonl`), agent reasoning (`agent-messages.jsonl`), and the intercepted final request (`interception.json`). Anyone can reproduce, re-grade, or post-hoc analyze our results. Pairs with the existing [task-definition dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench).
 - **[2026.05.09]** <img src="static/icons/robot.svg" width="14" height="14"> &nbsp;Added an **inline LLM judge** as the second scoring stage. Pass = (1) the agent's final HTTP request is intercepted and matches the task's URL/method schema, AND (2) an LLM judge confirms the request body actually fulfills the natural-language instruction. Default judge: `deepseek-v4-pro`. Disable with `--no-judge`. This means **runs now produce a final pass/fail score automatically** — no separate trajectory inspection step.
 - **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;We have updated our release pipeline and published the package to PyPI under [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) for easier usage.
 - **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;Refactored the codebase to improve project structure, streamline the CI/CD pipeline, make it easier to extend ClawBench to additional test suites, and deliver more stable builds across **V1**, **V1-Lite**, and **V2**. The FAQ section was also updated based on user feedback.
@@ -118,7 +118,7 @@ ClawBench ships **two** Hugging Face datasets — task definitions and full exec
 | Dataset | What's in it | Get it |
 |---|---|---|
 | **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged. | `hf download --repo-type dataset NAIL-Group/ClawBench` |
-| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | The full 5-layer recording — DOM, network, screenshots, action trace, console — for every V1 model run we evaluated. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | One directory per model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
 
 > The trace dataset is large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
