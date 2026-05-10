@@ -227,6 +227,8 @@ async def run_job(
     batch_start: float,
     no_upload: bool = False,
     harness: str | None = None,
+    judge: str | None = None,
+    no_judge: bool = False,
 ) -> None:
     assert shutdown_event is not None
     try:
@@ -267,6 +269,10 @@ async def run_job(
                     cmd_parts.append("--no-upload")
                 if harness:
                     cmd_parts += ["--harness", harness]
+                if no_judge:
+                    cmd_parts.append("--no-judge")
+                elif judge:
+                    cmd_parts += ["--judge", judge]
                 proc = await asyncio.create_subprocess_exec(
                     *cmd_parts,
                     stdout=asyncio.subprocess.PIPE,
@@ -574,9 +580,28 @@ async def async_main(args: argparse.Namespace) -> int:
 
     _run_mod.docker_build(args.harness)
 
-    batch_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    base_output = Path(args.output_dir).resolve() / f"batch-{batch_ts}"
-    log_dir = base_output / "batch-logs"
+    if args.resume:
+        base_output = Path(args.resume).resolve()
+        if not base_output.exists():
+            print(f"ERROR: --resume directory does not exist: {base_output}")
+            return 1
+        log_dir = base_output / "batch-logs"
+        skipped = 0
+        for job in jobs:
+            safe_model = re.sub(r"[/:]+", "--", job.model)
+            if (log_dir / f"{job.case_name}-{safe_model}.log").exists():
+                job.status = "skipped"
+                skipped += 1
+        remaining = sum(1 for j in jobs if j.status == "pending")
+        print(f"\n[RESUME] Reusing {base_output}")
+        print(f"[RESUME] {skipped} job(s) already done, {remaining} remaining")
+        if remaining == 0:
+            print("[RESUME] All jobs already completed.")
+            return 0
+    else:
+        batch_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+        base_output = Path(args.output_dir).resolve() / f"batch-{batch_ts}"
+        log_dir = base_output / "batch-logs"
     log_dir.mkdir(parents=True, exist_ok=True)
 
     sem = asyncio.Semaphore(args.max_concurrent)
@@ -622,8 +647,14 @@ async def async_main(args: argparse.Namespace) -> int:
     loop.add_signal_handler(signal.SIGTERM, on_signal)
 
     throttle = StartupThrottle(args.stagger_delay)
+
+    async def _noop() -> None:
+        """Placeholder for jobs already marked skipped (e.g. by --resume)."""
+
     all_tasks = [
-        asyncio.create_task(
+        asyncio.create_task(_noop())
+        if j.status == "skipped"
+        else asyncio.create_task(
             run_job(
                 j,
                 sem,
@@ -634,6 +665,8 @@ async def async_main(args: argparse.Namespace) -> int:
                 batch_start,
                 no_upload=args.no_upload,
                 harness=args.harness,
+                judge=args.judge,
+                no_judge=args.no_judge,
             )
         )
         for j in jobs
@@ -731,6 +764,15 @@ def main() -> None:
         action="store_true",
         help="Skip HuggingFace upload for all runs",
     )
+    p.add_argument(
+        "--resume",
+        default=None,
+        metavar="BATCH_DIR",
+        help=(
+            "Resume a previous batch run: reuse its output directory and skip "
+            "any (case x model) job whose batch-logs/<case>-<model>.log already exists."
+        ),
+    )
     from clawbench.runner.run import HARNESSES, DEFAULT_HARNESS
 
     p.add_argument(
@@ -738,6 +780,21 @@ def main() -> None:
         choices=HARNESSES,
         default=DEFAULT_HARNESS,
         help=f"Coding-agent harness (default: {DEFAULT_HARNESS})",
+    )
+    p.add_argument(
+        "--judge",
+        default="deepseek-v4-pro",
+        help=(
+            "Model name (key in models/models.yaml) used as LLM judge over "
+            "intercepted HTTP requests. Pass = intercepted AND judge says match. "
+            "Default: deepseek-v4-pro. Use --no-judge to disable."
+        ),
+    )
+    p.add_argument(
+        "--no-judge",
+        dest="no_judge",
+        action="store_true",
+        help="Skip the LLM judge stage; pass = intercepted (stage 1 only)",
     )
     args = p.parse_args()
     if args.cases_dir is None:

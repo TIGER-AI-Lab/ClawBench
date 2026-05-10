@@ -11,6 +11,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
 [![HF Daily Paper](https://img.shields.io/badge/Daily_Paper-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/papers/2604.08523)
 [![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
+[![HF Trace Dataset](https://img.shields.io/badge/Trace_Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 [![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
 [![GitHub stars](https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/reacher-z/ClawBench)
 [![Discord](https://img.shields.io/badge/Discord-%E5%8A%A0%E5%85%A5-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
@@ -61,7 +62,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 点外卖、订酒店、投简历、写评价、管理项目。<br/>
 **即使最强的模型，也只能完成其中约三分之一。**
 
-<sub><i>由 ZJU-REAL 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
+<sub><i>由 NAIL Group 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
 
 ---
 
@@ -73,6 +74,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> 动态
 
+- **[2026.05.09]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;发布 **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** —— V1 全部已评测模型运行的完整执行 trace:屏幕录制（`recording.mp4`)、网络请求（`requests.jsonl`)、浏览器操作（`actions.jsonl`)、智能体推理（`agent-messages.jsonl`)、被拦截的最终请求（`interception.json`)。任何人都可基于此复现、重新评分或事后分析我们的结果。与既有的 [任务定义数据集](https://huggingface.co/datasets/NAIL-Group/ClawBench) 配套使用。
 - **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;我们更新了发布流水线，并将包以 [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) 的名称发布到 PyPI，便于安装和使用。
 - **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;重构了代码库，以优化项目结构、提升 CI/CD 流水线效率、增强对更多测试套件的扩展能力，并为 **V1**、**V1-Lite** 和 **V2** 提供更稳定的构建行为；同时根据用户反馈更新了常见问题部分。
 - **[2026.04.25]** <img src="static/icons/rocket.svg" width="14" height="14">新增对 **hermes** Harness 的支持 —— 基于 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 原生 CDP 浏览器工具接入 ClawBench Chrome。
@@ -101,6 +103,17 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 </p>
 
 <br/>
+
+## <img src="static/icons/layer-group.svg" width="20" height="20"> 数据集
+
+ClawBench 提供 **两个** Hugging Face 数据集 —— 任务定义与完整执行 trace。两个都开源,一行命令即可下载。
+
+| 数据集 | 内容 | 下载 |
+|---|---|---|
+| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** | V1（153 个任务）和 V2（130 个任务）的任务定义、评分规则和元数据 —— 即"做什么"和"怎么打分"。 | `hf download --repo-type dataset NAIL-Group/ClawBench` |
+| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | 每个模型运行一个目录,内含 `recording.mp4`、`requests.jsonl`、`actions.jsonl`、`agent-messages.jsonl`、`interception.json`、`run-meta.json` —— 即我们用来评分该次运行的全部数据。 | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+
+> Trace 数据集体积较大;可用 `hf download --include "<pattern>"` 仅拉取某个模型或某个任务。
 
 ## 工作流程
 

@@ -1359,6 +1359,21 @@ def main():
         default=DEFAULT_HARNESS,
         help=f"Coding-agent harness (default: {DEFAULT_HARNESS})",
     )
+    parser.add_argument(
+        "--judge",
+        default="deepseek-v4-pro",
+        help=(
+            "Model name (key in models/models.yaml) used as LLM judge over the "
+            "intercepted HTTP request. Pass = intercepted AND judge says match. "
+            "Default: deepseek-v4-pro. Use --no-judge to disable."
+        ),
+    )
+    parser.add_argument(
+        "--no-judge",
+        dest="no_judge",
+        action="store_true",
+        help="Skip the LLM judge stage; pass = intercepted (stage 1 only)",
+    )
     args = parser.parse_args()
 
     if not args.human and args.model is None:
@@ -1573,6 +1588,52 @@ def main():
         step("Results")
         intercepted = print_results(output_dir)
 
+        # Stage 2 — LLM judge (default on, --no-judge to skip).
+        # Only invoked when stage 1 (intercepted) succeeded; otherwise the
+        # task already fails at stage 1 and there's nothing to judge.
+        judge_result: dict[str, Any] | None = None
+        if intercepted and not args.no_judge and args.judge:
+            phase = "running_judge"
+            step("LLM judge")
+            try:
+                from clawbench.runner.judge import judge_request
+
+                judge_cfg = load_model_config(args.judge)
+                instruction_text = (
+                    task.get("instruction") if isinstance(task, dict) else ""
+                ) or ""
+                interception_path = output_dir / "data" / "interception.json"
+                if interception_path.exists():
+                    intercept_blob = json.loads(interception_path.read_text())
+                else:
+                    intercept_blob = {}
+                judge_result = judge_request(
+                    judge_cfg,
+                    judge_cfg.get("model", args.judge),
+                    instruction_text,
+                    intercept_blob,
+                )
+                (output_dir / "judge.json").write_text(
+                    json.dumps(judge_result, indent=2, ensure_ascii=False)
+                )
+                print(
+                    f"Judge ({args.judge}): "
+                    f"match={judge_result.get('match')}  "
+                    f"reason={judge_result.get('reason', '')[:160]}"
+                )
+            except Exception as e:
+                judge_result = {
+                    "match": None,
+                    "reason": f"judge_setup_failed: {e}",
+                    "judge_model": args.judge,
+                    "raw": None,
+                    "error": str(e),
+                }
+                (output_dir / "judge.json").write_text(
+                    json.dumps(judge_result, indent=2, ensure_ascii=False)
+                )
+                print(f"Judge skipped due to error: {e}")
+
         # Write run metadata
         phase = "writing_run_meta"
         duration = time.time() - start_time
@@ -1589,6 +1650,17 @@ def main():
             intercepted=intercepted,
             classification=classification,
             extra_info_warnings=extra_info_warnings,
+        )
+        if judge_result is not None:
+            meta["judge"] = judge_result
+            meta["judge_match"] = judge_result.get("match")
+        meta["pass"] = bool(
+            intercepted
+            and (
+                args.no_judge
+                or judge_result is None
+                or judge_result.get("match") is True
+            )
         )
         write_run_meta(output_dir, meta)
 
@@ -1637,11 +1709,27 @@ def main():
             shutil.rmtree(personal_info_tmp, ignore_errors=True)
         (output_dir / "eval-schema.json").unlink(missing_ok=True)
 
-    if intercepted:
-        print(f"\nINTERCEPTED — results in {output_dir}")
-    else:
+    # Final pass status: stage 1 (intercepted) AND stage 2 (judge match), unless --no-judge.
+    final_pass = bool(meta.get("pass"))
+    if not intercepted:
         print(f"\nNOT INTERCEPTED — results in {output_dir}")
         sys.exit(1)
+    if (
+        not args.no_judge
+        and judge_result is not None
+        and judge_result.get("match") is not True
+    ):
+        verdict = judge_result.get("match")
+        reason = judge_result.get("reason", "")
+        print(
+            f"\nINTERCEPTED but JUDGE {'MISMATCH' if verdict is False else 'INCONCLUSIVE'} "
+            f"— results in {output_dir}\n  reason: {reason[:200]}"
+        )
+        sys.exit(1)
+    if final_pass:
+        print(f"\nINTERCEPTED + JUDGE MATCH — results in {output_dir}")
+    else:
+        print(f"\nINTERCEPTED — results in {output_dir}")
 
 
 if __name__ == "__main__":
