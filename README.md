@@ -76,6 +76,71 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 </div>
 
+## <img src="static/icons/circle-question.svg" width="20" height="20"> What are you looking for?
+
+<table>
+<tr>
+<td width="25%" align="center" valign="top">
+
+🏆 **See scores**<br/>
+[Live leaderboard](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard)<br/>
+<sub>Pick a corpus (v1 / v2)</sub>
+
+</td>
+<td width="25%" align="center" valign="top">
+
+🚀 **Run it on your model**<br/>
+[Quick start ↓](#-human-quick-start)<br/>
+<sub><code>pip install clawbench-eval</code></sub>
+
+</td>
+<td width="25%" align="center" valign="top">
+
+📊 **Browse 283 tasks**<br/>
+[Task explorer](https://claw-bench.com/v2)<br/>
+<sub>Search · filter · category</sub>
+
+</td>
+<td width="25%" align="center" valign="top">
+
+📄 **Read the paper**<br/>
+[arXiv:2604.08523](https://arxiv.org/abs/2604.08523)<br/>
+<sub>Methodology · evaluator · results</sub>
+
+</td>
+</tr>
+<tr>
+<td align="center" valign="top">
+
+🎬 **Re-grade old runs**<br/>
+[V1 raw traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)<br/>
+<sub>5 layers per (task × model)</sub>
+
+</td>
+<td align="center" valign="top">
+
+📦 **Download the data**<br/>
+[`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
+<sub>Tasks · rubrics · metadata</sub>
+
+</td>
+<td align="center" valign="top">
+
+🌱 **Add a task / model**<br/>
+[How to contribute](#contributing)<br/>
+<sub>YAML spec + rubric</sub>
+
+</td>
+<td align="center" valign="top">
+
+❓ **Have a question**<br/>
+[FAQ](#frequently-asked-questions) · [Discord](https://discord.gg/clawbench)<br/>
+<sub>Or open an issue</sub>
+
+</td>
+</tr>
+</table>
+
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
 
 - **[2026.05.11]** <img src="static/icons/chart-bar.svg" width="14" height="14"> &nbsp;V2 leaderboard ships — first 6 models scored end-to-end with two-stage rubric (interception + LLM judge). Top so far: `glm-5.1 / hermes` at **18.5% reward / 48.5% intercepted**. See [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard), scoring details in [`docs/scoring.md`](docs/scoring.md), live data on the [HF Space](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard).
