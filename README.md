@@ -78,6 +78,8 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
 
+- **[2026.05.11]** <img src="static/icons/chart-bar.svg" width="14" height="14"> &nbsp;V2 leaderboard ships — first 6 models scored end-to-end with two-stage rubric (interception + LLM judge). Top so far: `glm-5.1 / hermes` at **18.5% reward / 48.5% intercepted**. See [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard), scoring details in [`docs/scoring.md`](docs/scoring.md), live data on the [HF Space](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard).
+- **[2026.05.11]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Companion trace dataset **[ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)** going live — same 5-layer trace bundle per run as V1Trace, rolling as new V2 evaluations land.
 - **[2026.05.09]** <img src="static/icons/globe.svg" width="14" height="14"> Added support for the **pi** harness — Pi coding agent + `pi-browser-harness`.
 - **[2026.05.09]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Released **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** — the full execution trace for every V1 model run: session recording (`recording.mp4`), HTTP traffic (`requests.jsonl`), browser actions (`actions.jsonl`), agent reasoning (`agent-messages.jsonl`), and the intercepted final request (`interception.json`). Anyone can reproduce, re-grade, or post-hoc analyze our results. Pairs with the existing [task-definition dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench).
 - **[2026.05.09]** <img src="static/icons/robot.svg" width="14" height="14"> &nbsp;Added an **inline LLM judge** as the second scoring stage. Pass = (1) the agent's final HTTP request is intercepted and matches the task's URL/method schema, AND (2) an LLM judge confirms the request body actually fulfills the natural-language instruction. Default judge: `deepseek-v4-pro`. Disable with `--no-judge`. This means **runs now produce a final pass/fail score automatically** — no separate trajectory inspection step.
@@ -114,14 +116,17 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## <img src="static/icons/layer-group.svg" width="20" height="20"> Datasets
 
-ClawBench ships **two** Hugging Face datasets — task definitions and full execution traces. Both are open and downloadable in one command.
+ClawBench ships **three** Hugging Face datasets — task definitions plus full execution traces for V1 and V2. All open, downloadable in one command. The benchmark itself is also mirrored on **TIGER-Lab** for visibility.
 
 | Dataset                                                                                        | What's in it                                                                                                                                                                                       | Get it                                                        |
 | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)**               | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                               | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
-| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | One directory per model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                               | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
+| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)** | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                        | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
 
-> The trace dataset is large; use `hf download --include "<pattern>"` to pull a single model or a single task.
+> The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
+
+> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`docs/scoring.md`](docs/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/NAIL-Group/ClawBench/blob/main/leaderboard/results.csv).
 
 ## How It Works
 
