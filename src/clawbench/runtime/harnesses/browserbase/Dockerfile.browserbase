@@ -1,0 +1,2 @@
+FROM mcr.microsoft.com/playwright/python:latest
+RUN pip install --no-cache-dir browserbase
