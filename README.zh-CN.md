@@ -85,7 +85,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 <td width="25%" align="center" valign="top">
 
 🏆 **查看分数**<br/>
-[实时排行榜](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard)<br/>
+[实时排行榜](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
 <sub>选择语料 (v1 / v2)</sub>
 
 </td>
@@ -99,7 +99,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 <td width="25%" align="center" valign="top">
 
 📊 **浏览 283 个任务**<br/>
-[任务浏览器](https://claw-bench.com/v2)<br/>
+[任务浏览器](https://claw-bench.com/tasks)<br/>
 <sub>搜索 · 筛选 · 分类</sub>
 
 </td>
@@ -115,7 +115,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 <td align="center" valign="top">
 
 🎬 **重新评分旧运行**<br/>
-[V1 原始轨迹](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)<br/>
+[V1](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) · [V2](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) 原始轨迹<br/>
 <sub>每个 (任务 × 模型) 都有 5 层数据</sub>
 
 </td>
