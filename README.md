@@ -85,7 +85,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <td width="25%" align="center" valign="top">
 
 🏆 **See scores**<br/>
-[Live leaderboard](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard)<br/>
+[Live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
 <sub>Pick a corpus (v1 / v2)</sub>
 
 </td>
@@ -99,7 +99,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <td width="25%" align="center" valign="top">
 
 📊 **Browse 283 tasks**<br/>
-[Task explorer](https://claw-bench.com/v2)<br/>
+[Task explorer](https://claw-bench.com/tasks)<br/>
 <sub>Search · filter · category</sub>
 
 </td>
@@ -115,7 +115,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <td align="center" valign="top">
 
 🎬 **Re-grade old runs**<br/>
-[V1 raw traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)<br/>
+[V1](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) · [V2](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) raw traces<br/>
 <sub>5 layers per (task × model)</sub>
 
 </td>
