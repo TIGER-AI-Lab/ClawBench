@@ -680,16 +680,22 @@ Fifteen life categories: food delivery, travel booking, job applications, shoppi
 Yes for a V1 benchmark signal: the 153 tasks span 144 live websites and 15 life categories, and each full run is expensive because it uses isolated containers, real websites, five-layer recording, and post-session judgment against human references. V2 adds another 130 tasks in `test-cases/v2/`. For cheaper iteration, start with the 20-task [`test-cases/v1-lite/`](test-cases/v1-lite/) subset.
 
 **How is a task judged successful?**
-Each task runs in an isolated browser container with a five-layer recording: video, screenshots, network requests, browser actions, and agent messages. The evaluator compares the agent trajectory against a human reference run and assigns PASS or FAIL with evidence from the recording.
+Each task runs in an isolated browser container with a five-layer recording: video, screenshots, network requests, browser actions, and agent messages. For the original V1 results, an evaluator compares the agent trajectory against human reference runs and assigns PASS/FAIL with evidence from the recording. For V2 and newer leaderboard rows, scoring is two-stage: first, the request interceptor checks whether the final blocked HTTP request matches the task's URL/method schema; second, an LLM judge checks whether the captured request payload fulfills the natural-language instruction.
+
+**How do account login, registration, and initial task state work?**
+Each run receives a synthetic user profile plus a fresh disposable PurelyMail address. If a task requires sign-up, the agent normally starts from scratch and registers during the run, using the provided identity and email. If a task needs starting files or workspace context, those files live under the task's `extra_info/` directory and are mounted for the agent at runtime.
+
+**What happens when live websites change?**
+Live-site change is part of the benchmark's target: ClawBench measures whether agents can handle production websites rather than frozen snapshots. That also means some runs can be affected by layout changes, availability, anti-bot systems, or alternate flows. Reproducibility comes from publishing task definitions, eval schemas, run metadata, and five-layer traces; repeated runs over time are still useful for measuring site drift.
 
 **Do CAPTCHA or bot checks dominate failures?**
-If an agent encounters a CAPTCHA, it must attempt it. We have seen cases where frontier models are able to solve some CAPTCHAS. CAPTCHA failures can reflect model behavior, browser-control stack limits, or site defenses.
+If an agent encounters a CAPTCHA, it must attempt it. We have seen cases where frontier models are able to solve some CAPTCHAS. CAPTCHA failures can reflect model behavior, browser-control stack limits, or site defenses. The trace datasets make these failures inspectable.
 
 **What's the current top score?**
 33.3% — roughly one task in three — from the strongest frontier model we evaluated. The majority of tasks still defeat every model we've tested; the headroom is real, and the benchmark is not saturated.
 
 **Which harness are the published model results based on?**
-The repo default is `openclaw`, and all published results are based on this harness. Though we do support other harnesses listed in `src/clawbench/runtime/harnesses/` which can be selected with `--harness`.
+The repo default is `openclaw`, but leaderboard rows include their harness explicitly. V1 results used OpenClaw; newer runs may use Hermes or other supported harnesses. Use the `harness` column when comparing models, because model and harness changes are separate experimental axes.
 
 **Is ClawBench tightly coupled to OpenClaw?**
 No. OpenClaw is the default harness, but ClawBench supports interchangeable harnesses listed in `src/clawbench/runtime/harnesses/`.
@@ -701,7 +707,7 @@ Yes. ClawBench is a browser-task benchmark, but CLI and coding-agent harnesses c
 From a source checkout, configure `models/models.yaml`, then run `uv run clawbench`. The TUI builds the container image and runs local tasks against your model of choice. For batch runs, use `--all-cases` for the default V1 suite, `--cases-suite v2 --all-cases` for V2, or `--cases-suite v1-lite --all-cases` for Lite.
 
 **Will newer models be added?**
-Yes. New model runs can be submitted or requested through the contribution and issues. We'll also update new model scores when we get a chance to run them.
+Yes. New model runs can be submitted or requested through the contribution flow and issues. Public rows are added as complete or clearly marked partial runs, depending on what has finished.
 
 **Is ClawBench safe to run against live websites?**
 The runner uses a hardened container with a request interceptor that blocks purchases, account creation, outbound email sends, and similar irreversible actions by default. Tasks that need to *simulate* those actions (e.g., "add to cart and checkout") terminate at the last reversible step. You can relax the interceptor per-task if your research requires it.
