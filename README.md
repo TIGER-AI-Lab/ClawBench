@@ -739,6 +739,13 @@ If you use ClawBench in your research, please cite:
 }
 ```
 
+## Contact
+
+Questions, suggestions, or research collaboration? Reach the maintainer:
+
+- **Yuxuan Zhang** &mdash; `reacher` &lbrack;at&rbrack; `cs.ubc.ca` (UBC, NAIL Group) &middot; [Homepage &#8599;](https://reacher-z.github.io)
+- For bug reports or feature requests, please [open a GitHub issue](https://github.com/reacher-z/ClawBench/issues/new/choose) &mdash; it's faster than email and gets seen by all maintainers.
+
 ## Core Contributors
 
 <table>
