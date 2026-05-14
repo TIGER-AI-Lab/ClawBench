@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.1] - 2026-05-13
+### Fixed
+- Removed v1-799 and v2-795 tasks since the current interception schemas have risk of leaking the agent's final action to the end server, which leads to unexpected disturbance of the end business.
+
 ## [0.3.0] - 2026-05-09
 ### Added
 - Added support for the **pi** harness — [Pi coding agent](https://github.com/earendil-works/pi/tree/main/packages/coding-agent) + [`pi-browser-harness`](https://github.com/amankumarsingh77/pi-browser-harness)
