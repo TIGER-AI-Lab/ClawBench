@@ -58,7 +58,7 @@ wheels = [
 
 [[package]]
 name = "clawbench-eval"
-version = "0.3.1"
+version = "0.3.2"
 source = { editable = "." }
 dependencies = [
     { name = "fpdf2" },

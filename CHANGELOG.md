@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.2] - 2026-05-15
+### Added
+- Added the logic to remove the `.log` files from the generated `data/` directory to remove noise.
+- Added the handling to allow models with no visual capabilities to use the `claude-code-browser-extension` harness by skipping the screenshot steps.
+- Added retry logic to the `claude-code-browser-extension` harness to handle temporary rate limits.
+
 ## [0.3.1] - 2026-05-13
 ### Fixed
 - Removed v1-799 and v2-795 tasks since the current interception schemas have risk of leaking the agent's final action to the end server, which leads to unexpected disturbance of the end business.
