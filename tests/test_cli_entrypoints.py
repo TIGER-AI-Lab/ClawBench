@@ -5,6 +5,7 @@ from __future__ import annotations
 import subprocess
 import sys
 import textwrap
+import os
 from pathlib import Path
 
 import pytest
@@ -40,10 +41,13 @@ def test_module_help_does_not_require_container_runtime(module: str) -> None:
         runpy.run_module(module, run_name="__main__")
         """
     )
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(SRC_ROOT)
+
     result = subprocess.run(
         [sys.executable, "-c", code, module],
         capture_output=True,
-        env={"PYTHONPATH": str(SRC_ROOT)},
+        env=env,
         text=True,
         timeout=30,
     )
