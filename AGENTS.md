@@ -19,8 +19,8 @@ ClawBench/
       runner/
         run.py                    # Single test-case runner
         batch.py                  # Batch runner (model x case cross-product)
+        run_support/              # Runner-private helpers for single runs
       utils/
-        generate_resume_pdf.py    # Resume PDF generator
         hf_upload.py              # Optional HuggingFace upload helpers
       runtime/
         shared/

@@ -1,14 +1,5 @@
-"""Generate a PDF resume from the resume template JSON.
+"""Generate a PDF resume from the runner-private resume template JSON."""
 
-Usage:
-    python generate_resume_pdf.py [output.pdf]
-
-Generates from resume_template.json in the same directory.
-Default output: alex_green_resume.pdf in the current directory.
-"""
-
-import json
-import sys
 from pathlib import Path
 
 from fpdf import FPDF
@@ -152,11 +143,3 @@ def _draw_line(pdf: FPDF) -> None:
     y = pdf.get_y()
     pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
     pdf.ln(2)
-
-
-if __name__ == "__main__":
-    template = Path(__file__).resolve().parent / "resume_template.json"
-    data = json.loads(template.read_text())
-    out = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("alex_green_resume.pdf")
-    generate_resume_pdf(data, out)
-    print(f"Generated: {out.resolve()}")
