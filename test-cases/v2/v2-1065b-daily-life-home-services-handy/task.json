@@ -14,7 +14,7 @@
       "user_info": "alex_green_personal_info.json; the dummy user's personal information",
       "user_resume": "PDF resume with disposable email account injected"
     },
-    "task_key": "1065"
+    "task_key": "1065b"
   },
   "instruction": "Get a price quote on Handy for a house cleaning service for next Saturday at 9am for a 3-bedroom, 2-bathroom apartment in Brooklyn (ZIP 11201). Select 3 hours duration.",
   "eval_schema": {

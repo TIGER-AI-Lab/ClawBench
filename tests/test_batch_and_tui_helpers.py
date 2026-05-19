@@ -16,11 +16,11 @@ def test_tui_range_parser_selects_cases_without_platform_assumptions() -> None:
     cases = [
         "001-daily-life-food-uber-eats",
         "002-daily-life-food-doordash",
-        "v2-1065-daily-life-home-services-handy",
+        "v2-1065b-daily-life-home-services-handy",
         "369-entertainment-hobbies-general-goodreads",
     ]
 
-    selected = tui._parse_range_input("1-2,1065,369", cases)
+    selected = tui._parse_range_input("1-2,1065b,369", cases)
 
     assert selected == cases
 

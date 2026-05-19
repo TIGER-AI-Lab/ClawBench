@@ -413,8 +413,8 @@ def _parse_range_input(raw: str, cases: list[str]) -> list[str]:
     if raw.strip() == "*":
         return list(cases)
 
-    # Build token map: V1 accepts '001' and '1'; V2 accepts
-    # 'v2-1065' and numeric '1065' for range-like selection.
+    # Build token map: V1 accepts '001' and '1'; V2 accepts 'v2-1065b',
+    # '1065b', and numeric '1065' for range-like selection.
     id_map: dict[str, list[str]] = {}
     for c in cases:
         tokens = {c.lower()}
