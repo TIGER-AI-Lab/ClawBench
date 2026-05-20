@@ -273,6 +273,55 @@ This path gives you live-reload on ``src/``, ``src/clawbench/runtime/chrome-exte
 
 <br/>
 
+# <img src="static/icons/check-double.svg" width="28" height="28"> Reproduce the leaderboard
+
+> **Our experiments show the scores are stable.** Two independent runs of the same model × harness × corpus under the same judge (`deepseek/deepseek-v4-pro`, lenient rubric) reproduce Intercepted and Reward within ±2 pp on the V2 130-task corpus. Recipe below.
+
+The fastest reproduction is **DeepSeek V4 Flash on OpenRouter** (cheap, ~$5 per full V2 sweep, no waitlist).
+
+### Step 1 — Run the agent
+
+```bash
+# Add your OpenRouter key to models/models.yaml as `deepseek/deepseek-v4-flash`
+# (base_url: https://openrouter.ai/api/v1, api_type: openai-completions)
+
+# One-shot mode (RUN + JUDGE in the same command, default judge is deepseek/deepseek-v4-pro)
+uv run clawbench-batch \
+  --models deepseek/deepseek-v4-flash \
+  --cases-suite v2 --all-cases \
+  --harness hermes \
+  --max-concurrent 1 --stagger-delay 30 \
+  --output-dir ./my-rerun
+
+# OR two-stage mode (run first, judge later — useful when you want to try multiple rubrics)
+uv run clawbench-batch ... --no-judge       # produces raw traces only
+# ...later:
+uv run python scripts/clawbench_rescore.py ./my-rerun --judge deepseek/deepseek-v4-pro
+```
+
+### Step 2 — Score (or skip the run and score our traces)
+
+Two equivalent paths:
+
+**(a) Score your own fresh run** — `scripts/clawbench_rescore.py` walks each task dir, calls `deepseek/deepseek-v4-pro` on the intercepted HTTP payload, and writes `judge.json` per task + `rescore-summary.json` per batch.
+
+**(b) Skip the run, score our published traces** — download our DeepSeek V4 Flash V2 trace from [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) and re-judge:
+
+```bash
+hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace \
+  --include "batch-aligned-*/deepseek-v4-flash-free/**" \
+  --local-dir ./reproduce
+uv run python scripts/clawbench_rescore.py ./reproduce --judge deepseek/deepseek-v4-pro
+```
+
+### What "reproduced" means
+
+If your **Intercepted%**, **Reward (lenient)%**, and **Reward (strict)%** for `deepseek-v4-flash:free × hermes × v2` land within ±2 pp of our published row — **3.1% / 2.3% / 0.0% (3 / 129)** — reproduction is successful. Larger gaps point at either a different judge model, a different rubric prompt, or a harness configuration drift; in that case diff your `rescore-summary.json` against the one bundled inside the HF dataset.
+
+The same pattern works for any model in the [leaderboard above](#-leaderboard). Larger frontier models (claude-opus-4-7, gpt-5.5) cost more to re-run end-to-end but score-only path (b) is unchanged — same `clawbench_rescore.py`, point it at the relevant `batch-*/<model>/` subdir on HF.
+
+<br/>
+
 # <img src="static/icons/chart-bar.svg" width="28" height="28"> ClawBench-Lite
 
 **New here? Run this first.** [`test-cases/v1-lite/`](test-cases/v1-lite/) is a **20-task curated subset** of the V1 153-task corpus, selected for household-name sites, real-world relevance, difficulty, and category diversity. It matches the 20-tasks-per-source convention of [browser-use/benchmark](https://github.com/browser-use/benchmark) and gives you a credible signal at a fraction of the full-benchmark cost.
@@ -335,9 +384,67 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 
 <div align="center">
 
-**Success rate (%) of 6 frontier AI agents on ClawBench V1**
+**ClawBench leaderboard** &nbsp;&middot;&nbsp; 6 tabs by corpus × harness &nbsp;&middot;&nbsp; live at [claw-bench.com](https://claw-bench.com/)
 
 </div>
+
+<details open>
+<summary><b>V2 (Hermes)</b> &nbsp;·&nbsp; 8 models &nbsp;·&nbsp; ds-v4-pro judge, lenient + strict</summary>
+
+| Rank | Model | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | --- | --- | ---: | ---: | ---: | ---: |
+| 1 | **claude-opus-4-7** | hermes | **54.6%** | **44.6%** | 24.6% | 58 / 130 |
+| 2 | gpt-5.5 | hermes | 45.4% | 35.4% | 18.5% | 46 / 130 |
+| 3 | glm-5.1 | hermes | 48.5% | 34.6% | 17.7% | 45 / 130 |
+| 4 | deepseek-v4-pro | hermes | 43.9% | 33.9% | 12.3% | 44 / 130 |
+| 5 | openrouter-owl-alpha | hermes | 14.6% | 0.0% | 0.0% | 0 / 130 |
+| 6 | z-ai/glm-4.5-air:free | hermes | 4.6% | 2.3% | 0.8% | 3 / 130 |
+| 7 | deepseek-v4-flash:free | hermes | 3.1% | 2.3% | 0.0% | 3 / 129 |
+| 8 | minimax-m2.5:free | hermes | 2.3% | 1.5% | 0.0% | 2 / 130 |
+
+**Intercepted** = final HTTP request matched the task's URL/method (Stage 1, deterministic). **Reward (lenient)** = additionally judged by `deepseek/deepseek-v4-pro` to fulfill the instruction under the "no contradiction → match" rubric (Stage 2). **Reward (strict)** = same judge, strict rubric ("ambiguous → mismatch"). Ranked by Intercepted; Reward as tiebreak.
+
+</details>
+
+<details>
+<summary><b>V2 (OpenClaw)</b> &nbsp;·&nbsp; 1 model</summary>
+
+| Rank | Model | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | --- | --- | ---: | ---: | ---: | ---: |
+| 1 | glm-5.1 | openclaw | 0.0% | 0.0% | 0.0% | 0 / 130 |
+
+</details>
+
+<details>
+<summary><b>V2 (Codex)</b> &nbsp;·&nbsp; — (in progress)</summary>
+
+In-flight: gpt-5.5-oauth, gpt-5.4-oauth, gpt-5.4-mini-oauth, gpt-5.3-codex-oauth, gpt-5.3-codex-spark-oauth, gpt-5.2-oauth. Will be filled in after `judge_llm` re-judge completes.
+
+</details>
+
+<details>
+<summary><b>V2 (Claude Code)</b> &nbsp;·&nbsp; — (not yet run)</summary>
+
+—
+
+</details>
+
+<details>
+<summary><b>V1 (Hermes)</b> &nbsp;·&nbsp; 6 frontier models, original paper rubric</summary>
+
+| Rank | Model | Harness | Pass Rate | Pass / Total |
+| :---: | --- | --- | ---: | ---: |
+| 1 | claude-opus-4-6 | hermes | 61.4% | 94 / 153 |
+| 2 | claude-sonnet-4-6 | hermes | 56.9% | 87 / 153 |
+| 3 | claude-haiku-4-5-20251001 | hermes | 30.1% | 46 / 153 |
+| 4 | gpt-5.4-2026-03-05 | hermes | 25.5% | 39 / 153 |
+| 5 | gpt-5.4-mini-2026-03-17 | hermes | 24.8% | 38 / 153 |
+| 6 | kimi-k2.5 | hermes | 17.6% | 27 / 153 |
+
+V1 Pass Rate is from the original paper rubric (Claude Code agentic-eval subagent comparing each run against human reference trajectories under `eval/agentic_eval.md`). The two-stage Reward (interception + `deepseek/deepseek-v4-pro` lenient judge) for V1 will appear here once V1 trace bundles are re-judged.
+
+<details>
+<summary>V1 per-category breakdown (Sonnet 4.6 vs 6-model comparison)</summary>
 
 | Rank  | Model                 | Overall  |  Daily   | Finance  |   Work   |   Dev    | Academic |  Travel  |  Social  |   Pets   |
 | :---: | --------------------- | :------: | :------: | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
@@ -347,6 +454,17 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 |   4   | Claude Haiku 4.5      |   18.3   |   15.4   |   22.2   |   19.0   | **27.8** |   21.4   |   7.7    |   16.7   | **18.2** |
 |   5   | GPT-5.4               |   6.5    |   9.6    |   0.0    |   0.0    |   11.1   |   7.1    |   7.7    |   0.0    |   9.1    |
 |   6   | Gemini 3.1 Flash Lite |   3.3    |   1.9    |   0.0    |   0.0    |   5.6    |   14.3   |   0.0    |   0.0    |   9.1    |
+
+</details>
+
+</details>
+
+<details>
+<summary><b>V1 (OpenClaw)</b> &nbsp;·&nbsp; — (not yet aggregated)</summary>
+
+—
+
+</details>
 
 <details>
 <summary><b>Task Categories (V1: 15 categories, 153 tasks)</b></summary>
