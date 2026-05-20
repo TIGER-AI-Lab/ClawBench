@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - More data are stored in the `run-meta.json` for better post-hoc analysis and reproducibility, including the hash of the configs, runtime info, and flags used.
 
+### Fixed
+- Fixed several compatibility issues on Windows platforms.
+
 ## [0.3.2] - 2026-05-15
 ### Added
 - Added the logic to remove the `.log` files from the generated `data/` directory to remove noise.

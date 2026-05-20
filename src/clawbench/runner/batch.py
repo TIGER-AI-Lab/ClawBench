@@ -630,6 +630,7 @@ async def async_main(args: argparse.Namespace) -> int:
 
     def on_signal() -> None:
         nonlocal sigint_count
+        assert shutdown_event is not None
         sigint_count += 1
         shutdown_event.set()
 

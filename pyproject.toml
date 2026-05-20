@@ -62,10 +62,19 @@ exclude = [
 [tool.ruff]
 target-version = "py311"
 
+[tool.pyright]
+include = ["src/clawbench", "tests"]
+exclude = [
+    ".venv",
+    "src/clawbench/runtime/extension-server",
+    "src/clawbench/runtime/harnesses",
+]
+
 [dependency-groups]
 dev = [
     "jsonschema>=4.26.0",
     "pre-commit>=4.6.0",
+    "pyright>=1.1.407",
     "pytest>=9.0.3",
     "ruff>=0.15.12",
 ]

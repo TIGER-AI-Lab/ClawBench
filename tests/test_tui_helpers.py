@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import types
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -240,6 +242,46 @@ def test_tui_recommend_concurrent_returns_positive_value(
     monkeypatch.setattr(tui.multiprocessing, "cpu_count", lambda: 8)
 
     assert tui._recommend_concurrent() >= 1
+
+
+def test_tui_recommend_concurrent_uses_windows_memory(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(tui.platform, "system", lambda: "Windows")
+    monkeypatch.setattr(tui.multiprocessing, "cpu_count", lambda: 16)
+    monkeypatch.setattr(tui, "_windows_physical_memory_gb", lambda: 4)
+
+    assert tui._recommend_concurrent() == 2
+
+
+def test_tui_windows_physical_memory_uses_global_memory_status(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class Kernel32:
+        def GlobalMemoryStatusEx(self, status: Any) -> int:
+            status.ullTotalPhys = 12 * 1024**3
+            return 1
+
+    fake_ctypes: Any = types.ModuleType("ctypes")
+    fake_ctypes.Structure = object
+    fake_ctypes.c_ulong = object()
+    fake_ctypes.c_ulonglong = object()
+    fake_ctypes.sizeof = lambda _status: 64
+    fake_ctypes.byref = lambda status: status
+    fake_ctypes.windll = types.SimpleNamespace(kernel32=Kernel32())
+    monkeypatch.setitem(sys.modules, "ctypes", fake_ctypes)
+
+    assert tui._windows_physical_memory_gb() == 12
+
+
+def test_tui_physical_memory_falls_back_when_unavailable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(tui.platform, "system", lambda: "Windows")
+    monkeypatch.setattr(tui, "_windows_physical_memory_gb", lambda: None)
+    monkeypatch.delattr(tui.os, "sysconf", raising=False)
+
+    assert tui._physical_memory_gb() == 8
 
 
 def test_tui_main_single_run_flow_builds_runner_command(

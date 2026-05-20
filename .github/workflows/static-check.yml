@@ -46,6 +46,9 @@ jobs:
       - name: Ruff format check
         run: uv run --frozen ruff format --check .
 
+      - name: Pyright check
+        run: uv run --frozen pyright src/clawbench tests
+
       - name: Build package
         env:
           UV_FROZEN: "true"
