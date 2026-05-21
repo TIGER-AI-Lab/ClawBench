@@ -9,6 +9,18 @@ body:
       description: What happened? What did you expect?
     validations:
       required: true
+  - type: dropdown
+    id: corpus
+    attributes:
+      label: Corpus
+      description: Which ClawBench corpus were you running? V2 is the current default.
+      default: 0
+      options:
+        - v2
+        - v1
+        - v1-lite
+        - claw-eval
+        - not applicable
   - type: input
     id: test-case
     attributes:
