@@ -1,12 +1,94 @@
 ClawBench
 Copyright 2026 ClawBench Authors
 
-This product includes the following third-party software:
+This product includes the following third-party open source software and
+materials. Transitive package dependencies keep their upstream licenses.
 
-noVNC - Copyright (C) 2024 The noVNC Authors
-Licensed under the Mozilla Public License 2.0 (MPL 2.0)
+Source materials:
+
+Claw-Eval converted task subset
+Source: https://github.com/claw-eval/claw-eval
+Dataset: https://huggingface.co/datasets/claw-eval/Claw-Eval
+Licensed under the MIT License
+
+Direct Python packages:
+
+fpdf2 2.8.7 - Licensed under LGPL-3.0-only
+https://py-pdf.github.io/fpdf2/
+
+huggingface-hub 1.12.0 - Licensed under Apache-2.0
+https://github.com/huggingface/huggingface_hub
+
+PyYAML 6.0.3 - Licensed under the MIT License
+https://github.com/yaml/pyyaml
+
+questionary 2.1.1 - Licensed under the MIT License
+https://github.com/tmbo/questionary
+
+rich 15.0.0 - Licensed under the MIT License
+https://github.com/Textualize/rich
+
+fastapi 0.136.1 - Licensed under the MIT License
+https://github.com/fastapi/fastapi
+
+uvicorn 0.46.0 - Licensed under BSD-3-Clause
+https://uvicorn.dev/
+
+websocket-client 1.9.0 - Licensed under Apache-2.0
+https://github.com/websocket-client/websocket-client/
+
+jsonschema 4.26.0 - Licensed under the MIT License
+https://github.com/python-jsonschema/jsonschema
+
+pre-commit 4.6.0 - Licensed under the MIT License
+https://github.com/pre-commit/pre-commit
+
+ruff 0.15.12 - Licensed under the MIT License
+https://github.com/astral-sh/ruff
+
+Harness and runtime packages:
+
+browser-use 0.12.6 - Licensed under the MIT License
+https://github.com/browser-use/browser-use
+
+LiteLLM 1.83.9 - Licensed under the MIT License
+https://github.com/BerriAI/litellm
+
+websockets 13.1 - Licensed under BSD-3-Clause
+https://github.com/python-websockets/websockets
+
+Hermes Agent, commit bf196a3fc0fd1f79353369e8732051db275c6276 - Licensed under the MIT License
+https://github.com/NousResearch/hermes-agent
+
+agent-browser 0.26.0 - Licensed under Apache-2.0
+https://github.com/vercel-labs/agent-browser
+
+Microsoft Playwright MCP 0.0.70 - Licensed under Apache-2.0
+https://github.com/microsoft/playwright-mcp
+
+opencode-ai 1.4.4 - Licensed under the MIT License
+https://github.com/sst/opencode
+
+OpenClaw 2026.3.13 - Licensed under the MIT License
+https://github.com/openclaw/openclaw
+
+OpenAI Codex CLI 0.120.0 - Licensed under Apache-2.0
+https://github.com/openai/codex
+
+claw-code, commit 00d0eb61d4cfc1abd345dc76023dd21e420f6488 - License NOASSERTION; no license file found at pinned commit
+https://github.com/ultraworkers/claw-code
+
+pi-coding-agent 0.74.0 - Licensed under the MIT License
+https://github.com/earendil-works/pi-mono
+
+pi-browser-harness 0.4.0 - Licensed under the MIT License
+https://github.com/amankumarsingh77/pi-browser-harness
+
+typebox 1.1.38 - Licensed under the MIT License
+https://github.com/sinclairzx81/typebox
+
+noVNC 1.6.0 - Licensed under MPL-2.0
 https://github.com/novnc/noVNC
 
-websockify - Copyright (C) 2024 The websockify Authors
-Licensed under the GNU Lesser General Public License v3.0 (LGPL 3.0)
+websockify 0.13.0 - Licensed under LGPL-3.0
 https://github.com/novnc/websockify

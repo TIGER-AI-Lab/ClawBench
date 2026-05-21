@@ -1,0 +1,21 @@
+FROM node:24-slim AS node-runtime
+
+FROM clawbench-base
+
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g \
+    @earendil-works/pi-coding-agent@0.74.0 \
+    pi-browser-harness@0.4.0 \
+    typebox@1.1.38
+
+# LiteLLM proxy translates Pi's OpenAI-compatible requests into the upstream
+# API configured in models/models.yaml.
+RUN pip install --no-cache-dir 'litellm[proxy]==1.83.9'
+
+COPY harnesses/pi/setup-pi.sh /setup-pi.sh
+COPY harnesses/pi/run-pi.sh /run-harness.sh
+RUN chmod +x /setup-pi.sh /run-harness.sh

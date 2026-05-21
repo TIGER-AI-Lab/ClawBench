@@ -244,7 +244,7 @@ HERMES_ARGS=(chat
   --quiet
   --yolo
   --ignore-rules
-  --toolsets browser,file
+  --toolsets "browser,file"
   --max-turns 90
   --model "$HERMES_MODEL_NAME"
   --provider "$HERMES_PROVIDER"
@@ -336,4 +336,5 @@ sleep 15
 echo "Stopping recording..."
 curl -sf -X POST http://localhost:7878/api/stop-recording || true
 sleep 2
+rm -f /data/*.log
 echo "Done."

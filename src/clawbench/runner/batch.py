@@ -80,8 +80,8 @@ def discover_models(patterns: list[str] | None, all_models: bool) -> list[str]:
 
 
 def _case_id(d: Path) -> int | None:
-    """Extract the numeric task ID from V1/V2 case directory names."""
-    match = re.match(r"^(?:v\d+-)?(\d+)", d.name)
+    """Extract the numeric task ID from V1/V2/flat Claw-Eval case names."""
+    match = re.match(r"^(?:v\d+-|ce-)?[A-Za-z]?(\d+)", d.stem)
     if not match:
         return None
     return int(match.group(1))
@@ -103,6 +103,18 @@ def _resolve_cases_dir(cases_dir: str | Path) -> Path:
     return path
 
 
+def _flat_case_files(base: Path) -> list[Path]:
+    return [
+        p
+        for p in base.glob("*.json")
+        if p.is_file() and p.name not in {"eligibility-report.json"}
+    ]
+
+
+def _all_cases_in(base: Path) -> list[Path]:
+    return [p.parent for p in base.glob("*/task.json")] + _flat_case_files(base)
+
+
 def discover_cases(
     patterns: list[str] | None,
     all_cases: bool,
@@ -111,7 +123,7 @@ def discover_cases(
 ) -> list[Path]:
     base = _resolve_cases_dir(cases_dir)
     if all_cases:
-        dirs = sorted((p.parent for p in base.glob("*/task.json")), key=_case_sort_key)
+        dirs = sorted(_all_cases_in(base), key=_case_sort_key)
     elif patterns:
         dirs = []
         for pat in patterns:
@@ -126,8 +138,10 @@ def discover_cases(
             for d in expanded:
                 if d.is_dir() and (d / "task.json").exists():
                     dirs.append(d)
+                elif d.is_file() and d.suffix == ".json":
+                    dirs.append(d)
     elif case_range:
-        dirs = sorted((p.parent for p in base.glob("*/task.json")), key=_case_sort_key)
+        dirs = sorted(_all_cases_in(base), key=_case_sort_key)
     else:
         print("ERROR: provide --cases, --all-cases, or --case-range")
         sys.exit(1)
@@ -140,7 +154,7 @@ def discover_cases(
     dirs = sorted(set(dirs), key=_case_sort_key)
     if not dirs:
         print(
-            "ERROR: no test-case directories matched "
+            "ERROR: no test-case paths matched "
             f"(cases_dir={base}, patterns={patterns}, range={case_range})"
         )
         sys.exit(1)
@@ -581,9 +595,28 @@ async def async_main(args: argparse.Namespace) -> int:
 
     _run_mod.docker_build(args.harness)
 
-    batch_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    base_output = Path(args.output_dir).resolve() / f"batch-{batch_ts}"
-    log_dir = base_output / "batch-logs"
+    if args.resume:
+        base_output = Path(args.resume).resolve()
+        if not base_output.exists():
+            print(f"ERROR: --resume directory does not exist: {base_output}")
+            return 1
+        log_dir = base_output / "batch-logs"
+        skipped = 0
+        for job in jobs:
+            safe_model = re.sub(r"[/:]+", "--", job.model)
+            if (log_dir / f"{job.case_name}-{safe_model}.log").exists():
+                job.status = "skipped"
+                skipped += 1
+        remaining = sum(1 for j in jobs if j.status == "pending")
+        print(f"\n[RESUME] Reusing {base_output}")
+        print(f"[RESUME] {skipped} job(s) already done, {remaining} remaining")
+        if remaining == 0:
+            print("[RESUME] All jobs already completed.")
+            return 0
+    else:
+        batch_ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+        base_output = Path(args.output_dir).resolve() / f"batch-{batch_ts}"
+        log_dir = base_output / "batch-logs"
     log_dir.mkdir(parents=True, exist_ok=True)
 
     sem = asyncio.Semaphore(args.max_concurrent)
@@ -597,6 +630,7 @@ async def async_main(args: argparse.Namespace) -> int:
 
     def on_signal() -> None:
         nonlocal sigint_count
+        assert shutdown_event is not None
         sigint_count += 1
         shutdown_event.set()
 
@@ -629,8 +663,14 @@ async def async_main(args: argparse.Namespace) -> int:
     loop.add_signal_handler(signal.SIGTERM, on_signal)
 
     throttle = StartupThrottle(args.stagger_delay)
+
+    async def _noop() -> None:
+        """Placeholder for jobs already marked skipped (e.g. by --resume)."""
+
     all_tasks = [
-        asyncio.create_task(
+        asyncio.create_task(_noop())
+        if j.status == "skipped"
+        else asyncio.create_task(
             run_job(
                 j,
                 sem,
@@ -739,6 +779,15 @@ def main() -> None:
         dest="no_upload",
         action="store_true",
         help="Skip HuggingFace upload for all runs",
+    )
+    p.add_argument(
+        "--resume",
+        default=None,
+        metavar="BATCH_DIR",
+        help=(
+            "Resume a previous batch run: reuse its output directory and skip "
+            "any (case x model) job whose batch-logs/<case>-<model>.log already exists."
+        ),
     )
     from clawbench.runner.run import HARNESSES, DEFAULT_HARNESS
 

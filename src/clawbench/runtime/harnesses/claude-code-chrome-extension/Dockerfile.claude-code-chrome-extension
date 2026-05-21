@@ -349,7 +349,7 @@ PYEOF
 # 127.0.0.1:4002. We also widen the manifest CSP connect-src so the browser
 # does not block the ws:// connection to localhost.
 RUN python3 - /app/claude-in-chrome <<'PYEOF'
-import json, sys
+import json, re, sys
 from pathlib import Path
 
 assets_dir = Path(sys.argv[1])
@@ -365,13 +365,20 @@ def patch_file(path):
         if needle in text:
             text = text.replace(needle, "ws://127.0.0.1:4002", 1)
             patches.append(f"{path.name}: bridge URL")
-    # 2. Neutralize wsApiBaseUrl for permission manager — forces HTTPS ws to
-    # api.anthropic.com; we want it to fail fast so it does not hang.
+    # 2. Force local bridge mode and neutralize wsApiBaseUrl for permission
+    # manager. Extension 1.0.70 moved the active bridge connector into
+    # mcpPermissions-*.js; localBridge keeps its connect frame from requiring
+    # a real OAuth bearer token once the connector is allowed past preflight.
+    if 'localBridge:!1' in text:
+        text = text.replace('localBridge:!1', 'localBridge:!0', 1)
+        patches.append(f"{path.name}: localBridge")
     if '"wss://api.anthropic.com"' in text:
         text = text.replace('"wss://api.anthropic.com"',
                             '"ws://127.0.0.1:4001"', 1)
         patches.append(f"{path.name}: wsApiBaseUrl")
-    # 3. Bypass OAuth null-return inside en().
+    # 3. Bypass OAuth null-returns inside the bridge connector. Older builds
+    # used Na/nn in PermissionManager; newer 1.0.70 builds use Ba/un in
+    # mcpPermissions. Patch both shapes so extension updates fail less often.
     oauth_null = 'if(o=await u(),!o)return Na=!1,nn(),!1;'
     oauth_fix = 'if(o=await u(),!o)o="fake-oauth-token";'
     if oauth_null in text:
@@ -382,6 +389,59 @@ def patch_file(path):
     if userid_null in text:
         text = text.replace(userid_null, userid_fix, 1)
         patches.append(f"{path.name}: userId null-return")
+    oauth_null = 'if(o=await u(),!o)return Ba=!1,un(),!1;'
+    oauth_fix = 'if(o=await u(),!o)o="fake-oauth-token";'
+    if oauth_null in text:
+        text = text.replace(oauth_null, oauth_fix, 1)
+        patches.append(f"{path.name}: OAuth null-return")
+    userid_null = 'if(t=await h(o),!t)return Ba=!1,un(),!1;'
+    userid_fix = 'if(t=await h(o),!t)t="clawbench-user";'
+    if userid_null in text:
+        text = text.replace(userid_null, userid_fix, 1)
+        patches.append(f"{path.name}: userId null-return")
+    # 4. Make the extension's auth helpers local-only. This prevents both the
+    # visible OAuth launcher and the non-interactive silent reauth path from
+    # opening claude.ai tabs while still satisfying side panel/native-host
+    # status checks that expect auth to be valid.
+    text, count = re.subn(
+        r'async function Te\(\)\{.*?\}const xe=',
+        'async function Te(){return"success"}const xe=',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count:
+        patches.append(f"{path.name}: silent OAuth no-op")
+    text, count = re.subn(
+        r'let Ae=null;const Oe=\(\)=>Ae\|\|.*?\),Ae\);const Ce=async\(\)=>\{if\(!\(await Oe\(\)\)\.isValid\)return;return await j\(F\.ACCESS_TOKEN\)\|\|void 0\}',
+        'let Ae=null;const Oe=()=>Promise.resolve({isValid:!0,isRefreshed:!1});const Ce=async()=>await j(F.ACCESS_TOKEN)||"fake-oauth-token"',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count:
+        patches.append(f"{path.name}: auth valid")
+    text, count = re.subn(
+        r'Re=async t=>\{const e=t\?\?await Ce\(\);.*?\},Ie=async',
+        'Re=async t=>"clawbench-user",Ie=async',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count:
+        patches.append(f"{path.name}: userId helper")
+
+    # 5. Stop the extension from opening a visible claude.ai OAuth tab during
+    # startup. The bridge gets fake credentials above; this keeps benchmark
+    # action logs focused on the task page instead of the auth splash.
+    text, count = re.subn(
+        r'Le=async\(\)=>\{const t=E\(\),e=ve\(32\).*?chrome\.tabs\.create\(\{url:o\}\)\}',
+        'Le=async()=>{await G({[F.ACCESS_TOKEN]:"fake-oauth-token",[F.REFRESH_TOKEN]:"fake-refresh-token",[F.TOKEN_EXPIRY]:Date.now()+31536e6,[F.ACCOUNT_UUID]:"clawbench-user"})}',
+        text,
+        count=1,
+    )
+    if count:
+        patches.append(f"{path.name}: OAuth launch no-op")
     if text != original:
         path.write_text(text)
 
@@ -412,6 +472,36 @@ if not any(p.endswith("bridge URL") for p in patches):
         "ERROR: extension patch 'bridge URL' did not match any JS file. "
         "The Claude in Chrome extension's minified source has likely "
         "changed — update the Dockerfile's extension-patch heredoc.")
+if not any("OAuth null-return" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'OAuth null-return' did not match any JS file. "
+        "The Claude in Chrome extension's bridge auth preflight has likely "
+        "changed — update the Dockerfile's extension-patch heredoc.")
+if not any("userId null-return" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'userId null-return' did not match any JS file. "
+        "The Claude in Chrome extension's bridge auth preflight has likely "
+        "changed — update the Dockerfile's extension-patch heredoc.")
+if not any("localBridge" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'localBridge' did not match any JS file. "
+        "The Claude in Chrome extension's runtime config has likely changed.")
+if not any("silent OAuth no-op" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'silent OAuth no-op' did not match any JS file. "
+        "The Claude in Chrome extension's silent auth helper has likely changed.")
+if not any("auth valid" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'auth valid' did not match any JS file. "
+        "The Claude in Chrome extension's auth validator has likely changed.")
+if not any("userId helper" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'userId helper' did not match any JS file. "
+        "The Claude in Chrome extension's user-id helper has likely changed.")
+if not any("OAuth launch no-op" in p for p in patches):
+    raise SystemExit(
+        "ERROR: extension patch 'OAuth launch no-op' did not match any JS file. "
+        "The Claude in Chrome extension's login bootstrap has likely changed.")
 
 PYEOF
 

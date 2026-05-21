@@ -149,4 +149,5 @@ sleep 15
 echo "Stopping recording..."
 curl -sf -X POST http://localhost:7878/api/stop-recording || true
 sleep 2
+rm -f /data/*.log
 echo "Done."

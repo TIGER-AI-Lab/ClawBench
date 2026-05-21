@@ -6,6 +6,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.3] - 2026-05-19
+### Changed
+- More data are stored in the `run-meta.json` for better post-hoc analysis and reproducibility, including the hash of the configs, runtime info, and flags used.
+
+### Fixed
+- Fixed several compatibility issues on Windows platforms.
+
+## [0.3.2] - 2026-05-15
+### Added
+- Added the logic to remove the `.log` files from the generated `data/` directory to remove noise.
+- Added the handling to allow models with no visual capabilities to use the `claude-code-browser-extension` harness by skipping the screenshot steps.
+- Added retry logic to the `claude-code-browser-extension` harness to handle temporary rate limits.
+
+## [0.3.1] - 2026-05-13
+### Fixed
+- Removed v1-799 and v2-795 tasks since the current interception schemas have risk of leaking the agent's final action to the end server, which leads to unexpected disturbance of the end business.
+
+## [0.3.0] - 2026-05-09
+### Added
+- Added support for the **pi** harness — [Pi coding agent](https://github.com/earendil-works/pi/tree/main/packages/coding-agent) + [`pi-browser-harness`](https://github.com/amankumarsingh77/pi-browser-harness)
+
 ## [0.2.2] - 2026-05-08
 ### Changed
 - Migrated the PyPI package to `clawbench-eval` instead of `clawbenchmark`.

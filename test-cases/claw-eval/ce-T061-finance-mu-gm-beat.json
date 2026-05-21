@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "task_id": 500061,
+    "metaclass": "claw-eval",
+    "class": "finance",
+    "description": "Micron Q3 2024 GAAP Gross Margin Beat",
+    "sites_involved": [
+      "web"
+    ],
+    "platform": "claw-eval",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "source_task_id": "T061_finance_mu_gm_beat",
+    "source_task_name": "Micron Q3 2024 GAAP Gross Margin Beat",
+    "source_version": "1.0",
+    "source_difficulty": "easy",
+    "source_tags": [
+      "general"
+    ],
+    "source_language": "en"
+  },
+  "instruction": "How many basis points did Micron Technology (MU) beat or miss Q3 2024 GAAP gross margin guidance?\n\n---\nWhen you have completed the research and are ready to give the final answer, open http://127.0.0.1:7878/submit in the browser and submit your final answer there. Submit only after you are satisfied that the answer fulfills the task.",
+  "eval_schema": {
+    "url_pattern": "/api/task-submit",
+    "method": "POST"
+  },
+  "time_limit": 30.0,
+  "judge_context": {
+    "rubric": "Evaluate whether the agent found the correct answer.\n\nThe correct answer is that Micron Technology (MU) beat Q3 2024 GAAP gross margin guidance by 140 basis points.\nKey facts the response should contain:\n- Company: Micron Technology (MU)\n- Period: Q3 2024 (fiscal quarter)\n- Metric: GAAP gross margin vs. guidance\n- Direction: beat (outperformed)\n- Amount: 140 basis points (bps)\n\nScoring guidance:\n- 0.90-1.00: Correctly states 140 bps beat with direction and context (GAAP, Q3 2024)\n- 0.70-0.89: Correct value and direction with minor context gaps\n- 0.40-0.69: Partially correct (wrong bps or missing beat/miss direction)\n- 0.00-0.39: Wrong answer or no meaningful response\n",
+    "reference_solution": "Micron Technology (MU) beat Q3 2024 GAAP gross margin guidance by 140 basis points.\n",
+    "source_task_yaml": "task_id: T061_finance_mu_gm_beat\ntask_name: Micron Q3 2024 GAAP Gross Margin Beat\nversion: \"1.0\"\ncategory: finance\ndifficulty: easy\ntags: [general]\n\nservices:\n  - name: web_real\n    command: python mock_services/web_real/server.py\n    port: 9114\n    health_check: http://localhost:9114/web/health\n    health_check_method: GET\n    ready_timeout: 10\n    reset_endpoint: http://localhost:9114/web/reset\n\nprompt:\n  text: |\n    How many basis points did Micron Technology (MU) beat or miss Q3 2024 GAAP gross margin guidance?\n  language: en\n\ntools:\n  - name: web_search\n    description: Search the public web and return result snippets.\n    input_schema:\n      type: object\n      properties:\n        query:\n          type: string\n          description: Search query\n        max_results:\n          type: integer\n          description: Maximum number of results\n          default: 10\n      required: [query]\n\n  - name: web_fetch\n    description: Fetch full webpage content for a URL.\n    input_schema:\n      type: object\n      properties:\n        url:\n          type: string\n          description: Target URL\n        timeout_seconds:\n          type: integer\n          description: Request timeout in seconds\n          default: 30\n      required: [url]\n\ntool_endpoints:\n  - tool_name: web_search\n    url: http://localhost:9114/web/search\n    method: POST\n  - tool_name: web_fetch\n    url: http://localhost:9114/web/fetch\n    method: POST\n\n\nenvironment:\n  timeout_seconds: 1800\n  max_turns: 50\n\nscoring_components:\n  - name: bps_value\n    weight: 0.40\n    check:\n      type: keywords_present\n      keywords: [\"140 bps\", \"140 basis points\"]\n  - name: beat_direction\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [beat]\n  - name: context\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [Micron, Q3 2024, GAAP, gross margin]\n\nsafety_checks: []\nexpected_actions: []\n\njudge_rubric: |\n  Evaluate whether the agent found the correct answer.\n\n  The correct answer is that Micron Technology (MU) beat Q3 2024 GAAP gross margin guidance by 140 basis points.\n  Key facts the response should contain:\n  - Company: Micron Technology (MU)\n  - Period: Q3 2024 (fiscal quarter)\n  - Metric: GAAP gross margin vs. guidance\n  - Direction: beat (outperformed)\n  - Amount: 140 basis points (bps)\n\n  Scoring guidance:\n  - 0.90-1.00: Correctly states 140 bps beat with direction and context (GAAP, Q3 2024)\n  - 0.70-0.89: Correct value and direction with minor context gaps\n  - 0.40-0.69: Partially correct (wrong bps or missing beat/miss direction)\n  - 0.00-0.39: Wrong answer or no meaningful response\n\nreference_solution: |\n  Micron Technology (MU) beat Q3 2024 GAAP gross margin guidance by 140 basis points.\n\nprimary_dimensions: [completion, communication]\n"
+  }
+}

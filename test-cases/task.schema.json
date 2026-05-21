@@ -121,6 +121,25 @@
         ],
         "additionalProperties": false
       }
+    },
+    "judge_context": {
+      "type": "object",
+      "description": "Hidden context used only by the LLM judge; never injected into the agent prompt.",
+      "properties": {
+        "rubric": {
+          "type": "string",
+          "description": "Task-specific judging rubric"
+        },
+        "reference_solution": {
+          "type": "string",
+          "description": "Reference solution or expected answer details"
+        },
+        "source_task_yaml": {
+          "type": "string",
+          "description": "Raw source task.yaml content, when converted from another corpus"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [

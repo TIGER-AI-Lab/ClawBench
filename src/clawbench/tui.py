@@ -106,6 +106,11 @@ DATASETS = {
         "summary": "V1 Lite (test-cases/v1-lite)",
         "cases_dir": "test-cases/v1-lite",
     },
+    "claw-eval": {
+        "label": "Claw-Eval port  (test-cases/claw-eval)",
+        "summary": "Claw-Eval port (test-cases/claw-eval)",
+        "cases_dir": "test-cases/claw-eval",
+    },
 }
 
 API_TYPES = [
@@ -359,8 +364,13 @@ def _case_sort_key(case: str) -> tuple[int, int, str]:
 
 def load_cases(cases_dir_name: str = "test-cases") -> list[str]:
     cases_dir = ASSET_ROOT / cases_dir_name
+    flat_cases = [
+        p.stem
+        for p in cases_dir.glob("*.json")
+        if p.name not in {"eligibility-report.json"}
+    ]
     cases = sorted(
-        (p.parent.name for p in cases_dir.glob("*/task.json")),
+        [*(p.parent.name for p in cases_dir.glob("*/task.json")), *flat_cases],
         key=_case_sort_key,
     )
     if not cases:
@@ -374,13 +384,55 @@ def load_cases(cases_dir_name: str = "test-cases") -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def _recommend_concurrent() -> int:
-    cpus = multiprocessing.cpu_count()
+def _windows_physical_memory_gb() -> float | None:
+    try:
+        import ctypes
+    except ImportError:
+        return None
+
+    windll = getattr(ctypes, "windll", None)
+    if windll is None:
+        return None
+
+    class MEMORYSTATUSEX(ctypes.Structure):
+        _fields_ = [
+            ("dwLength", ctypes.c_ulong),
+            ("dwMemoryLoad", ctypes.c_ulong),
+            ("ullTotalPhys", ctypes.c_ulonglong),
+            ("ullAvailPhys", ctypes.c_ulonglong),
+            ("ullTotalPageFile", ctypes.c_ulonglong),
+            ("ullAvailPageFile", ctypes.c_ulonglong),
+            ("ullTotalVirtual", ctypes.c_ulonglong),
+            ("ullAvailVirtual", ctypes.c_ulonglong),
+            ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+        ]
+
+    status = MEMORYSTATUSEX()
+    status.dwLength = ctypes.sizeof(status)
+    try:
+        ok = windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))
+    except (AttributeError, OSError):
+        return None
+    if not ok:
+        return None
+    return status.ullTotalPhys / (1024**3)
+
+
+def _physical_memory_gb() -> float:
+    if platform.system() == "Windows":
+        mem_gb = _windows_physical_memory_gb()
+        if mem_gb is not None:
+            return mem_gb
     try:
         mem_bytes = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
-        mem_gb = mem_bytes / (1024**3)
-    except (ValueError, OSError):
-        mem_gb = 8
+        return mem_bytes / (1024**3)
+    except (AttributeError, ValueError, OSError):
+        return 8
+
+
+def _recommend_concurrent() -> int:
+    cpus = multiprocessing.cpu_count()
+    mem_gb = _physical_memory_gb()
     by_cpu = cpus // 2
     by_ram = int(mem_gb // 2)
     recommended = max(1, min(by_cpu, by_ram))
@@ -552,6 +604,7 @@ def mode_single(
             "browser-use",
             "claw-code",
             "hermes",
+            "pi",
         ],
         default="openclaw",
         style=STYLE,
@@ -641,6 +694,7 @@ def mode_batch(
             "browser-use",
             "claw-code",
             "hermes",
+            "pi",
         ],
         default="openclaw",
         style=STYLE,
@@ -1258,7 +1312,7 @@ def _run_streamed(cmd: list[str], *, status_msg: str) -> int:
     return rc
 
 
-def _fix_engine(engine: str, status: str, detail: str) -> bool:
+def _fix_engine(engine: str | None, status: str, detail: str) -> bool:
     """Show an actionable panel for the engine problem and offer a fix.
 
     Returns True if the engine is now usable, False otherwise. Safe to
@@ -1518,6 +1572,7 @@ def main() -> None:
         console.print()
         console.print("[bold]Welcome to ClawBench.[/]")
         theme = _pick_theme()
+    assert theme is not None
     STYLE = _make_style(theme)
     # Apple HIG: Indigo for headers, Blue for inline accents
     if theme == "light":

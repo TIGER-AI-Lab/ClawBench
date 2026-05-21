@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "task_id": 500066,
+    "metaclass": "claw-eval",
+    "class": "finance",
+    "description": "Dutch Bros 2026 Gross Profit Projection",
+    "sites_involved": [
+      "web"
+    ],
+    "platform": "claw-eval",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "source_task_id": "T066_finance_bros_gross_profit",
+    "source_task_name": "Dutch Bros 2026 Gross Profit Projection",
+    "source_version": "1.0",
+    "source_difficulty": "easy",
+    "source_tags": [
+      "general"
+    ],
+    "source_language": "en"
+  },
+  "instruction": "Assume Dutch Bros (BROS) grows revenue by 30% CAGR and gross margins compress by 500 basis points from year-end 2024 levels. What is BROS gross profit in 2026?\n\n---\nWhen you have completed the research and are ready to give the final answer, open http://127.0.0.1:7878/submit in the browser and submit your final answer there. Submit only after you are satisfied that the answer fulfills the task.",
+  "eval_schema": {
+    "url_pattern": "/api/task-submit",
+    "method": "POST"
+  },
+  "time_limit": 30.0,
+  "judge_context": {
+    "rubric": "Evaluate whether the calculation methodology is correct and the answer is accurate.\n\nThe correct answer is approximately $467 million for Dutch Bros (BROS) 2026 gross profit.\nKey facts the response should contain:\n- Company: Dutch Bros (BROS)\n- Projection year: 2026\n- Metric: gross profit\n- Revenue growth assumption: 30% CAGR for 2 years\n- Gross margin compression assumption: 500 basis points from 2024 levels\n- 2026 revenue: approximately $2,165M\n- 2026 gross margin: approximately 21.5%\n- 2026 gross profit: approximately $467M\n\nThe agent should:\n1) Find Dutch Bros 2024 revenue and gross margin from real financial data\n2) Apply 30% CAGR for 2 years to get 2026 revenue\n3) Subtract 500 basis points from 2024 gross margin to get 2026 gross margin\n4) Multiply 2026 revenue by 2026 gross margin to get gross profit\n\nScoring guidance:\n- 0.90-1.00: Answer is approximately $467M with all four steps and key facts present\n- 0.70-0.89: Answer is in range $420M-$520M with correct methodology\n- 0.40-0.69: Correct methodology but answer is materially off, or missing key steps\n- 0.00-0.39: Wrong methodology or no meaningful calculation\n",
+    "reference_solution": "Starting from Dutch Bros 2024 revenue and gross margin, apply 30% CAGR for 2 years\nto get 2026 revenue, then reduce gross margin by 500bps to get the adjusted margin.\n2026 gross profit ≈ $467 million.\n",
+    "source_task_yaml": "task_id: T066_finance_bros_gross_profit\ntask_name: Dutch Bros 2026 Gross Profit Projection\nversion: \"1.0\"\ncategory: finance\ndifficulty: easy\ntags: [general]\n\nservices:\n  - name: web_real\n    command: python mock_services/web_real/server.py\n    port: 9114\n    health_check: http://localhost:9114/web/health\n    health_check_method: GET\n    ready_timeout: 10\n    reset_endpoint: http://localhost:9114/web/reset\n\nprompt:\n  text: |\n    Assume Dutch Bros (BROS) grows revenue by 30% CAGR and gross margins compress by 500 basis points from year-end 2024 levels. What is BROS gross profit in 2026?\n  language: en\n\ntools:\n  - name: web_search\n    description: Search the public web and return result snippets.\n    input_schema:\n      type: object\n      properties:\n        query:\n          type: string\n          description: Search query\n        max_results:\n          type: integer\n          description: Maximum number of results\n          default: 10\n      required: [query]\n\n  - name: web_fetch\n    description: Fetch full webpage content for a URL.\n    input_schema:\n      type: object\n      properties:\n        url:\n          type: string\n          description: Target URL\n        timeout_seconds:\n          type: integer\n          description: Request timeout in seconds\n          default: 30\n      required: [url]\n\ntool_endpoints:\n  - tool_name: web_search\n    url: http://localhost:9114/web/search\n    method: POST\n  - tool_name: web_fetch\n    url: http://localhost:9114/web/fetch\n    method: POST\n\nenvironment:\n  timeout_seconds: 1800\n  max_turns: 50\n\nscoring_components:\n  - name: gross_profit\n    weight: 0.40\n    check:\n      type: keywords_present\n      keywords: [\"$467 million\", \"$467M\"]\n  - name: methodology\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [30%, 500 basis points, CAGR]\n  - name: context\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [Dutch Bros, BROS, 2026, gross profit]\n\nsafety_checks: []\nexpected_actions: []\n\njudge_rubric: |\n  Evaluate whether the calculation methodology is correct and the answer is accurate.\n\n  The correct answer is approximately $467 million for Dutch Bros (BROS) 2026 gross profit.\n  Key facts the response should contain:\n  - Company: Dutch Bros (BROS)\n  - Projection year: 2026\n  - Metric: gross profit\n  - Revenue growth assumption: 30% CAGR for 2 years\n  - Gross margin compression assumption: 500 basis points from 2024 levels\n  - 2026 revenue: approximately $2,165M\n  - 2026 gross margin: approximately 21.5%\n  - 2026 gross profit: approximately $467M\n\n  The agent should:\n  1) Find Dutch Bros 2024 revenue and gross margin from real financial data\n  2) Apply 30% CAGR for 2 years to get 2026 revenue\n  3) Subtract 500 basis points from 2024 gross margin to get 2026 gross margin\n  4) Multiply 2026 revenue by 2026 gross margin to get gross profit\n\n  Scoring guidance:\n  - 0.90-1.00: Answer is approximately $467M with all four steps and key facts present\n  - 0.70-0.89: Answer is in range $420M-$520M with correct methodology\n  - 0.40-0.69: Correct methodology but answer is materially off, or missing key steps\n  - 0.00-0.39: Wrong methodology or no meaningful calculation\n\nreference_solution: |\n  Starting from Dutch Bros 2024 revenue and gross margin, apply 30% CAGR for 2 years\n  to get 2026 revenue, then reduce gross margin by 500bps to get the adjusted margin.\n  2026 gross profit ≈ $467 million.\n\nprimary_dimensions: [completion, communication]\n"
+  }
+}

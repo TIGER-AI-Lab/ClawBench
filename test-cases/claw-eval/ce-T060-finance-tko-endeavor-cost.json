@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "task_id": 500060,
+    "metaclass": "claw-eval",
+    "class": "finance",
+    "description": "TKO Endeavor Acquisition Cost",
+    "sites_involved": [
+      "web"
+    ],
+    "platform": "claw-eval",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "source_task_id": "T060_finance_tko_endeavor_cost",
+    "source_task_name": "TKO Endeavor Acquisition Cost",
+    "source_version": "1.0",
+    "source_difficulty": "easy",
+    "source_tags": [
+      "general"
+    ],
+    "source_language": "en"
+  },
+  "instruction": "What was the total consideration cost TKO paid to acquire Endeavor assets?\n\n---\nWhen you have completed the research and are ready to give the final answer, open http://127.0.0.1:7878/submit in the browser and submit your final answer there. Submit only after you are satisfied that the answer fulfills the task.",
+  "eval_schema": {
+    "url_pattern": "/api/task-submit",
+    "method": "POST"
+  },
+  "time_limit": 30.0,
+  "judge_context": {
+    "rubric": "Evaluate whether the agent found the correct figure.\n\nThe correct answer is approximately $3.25 billion in total consideration paid by TKO Group Holdings to acquire Endeavor assets.\nKey facts the response should contain:\n- Company: TKO Group Holdings (TKO)\n- Deal: acquisition of Endeavor assets\n- Metric: total consideration (acquisition cost)\n- Amount: approximately $3.25 billion\n\nScoring guidance:\n- 0.90-1.00: Correctly states $3.25 billion with deal context (TKO, Endeavor)\n- 0.70-0.89: Correct amount with minor context gaps\n- 0.40-0.69: Partially correct or vague on amount\n- 0.00-0.39: Wrong amount or no meaningful answer\n",
+    "reference_solution": "TKO Group Holdings paid approximately $3.25 billion in total consideration\nto acquire Endeavor assets.\n",
+    "source_task_yaml": "task_id: T060_finance_tko_endeavor_cost\ntask_name: TKO Endeavor Acquisition Cost\nversion: \"1.0\"\ncategory: finance\ndifficulty: easy\ntags: [general]\n\nservices:\n  - name: web_real\n    command: python mock_services/web_real/server.py\n    port: 9114\n    health_check: http://localhost:9114/web/health\n    health_check_method: GET\n    ready_timeout: 10\n    reset_endpoint: http://localhost:9114/web/reset\n\nprompt:\n  text: |\n    What was the total consideration cost TKO paid to acquire Endeavor assets?\n  language: en\n\ntools:\n  - name: web_search\n    description: Search the public web and return result snippets.\n    input_schema:\n      type: object\n      properties:\n        query:\n          type: string\n          description: Search query\n        max_results:\n          type: integer\n          description: Maximum number of results\n          default: 10\n      required: [query]\n\n  - name: web_fetch\n    description: Fetch full webpage content for a URL.\n    input_schema:\n      type: object\n      properties:\n        url:\n          type: string\n          description: Target URL\n        timeout_seconds:\n          type: integer\n          description: Request timeout in seconds\n          default: 30\n      required: [url]\n\ntool_endpoints:\n  - tool_name: web_search\n    url: http://localhost:9114/web/search\n    method: POST\n  - tool_name: web_fetch\n    url: http://localhost:9114/web/fetch\n    method: POST\n\nenvironment:\n  timeout_seconds: 1800\n  max_turns: 50\n\n\nscoring_components:\n  - name: acquisition_cost\n    weight: 0.50\n    check:\n      type: keywords_present\n      keywords: [\"$3.25 billion\", \"$3.25B\"]\n  - name: deal_context\n    weight: 0.50\n    check:\n      type: keywords_present\n      keywords: [TKO, Endeavor]\n\nsafety_checks: []\nexpected_actions: []\n\njudge_rubric: |\n  Evaluate whether the agent found the correct figure.\n\n  The correct answer is approximately $3.25 billion in total consideration paid by TKO Group Holdings to acquire Endeavor assets.\n  Key facts the response should contain:\n  - Company: TKO Group Holdings (TKO)\n  - Deal: acquisition of Endeavor assets\n  - Metric: total consideration (acquisition cost)\n  - Amount: approximately $3.25 billion\n\n  Scoring guidance:\n  - 0.90-1.00: Correctly states $3.25 billion with deal context (TKO, Endeavor)\n  - 0.70-0.89: Correct amount with minor context gaps\n  - 0.40-0.69: Partially correct or vague on amount\n  - 0.00-0.39: Wrong amount or no meaningful answer\n\nreference_solution: |\n  TKO Group Holdings paid approximately $3.25 billion in total consideration\n  to acquire Endeavor assets.\n\nprimary_dimensions: [completion, communication]\n"
+  }
+}

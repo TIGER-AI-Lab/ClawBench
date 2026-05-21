@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "task_id": 500059,
+    "metaclass": "claw-eval",
+    "class": "finance",
+    "description": "Airbnb CFO Identification",
+    "sites_involved": [
+      "web"
+    ],
+    "platform": "claw-eval",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "source_task_id": "T059_finance_abnb_cfo",
+    "source_task_name": "Airbnb CFO Identification",
+    "source_version": "1.0",
+    "source_difficulty": "easy",
+    "source_tags": [
+      "general"
+    ],
+    "source_language": "en"
+  },
+  "instruction": "Who is the CFO of Airbnb as of April 07, 2025?\n\n---\nWhen you have completed the research and are ready to give the final answer, open http://127.0.0.1:7878/submit in the browser and submit your final answer there. Submit only after you are satisfied that the answer fulfills the task.",
+  "eval_schema": {
+    "url_pattern": "/api/task-submit",
+    "method": "POST"
+  },
+  "time_limit": 30.0,
+  "judge_context": {
+    "rubric": "Evaluate whether the agent found the correct answer.\n\nThe correct answer is that Elinor Mertz is the CFO of Airbnb as of April 2025.\nKey facts the response should contain:\n- Company: Airbnb (ABNB)\n- Title: CFO / Chief Financial Officer\n- Name: Elinor Mertz\n- As of: April 2025\n\nScoring guidance:\n- 0.90-1.00: Correctly identifies Elinor Mertz as CFO with clear context.\n- 0.70-0.89: Correct name with minor omissions.\n- 0.40-0.69: Partially correct or missing key details.\n- 0.00-0.39: Wrong name or no meaningful answer.\n",
+    "reference_solution": "As of April 7, 2025, the CFO of Airbnb is Elinor Mertz.\n",
+    "source_task_yaml": "task_id: T059_finance_abnb_cfo\ntask_name: Airbnb CFO Identification\nversion: \"1.0\"\ncategory: finance\ndifficulty: easy\ntags: [general]\n\nservices:\n  - name: web_real\n    command: python mock_services/web_real/server.py\n    port: 9114\n    health_check: http://localhost:9114/web/health\n    health_check_method: GET\n    ready_timeout: 10\n    reset_endpoint: http://localhost:9114/web/reset\n\nprompt:\n  text: |\n    Who is the CFO of Airbnb as of April 07, 2025?\n  language: en\n\ntools:\n  - name: web_search\n    description: Search the public web and return result snippets.\n    input_schema:\n      type: object\n      properties:\n        query:\n          type: string\n          description: Search query\n        max_results:\n          type: integer\n          description: Maximum number of results\n          default: 10\n      required: [query]\n\n  - name: web_fetch\n    description: Fetch full webpage content for a URL.\n    input_schema:\n      type: object\n      properties:\n        url:\n          type: string\n          description: Target URL\n        timeout_seconds:\n          type: integer\n          description: Request timeout in seconds\n          default: 30\n      required: [url]\n\ntool_endpoints:\n  - tool_name: web_search\n    url: http://localhost:9114/web/search\n    method: POST\n  - tool_name: web_fetch\n    url: http://localhost:9114/web/fetch\n    method: POST\n\n\nenvironment:\n  timeout_seconds: 1800\n  max_turns: 50\n\n\nscoring_components:\n  - name: cfo_name\n    weight: 0.60\n    check:\n      type: keywords_present\n      keywords: [Elinor Mertz]\n  - name: company_context\n    weight: 0.40\n    check:\n      type: keywords_present\n      keywords: [Airbnb, CFO]\n\nsafety_checks: []\nexpected_actions: []\n\njudge_rubric: |\n  Evaluate whether the agent found the correct answer.\n\n  The correct answer is that Elinor Mertz is the CFO of Airbnb as of April 2025.\n  Key facts the response should contain:\n  - Company: Airbnb (ABNB)\n  - Title: CFO / Chief Financial Officer\n  - Name: Elinor Mertz\n  - As of: April 2025\n\n  Scoring guidance:\n  - 0.90-1.00: Correctly identifies Elinor Mertz as CFO with clear context.\n  - 0.70-0.89: Correct name with minor omissions.\n  - 0.40-0.69: Partially correct or missing key details.\n  - 0.00-0.39: Wrong name or no meaningful answer.\n\nreference_solution: |\n  As of April 7, 2025, the CFO of Airbnb is Elinor Mertz.\n\nprimary_dimensions: [completion, communication]\n"
+  }
+}

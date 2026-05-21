@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "task_id": 500065,
+    "metaclass": "claw-eval",
+    "class": "finance",
+    "description": "US Steel FY2024 Inventory Turnover",
+    "sites_involved": [
+      "web"
+    ],
+    "platform": "claw-eval",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "source_task_id": "T065_finance_x_inv_turnover",
+    "source_task_name": "US Steel FY2024 Inventory Turnover",
+    "source_version": "1.0",
+    "source_difficulty": "easy",
+    "source_tags": [
+      "general"
+    ],
+    "source_language": "en"
+  },
+  "instruction": "Calculate the inventory turnover ratio for United States Steel Corporation (X) in FY2024.\n\n---\nWhen you have completed the research and are ready to give the final answer, open http://127.0.0.1:7878/submit in the browser and submit your final answer there. Submit only after you are satisfied that the answer fulfills the task.",
+  "eval_schema": {
+    "url_pattern": "/api/task-submit",
+    "method": "POST"
+  },
+  "time_limit": 30.0,
+  "judge_context": {
+    "rubric": "Evaluate whether the calculation methodology is correct and the answer is accurate.\n\nThe correct answer is approximately 6.55 for United States Steel Corporation (ticker: X) FY2024 inventory turnover.\nKey facts the response should contain:\n- Company: United States Steel Corporation (X)\n- Period: FY2024\n- COGS: approximately $14,060 million\n- Beginning inventory: approximately $2,168 million\n- Ending inventory: approximately $2,128 million\n- Average inventory: approximately $2,148 million\n- Inventory turnover ratio: approximately 6.55\n\nThe agent should:\n1) Find US Steel FY2024 COGS from real financial data\n2) Find beginning and ending inventory figures\n3) Calculate average inventory = (beginning + ending) / 2\n4) Calculate inventory turnover = COGS / average inventory\n\nScoring guidance:\n- 0.90-1.00: Answer is approximately 6.55 with all four steps and key facts present\n- 0.70-0.89: Answer is close (6.3-6.8) with correct methodology\n- 0.40-0.69: Correct methodology but answer is materially off, or missing steps\n- 0.00-0.39: Wrong methodology or no meaningful calculation\n",
+    "reference_solution": "US Steel FY2024: COGS ~$14,060M; beginning inventory ~$2,168M, ending inventory ~$2,128M.\nAverage inventory = (2,168 + 2,128) / 2 = $2,148M.\nInventory turnover = 14,060 / 2,148 ≈ 6.55.\n",
+    "source_task_yaml": "task_id: T065_finance_x_inv_turnover\ntask_name: US Steel FY2024 Inventory Turnover\nversion: \"1.0\"\ncategory: finance\ndifficulty: easy\ntags: [general]\n\nservices:\n  - name: web_real\n    command: python mock_services/web_real/server.py\n    port: 9114\n    health_check: http://localhost:9114/web/health\n    health_check_method: GET\n    ready_timeout: 10\n    reset_endpoint: http://localhost:9114/web/reset\n\nprompt:\n  text: |\n    Calculate the inventory turnover ratio for United States Steel Corporation (X) in FY2024.\n  language: en\n\ntools:\n  - name: web_search\n    description: Search the public web and return result snippets.\n    input_schema:\n      type: object\n      properties:\n        query:\n          type: string\n          description: Search query\n        max_results:\n          type: integer\n          description: Maximum number of results\n          default: 10\n      required: [query]\n\n  - name: web_fetch\n    description: Fetch full webpage content for a URL.\n    input_schema:\n      type: object\n      properties:\n        url:\n          type: string\n          description: Target URL\n        timeout_seconds:\n          type: integer\n          description: Request timeout in seconds\n          default: 30\n      required: [url]\n\ntool_endpoints:\n  - tool_name: web_search\n    url: http://localhost:9114/web/search\n    method: POST\n  - tool_name: web_fetch\n    url: http://localhost:9114/web/fetch\n    method: POST\n\n\nenvironment:\n  timeout_seconds: 1800\n  max_turns: 50\n\nscoring_components:\n  - name: turnover_ratio\n    weight: 0.40\n    check:\n      type: keywords_present\n      keywords: [\"6.55\"]\n  - name: supporting_figures\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [\"14,060\", \"2,148\"]\n  - name: context\n    weight: 0.30\n    check:\n      type: keywords_present\n      keywords: [US Steel, inventory turnover, FY2024]\n\nsafety_checks: []\nexpected_actions: []\n\njudge_rubric: |\n  Evaluate whether the calculation methodology is correct and the answer is accurate.\n\n  The correct answer is approximately 6.55 for United States Steel Corporation (ticker: X) FY2024 inventory turnover.\n  Key facts the response should contain:\n  - Company: United States Steel Corporation (X)\n  - Period: FY2024\n  - COGS: approximately $14,060 million\n  - Beginning inventory: approximately $2,168 million\n  - Ending inventory: approximately $2,128 million\n  - Average inventory: approximately $2,148 million\n  - Inventory turnover ratio: approximately 6.55\n\n  The agent should:\n  1) Find US Steel FY2024 COGS from real financial data\n  2) Find beginning and ending inventory figures\n  3) Calculate average inventory = (beginning + ending) / 2\n  4) Calculate inventory turnover = COGS / average inventory\n\n  Scoring guidance:\n  - 0.90-1.00: Answer is approximately 6.55 with all four steps and key facts present\n  - 0.70-0.89: Answer is close (6.3-6.8) with correct methodology\n  - 0.40-0.69: Correct methodology but answer is materially off, or missing steps\n  - 0.00-0.39: Wrong methodology or no meaningful calculation\n\nreference_solution: |\n  US Steel FY2024: COGS ~$14,060M; beginning inventory ~$2,168M, ending inventory ~$2,128M.\n  Average inventory = (2,168 + 2,128) / 2 = $2,148M.\n  Inventory turnover = 14,060 / 2,148 ≈ 6.55.\n\nprimary_dimensions: [completion, communication]\n"
+  }
+}

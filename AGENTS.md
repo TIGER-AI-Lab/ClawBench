@@ -4,7 +4,7 @@ This file is for coding agents (Claude Code, Cursor, Copilot, etc.) to understan
 
 ## What This Is
 
-ClawBench is a benchmarking framework for evaluating AI web agents on real-world online tasks. V1 lives in `test-cases/v1/` with 153 tasks spanning 144 live websites and 15 life categories; V2 lives in `test-cases/v2/` with 130 tasks; Lite lives in `test-cases/v1-lite/` with 20 link-backed V1 tasks. Each task runs in an isolated Docker container with Chromium, a recording Chrome extension, and an AI agent harness (`openclaw`, `opencode`, `claude-code`, `claude-code-chrome-extension`, `codex`, `browser-use`, `claw-code`, or `hermes`, selectable via `--harness`). The framework captures five layers of data: session replay (MP4), action screenshots, HTTP traffic, browser actions, and agent messages.
+ClawBench is a benchmarking framework for evaluating AI web agents on real-world online tasks. V1 lives in `test-cases/v1/` with 153 tasks spanning 144 live websites and 15 life categories; V2 lives in `test-cases/v2/` with 130 tasks; Lite lives in `test-cases/v1-lite/` with 20 link-backed V1 tasks. Each task runs in an isolated Docker container with  a browser, a recording Chrome extension, and an AI agent harness (`openclaw`, `opencode`, `claude-code`, `claude-code-chrome-extension`, `codex`, `browser-use`, `claw-code`, `hermes`, or `pi`, selectable via `--harness`). The framework captures five layers of data: session replay (MP4), action screenshots, HTTP traffic, browser actions, and agent messages.
 
 ## Project Structure
 
@@ -19,8 +19,8 @@ ClawBench/
       runner/
         run.py                    # Single test-case runner
         batch.py                  # Batch runner (model x case cross-product)
+        run_support/              # Runner-private helpers for single runs
       utils/
-        generate_resume_pdf.py    # Resume PDF generator
         hf_upload.py              # Optional HuggingFace upload helpers
       runtime/
         shared/
@@ -125,7 +125,12 @@ test-output/<model>/<harness>-<case>-<model>-<timestamp>/
                             #   `result`, `state`, `metadata` fields;
                             #   hermes → live `session_meta`/`thinking`/`reasoning`/
                             #   `tool_use`/`tool_result` capture, falling back to
-                            #   Hermes session export when it contains messages)
+                            #   Hermes session export when it contains messages;
+                            #   pi → filtered Pi JSON mode events with
+                            #   `message_start`/`message_end`,
+                            #   `tool_execution_*`, tool-call content, and
+                            #   thinking blocks; streaming `message_update`
+                            #   fragments are omitted)
     screenshots/            # Timestamped PNGs
     recording.mp4           # Full session video
     interception.json       # Interception result

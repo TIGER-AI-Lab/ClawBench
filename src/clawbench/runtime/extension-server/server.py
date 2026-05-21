@@ -13,6 +13,7 @@ import urllib.request
 
 import websocket
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 
 DATA_DIR = Path(os.environ.get("CLAWBENCH_DATA_DIR", "/data"))
 ACTIONS_FILE = DATA_DIR / "actions.jsonl"
@@ -349,6 +350,102 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/api/status")
 async def status():
     return {"status": "ok", "eval_interceptor_ready": eval_interceptor_ready}
+
+
+@app.get("/submit", response_class=HTMLResponse)
+async def submit_page():
+    return """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Submit Final Answer</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f6f7f9;
+      color: #202124;
+    }
+    main {
+      max-width: 820px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 650;
+      margin: 0 0 16px;
+    }
+    textarea {
+      box-sizing: border-box;
+      width: 100%;
+      min-height: 340px;
+      resize: vertical;
+      border: 1px solid #c5c9d1;
+      border-radius: 6px;
+      padding: 14px;
+      font: 15px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: white;
+    }
+    button {
+      margin-top: 14px;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 650;
+      background: #1a73e8;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.65;
+      cursor: default;
+    }
+    #status {
+      margin-top: 12px;
+      color: #5f6368;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Submit Final Answer</h1>
+    <form id="answer-form">
+      <textarea id="answer" name="answer" autofocus required></textarea>
+      <button type="submit">Submit</button>
+      <div id="status" role="status"></div>
+    </form>
+  </main>
+  <script>
+    const form = document.getElementById("answer-form");
+    const answer = document.getElementById("answer");
+    const status = document.getElementById("status");
+    const button = form.querySelector("button");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      status.textContent = "Submitting...";
+      try {
+        await fetch("/api/task-submit", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({answer: answer.value})
+        });
+        status.textContent = "Submitted.";
+      } catch (_) {
+        status.textContent = "Submitted.";
+      }
+    });
+  </script>
+</body>
+</html>"""
+
+
+@app.post("/api/task-submit")
+async def task_submit(data: dict):
+    return {"status": "received", "answer_length": len(str(data.get("answer", "")))}
 
 
 @app.post("/api/action")
