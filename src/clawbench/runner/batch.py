@@ -47,7 +47,7 @@ CASE_SUITES = {
     "v2": "test-cases/v2",
     "v1-lite": "test-cases/v1-lite",
 }
-DEFAULT_CASES_SUITE = "v1"
+DEFAULT_CASES_SUITE = "v2"
 
 
 def load_models_yaml() -> dict:
