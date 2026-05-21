@@ -2,7 +2,7 @@
 title: ClawBench v2 + HF Dataset Announcement Update
 date: 2026-05-09
 status: draft (awaiting user approval)
-owner: nick (collaborator with reacher-z)
+owner: reacher-z
 ---
 
 # ClawBench v2 Update + HF Dataset Announcement — Design
@@ -50,9 +50,11 @@ Concrete edits:
 3. **HF `NAIL-Group/ClawBenchV1Trace` card** (currently empty):
    - Write full `README.md` covering: what's in it (5-layer trace per task per model), file layout, model coverage, how to load (Datasets API + raw download), citation block, link back to `ClawBench` task definitions and to the GitHub repo.
 
-**Open question for user**:
-- Q1.1: Confirm the V1Trace dataset content is the 5-layer recording per task per model. If not, give one-line content description so the V1Trace card README is accurate.
-- Q1.2: Should the "Built by ZJU-REAL" tagline (README line 68) stay, or change to `NAIL Group` (matches the HF org)?
+4. **Clean up "Built by ZJU-REAL" tagline** (README line 68): user confirmed this is historical legacy, not their attribution. Default action: replace with `Built by NAIL Group` to match the HF org. (Alt: remove the "Built by ..." part entirely, keep just the sister-project + Chrome line. → Q1.2.) The `ZJU-REAL` link in the awesome-lists badges (line 31) is a third-party featured-list reference and stays.
+
+**Open questions for user**:
+- Q1.1: Confirm the V1Trace dataset content is the 5-layer recording per task per model (DOM, network, screenshots, action trace, console). If not, give one-line content description so the V1Trace card README is accurate.
+- Q1.2: For the line-68 cleanup — `Built by NAIL Group` (default) vs remove the "Built by ..." prefix entirely?
 
 ### Workstream 2 — Homepage v1/v2 tab switcher (ship within the week)
 

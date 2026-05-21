@@ -36,10 +36,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-PKG = Path(__file__).resolve().parent.parent / "src"
-if str(PKG) not in sys.path:
-    sys.path.insert(0, str(PKG))
-
 import yaml
 
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}

@@ -65,10 +65,9 @@ def download(model: str, dest: Path) -> Path:
 
 
 def rescore(batch_dir: Path, judge_model: str, rubric: str) -> dict[str, Any]:
-    """Invoke clawbench_rescore on the downloaded batch dir."""
-    script = Path(__file__).resolve().parent / "clawbench_rescore.py"
+    """Invoke clawbench-rescore on the downloaded batch dir."""
     cmd = [
-        sys.executable, str(script),
+        sys.executable, "-m", "clawbench.eval.rescore",
         "--only-batch", str(batch_dir),
         "--judge-model", judge_model,
         "--rubric", rubric,
