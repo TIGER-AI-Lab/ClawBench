@@ -46,6 +46,7 @@ CASE_SUITES = {
     "v1": "test-cases/v1",
     "v2": "test-cases/v2",
     "v1-lite": "test-cases/v1-lite",
+    "claw-eval": "test-cases/claw-eval",
 }
 DEFAULT_CASES_SUITE = "v2"
 
