@@ -189,8 +189,8 @@ def main() -> int:
     p.add_argument("--sweep-root", type=Path,
                    default=Path.home() / "work/ClawBench/claw-output/sweep")
     p.add_argument("--judge-model", default="deepseek-v4-pro",
-                   help="Model key in models/models.yaml used to judge (default ds-v4-pro, "
-                        "same model used for our published leaderboard).")
+                   help="Model key in models/models.yaml used to judge "
+                        "(default deepseek-v4-pro, same model used for our published leaderboard).")
     p.add_argument("--models-yaml", type=Path,
                    default=Path.home() / "work/ClawBench/models/models.yaml")
     p.add_argument("--rubric", choices=["lenient", "strict", "both"], default="lenient",
