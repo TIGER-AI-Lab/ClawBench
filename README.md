@@ -275,50 +275,39 @@ This path gives you live-reload on ``src/``, ``src/clawbench/runtime/chrome-exte
 
 # <img src="static/icons/check-double.svg" width="28" height="28"> Reproduce the leaderboard
 
-> **Our experiments show the scores are stable.** Two independent runs of the same model × harness × corpus under the same judge (`deepseek/deepseek-v4-pro`, lenient rubric) reproduce Intercepted and Reward within ±2 pp on the V2 130-task corpus. Recipe below.
+> **Our scores are stable**: two independent runs of the same model under the same judge (`deepseek/deepseek-v4-pro`, lenient rubric) reproduce Intercepted and Reward within ±2 pp on the V2 130-task corpus.
 
-The fastest reproduction is **DeepSeek V4 Flash on OpenRouter** (cheap, ~$5 per full V2 sweep, no waitlist).
+There are **two ways** to verify this on your own machine.
 
-### Step 1 — Run the agent
+### Path A — Re-run the agent, then score
+
+Confirms the *full pipeline* (your agent + our judge) lines up with our leaderboard row.
 
 ```bash
-# Add your OpenRouter key to models/models.yaml as `deepseek/deepseek-v4-flash`
-# (base_url: https://openrouter.ai/api/v1, api_type: openai-completions)
-
-# One-shot mode (RUN + JUDGE in the same command, default judge is deepseek/deepseek-v4-pro)
-uv run clawbench-batch \
-  --models deepseek/deepseek-v4-flash \
-  --cases-suite v2 --all-cases \
-  --harness hermes \
-  --max-concurrent 1 --stagger-delay 30 \
-  --output-dir ./my-rerun
-
-# OR two-stage mode (run first, judge later — useful when you want to try multiple rubrics)
-uv run clawbench-batch ... --no-judge       # produces raw traces only
-# ...later:
-uv run python scripts/clawbench_rescore.py ./my-rerun --judge deepseek/deepseek-v4-pro
+clawbench-batch --models deepseek/deepseek-v4-flash --cases-suite v2 \
+  --all-cases --harness hermes --no-judge --output-dir ./my-run
+clawbench-rescore ./my-run --judge-model deepseek-v4-pro --rubric both
 ```
 
-### Step 2 — Score (or skip the run and score our traces)
+### Path B — Skip the run, re-judge our published traces
 
-Two equivalent paths:
-
-**(a) Score your own fresh run** — `scripts/clawbench_rescore.py` walks each task dir, calls `deepseek/deepseek-v4-pro` on the intercepted HTTP payload, and writes `judge.json` per task + `rescore-summary.json` per batch.
-
-**(b) Skip the run, score our published traces** — download our DeepSeek V4 Flash V2 trace from [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) and re-judge:
+Confirms *just the judge* matches ours (cheap, no agent compute, useful for sanity-checking your judge config).
 
 ```bash
 hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace \
-  --include "batch-aligned-*/deepseek-v4-flash-free/**" \
-  --local-dir ./reproduce
-uv run python scripts/clawbench_rescore.py ./reproduce --judge deepseek/deepseek-v4-pro
+  --include "batch-aligned-*/deepseek-v4-flash-free/**" --local-dir ./reproduce
+clawbench-rescore ./reproduce --judge-model deepseek-v4-pro --rubric both
 ```
 
-### What "reproduced" means
+One-shot equivalent of Path B for any model in the leaderboard:
 
-If your **Intercepted%**, **Reward (lenient)%**, and **Reward (strict)%** for `deepseek-v4-flash:free × hermes × v2` land within ±2 pp of our published row — **3.1% / 2.3% / 0.0% (3 / 129)** — reproduction is successful. Larger gaps point at either a different judge model, a different rubric prompt, or a harness configuration drift; in that case diff your `rescore-summary.json` against the one bundled inside the HF dataset.
+```bash
+clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
+```
 
-The same pattern works for any model in the [leaderboard above](#-leaderboard). Larger frontier models (claude-opus-4-7, gpt-5.5) cost more to re-run end-to-end but score-only path (b) is unchanged — same `clawbench_rescore.py`, point it at the relevant `batch-*/<model>/` subdir on HF.
+### Pass criterion
+
+For `deepseek-v4-flash:free × hermes × v2`, the published row is **Intercepted 3.1% / Reward-lenient 2.3% / Reward-strict 0.0% (3 / 129)**. Path A or B counts as **reproduced** when all three metrics land within ±2 pp. Larger gaps usually mean a different judge model, a different rubric prompt, or a harness configuration drift — diff your `eval_results/<batch>/summary.json` against the published row to localize the cause.
 
 <br/>
 
