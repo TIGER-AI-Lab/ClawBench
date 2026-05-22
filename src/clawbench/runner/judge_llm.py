@@ -21,6 +21,7 @@ Usage (same interface as judge.py for drop-in replacement):
     from judge_llm import judge_request
     verdict = judge_request(model_cfg, judge_model, instruction, intercept)
 """
+
 from __future__ import annotations
 
 import json
@@ -90,9 +91,13 @@ def _build_user_msg(instruction: str, intercept: dict[str, Any]) -> str:
     )
 
 
-def _post_json(url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int = 60) -> dict[str, Any]:
+def _post_json(
+    url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int = 60
+) -> dict[str, Any]:
     data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={**headers, "Content-Type": "application/json"})
+    req = urllib.request.Request(
+        url, data=data, headers={**headers, "Content-Type": "application/json"}
+    )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read())
 
@@ -113,7 +118,9 @@ def _call_openai_chat(model_cfg: dict, model_name: str, system: str, user: str) 
     return resp["choices"][0]["message"]["content"]
 
 
-def _call_anthropic_messages(model_cfg: dict, model_name: str, system: str, user: str) -> str:
+def _call_anthropic_messages(
+    model_cfg: dict, model_name: str, system: str, user: str
+) -> str:
     base = model_cfg.get("base_url", "https://api.anthropic.com").rstrip("/")
     url = f"{base}/v1/messages"
     headers = {
@@ -129,7 +136,11 @@ def _call_anthropic_messages(model_cfg: dict, model_name: str, system: str, user
     }
     resp = _post_json(url, headers, payload)
     content = resp.get("content", [])
-    return "".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text")
+    return "".join(
+        b.get("text", "")
+        for b in content
+        if isinstance(b, dict) and b.get("type") == "text"
+    )
 
 
 def _parse_verdict(raw: str) -> tuple[bool, str]:
@@ -146,12 +157,18 @@ def _parse_verdict(raw: str) -> tuple[bool, str]:
     except Exception:
         # Fall back to keyword scan, defaulting to TRUE (per lenient rubric)
         low = raw.lower()
-        if "false" in low and "match" in low and low.find("false") - low.find("match") < 80:
+        if (
+            "false" in low
+            and "match" in low
+            and low.find("false") - low.find("match") < 80
+        ):
             return False, raw[:200]
         return True, raw[:200]
 
 
-def judge_request(model_cfg: dict, judge_model_name: str, instruction: str, intercept: dict[str, Any]) -> dict[str, Any]:
+def judge_request(
+    model_cfg: dict, judge_model_name: str, instruction: str, intercept: dict[str, Any]
+) -> dict[str, Any]:
     """Run a single lenient judge call. Returns dict with keys match/reason/judge_model/raw/error."""
     system = JUDGE_SYSTEM
     user = _build_user_msg(instruction, intercept)
@@ -163,20 +180,37 @@ def judge_request(model_cfg: dict, judge_model_name: str, instruction: str, inte
             if api_type in ("openai-completions", "openai-responses"):
                 raw = _call_openai_chat(model_cfg, judge_model_name, system, user)
             elif api_type == "anthropic-messages":
-                raw = _call_anthropic_messages(model_cfg, judge_model_name, system, user)
+                raw = _call_anthropic_messages(
+                    model_cfg, judge_model_name, system, user
+                )
             else:
-                raise NotImplementedError(f"judge_llm: unsupported api_type {api_type!r}")
+                raise NotImplementedError(
+                    f"judge_llm: unsupported api_type {api_type!r}"
+                )
             break
         except urllib.error.HTTPError as e:
             err = f"http_{e.code}"
             if e.code in (429, 500, 502, 503):
-                time.sleep(2 ** attempt)
+                time.sleep(2**attempt)
                 continue
             break
         except Exception as e:
             err = f"err_{type(e).__name__}: {e}"
             break
     if not raw:
-        return {"match": None, "reason": "", "judge_model": judge_model_name, "raw": "", "error": err, "rubric": "lenient"}
+        return {
+            "match": None,
+            "reason": "",
+            "judge_model": judge_model_name,
+            "raw": "",
+            "error": err,
+            "rubric": "lenient",
+        }
     m, reason = _parse_verdict(raw)
-    return {"match": m, "reason": reason, "judge_model": judge_model_name, "raw": raw[:500], "rubric": "lenient"}
+    return {
+        "match": m,
+        "reason": reason,
+        "judge_model": judge_model_name,
+        "raw": raw[:500],
+        "rubric": "lenient",
+    }

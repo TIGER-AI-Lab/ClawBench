@@ -25,12 +25,12 @@ Outputs:
                                     match_lenient + match_strict + reasons
     summary.json                    overall %s formatted XX.X%
 """
+
 from __future__ import annotations
 
 import argparse
 import csv
 import json
-import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -45,8 +45,14 @@ def find_run_dirs(root: Path) -> list[Path]:
     return [p.parent for p in root.rglob("run-meta.json")]
 
 
-def rescore_one(model_cfg: dict, judge_model: str, run_dir: Path,
-                force: bool, rubrics: list[str], judge_funcs: dict) -> dict[str, Any]:
+def rescore_one(
+    model_cfg: dict,
+    judge_model: str,
+    run_dir: Path,
+    force: bool,
+    rubrics: list[str],
+    judge_funcs: dict,
+) -> dict[str, Any]:
     """Run each rubric's judge. Returns {rubric: verdict_dict}."""
     out: dict[str, Any] = {}
     meta_p = run_dir / "run-meta.json"
@@ -148,8 +154,13 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
     return out
 
 
-def write_eval_results(batch_dir: Path, roll: dict[str, Any], rubrics: list[str],
-                       model_label: str, eval_dir: Path) -> None:
+def write_eval_results(
+    batch_dir: Path,
+    roll: dict[str, Any],
+    rubrics: list[str],
+    model_label: str,
+    eval_dir: Path,
+) -> None:
     """Write per-task CSV + summary JSON to eval_results/<batch_name>/."""
     out_dir = eval_dir / batch_dir.name
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -170,47 +181,75 @@ def write_eval_results(batch_dir: Path, roll: dict[str, Any], rubrics: list[str]
         "batch_dir": str(batch_dir),
         "n_total": n,
         "n_intercepted": roll["n_intercepted"],
-        "intercepted_pct": f"{100*roll['n_intercepted']/n:.1f}%" if n else "0.0%",
+        "intercepted_pct": f"{100 * roll['n_intercepted'] / n:.1f}%" if n else "0.0%",
     }
     for r in rubrics:
-        summary[f"reward_{r}_pct"] = f"{100*roll[f'reward_pct_{r}']:.1f}%"
+        summary[f"reward_{r}_pct"] = f"{100 * roll[f'reward_pct_{r}']:.1f}%"
         summary[f"match_{r}"] = roll[f"n_match_{r}"]
         summary[f"mismatch_{r}"] = roll[f"n_mismatch_{r}"]
         summary[f"judge_err_{r}"] = roll[f"n_judge_err_{r}"]
     summary["judge_model"] = roll.get("judge_model")
     summary["rubrics"] = rubrics
-    (out_dir / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False))
+    (out_dir / "summary.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False)
+    )
     print(f"  eval_results written to {out_dir}/")
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--sweep-root", type=Path,
-                   default=Path.home() / "work/ClawBench/claw-output/sweep")
-    p.add_argument("--judge-model", default="deepseek-v4-pro",
-                   help="Model key in models/models.yaml used to judge "
-                        "(default deepseek-v4-pro, same model used for our published leaderboard).")
-    p.add_argument("--models-yaml", type=Path,
-                   default=Path.home() / "work/ClawBench/models/models.yaml")
-    p.add_argument("--rubric", choices=["lenient", "strict", "both"], default="lenient",
-                   help="Judge rubric. Default 'lenient' matches the public leaderboard. "
-                        "'strict' is the conservative original. 'both' runs both.")
-    p.add_argument("--eval-results-dir", type=Path,
-                   default=Path("eval_results"),
-                   help="Where to write per-task CSV + summary JSON (default ./eval_results/)")
-    p.add_argument("--no-eval-results", action="store_true",
-                   help="Skip writing the eval_results/ artifact")
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    p.add_argument(
+        "--sweep-root",
+        type=Path,
+        default=Path.home() / "work/ClawBench/claw-output/sweep",
+    )
+    p.add_argument(
+        "--judge-model",
+        default="deepseek-v4-pro",
+        help="Model key in models/models.yaml used to judge "
+        "(default deepseek-v4-pro, same model used for our published leaderboard).",
+    )
+    p.add_argument(
+        "--models-yaml",
+        type=Path,
+        default=Path.home() / "work/ClawBench/models/models.yaml",
+    )
+    p.add_argument(
+        "--rubric",
+        choices=["lenient", "strict", "both"],
+        default="lenient",
+        help="Judge rubric. Default 'lenient' matches the public leaderboard. "
+        "'strict' is the conservative original. 'both' runs both.",
+    )
+    p.add_argument(
+        "--eval-results-dir",
+        type=Path,
+        default=Path("eval_results"),
+        help="Where to write per-task CSV + summary JSON (default ./eval_results/)",
+    )
+    p.add_argument(
+        "--no-eval-results",
+        action="store_true",
+        help="Skip writing the eval_results/ artifact",
+    )
     p.add_argument("--workers", type=int, default=4)
-    p.add_argument("--force", action="store_true",
-                   help="Re-judge tasks that already have the rubric's judge file")
+    p.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-judge tasks that already have the rubric's judge file",
+    )
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--only-batch", type=Path, default=None)
     args = p.parse_args()
 
     cfg_all = yaml.safe_load(args.models_yaml.read_text())
     if args.judge_model not in cfg_all:
-        print(f"ERROR: judge model {args.judge_model!r} not in {args.models_yaml}", file=sys.stderr)
+        print(
+            f"ERROR: judge model {args.judge_model!r} not in {args.models_yaml}",
+            file=sys.stderr,
+        )
         return 2
     judge_cfg = dict(cfg_all[args.judge_model])
     if not judge_cfg.get("api_key"):
@@ -221,12 +260,18 @@ def main() -> int:
     judge_funcs = {}
     if "strict" in rubrics:
         from clawbench.runner.judge import judge_request as judge_strict
+
         judge_funcs["strict"] = judge_strict
     if "lenient" in rubrics:
         from clawbench.runner.judge_llm import judge_request as judge_lenient
+
         judge_funcs["lenient"] = judge_lenient
 
-    run_dirs = find_run_dirs(args.only_batch) if args.only_batch else find_run_dirs(args.sweep_root)
+    run_dirs = (
+        find_run_dirs(args.only_batch)
+        if args.only_batch
+        else find_run_dirs(args.sweep_root)
+    )
 
     pending = []
     for rd in run_dirs:
@@ -234,7 +279,9 @@ def main() -> int:
             m = json.loads((rd / "run-meta.json").read_text())
             if not m.get("intercepted"):
                 continue
-            needs = any(args.force or not (rd / JUDGE_FILE[r]).exists() for r in rubrics)
+            needs = any(
+                args.force or not (rd / JUDGE_FILE[r]).exists() for r in rubrics
+            )
             if needs:
                 pending.append(rd)
         except Exception:
@@ -242,20 +289,32 @@ def main() -> int:
     if args.limit:
         pending = pending[: args.limit]
 
-    print(f"discovered {len(run_dirs)} tasks, judging {len(pending)} intercepted "
-          f"ones with {args.judge_model} (rubrics: {rubrics})")
+    print(
+        f"discovered {len(run_dirs)} tasks, judging {len(pending)} intercepted "
+        f"ones with {args.judge_model} (rubrics: {rubrics})"
+    )
 
     judged = 0
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futs = {ex.submit(rescore_one, judge_cfg, args.judge_model, rd, args.force, rubrics, judge_funcs): rd
-                for rd in pending}
+        futs = {
+            ex.submit(
+                rescore_one,
+                judge_cfg,
+                args.judge_model,
+                rd,
+                args.force,
+                rubrics,
+                judge_funcs,
+            ): rd
+            for rd in pending
+        }
         for fut in as_completed(futs):
             rd = futs[fut]
             try:
                 vmap = fut.result()
                 judged += 1
                 tags = " ".join(
-                    f"{r}={ {True:'M', False:'.', None:'?'}.get(vmap.get(r, {}).get('match'), '?') }"
+                    f"{r}={ {True: 'M', False: '.', None: '?'}.get(vmap.get(r, {}).get('match'), '?') }"
                     for r in rubrics
                 )
                 print(f"  [{judged}/{len(pending)}] {tags} {rd.name[:80]}")
@@ -265,10 +324,18 @@ def main() -> int:
     if args.only_batch:
         batches = [args.only_batch]
     else:
-        batches = sorted({
-            next((p for p in run.parents if p.name.startswith("batch-")), None)
-            for run in run_dirs
-        } - {None})
+        batches = sorted(
+            {
+                batch
+                for run in run_dirs
+                if (
+                    batch := next(
+                        (p for p in run.parents if p.name.startswith("batch-")), None
+                    )
+                )
+                is not None
+            }
+        )
     print(f"\nrolling up {len(batches)} batches:")
     for bd in batches:
         try:
@@ -278,7 +345,9 @@ def main() -> int:
             continue
         roll["judge_model"] = args.judge_model
         roll["rubrics"] = rubrics
-        (bd / "rescore-summary.json").write_text(json.dumps(roll, indent=2, ensure_ascii=False))
+        (bd / "rescore-summary.json").write_text(
+            json.dumps(roll, indent=2, ensure_ascii=False)
+        )
         s1 = roll["pass_rate_stage1_only"] * 100
         parts = [f"intercept={roll['n_intercepted']}/{roll['n_total']} ({s1:.1f}%)"]
         for r in rubrics:
