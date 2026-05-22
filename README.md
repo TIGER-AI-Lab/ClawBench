@@ -732,13 +732,13 @@ Same scoring pipeline, orthogonal axis. ClawBench fixes the harness and varies t
 If you use ClawBench in your research, please cite:
 
 ```bibtex
-@misc{zhang2026clawbench,
+@misc{zhang2026clawbenchaiagentscomplete,
   title         = {ClawBench: Can AI Agents Complete Everyday Online Tasks?},
   author        = {Yuxuan Zhang and Yubo Wang and Yipeng Zhu and Penghui Du and Junwen Miao and Xuan Lu and Wendong Xu and Yunzhuo Hao and Songcheng Cai and Xiaochen Wang and Huaisong Zhang and Xian Wu and Yi Lu and Minyi Lei and Kai Zou and Huifeng Yin and Ping Nie and Liang Chen and Dongfu Jiang and Wenhu Chen and Kelsey R. Allen},
   year          = {2026},
   eprint        = {2604.08523},
   archivePrefix = {arXiv},
-  primaryClass  = {cs.AI},
+  primaryClass  = {cs.CL},
   url           = {https://arxiv.org/abs/2604.08523}
 }
 ```
