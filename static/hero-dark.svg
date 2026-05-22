@@ -36,7 +36,7 @@
 
   <rect x="100" y="118" width="180" height="3" rx="1.5" fill="url(#accent)" opacity="0.95"/>
 
-  <text x="100" y="102" font-family="'Inter','SF Pro Text','Avenir Next',-apple-system,Segoe UI,sans-serif" font-size="18" font-weight="600" letter-spacing="2.8" fill="#94a3b8">REAL&#8209;WORLD&#160;BROWSER&#160;AGENT&#160;BENCHMARK&#160;&#8226;&#160;153&#160;TASKS&#160;&#8226;&#160;144&#160;LIVE&#160;WEBSITES</text>
+  <text x="100" y="102" font-family="'Inter','SF Pro Text','Avenir Next',-apple-system,Segoe UI,sans-serif" font-size="18" font-weight="600" letter-spacing="2.8" fill="#94a3b8">REAL&#8209;WORLD&#160;BROWSER&#160;AGENT&#160;BENCHMARK&#160;&#8226;&#160;130&#160;TASKS&#160;&#8226;&#160;64&#160;LIVE&#160;WEBSITES</text>
 
   <text x="100" y="232" font-family="'Iowan Old Style',Palatino,Georgia,'Times New Roman',serif" font-size="128" font-weight="700" fill="#e4e8ef" letter-spacing="-2">Claw<tspan fill="url(#violet)">Bench</tspan></text>
 

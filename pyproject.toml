@@ -26,6 +26,8 @@ Paper = "https://arxiv.org/abs/2604.08523"
 clawbench = "clawbench.tui:main"
 clawbench-run = "clawbench.runner.run:main"
 clawbench-batch = "clawbench.runner.batch:main"
+clawbench-rescore = "clawbench.eval.rescore:main"
+clawbench-reproduce = "clawbench.eval.reproduce:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clawbench"]

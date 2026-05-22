@@ -143,31 +143,18 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 </tr>
 </table>
 
-## <img src="static/icons/bullhorn.svg" width="20" height="20"> News
+## News
 
-- **[2026.05.16]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Added a converted **Claw-Eval** suite in [`test-cases/claw-eval/`](test-cases/claw-eval/) — 19 browser-research tasks ported into native flat task JSON files with final-answer submission through ClawBench's request interceptor. Run with `uv run clawbench-batch --models <model-name> --cases-suite claw-eval --all-cases`.
-- **[2026.05.12]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;Canonical leaderboard moved to **[`TIGER-Lab/ClawBench`](https://huggingface.co/spaces/TIGER-Lab/ClawBench)** — Gradio 3-tab Space (Leaderboard / About / Submit) modeled after [`TIGER-Lab/MMLU-Pro`](https://huggingface.co/spaces/TIGER-Lab/MMLU-Pro). All HF assets bundled in the **[ClawBench collection](https://huggingface.co/collections/TIGER-Lab/clawbench-6a0247d04680f475038797d4)** — paper + V1/V2 dataset + V1Trace + V2Trace + Space. Ranking corrected: partial-batch results no longer outrank complete ones with lower reward. ([`NAIL-Group/clawbench-leaderboard`](https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard) remains live as the historical mirror.)
-- **[2026.05.11]** <img src="static/icons/chart-bar.svg" width="14" height="14"> &nbsp;V2 leaderboard ships — first 6 models scored end-to-end with two-stage rubric (interception + LLM judge). Top so far: `glm-5.1 / hermes` at **18.5% reward / 48.5% intercepted**. See [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard), scoring details in [`eval/scoring.md`](eval/scoring.md), live data on the [HF Space](https://huggingface.co/spaces/TIGER-Lab/ClawBench).
-- **[2026.05.11]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Companion trace dataset **[ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)** going live — same 5-layer trace bundle per run as V1Trace, rolling as new V2 evaluations land.
-- **[2026.05.09]** <img src="static/icons/globe.svg" width="14" height="14"> Added support for the **pi** harness — Pi coding agent + `pi-browser-harness`.
-- **[2026.05.09]** <img src="static/icons/layer-group.svg" width="14" height="14"> &nbsp;Released **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** — the full execution trace for every V1 model run: session recording (`recording.mp4`), HTTP traffic (`requests.jsonl`), browser actions (`actions.jsonl`), agent reasoning (`agent-messages.jsonl`), and the intercepted final request (`interception.json`). Anyone can reproduce, re-grade, or post-hoc analyze our results. Pairs with the existing [task-definition dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench).
-- **[2026.05.09]** <img src="static/icons/robot.svg" width="14" height="14"> &nbsp;Added an **inline LLM judge** as the second scoring stage. Pass = (1) the agent's final HTTP request is intercepted and matches the task's URL/method schema, AND (2) an LLM judge confirms the request body actually fulfills the natural-language instruction. Default judge: `deepseek-v4-pro`. Disable with `--no-judge`. This means **runs now produce a final pass/fail score automatically** — no separate trajectory inspection step.
-- **[2026.05.09]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;We have updated our release pipeline and published the package to PyPI under [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) for easier usage.
-- **[2026.05.04]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;Refactored the codebase to improve project structure, streamline the CI/CD pipeline, make it easier to extend ClawBench to additional test suites, and deliver more stable builds across **V1**, **V1-Lite**, and **V2**. The FAQ section was also updated based on user feedback.
-- **[2026.05.01]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;Added the full **V2** 130-task corpus and one-command Hermes launch:
-  `uv run clawbench-batch --models deepseek/deepseek-v4-flash --cases-suite v2 --all-cases --harness hermes --max-concurrent 3 --no-upload`
-- **[2026.04.25]**<img src="static/icons/globe.svg" width="14" height="14"> Added support for the **hermes** harness.
-- **[2026.04.22]**<img src="static/icons/rocket.svg" width="14" height="14"> Added support for the **claude-code-chrome-extension** harness — Claude Code CLI + [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension.
-- **[2026.04.20]**<img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> Added support for the **claw-code** harness.
-- **[2026.04.18]** <img src="static/icons/globe.svg" width="14" height="14"> &nbsp;Added support for the **browser-use** harness.
-- **[2026.04.17]** <img src="static/icons/rocket.svg" width="14" height="14"> &nbsp;Added support for the **Codex** harness.
-- **[2026.04.16]** <img src="static/icons/bolt.svg" width="14" height="14"> &nbsp;Added support for the **Claude Code** harness.
-- **[2026.04.16]** Featured in **5 curated awesome-lists**: [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering), [Awesome-AI-Agents](https://github.com/Jenqyang/Awesome-AI-Agents), [awesome-computer-use](https://github.com/ranpox/awesome-computer-use), [Awesome-GUI-Agents](https://github.com/ZJU-REAL/Awesome-GUI-Agents), and [LLM-Agent-Benchmark-List](https://github.com/zhangxjohn/LLM-Agent-Benchmark-List).
-- **[2026.04.15]** Sister project [**HarnessBench**](https://github.com/reacher-z/HarnessBench) launched — fixes the base model, varies the harness. Also on [PyPI](https://pypi.org/project/harness-bench/).
-- **[2026.04.14]** <img src="static/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;Added support for the **OpenCode** harness.
-- **[2026.04.14]** Project featured on [**DeepWiki**](https://deepwiki.com/reacher-z/ClawBench) — ask questions about ClawBench in natural language.
-- **[2026.04.11]** Honored to be [**#3 HuggingFace Paper of the Day**](https://huggingface.co/papers/2604.08523)!
-- **[2026.04.11]** Paper released on [arXiv (2604.08523)](https://arxiv.org/abs/2604.08523). Dataset published on [HuggingFace](https://huggingface.co/datasets/NAIL-Group/ClawBench).
+- **[2026.05.20]** — V2 is now the default corpus + lenient judge + 6 first-class harnesses. [Details →](https://github.com/reacher-z/ClawBench/blob/main/docs/v1-vs-v2.md)
+- **[2026.05.16]** — Added Claw-Eval suite: 19 browser-research tasks with final-answer submission. [Details →](test-cases/claw-eval/)
+- **[2026.05.12]** — Canonical leaderboard moved to TIGER-Lab/ClawBench Gradio Space. [Details →](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
+- **[2026.05.11]** — V2 leaderboard ships: top so far `glm-5.1 / hermes` at 18.5% reward / 48.5% intercepted. [Details →](https://claw-bench.com/leaderboard)
+- **[2026.05.09]** — Inline LLM judge added as second scoring stage; runs now auto-produce pass/fail. [Details →](docs/scoring.md)
+- **[2026.05.09]** — `clawbench-eval` package published to PyPI for one-command install. [Details →](https://pypi.org/project/clawbench-eval/)
+- **[2026.05.09]** — Released ClawBenchV1Trace: full 5-layer execution trace for every V1 run. [Details →](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
+- **[2026.04.25]** — Added support for the hermes harness. [Details →](src/clawbench/runtime/harnesses/hermes/)
+- **[2026.04.18]** — Added support for the browser-use harness. [Details →](src/clawbench/runtime/harnesses/browser-use/)
+- **[2026.04.11]** — Paper released on arXiv (2604.08523); #3 HuggingFace Paper of the Day. [Details →](https://arxiv.org/abs/2604.08523)
 
 <br/>
 
@@ -187,11 +174,11 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ClawBench ships **three** Hugging Face datasets — task definitions plus full execution traces for V1 and V2. All open, downloadable in one command. The benchmark itself is also mirrored on **TIGER-Lab** for visibility.
 
-| Dataset                                                                                        | What's in it                                                                                                                                                                                       | Get it                                                        |
-| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                               | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
-| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
-| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)** | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                        | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
+| Dataset                                                                                                                                                                          | What's in it                                                                                                                                                                                          | Get it                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                                  | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
+| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)**                                                                                   | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
@@ -361,6 +348,44 @@ This path gives you live-reload on ``src/``, ``src/clawbench/runtime/chrome-exte
 
 <br/>
 
+# <img src="static/icons/check-double.svg" width="28" height="28"> Reproduce the leaderboard
+
+> **Our scores are stable**: two independent runs of the same model under the same judge (`deepseek/deepseek-v4-pro`, lenient rubric) reproduce Intercepted and Reward within ±2 pp on the V2 130-task corpus.
+
+There are **two ways** to verify this on your own machine.
+
+### Path A — Re-run the agent, then score
+
+Confirms the *full pipeline* (your agent + our judge) lines up with our leaderboard row.
+
+```bash
+clawbench-batch --models deepseek/deepseek-v4-flash --cases-suite v2 \
+  --all-cases --harness hermes --no-judge --output-dir ./my-run
+clawbench-rescore ./my-run --judge-model deepseek-v4-pro --rubric both
+```
+
+### Path B — Skip the run, re-judge our published traces
+
+Confirms *just the judge* matches ours (cheap, no agent compute, useful for sanity-checking your judge config).
+
+```bash
+hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace \
+  --include "batch-aligned-*/deepseek-v4-flash-free/**" --local-dir ./reproduce
+clawbench-rescore ./reproduce --judge-model deepseek-v4-pro --rubric both
+```
+
+One-shot equivalent of Path B for any model in the leaderboard:
+
+```bash
+clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
+```
+
+### Pass criterion
+
+For `deepseek-v4-flash:free × hermes × v2`, the published row is **Intercepted 3.1% / Reward-lenient 2.3% / Reward-strict 0.0% (3 / 129)**. Path A or B counts as **reproduced** when all three metrics land within ±2 pp. Larger gaps usually mean a different judge model, a different rubric prompt, or a harness configuration drift — diff your `eval_results/<batch>/summary.json` against the published row to localize the cause.
+
+<br/>
+
 # <img src="static/icons/chart-bar.svg" width="28" height="28"> ClawBench-Lite
 
 **New here? Run this first.** [`test-cases/v1-lite/`](test-cases/v1-lite/) is a **20-task curated subset** of the V1 153-task corpus, selected for household-name sites, real-world relevance, difficulty, and category diversity. It matches the 20-tasks-per-source convention of [browser-use/benchmark](https://github.com/browser-use/benchmark) and gives you a credible signal at a fraction of the full-benchmark cost.
@@ -423,9 +448,67 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 
 <div align="center">
 
-**Success rate (%) of 6 frontier AI agents on ClawBench V1**
+**ClawBench leaderboard** &nbsp;&middot;&nbsp; 6 tabs by corpus × harness &nbsp;&middot;&nbsp; live at [claw-bench.com](https://claw-bench.com/)
 
 </div>
+
+<details open>
+<summary><b>V2 (Hermes)</b> &nbsp;·&nbsp; 8 models &nbsp;·&nbsp; ds-v4-pro judge, lenient + strict</summary>
+
+| Rank  | Model                  | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | ---------------------- | ------- | ----------: | ---------------: | --------------: | -----------: |
+|   1   | **claude-opus-4-7**    | hermes  |   **54.6%** |        **44.6%** |           24.6% |     58 / 130 |
+|   2   | gpt-5.5                | hermes  |       45.4% |            35.4% |           18.5% |     46 / 130 |
+|   3   | glm-5.1                | hermes  |       48.5% |            34.6% |           17.7% |     45 / 130 |
+|   4   | deepseek-v4-pro        | hermes  |       43.9% |            33.9% |           12.3% |     44 / 130 |
+|   5   | openrouter-owl-alpha   | hermes  |       14.6% |             0.0% |            0.0% |      0 / 130 |
+|   6   | z-ai/glm-4.5-air:free  | hermes  |        4.6% |             2.3% |            0.8% |      3 / 130 |
+|   7   | deepseek-v4-flash:free | hermes  |        3.1% |             2.3% |            0.0% |      3 / 129 |
+|   8   | minimax-m2.5:free      | hermes  |        2.3% |             1.5% |            0.0% |      2 / 130 |
+
+**Intercepted** = final HTTP request matched the task's URL/method (Stage 1, deterministic). **Reward (lenient)** = additionally judged by `deepseek/deepseek-v4-pro` to fulfill the instruction under the "no contradiction → match" rubric (Stage 2). **Reward (strict)** = same judge, strict rubric ("ambiguous → mismatch"). Ranked by Intercepted; Reward as tiebreak.
+
+</details>
+
+<details>
+<summary><b>V2 (OpenClaw)</b> &nbsp;·&nbsp; 1 model</summary>
+
+| Rank  | Model   | Harness  | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | ------- | -------- | ----------: | ---------------: | --------------: | -----------: |
+|   1   | glm-5.1 | openclaw |        0.0% |             0.0% |            0.0% |      0 / 130 |
+
+</details>
+
+<details>
+<summary><b>V2 (Codex)</b> &nbsp;·&nbsp; — (in progress)</summary>
+
+In-flight: gpt-5.5-oauth, gpt-5.4-oauth, gpt-5.4-mini-oauth, gpt-5.3-codex-oauth, gpt-5.3-codex-spark-oauth, gpt-5.2-oauth. Will be filled in after `judge_llm` re-judge completes.
+
+</details>
+
+<details>
+<summary><b>V2 (Claude Code)</b> &nbsp;·&nbsp; — (not yet run)</summary>
+
+—
+
+</details>
+
+<details>
+<summary><b>V1 (Hermes)</b> &nbsp;·&nbsp; 6 frontier models, original paper rubric</summary>
+
+| Rank  | Model                     | Harness | Pass Rate | Pass / Total |
+| :---: | ------------------------- | ------- | --------: | -----------: |
+|   1   | claude-opus-4-6           | hermes  |     61.4% |     94 / 153 |
+|   2   | claude-sonnet-4-6         | hermes  |     56.9% |     87 / 153 |
+|   3   | claude-haiku-4-5-20251001 | hermes  |     30.1% |     46 / 153 |
+|   4   | gpt-5.4-2026-03-05        | hermes  |     25.5% |     39 / 153 |
+|   5   | gpt-5.4-mini-2026-03-17   | hermes  |     24.8% |     38 / 153 |
+|   6   | kimi-k2.5                 | hermes  |     17.6% |     27 / 153 |
+
+V1 Pass Rate is from the original paper rubric (Claude Code agentic-eval subagent comparing each run against human reference trajectories under `eval/agentic_eval.md`). The two-stage Reward (interception + `deepseek/deepseek-v4-pro` lenient judge) for V1 will appear here once V1 trace bundles are re-judged.
+
+<details>
+<summary>V1 per-category breakdown (Sonnet 4.6 vs 6-model comparison)</summary>
 
 | Rank  | Model                 | Overall  |  Daily   | Finance  |   Work   |   Dev    | Academic |  Travel  |  Social  |   Pets   |
 | :---: | --------------------- | :------: | :------: | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
@@ -435,6 +518,17 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 |   4   | Claude Haiku 4.5      |   18.3   |   15.4   |   22.2   |   19.0   | **27.8** |   21.4   |   7.7    |   16.7   | **18.2** |
 |   5   | GPT-5.4               |   6.5    |   9.6    |   0.0    |   0.0    |   11.1   |   7.1    |   7.7    |   0.0    |   9.1    |
 |   6   | Gemini 3.1 Flash Lite |   3.3    |   1.9    |   0.0    |   0.0    |   5.6    |   14.3   |   0.0    |   0.0    |   9.1    |
+
+</details>
+
+</details>
+
+<details>
+<summary><b>V1 (OpenClaw)</b> &nbsp;·&nbsp; — (not yet aggregated)</summary>
+
+—
+
+</details>
 
 <details>
 <summary><b>Task Categories (V1: 15 categories, 153 tasks)</b></summary>
@@ -464,17 +558,17 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 
 ## How ClawBench compares
 
-| Benchmark                                                   | Domain               | Environment              | Task count | ClawBench difference                                  |
-| ----------------------------------------------------------- | -------------------- | ------------------------ | ---------- | ----------------------------------------------------- |
-| [WebArena](https://webarena.dev)                            | Synthetic web apps   | Self-hosted replicas     | 812        | Live consumer sites, not admin UIs on hosted replicas |
-| [GAIA](https://huggingface.co/datasets/gaia-benchmark/GAIA) | General assistants   | Closed-book text + tools | 466        | Browser-centric; end-to-end task execution            |
-| [SWE-bench](https://www.swebench.com)                       | Software engineering | GitHub repos             | 2,294      | Non-code; everyday consumer workflows                 |
-| [BrowserGym](https://github.com/ServiceNow/BrowserGym)      | Web agents           | Headless sandbox         | —          | Cloud-parity; records real user journeys              |
-| [Mind2Web](https://github.com/OSU-NLP-Group/Mind2Web)       | Web navigation       | Static traces            | 2,350      | Dynamic live websites, not replayed traces            |
-| [Online-Mind2Web](https://github.com/OSU-NLP-Group/Online-Mind2Web) | Live web navigation | Real websites | 300        | 4× more tasks (V1+V2: 283 vs 300 — comparable), with full 5-layer recordings |
-| [VisualWebArena](https://jykoh.com/vwa)                     | Visual web tasks    | Self-hosted (3 sites)   | 910        | Real websites with full visual layer (vs 3 hosted apps) |
-| [WebVoyager](https://github.com/MinorJerry/WebVoyager)      | Real-website nav    | Real websites (15)      | 643        | Interception-graded vs LLM-judge-only, 144 sites covered |
-| [TheAgentCompany](https://the-agent-company.com)            | Office workflows    | Self-hosted (6 platforms) | 175      | Consumer everyday tasks instead of enterprise sandbox |
+| Benchmark                                                           | Domain               | Environment               | Task count | ClawBench difference                                                         |
+| ------------------------------------------------------------------- | -------------------- | ------------------------- | ---------- | ---------------------------------------------------------------------------- |
+| [WebArena](https://webarena.dev)                                    | Synthetic web apps   | Self-hosted replicas      | 812        | Live consumer sites, not admin UIs on hosted replicas                        |
+| [GAIA](https://huggingface.co/datasets/gaia-benchmark/GAIA)         | General assistants   | Closed-book text + tools  | 466        | Browser-centric; end-to-end task execution                                   |
+| [SWE-bench](https://www.swebench.com)                               | Software engineering | GitHub repos              | 2,294      | Non-code; everyday consumer workflows                                        |
+| [BrowserGym](https://github.com/ServiceNow/BrowserGym)              | Web agents           | Headless sandbox          | —          | Cloud-parity; records real user journeys                                     |
+| [Mind2Web](https://github.com/OSU-NLP-Group/Mind2Web)               | Web navigation       | Static traces             | 2,350      | Dynamic live websites, not replayed traces                                   |
+| [Online-Mind2Web](https://github.com/OSU-NLP-Group/Online-Mind2Web) | Live web navigation  | Real websites             | 300        | 4× more tasks (V1+V2: 283 vs 300 — comparable), with full 5-layer recordings |
+| [VisualWebArena](https://jykoh.com/vwa)                             | Visual web tasks     | Self-hosted (3 sites)     | 910        | Real websites with full visual layer (vs 3 hosted apps)                      |
+| [WebVoyager](https://github.com/MinorJerry/WebVoyager)              | Real-website nav     | Real websites (15)        | 643        | Interception-graded vs LLM-judge-only, 144 sites covered                     |
+| [TheAgentCompany](https://the-agent-company.com)                    | Office workflows     | Self-hosted (6 platforms) | 175        | Consumer everyday tasks instead of enterprise sandbox                        |
 
 ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recording**. If you want a controlled sandbox or replayed traces, the projects above are excellent. If you want to know whether your agent can actually order food or book a flight *today*, this is the benchmark for that.
 
