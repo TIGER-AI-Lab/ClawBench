@@ -174,11 +174,11 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ClawBench ships **three** Hugging Face datasets — task definitions plus full execution traces for V1 and V2. All open, downloadable in one command. The benchmark itself is also mirrored on **TIGER-Lab** for visibility.
 
-| Dataset                                                                                        | What's in it                                                                                                                                                                                       | Get it                                                        |
-| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                               | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
-| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
-| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)** | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                        | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
+| Dataset                                                                                                                                                                          | What's in it                                                                                                                                                                                          | Get it                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                                  | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
+| **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)**                                                                                   | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
+| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
@@ -455,16 +455,16 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 <details open>
 <summary><b>V2 (Hermes)</b> &nbsp;·&nbsp; 8 models &nbsp;·&nbsp; ds-v4-pro judge, lenient + strict</summary>
 
-| Rank | Model | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
-| :---: | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | **claude-opus-4-7** | hermes | **54.6%** | **44.6%** | 24.6% | 58 / 130 |
-| 2 | gpt-5.5 | hermes | 45.4% | 35.4% | 18.5% | 46 / 130 |
-| 3 | glm-5.1 | hermes | 48.5% | 34.6% | 17.7% | 45 / 130 |
-| 4 | deepseek-v4-pro | hermes | 43.9% | 33.9% | 12.3% | 44 / 130 |
-| 5 | openrouter-owl-alpha | hermes | 14.6% | 0.0% | 0.0% | 0 / 130 |
-| 6 | z-ai/glm-4.5-air:free | hermes | 4.6% | 2.3% | 0.8% | 3 / 130 |
-| 7 | deepseek-v4-flash:free | hermes | 3.1% | 2.3% | 0.0% | 3 / 129 |
-| 8 | minimax-m2.5:free | hermes | 2.3% | 1.5% | 0.0% | 2 / 130 |
+| Rank  | Model                  | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | ---------------------- | ------- | ----------: | ---------------: | --------------: | -----------: |
+|   1   | **claude-opus-4-7**    | hermes  |   **54.6%** |        **44.6%** |           24.6% |     58 / 130 |
+|   2   | gpt-5.5                | hermes  |       45.4% |            35.4% |           18.5% |     46 / 130 |
+|   3   | glm-5.1                | hermes  |       48.5% |            34.6% |           17.7% |     45 / 130 |
+|   4   | deepseek-v4-pro        | hermes  |       43.9% |            33.9% |           12.3% |     44 / 130 |
+|   5   | openrouter-owl-alpha   | hermes  |       14.6% |             0.0% |            0.0% |      0 / 130 |
+|   6   | z-ai/glm-4.5-air:free  | hermes  |        4.6% |             2.3% |            0.8% |      3 / 130 |
+|   7   | deepseek-v4-flash:free | hermes  |        3.1% |             2.3% |            0.0% |      3 / 129 |
+|   8   | minimax-m2.5:free      | hermes  |        2.3% |             1.5% |            0.0% |      2 / 130 |
 
 **Intercepted** = final HTTP request matched the task's URL/method (Stage 1, deterministic). **Reward (lenient)** = additionally judged by `deepseek/deepseek-v4-pro` to fulfill the instruction under the "no contradiction → match" rubric (Stage 2). **Reward (strict)** = same judge, strict rubric ("ambiguous → mismatch"). Ranked by Intercepted; Reward as tiebreak.
 
@@ -473,9 +473,9 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 <details>
 <summary><b>V2 (OpenClaw)</b> &nbsp;·&nbsp; 1 model</summary>
 
-| Rank | Model | Harness | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
-| :---: | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | glm-5.1 | openclaw | 0.0% | 0.0% | 0.0% | 0 / 130 |
+| Rank  | Model   | Harness  | Intercepted | Reward (lenient) | Reward (strict) | Pass / Total |
+| :---: | ------- | -------- | ----------: | ---------------: | --------------: | -----------: |
+|   1   | glm-5.1 | openclaw |        0.0% |             0.0% |            0.0% |      0 / 130 |
 
 </details>
 
@@ -496,14 +496,14 @@ In-flight: gpt-5.5-oauth, gpt-5.4-oauth, gpt-5.4-mini-oauth, gpt-5.3-codex-oauth
 <details>
 <summary><b>V1 (Hermes)</b> &nbsp;·&nbsp; 6 frontier models, original paper rubric</summary>
 
-| Rank | Model | Harness | Pass Rate | Pass / Total |
-| :---: | --- | --- | ---: | ---: |
-| 1 | claude-opus-4-6 | hermes | 61.4% | 94 / 153 |
-| 2 | claude-sonnet-4-6 | hermes | 56.9% | 87 / 153 |
-| 3 | claude-haiku-4-5-20251001 | hermes | 30.1% | 46 / 153 |
-| 4 | gpt-5.4-2026-03-05 | hermes | 25.5% | 39 / 153 |
-| 5 | gpt-5.4-mini-2026-03-17 | hermes | 24.8% | 38 / 153 |
-| 6 | kimi-k2.5 | hermes | 17.6% | 27 / 153 |
+| Rank  | Model                     | Harness | Pass Rate | Pass / Total |
+| :---: | ------------------------- | ------- | --------: | -----------: |
+|   1   | claude-opus-4-6           | hermes  |     61.4% |     94 / 153 |
+|   2   | claude-sonnet-4-6         | hermes  |     56.9% |     87 / 153 |
+|   3   | claude-haiku-4-5-20251001 | hermes  |     30.1% |     46 / 153 |
+|   4   | gpt-5.4-2026-03-05        | hermes  |     25.5% |     39 / 153 |
+|   5   | gpt-5.4-mini-2026-03-17   | hermes  |     24.8% |     38 / 153 |
+|   6   | kimi-k2.5                 | hermes  |     17.6% |     27 / 153 |
 
 V1 Pass Rate is from the original paper rubric (Claude Code agentic-eval subagent comparing each run against human reference trajectories under `eval/agentic_eval.md`). The two-stage Reward (interception + `deepseek/deepseek-v4-pro` lenient judge) for V1 will appear here once V1 trace bundles are re-judged.
 
@@ -558,17 +558,17 @@ V1 Pass Rate is from the original paper rubric (Claude Code agentic-eval subagen
 
 ## How ClawBench compares
 
-| Benchmark                                                   | Domain               | Environment              | Task count | ClawBench difference                                  |
-| ----------------------------------------------------------- | -------------------- | ------------------------ | ---------- | ----------------------------------------------------- |
-| [WebArena](https://webarena.dev)                            | Synthetic web apps   | Self-hosted replicas     | 812        | Live consumer sites, not admin UIs on hosted replicas |
-| [GAIA](https://huggingface.co/datasets/gaia-benchmark/GAIA) | General assistants   | Closed-book text + tools | 466        | Browser-centric; end-to-end task execution            |
-| [SWE-bench](https://www.swebench.com)                       | Software engineering | GitHub repos             | 2,294      | Non-code; everyday consumer workflows                 |
-| [BrowserGym](https://github.com/ServiceNow/BrowserGym)      | Web agents           | Headless sandbox         | —          | Cloud-parity; records real user journeys              |
-| [Mind2Web](https://github.com/OSU-NLP-Group/Mind2Web)       | Web navigation       | Static traces            | 2,350      | Dynamic live websites, not replayed traces            |
-| [Online-Mind2Web](https://github.com/OSU-NLP-Group/Online-Mind2Web) | Live web navigation | Real websites | 300        | 4× more tasks (V1+V2: 283 vs 300 — comparable), with full 5-layer recordings |
-| [VisualWebArena](https://jykoh.com/vwa)                     | Visual web tasks    | Self-hosted (3 sites)   | 910        | Real websites with full visual layer (vs 3 hosted apps) |
-| [WebVoyager](https://github.com/MinorJerry/WebVoyager)      | Real-website nav    | Real websites (15)      | 643        | Interception-graded vs LLM-judge-only, 144 sites covered |
-| [TheAgentCompany](https://the-agent-company.com)            | Office workflows    | Self-hosted (6 platforms) | 175      | Consumer everyday tasks instead of enterprise sandbox |
+| Benchmark                                                           | Domain               | Environment               | Task count | ClawBench difference                                                         |
+| ------------------------------------------------------------------- | -------------------- | ------------------------- | ---------- | ---------------------------------------------------------------------------- |
+| [WebArena](https://webarena.dev)                                    | Synthetic web apps   | Self-hosted replicas      | 812        | Live consumer sites, not admin UIs on hosted replicas                        |
+| [GAIA](https://huggingface.co/datasets/gaia-benchmark/GAIA)         | General assistants   | Closed-book text + tools  | 466        | Browser-centric; end-to-end task execution                                   |
+| [SWE-bench](https://www.swebench.com)                               | Software engineering | GitHub repos              | 2,294      | Non-code; everyday consumer workflows                                        |
+| [BrowserGym](https://github.com/ServiceNow/BrowserGym)              | Web agents           | Headless sandbox          | —          | Cloud-parity; records real user journeys                                     |
+| [Mind2Web](https://github.com/OSU-NLP-Group/Mind2Web)               | Web navigation       | Static traces             | 2,350      | Dynamic live websites, not replayed traces                                   |
+| [Online-Mind2Web](https://github.com/OSU-NLP-Group/Online-Mind2Web) | Live web navigation  | Real websites             | 300        | 4× more tasks (V1+V2: 283 vs 300 — comparable), with full 5-layer recordings |
+| [VisualWebArena](https://jykoh.com/vwa)                             | Visual web tasks     | Self-hosted (3 sites)     | 910        | Real websites with full visual layer (vs 3 hosted apps)                      |
+| [WebVoyager](https://github.com/MinorJerry/WebVoyager)              | Real-website nav     | Real websites (15)        | 643        | Interception-graded vs LLM-judge-only, 144 sites covered                     |
+| [TheAgentCompany](https://the-agent-company.com)                    | Office workflows     | Self-hosted (6 platforms) | 175        | Consumer everyday tasks instead of enterprise sandbox                        |
 
 ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recording**. If you want a controlled sandbox or replayed traces, the projects above are excellent. If you want to know whether your agent can actually order food or book a flight *today*, this is the benchmark for that.
 
@@ -826,12 +826,14 @@ Same scoring pipeline, orthogonal axis. ClawBench fixes the harness and varies t
 If you use ClawBench in your research, please cite:
 
 ```bibtex
-@article{zhang2026clawbench,
-  title   = {ClawBench: Can AI Agents Complete Everyday Online Tasks?},
-  author  = {Yuxuan Zhang and Yubo Wang and Yipeng Zhu and Penghui Du and Junwen Miao and Xuan Lu and Wendong Xu and Yunzhuo Hao and Songcheng Cai and Xiaochen Wang and Huaisong Zhang and Xian Wu and Yi Lu and Minyi Lei and Kai Zou and Huifeng Yin and Ping Nie and Liang Chen and Dongfu Jiang and Wenhu Chen and Kelsey R. Allen},
-  journal = {arXiv preprint arXiv:2604.08523},
-  year    = {2026},
-  url     = {https://arxiv.org/abs/2604.08523}
+@misc{zhang2026clawbenchaiagentscomplete,
+  title         = {ClawBench: Can AI Agents Complete Everyday Online Tasks?},
+  author        = {Yuxuan Zhang and Yubo Wang and Yipeng Zhu and Penghui Du and Junwen Miao and Xuan Lu and Wendong Xu and Yunzhuo Hao and Songcheng Cai and Xiaochen Wang and Huaisong Zhang and Xian Wu and Yi Lu and Minyi Lei and Kai Zou and Huifeng Yin and Ping Nie and Liang Chen and Dongfu Jiang and Wenhu Chen and Kelsey R. Allen},
+  year          = {2026},
+  eprint        = {2604.08523},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2604.08523}
 }
 ```
 

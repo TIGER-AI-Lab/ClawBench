@@ -2,6 +2,17 @@ name: New Test Case Proposal
 description: Propose a new test case for ClawBench
 labels: ["new-test-case"]
 body:
+  - type: dropdown
+    id: corpus
+    attributes:
+      label: Target corpus
+      description: Which ClawBench corpus should this test case land in? V2 is the current default.
+      default: 0
+      options:
+        - v2
+        - v1
+    validations:
+      required: true
   - type: input
     id: platform
     attributes:
