@@ -4,18 +4,18 @@
     "task_id": 86,
     "metaclass": "job-search-hr",
     "class": "cv-autofill",
-    "description": "Extract information from resume.pdf and fill out the Meta Senior Software Engineer application on Greenhouse",
+    "description": "Extract information from resume.pdf and fill out the CodePath Senior Software Engineer application on Greenhouse",
     "sites_involved": [
       "greenhouse.com"
     ],
-    "platform": "greenhouse-meta",
+    "platform": "greenhouse-codepath",
     "common_info": {
       "email_credentials": "credentials to use the assigned disposable email account",
       "user_info": "alex_green_personal_info.json; the dummy user's personal information",
       "user_resume": "PDF resume with disposable email account injected"
     }
   },
-  "instruction": "Extract information from resume.pdf and fill out the Meta Senior Software Engineer application on Greenhouse",
+  "instruction": "Extract information from resume.pdf and fill out the CodePath Senior Software Engineer application on Greenhouse",
   "eval_schema": {
     "url_pattern": "boards-api\\.greenhouse\\.io/v1/boards/.+/jobs/\\d+|job-boards\\.greenhouse\\.io/.+/jobs/\\d+",
     "method": "POST"
