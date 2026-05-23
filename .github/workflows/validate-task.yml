@@ -1,0 +1,138 @@
+name: validate-task
+
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - ".github/workflows/validate-task.yml"
+            - "test-cases/task.schema.json"
+            - "test-cases/**/task.json"
+            - "test-cases/**/extra_info/**"
+    push:
+        branches: [main]
+        paths:
+            - ".github/workflows/validate-task.yml"
+            - "test-cases/task.schema.json"
+            - "test-cases/**/task.json"
+            - "test-cases/**/extra_info/**"
+    workflow_dispatch:
+
+jobs:
+    validate-task:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: "3.11"
+
+            - name: Install validator
+              run: python -m pip install "jsonschema==4.26.0"
+
+            - name: Collect changed task files
+              id: changed
+              shell: bash
+              run: |
+                  set -euo pipefail
+
+                  if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+                    find test-cases -path "*/task.json" -o -path "*/extra_info/*" > changed-files.txt
+                  elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+                    base="${{ github.event.pull_request.base.sha }}"
+                    git diff --name-only "$base"...HEAD > changed-files.txt
+                  elif [[ "${{ github.event_name }}" == "push" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+                    git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" > changed-files.txt
+                  else
+                    find test-cases -path "*/task.json" -o -path "*/extra_info/*" > changed-files.txt
+                  fi
+
+                  echo "Changed files:"
+                  cat changed-files.txt
+
+            - name: Validate changed tasks
+              run: |
+                  python - <<'PY'
+                  import json
+                  import sys
+                  from pathlib import Path
+
+                  from jsonschema import Draft202012Validator
+
+                  repo = Path(".")
+                  schema_path = repo / "test-cases" / "task.schema.json"
+                  changed_paths = [
+                      Path(line.strip())
+                      for line in Path("changed-files.txt").read_text().splitlines()
+                      if line.strip()
+                  ]
+
+                  schema = json.loads(schema_path.read_text())
+                  validator = Draft202012Validator(schema)
+
+                  validate_all = schema_path in changed_paths
+                  task_files: set[Path] = set()
+                  changed_json_files: set[Path] = set()
+
+                  if validate_all:
+                      task_files.update(repo.glob("test-cases/**/task.json"))
+
+                  for path in changed_paths:
+                      if not str(path).startswith("test-cases/"):
+                          continue
+                      if path.name == "task.json" and path.exists():
+                          task_files.add(path)
+                          changed_json_files.add(path)
+                          continue
+                      if "extra_info" in path.parts:
+                          extra_index = path.parts.index("extra_info")
+                          task_dir = Path(*path.parts[:extra_index])
+                          task_file = task_dir / "task.json"
+                          if task_file.exists():
+                              task_files.add(task_file)
+                          if path.suffix == ".json" and path.exists():
+                              changed_json_files.add(path)
+
+                  errors: list[str] = []
+
+                  for json_file in sorted(changed_json_files):
+                      try:
+                          json.loads(json_file.read_text())
+                      except Exception as exc:
+                          errors.append(f"{json_file}: invalid JSON: {exc}")
+
+                  for task_file in sorted(task_files):
+                      try:
+                          task = json.loads(task_file.read_text())
+                      except Exception as exc:
+                          errors.append(f"{task_file}: invalid JSON: {exc}")
+                          continue
+
+                      for error in sorted(validator.iter_errors(task), key=lambda item: list(item.path)):
+                          location = "/" + "/".join(str(part) for part in error.path)
+                          errors.append(f"{task_file}{location}: {error.message}")
+
+                      extra_info = task.get("extra_info") or []
+                      if not isinstance(extra_info, list):
+                          continue
+                      for index, item in enumerate(extra_info):
+                          if not isinstance(item, dict) or not item.get("path"):
+                              continue
+                          extra_path = task_file.parent / item["path"]
+                          if not extra_path.exists():
+                              errors.append(
+                                  f"{task_file}: extra_info[{index}].path does not exist: {item['path']}"
+                              )
+
+                  if errors:
+                      print("Task validation failed:")
+                      for error in errors:
+                          print(f"- {error}")
+                      sys.exit(1)
+
+                  print(f"Validated {len(task_files)} task file(s) and {len(changed_json_files)} changed JSON file(s).")
+                  PY
