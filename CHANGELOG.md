@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] - 2026-05-23
+### Fixed
+- Fixed several mismatches in task definitions and the provided extra information.
+
 ## [0.4.0] - 2026-05-22
 ### Added
 - Added scripts for rescoring and reproducing the benchmark results based on disclosed trajectories.
