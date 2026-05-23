@@ -1,0 +1,102 @@
+default: openclaw
+base:
+  image: clawbench-base
+  dockerfile: base/Dockerfile.base
+  entrypoint_script: base/entrypoint.sh
+  agent_message_sources:
+    - type: file
+      path: /data/agent-messages.jsonl
+harnesses:
+  - name: openclaw
+    image: clawbench-openclaw
+    dockerfile: openclaw/Dockerfile.openclaw
+    setup_script: openclaw/setup-openclaw.sh
+    run_script: openclaw/run-openclaw.sh
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+      - type: file
+        path: /root/.openclaw/agents/main/sessions/clawbench.jsonl
+  - name: opencode
+    image: clawbench-opencode
+    dockerfile: opencode/Dockerfile.opencode
+    setup_script: opencode/setup-opencode.sh
+    run_script: opencode/run-opencode.sh
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+  - name: claude-code
+    image: clawbench-claude-code
+    dockerfile: claude-code/Dockerfile.claude-code
+    setup_script: claude-code/setup-claude-code.sh
+    run_script: claude-code/run-claude-code.sh
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+  - name: claude-code-chrome-extension
+    image: clawbench-claude-code-chrome-extension
+    dockerfile: claude-code-chrome-extension/Dockerfile.claude-code-chrome-extension
+    setup_script: claude-code-chrome-extension/setup-claude-code-chrome-extension.sh
+    run_script: claude-code-chrome-extension/run-claude-code-chrome-extension.sh
+    extra_files:
+      - claude-code-chrome-extension/mock-anthropic-api.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+  - name: codex
+    image: clawbench-codex
+    dockerfile: codex/Dockerfile.codex
+    setup_script: codex/setup-codex.sh
+    run_script: codex/run-codex.sh
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+      - type: file
+        path: /tmp/codex-stdout.jsonl
+      - type: find_latest
+        root: /root/.codex/sessions
+        name: rollout-*.jsonl
+  - name: browser-use
+    image: clawbench-browser-use
+    dockerfile: browser-use/Dockerfile.browser-use
+    setup_script: browser-use/setup-browser-use.sh
+    run_script: browser-use/run-browser-use.sh
+    extra_files:
+      - browser-use/run-browser-use-agent.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+  - name: claw-code
+    image: clawbench-claw-code
+    dockerfile: claw-code/Dockerfile.claw-code
+    setup_script: claw-code/setup-claw-code.sh
+    run_script: claw-code/run-claw-code.sh
+    extra_files:
+      - claw-code/claw-code-ndjson.patch.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+      - type: latest_glob
+        pattern: /root/workspace/.claw/sessions/*/*.jsonl
+  - name: hermes
+    image: clawbench-hermes
+    dockerfile: hermes/Dockerfile.hermes
+    setup_script: hermes/setup-hermes.sh
+    run_script: hermes/run-hermes.sh
+    extra_files:
+      - hermes/hermes-capture.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+      - type: file
+        path: /tmp/hermes-live-agent-messages.jsonl
+  - name: pi
+    image: clawbench-pi
+    dockerfile: pi/Dockerfile.pi
+    setup_script: pi/setup-pi.sh
+    run_script: pi/run-pi.sh
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
+      - type: file
+        path: /data/agent-messages.raw.jsonl

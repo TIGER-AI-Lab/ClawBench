@@ -1,20 +1,20 @@
-name: check-docker-build
+name: check-harness-build
 
 on:
   pull_request:
     branches: [ main ]
     paths:
       - "src/clawbench/runtime/**"
-      - ".github/workflows/check-docker-build.yml"
+      - ".github/workflows/check-harness-build.yml"
   push:
     branches: [ main ]
     paths:
       - "src/clawbench/runtime/**"
-      - ".github/workflows/check-docker-build.yml"
+      - ".github/workflows/check-harness-build.yml"
   workflow_dispatch:
 
 jobs:
-  docker-build:
+  harness-build:
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILD_PARALLELISM: "3"
@@ -23,6 +23,50 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install harness registry validator
+        run: python -m pip install "jsonschema==4.26.0" "PyYAML==6.0.2"
+
+      - name: Validate harness registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          import yaml
+          from jsonschema import Draft202012Validator
+
+          harness_root = Path("src/clawbench/runtime/harnesses")
+          registry_path = harness_root / "harnesses.yaml"
+          schema_path = harness_root / "harness.schema.json"
+
+          schema = json.loads(schema_path.read_text())
+          registry = yaml.safe_load(registry_path.read_text())
+          validator = Draft202012Validator(schema)
+
+          errors = [
+              "/" + "/".join(str(part) for part in error.path) + f": {error.message}"
+              for error in sorted(validator.iter_errors(registry), key=lambda item: list(item.path))
+          ]
+          if errors:
+              print("Harness registry schema validation failed:")
+              print("\n".join(errors))
+              raise SystemExit(1)
+
+          sys.path.insert(0, str(Path("src")))
+          from clawbench.runner.run_support.harness_registry import load_harness_registry
+
+          load_harness_registry(registry_path)
+          print(f"Validated {registry_path} against {schema_path}")
+          PY
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v5.1.0
@@ -34,16 +78,16 @@ jobs:
               }
             }
 
-      - name: Restore Docker build cache
+      - name: Restore harness build cache
         id: docker-cache
         uses: actions/cache@v5.0.5
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-harness-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-docker-buildx-
+            ${{ runner.os }}-harness-buildx-
 
-      - name: Inspect restored Docker build cache
+      - name: Inspect restored harness build cache
         shell: bash
         run: |
           set -euo pipefail
@@ -52,7 +96,7 @@ jobs:
             find /tmp/.buildx-cache -mindepth 1 -maxdepth 1 -type d -print | sort
             du -sh /tmp/.buildx-cache || true
           else
-            echo "No Docker build cache restored."
+            echo "No harness build cache restored."
           fi
 
       - name: Select harness Dockerfiles
@@ -147,10 +191,10 @@ jobs:
 
           echo "Selected ${#selected_dockerfiles[@]} harness Dockerfile(s):"
           printf '  %s\n' "${selected_dockerfiles[@]}"
-          echo "::notice title=Docker build plan::Selected ${#selected_dockerfiles[@]} harness Dockerfile(s)"
+          echo "::notice title=Harness build plan::Selected ${#selected_dockerfiles[@]} harness Dockerfile(s)"
 
           {
-            echo "## Docker build plan"
+            echo "## Harness build plan"
             echo
             echo "- Event: \`${{ github.event_name }}\`"
             echo "- Selection mode: \`$([[ "${build_all}" == "true" ]] && echo all || echo changed)\`"
@@ -166,7 +210,7 @@ jobs:
             done
           } >> "${GITHUB_STEP_SUMMARY}"
 
-      - name: Build Docker images
+      - name: Build harness Docker images
         shell: bash
         run: |
           set -euo pipefail
@@ -175,7 +219,7 @@ jobs:
           base_dockerfile="${harness_root}/base/Dockerfile.base"
           cache_root="/tmp/.buildx-cache"
           cache_update="/tmp/.buildx-cache-update"
-          status_root="/tmp/clawbench-docker-build-status"
+          status_root="/tmp/clawbench-harness-build-status"
           parallelism="${DOCKER_BUILD_PARALLELISM:-3}"
 
           rm -rf "${cache_update}" "${status_root}"
@@ -183,7 +227,7 @@ jobs:
 
           {
             echo
-            echo "## Docker build results"
+            echo "## Harness build results"
             echo
             echo "- Restored cache key: \`${{ steps.docker-cache.outputs.cache-matched-key || 'none' }}\`"
             echo "- Exact cache hit: \`${{ steps.docker-cache.outputs.cache-hit || 'false' }}\`"

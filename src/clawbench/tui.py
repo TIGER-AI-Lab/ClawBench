@@ -20,7 +20,11 @@ from rich.status import Status
 from rich.table import Table
 from rich.text import Text
 
+from clawbench.runner.run_support.harness_registry import HARNESS_REGISTRY
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
+
+HARNESSES = HARNESS_REGISTRY.harnesses
+DEFAULT_HARNESS = HARNESS_REGISTRY.default
 
 
 def _patch_questionary_defaults() -> None:
@@ -595,18 +599,8 @@ def mode_single(
     console.print(f"\n[bold {ACCENT}]--- Select Harness ---[/]\n")
     harness = questionary.select(
         "Harness:",
-        choices=[
-            "openclaw",
-            "opencode",
-            "claude-code",
-            "claude-code-chrome-extension",
-            "codex",
-            "browser-use",
-            "claw-code",
-            "hermes",
-            "pi",
-        ],
-        default="openclaw",
+        choices=list(HARNESSES),
+        default=DEFAULT_HARNESS,
         style=STYLE,
     ).ask()
     if harness is None:
@@ -685,18 +679,8 @@ def mode_batch(
     console.print(f"\n[bold {ACCENT}]--- Select Harness ---[/]\n")
     harness = questionary.select(
         "Harness:",
-        choices=[
-            "openclaw",
-            "opencode",
-            "claude-code",
-            "claude-code-chrome-extension",
-            "codex",
-            "browser-use",
-            "claw-code",
-            "hermes",
-            "pi",
-        ],
-        default="openclaw",
+        choices=list(HARNESSES),
+        default=DEFAULT_HARNESS,
         style=STYLE,
     ).ask()
     if harness is None:

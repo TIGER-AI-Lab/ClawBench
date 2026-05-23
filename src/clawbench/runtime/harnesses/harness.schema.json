@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Schema for src/clawbench/runtime/harnesses/harnesses.yaml.",
+  "type": "object",
+  "required": ["default", "base", "harnesses"],
+  "properties": {
+    "default": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Default harness name."
+    },
+    "base": {
+      "$ref": "#/$defs/base"
+    },
+    "harnesses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/harness"
+      },
+      "description": "Supported harnesses in CLI/TUI display order."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\\\]+$",
+      "description": "Repository-relative path under src/clawbench/runtime/harnesses, using forward slashes."
+    },
+    "containerPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^/",
+      "description": "Absolute path inside the runtime container."
+    },
+    "containerGlob": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^/[A-Za-z0-9_./*?\\[\\]-]+$",
+      "description": "Safe absolute glob pattern inside the runtime container."
+    },
+    "agentMessageSource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "path"],
+          "properties": {
+            "type": { "const": "file" },
+            "path": { "$ref": "#/$defs/containerPath" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "root", "name"],
+          "properties": {
+            "type": { "const": "find_latest" },
+            "root": { "$ref": "#/$defs/containerPath" },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "pattern"],
+          "properties": {
+            "type": { "const": "latest_glob" },
+            "pattern": { "$ref": "#/$defs/containerGlob" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "agentMessageSources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/agentMessageSource"
+      }
+    },
+    "base": {
+      "type": "object",
+      "required": [
+        "image",
+        "dockerfile",
+        "entrypoint_script",
+        "agent_message_sources"
+      ],
+      "properties": {
+        "image": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dockerfile": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "entrypoint_script": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "agent_message_sources": {
+          "$ref": "#/$defs/agentMessageSources"
+        }
+      },
+      "additionalProperties": false
+    },
+    "harness": {
+      "type": "object",
+      "required": [
+        "name",
+        "image",
+        "dockerfile",
+        "setup_script",
+        "run_script",
+        "agent_message_sources"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dockerfile": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "setup_script": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "run_script": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "extra_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "agent_message_sources": {
+          "$ref": "#/$defs/agentMessageSources"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
