@@ -38,7 +38,6 @@ packages = ["src/clawbench"]
 "models/model.schema.json" = "clawbench/_bundled/models/model.schema.json"
 "test-cases" = "clawbench/_bundled/test-cases"
 "assets" = "assets"
-"README.zh-CN.md" = "README.zh-CN.md"
 "NOTICE" = "NOTICE"
 
 [tool.hatch.build.targets.sdist]
@@ -49,7 +48,6 @@ include = [
     "/test-cases",
     "/src/clawbench",
     "/README.md",
-    "/README.zh-CN.md",
     "/LICENSE",
     "/NOTICE",
     "/assets",
@@ -68,8 +66,10 @@ target-version = "py311"
 include = ["src/clawbench", "tests"]
 exclude = [
     ".venv",
-    "src/clawbench/runtime/extension-server",
-    "src/clawbench/runtime/harnesses",
+    "src/clawbench/runtime",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*"
 ]
 
 [dependency-groups]
