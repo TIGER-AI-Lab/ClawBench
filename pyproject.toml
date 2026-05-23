@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "clawbench-eval"
-version = "0.3.3"
+version = "0.4.0"
 description = "Benchmarking framework for evaluating AI web agents on real-world online tasks"
 readme = "README.md"
 requires-python = ">=3.11"
