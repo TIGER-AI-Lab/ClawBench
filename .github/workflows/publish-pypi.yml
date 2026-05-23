@@ -110,6 +110,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Wait for TestPyPI index
+        run: sleep 3
+
       - name: Install package from TestPyPI
         env:
           PACKAGE_VERSION: ${{ needs.build.outputs.version }}
