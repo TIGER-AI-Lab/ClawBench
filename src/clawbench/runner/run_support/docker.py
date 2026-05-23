@@ -21,6 +21,11 @@ from clawbench.runner.run_support.config import (
     IMAGE,
     harness_image,
 )
+from clawbench.runner.run_support.usage import (
+    fetch_openrouter_pricing,
+    format_usage_status,
+    summarize_usage_text,
+)
 from clawbench.utils.paths import DOCKER_CONTEXT_ROOT, HARNESS_ROOT
 
 console = Console()
@@ -402,13 +407,71 @@ def docker_run(
     run([*env_flags, harness_image(harness)])
 
 
-def docker_wait(name: str) -> None:
+def _container_usage_summary(
+    name: str,
+    model_cfg: dict | None,
+    pricing_models: dict[str, dict] | None,
+) -> dict | None:
+    try:
+        r = subprocess.run(
+            [
+                ENGINE,
+                "exec",
+                name,
+                "sh",
+                "-c",
+                (
+                    "if [ -s /data/agent-messages.jsonl ]; then "
+                    "cat /data/agent-messages.jsonl; "
+                    "elif [ -s /root/.openclaw/agents/main/sessions/clawbench.jsonl ]; then "
+                    "cat /root/.openclaw/agents/main/sessions/clawbench.jsonl; "
+                    "elif [ -s /tmp/hermes-live-agent-messages.jsonl ]; then "
+                    "cat /tmp/hermes-live-agent-messages.jsonl; "
+                    "elif [ -s /data/agent-messages.raw.jsonl ]; then "
+                    "cat /data/agent-messages.raw.jsonl; "
+                    "elif [ -s /tmp/codex-stdout.jsonl ]; then "
+                    "cat /tmp/codex-stdout.jsonl; "
+                    "else "
+                    "p=$(find /root/.codex/sessions -name 'rollout-*.jsonl' "
+                    "-type f -printf '%T@ %p\\n' 2>/dev/null | sort -rn | "
+                    "head -1 | cut -d' ' -f2-); "
+                    'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; '
+                    "else "
+                    "p=$(ls -t /root/workspace/.claw/sessions/*/*.jsonl "
+                    "2>/dev/null | head -1); "
+                    'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; fi; '
+                    "fi; "
+                    "fi"
+                ),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError):
+        return None
+    if r.returncode != 0:
+        return None
+    return summarize_usage_text(
+        r.stdout,
+        model_cfg=model_cfg,
+        pricing_models=pricing_models,
+    )
+
+
+def docker_wait(name: str, model_cfg: dict | None = None) -> None:
     """Block until the container exits, showing a live status line."""
     start = time.time()
     proc = subprocess.Popen(
         [ENGINE, "wait", name], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     last_actions = 0
+    usage_summary: dict | None = None
+    pricing_models: dict[str, dict] | None = None
+    if model_cfg and "openrouter.ai" in str(model_cfg.get("base_url", "")):
+        pricing_models = fetch_openrouter_pricing(
+            base_url=str(model_cfg.get("base_url") or "")
+        )
     with Status("[dim]starting...[/]", console=console) as status:
         while proc.poll() is None:
             elapsed = int(time.time() - start)
@@ -427,14 +490,30 @@ def docker_wait(name: str) -> None:
                         pass
             except (subprocess.TimeoutExpired, subprocess.SubprocessError):
                 pass
-            status.update(f"[dim]{mins:02d}:{secs:02d}  •  {last_actions} actions[/]")
+            usage_summary = _container_usage_summary(name, model_cfg, pricing_models)
+            usage_part = (
+                format_usage_status(usage_summary)
+                if usage_summary is not None
+                else "tokens pending"
+            )
+            status.update(
+                f"[dim]{mins:02d}:{secs:02d}  •  {last_actions} actions  •  "
+                f"{usage_part}[/]"
+            )
             try:
                 proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 pass
     elapsed = int(time.time() - start)
     mins, secs = divmod(elapsed, 60)
-    console.print(f"  Container exited ({mins}m{secs:02d}s, {last_actions} actions)")
+    usage_part = (
+        f", {format_usage_status(usage_summary)}"
+        if usage_summary is not None and usage_summary.get("total_tokens")
+        else ""
+    )
+    console.print(
+        f"  Container exited ({mins}m{secs:02d}s, {last_actions} actions{usage_part})"
+    )
 
 
 def docker_copy(name: str, output_dir: Path) -> None:

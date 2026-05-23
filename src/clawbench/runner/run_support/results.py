@@ -4,6 +4,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+from clawbench.runner.run_support.usage import (
+    format_usage_summary,
+    summarize_usage_file,
+)
+
 INFRA_STOP_REASONS = {
     "chrome_cdp_timeout",
     "gateway_failed",
@@ -81,7 +86,10 @@ def _line_has_api_or_credit_evidence(line: str) -> bool:
     return any(pattern in lowered for pattern in API_OR_CREDIT_PATTERNS)
 
 
-def collect_run_metrics(output_dir: Path) -> dict[str, Any]:
+def collect_run_metrics(
+    output_dir: Path,
+    model_cfg: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     data_dir = output_dir / "data"
     actions_file = data_dir / "actions.jsonl"
     requests_file = data_dir / "requests.jsonl"
@@ -196,6 +204,11 @@ def collect_run_metrics(output_dir: Path) -> dict[str, Any]:
     elif browser_use_model_outputs:
         metrics["api_calls"] = browser_use_model_outputs
 
+    usage = summarize_usage_file(messages_file, model_cfg=model_cfg)
+    if usage["api_calls"] > metrics["api_calls"]:
+        metrics["api_calls"] = usage["api_calls"]
+    metrics["usage"] = usage
+
     if metrics["api_or_credit_evidence"] is None and data_dir.exists():
         for log_file in data_dir.glob("*.log"):
             try:
@@ -218,8 +231,9 @@ def classify_run(
     output_dir: Path,
     intercepted: bool,
     default_failure_category: str | None = None,
+    model_cfg: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    metrics = collect_run_metrics(output_dir)
+    metrics = collect_run_metrics(output_dir, model_cfg=model_cfg)
     infra_flags: list[str] = []
     if metrics["api_calls"] == 0:
         infra_flags.append("zero_api_calls")
@@ -311,7 +325,10 @@ def ensure_interception(output_dir: Path):
     interception_file.write_text(json.dumps(result, indent=2))
 
 
-def print_results(output_dir: Path) -> bool:
+def print_results(
+    output_dir: Path,
+    model_cfg: dict[str, Any] | None = None,
+) -> bool:
     data_dir = output_dir / "data"
 
     actions_file = data_dir / "actions.jsonl"
@@ -345,4 +362,6 @@ def print_results(output_dir: Path) -> bool:
         print(f"Request method: {result['request']['method']}")
         if result["request"].get("body"):
             print(f"Body: {json.dumps(result['request']['body'])[:300]}")
+    usage = summarize_usage_file(data_dir / "agent-messages.jsonl", model_cfg=model_cfg)
+    print(format_usage_summary(usage))
     return intercepted

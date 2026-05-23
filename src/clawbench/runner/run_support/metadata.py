@@ -245,6 +245,7 @@ def make_run_meta(
         "adjusted_eligible": classification["adjusted_eligible"],
         "infra_flags": classification["infra_flags"],
         "run_metrics": classification["metrics"],
+        "usage": classification["metrics"].get("usage"),
         "runtime": _runtime_meta(harness),
         "task": _task_meta(
             task=task,

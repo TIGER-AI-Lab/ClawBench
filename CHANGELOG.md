@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+### Added
+- Added display of live token cost estimation during the run.
+
 ## [0.4.1] - 2026-05-23
 ### Fixed
 - Fixed several mismatches in task definitions and the provided extra information.

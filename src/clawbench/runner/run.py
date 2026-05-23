@@ -191,7 +191,9 @@ def main():
         time_limit_s = int(float(task["time_limit"]) * 60)
     except (OSError, json.JSONDecodeError, ValueError) as e:
         duration = time.time() - start_time
-        classification = classify_run(output_dir, False, "task_data")
+        classification = classify_run(
+            output_dir, False, "task_data", model_cfg=model_cfg
+        )
         meta = make_run_meta(
             task=task,
             task_json_sha256=task_json_sha256,
@@ -222,7 +224,9 @@ def main():
             docker_build(args.harness)
         except SystemExit as e:
             duration = time.time() - start_time
-            classification = classify_run(output_dir, False, "infra_failure")
+            classification = classify_run(
+                output_dir, False, "infra_failure", model_cfg=model_cfg
+            )
             meta = make_run_meta(
                 task=task,
                 task_json_sha256=task_json_sha256,
@@ -336,7 +340,7 @@ def main():
             step(f"Agent running (max {task['time_limit']}min)")
 
         phase = "waiting_for_container"
-        docker_wait(container)
+        docker_wait(container, model_cfg=None if args.human else model_cfg)
 
         phase = "container_logs"
         step("Container logs")
@@ -352,7 +356,10 @@ def main():
 
         phase = "printing_results"
         step("Results")
-        intercepted = print_results(output_dir)
+        intercepted = print_results(
+            output_dir,
+            model_cfg=None if args.human else model_cfg,
+        )
 
         # Stage 2 — LLM judge (default on, --no-judge to skip).
         # Only invoked when stage 1 (intercepted) succeeded; otherwise the
@@ -408,7 +415,7 @@ def main():
         # Write run metadata
         phase = "writing_run_meta"
         duration = time.time() - start_time
-        classification = classify_run(output_dir, intercepted)
+        classification = classify_run(output_dir, intercepted, model_cfg=model_cfg)
         meta = make_run_meta(
             task=task,
             task_json_sha256=task_json_sha256,
@@ -461,7 +468,7 @@ def main():
         except Exception:
             pass
         duration = time.time() - start_time
-        classification = classify_run(output_dir, False, category)
+        classification = classify_run(output_dir, False, category, model_cfg=model_cfg)
         meta = make_run_meta(
             task=task,
             task_json_sha256=task_json_sha256,
