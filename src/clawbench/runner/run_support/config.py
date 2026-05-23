@@ -7,6 +7,12 @@ from pathlib import Path
 
 import yaml
 
+from clawbench.runner.run_support.harness_registry import (
+    HARNESS_REGISTRY,
+    HARNESS_REGISTRY_YAML,
+    HarnessRegistry,
+    load_harness_registry,
+)
 from clawbench.utils.paths import (
     ASSET_ROOT,
     WORKSPACE_ROOT,
@@ -14,24 +20,43 @@ from clawbench.utils.paths import (
     workspace_path,
 )
 
-HARNESSES = (
-    "openclaw",
-    "opencode",
-    "claude-code",
-    "claude-code-chrome-extension",
-    "codex",
-    "browser-use",
-    "claw-code",
-    "hermes",
-    "pi",
-)
-DEFAULT_HARNESS = "openclaw"
-BASE_IMAGE = "clawbench-base"
+__all__ = [
+    "ASSET_ROOT",
+    "BASE_IMAGE",
+    "DEFAULT_HARNESS",
+    "ENGINE",
+    "HARNESS_REGISTRY",
+    "HARNESS_REGISTRY_YAML",
+    "HARNESSES",
+    "IMAGE",
+    "MODELS_YAML",
+    "WORKSPACE_ROOT",
+    "HarnessRegistry",
+    "harness_image",
+    "load_dotenv",
+    "load_harness_registry",
+    "load_model_config",
+    "load_models_yaml",
+    "load_runtime_env",
+    "resolve_task_file",
+    "resolve_test_case_dir",
+    "resolve_test_case_path",
+]
+
+
+HARNESSES = HARNESS_REGISTRY.harnesses
+DEFAULT_HARNESS = HARNESS_REGISTRY.default
+BASE_IMAGE = HARNESS_REGISTRY.base_image
 
 
 def harness_image(harness: str) -> str:
     """Return the docker image tag for a given harness name."""
-    return f"clawbench-{harness}"
+    try:
+        return HARNESS_REGISTRY.harness_images[harness]
+    except KeyError as e:
+        raise ValueError(
+            f"Unknown harness {harness!r}; expected one of {list(HARNESSES)}"
+        ) from e
 
 
 # Kept for back-compat with old callers / scripts that imported IMAGE.

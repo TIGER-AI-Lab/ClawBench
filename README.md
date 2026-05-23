@@ -801,7 +801,7 @@ If an agent encounters a CAPTCHA, it must attempt it. We have seen cases where f
 The repo default is `openclaw`, but leaderboard rows include their harness explicitly. V1 results used OpenClaw; newer runs may use Hermes or other supported harnesses. Use the `harness` column when comparing models, because model and harness changes are separate experimental axes.
 
 **Is ClawBench tightly coupled to OpenClaw?**
-No. OpenClaw is the default harness, but ClawBench supports interchangeable harnesses listed in `src/clawbench/runtime/harnesses/`.
+No. OpenClaw is the default harness, but ClawBench supports interchangeable harnesses listed in `src/clawbench/runtime/harnesses/harnesses.yaml`.
 
 **Can ClawBench evaluate CLI agents?**
 Yes. ClawBench is a browser-task benchmark, but CLI and coding-agent harnesses can drive the same instrumented Chromium session using native tools or MCPs.
@@ -816,7 +816,7 @@ Yes. New model runs can be submitted or requested through the contribution flow 
 The runner uses a hardened container with a request interceptor that blocks purchases, account creation, outbound email sends, and similar irreversible actions by default. Tasks that need to *simulate* those actions (e.g., "add to cart and checkout") terminate at the last reversible step. You can relax the interceptor per-task if your research requires it.
 
 **Can I contribute new tasks or harnesses?**
-Yes. V1 tasks live in `test-cases/v1/`; V2 tasks live in `test-cases/v2/`; Lite tasks live in `test-cases/v1-lite/`. See `CONTRIBUTING.md` for the task schema and validation flow.
+Yes. V1 tasks live in `test-cases/v1/`; V2 tasks live in `test-cases/v2/`; Lite tasks live in `test-cases/v1-lite/`. Harness definitions live in `src/clawbench/runtime/harnesses/harnesses.yaml`. See `CONTRIBUTING.md` for the task schema and validation flow.
 
 **How does ClawBench relate to HarnessBench?**
 Same scoring pipeline, orthogonal axis. ClawBench fixes the harness and varies the model; HarnessBench fixes the model and varies the harness. They share the V1 153-task corpus, the five-layer recording, and the agentic evaluator — so numbers are directly comparable.

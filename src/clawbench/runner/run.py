@@ -340,7 +340,11 @@ def main():
             step(f"Agent running (max {task['time_limit']}min)")
 
         phase = "waiting_for_container"
-        docker_wait(container, model_cfg=None if args.human else model_cfg)
+        docker_wait(
+            container,
+            model_cfg=None if args.human else model_cfg,
+            harness=None if args.human else args.harness,
+        )
 
         phase = "container_logs"
         step("Container logs")

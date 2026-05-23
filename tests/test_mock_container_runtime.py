@@ -148,6 +148,23 @@ def test_docker_run_builds_agent_container_command_with_mock_runtime(
     assert cmd[-1] == "clawbench-codex"
 
 
+def test_agent_message_probe_script_uses_harness_registry(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    docker = _import_docker_helpers(monkeypatch)
+
+    codex_script = docker._agent_message_probe_script("codex")
+    assert "/data/agent-messages.jsonl" in codex_script
+    assert "/tmp/codex-stdout.jsonl" in codex_script
+    assert "/root/.codex/sessions" in codex_script
+    assert "rollout-*.jsonl" in codex_script
+    assert "/tmp/hermes-live-agent-messages.jsonl" not in codex_script
+
+    all_harnesses_script = docker._agent_message_probe_script()
+    assert "/tmp/hermes-live-agent-messages.jsonl" in all_harnesses_script
+    assert "/root/workspace/.claw/sessions/*/*.jsonl" in all_harnesses_script
+
+
 def test_docker_run_human_uses_podman_network_flags_with_mock_runtime(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import shlex
 import socket
 import subprocess
 import sys
@@ -13,11 +14,13 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.status import Status
 
+from clawbench.runner.run_support.harness_registry import AgentMessageSource
 from clawbench.runner.run_support.config import (
     BASE_IMAGE,
     DEFAULT_HARNESS,
     ENGINE,
     HARNESSES,
+    HARNESS_REGISTRY,
     IMAGE,
     harness_image,
 )
@@ -26,24 +29,12 @@ from clawbench.runner.run_support.usage import (
     format_usage_status,
     summarize_usage_text,
 )
-from clawbench.utils.paths import DOCKER_CONTEXT_ROOT, HARNESS_ROOT
+from clawbench.utils.paths import DOCKER_CONTEXT_ROOT
 
 console = Console()
 
-BASE_DOCKERFILE = HARNESS_ROOT / "base" / "Dockerfile.base"
-_HARNESS_DOCKERFILES: dict[str, Path] = {
-    "openclaw": HARNESS_ROOT / "openclaw" / "Dockerfile.openclaw",
-    "opencode": HARNESS_ROOT / "opencode" / "Dockerfile.opencode",
-    "claude-code": HARNESS_ROOT / "claude-code" / "Dockerfile.claude-code",
-    "claude-code-chrome-extension": HARNESS_ROOT
-    / "claude-code-chrome-extension"
-    / "Dockerfile.claude-code-chrome-extension",
-    "codex": HARNESS_ROOT / "codex" / "Dockerfile.codex",
-    "browser-use": HARNESS_ROOT / "browser-use" / "Dockerfile.browser-use",
-    "claw-code": HARNESS_ROOT / "claw-code" / "Dockerfile.claw-code",
-    "hermes": HARNESS_ROOT / "hermes" / "Dockerfile.hermes",
-    "pi": HARNESS_ROOT / "pi" / "Dockerfile.pi",
-}
+BASE_DOCKERFILE = HARNESS_REGISTRY.base_dockerfile
+_HARNESS_DOCKERFILES: dict[str, Path] = HARNESS_REGISTRY.harness_dockerfiles
 
 
 def step(msg: str):
@@ -407,10 +398,68 @@ def docker_run(
     run([*env_flags, harness_image(harness)])
 
 
+def _agent_message_sources_for(harness: str | None) -> list[AgentMessageSource]:
+    sources: list[AgentMessageSource] = []
+    seen: set[AgentMessageSource] = set()
+    for source in HARNESS_REGISTRY.base_agent_message_sources:
+        if source not in seen:
+            sources.append(source)
+            seen.add(source)
+    if harness is not None:
+        for source in HARNESS_REGISTRY.harness_agent_message_sources.get(harness, ()):
+            if source not in seen:
+                sources.append(source)
+                seen.add(source)
+        return sources
+
+    for harness_name in HARNESSES:
+        for source in HARNESS_REGISTRY.harness_agent_message_sources[harness_name]:
+            if source not in seen:
+                sources.append(source)
+                seen.add(source)
+    return sources
+
+
+def _agent_message_source_shell(source: AgentMessageSource) -> str:
+    if source.type == "file":
+        assert source.path is not None
+        path = shlex.quote(source.path)
+        return f"if [ -s {path} ]; then cat {path}; exit 0; fi"
+
+    if source.type == "find_latest":
+        assert source.root is not None
+        assert source.name is not None
+        root = shlex.quote(source.root)
+        name = shlex.quote(source.name)
+        return (
+            f"p=$(find {root} -name {name} -type f -printf '%T@ %p\\n' "
+            "2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-); "
+            'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; exit 0; fi'
+        )
+
+    if source.type == "latest_glob":
+        assert source.pattern is not None
+        return (
+            f"p=$(ls -t {source.pattern} 2>/dev/null | head -1); "
+            'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; exit 0; fi'
+        )
+
+    raise ValueError(f"Unsupported agent message source type: {source.type}")
+
+
+def _agent_message_probe_script(harness: str | None = None) -> str:
+    lines = [
+        _agent_message_source_shell(source)
+        for source in _agent_message_sources_for(harness)
+    ]
+    return " ".join([*lines, "exit 0"])
+
+
 def _container_usage_summary(
     name: str,
     model_cfg: dict | None,
     pricing_models: dict[str, dict] | None,
+    harness: str | None,
 ) -> dict | None:
     try:
         r = subprocess.run(
@@ -420,29 +469,7 @@ def _container_usage_summary(
                 name,
                 "sh",
                 "-c",
-                (
-                    "if [ -s /data/agent-messages.jsonl ]; then "
-                    "cat /data/agent-messages.jsonl; "
-                    "elif [ -s /root/.openclaw/agents/main/sessions/clawbench.jsonl ]; then "
-                    "cat /root/.openclaw/agents/main/sessions/clawbench.jsonl; "
-                    "elif [ -s /tmp/hermes-live-agent-messages.jsonl ]; then "
-                    "cat /tmp/hermes-live-agent-messages.jsonl; "
-                    "elif [ -s /data/agent-messages.raw.jsonl ]; then "
-                    "cat /data/agent-messages.raw.jsonl; "
-                    "elif [ -s /tmp/codex-stdout.jsonl ]; then "
-                    "cat /tmp/codex-stdout.jsonl; "
-                    "else "
-                    "p=$(find /root/.codex/sessions -name 'rollout-*.jsonl' "
-                    "-type f -printf '%T@ %p\\n' 2>/dev/null | sort -rn | "
-                    "head -1 | cut -d' ' -f2-); "
-                    'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; '
-                    "else "
-                    "p=$(ls -t /root/workspace/.claw/sessions/*/*.jsonl "
-                    "2>/dev/null | head -1); "
-                    'if [ -n "$p" ] && [ -s "$p" ]; then cat "$p"; fi; '
-                    "fi; "
-                    "fi"
-                ),
+                _agent_message_probe_script(harness),
             ],
             capture_output=True,
             text=True,
@@ -459,7 +486,11 @@ def _container_usage_summary(
     )
 
 
-def docker_wait(name: str, model_cfg: dict | None = None) -> None:
+def docker_wait(
+    name: str,
+    model_cfg: dict | None = None,
+    harness: str | None = None,
+) -> None:
     """Block until the container exits, showing a live status line."""
     start = time.time()
     proc = subprocess.Popen(
@@ -490,7 +521,12 @@ def docker_wait(name: str, model_cfg: dict | None = None) -> None:
                         pass
             except (subprocess.TimeoutExpired, subprocess.SubprocessError):
                 pass
-            usage_summary = _container_usage_summary(name, model_cfg, pricing_models)
+            usage_summary = _container_usage_summary(
+                name,
+                model_cfg,
+                pricing_models,
+                harness,
+            )
             usage_part = (
                 format_usage_status(usage_summary)
                 if usage_summary is not None
