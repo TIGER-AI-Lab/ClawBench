@@ -2,8 +2,8 @@
 
 <a href="https://github.com/reacher-z/ClawBench">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="static/hero-dark.svg">
-    <img alt="ClawBench" src="static/hero-light.svg" width="820">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
+    <img alt="ClawBench" src="assets/hero-light.svg" width="820">
   </picture>
 </a>
 
@@ -62,7 +62,7 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 
 **ClawBench is an open-source benchmark that evaluates AI browser agents on everyday online tasks — booking travel, ordering food, applying for jobs, managing email — across live websites. V1 lives in `test-cases/v1/` with 153 tasks across 144 websites; V2 lives in `test-cases/v2/` with 130 tasks. It measures end-to-end task success with a 5-layer recording pipeline and an agentic evaluator that compares each run against human references. Top score to date: 33.3%.**
 
-<img src="static/clawbench_logo.png" alt="ClawBench logo" width="320">
+<img src="assets/clawbench_logo.png" alt="ClawBench logo" width="320">
 
 We asked frontier AI agents to do what people do every day --<br/>
 order food, book travel, apply for jobs, write reviews, manage projects.<br/>
@@ -74,11 +74,11 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 **V1: 153** everyday tasks &nbsp;&middot;&nbsp; **V2: 130** tasks &nbsp;&middot;&nbsp; **144** live websites &nbsp;&middot;&nbsp; **15** life categories
 
-<a href="README.zh-CN.md"><img src="static/icons/language.svg" width="16" height="16"> 中文</a>
+<a href="docs/README.zh-CN.md"><img src="assets/icons/language.svg" width="16" height="16"> 中文</a>
 
 </div>
 
-## <img src="static/icons/circle-question.svg" width="20" height="20"> What are you looking for?
+## <img src="assets/icons/circle-question.svg" width="20" height="20"> What are you looking for?
 
 <table>
 <tr>
@@ -159,18 +159,18 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <br/>
 
 <p align="center">
-<img src="static/icons/globe.svg" width="24" height="24">&nbsp;<b>Live Websites</b>
+<img src="assets/icons/globe.svg" width="24" height="24">&nbsp;<b>Live Websites</b>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="static/icons/cube.svg" width="24" height="24">&nbsp;<b>Isolated Containers</b>
+<img src="assets/icons/cube.svg" width="24" height="24">&nbsp;<b>Isolated Containers</b>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="static/icons/shield-halved.svg" width="24" height="24">&nbsp;<b>Request Interceptor</b>
+<img src="assets/icons/shield-halved.svg" width="24" height="24">&nbsp;<b>Request Interceptor</b>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="static/icons/layer-group.svg" width="24" height="24">&nbsp;<b>Five-Layer Recording</b>
+<img src="assets/icons/layer-group.svg" width="24" height="24">&nbsp;<b>Five-Layer Recording</b>
 </p>
 
 <br/>
 
-## <img src="static/icons/layer-group.svg" width="20" height="20"> Datasets
+## <img src="assets/icons/layer-group.svg" width="20" height="20"> Datasets
 
 ClawBench ships **three** Hugging Face datasets — task definitions plus full execution traces for V1 and V2. All open, downloadable in one command. The benchmark itself is also mirrored on **TIGER-Lab** for visibility.
 
@@ -200,13 +200,13 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 <br/>
 
-# <img src="static/icons/robot.svg" width="28" height="28"> LLM Quick Start
+# <img src="assets/icons/robot.svg" width="28" height="28"> LLM Quick Start
 
 Point your coding agent (Claude Code, Cursor, Copilot, etc.) at [`AGENTS.md`](AGENTS.md) and prompt away.
 
 <br/>
 
-# <img src="static/icons/person.svg" width="28" height="28"> Human Quick Start
+# <img src="assets/icons/person.svg" width="28" height="28"> Human Quick Start
 
 Install ClawBench from PyPI for normal use:
 
@@ -348,7 +348,7 @@ This path gives you live-reload on ``src/``, ``src/clawbench/runtime/chrome-exte
 
 <br/>
 
-# <img src="static/icons/check-double.svg" width="28" height="28"> Reproduce the leaderboard
+# <img src="assets/icons/check-double.svg" width="28" height="28"> Reproduce the leaderboard
 
 > **Our scores are stable**: two independent runs of the same model under the same judge (`deepseek/deepseek-v4-pro`, lenient rubric) reproduce Intercepted and Reward within ±2 pp on the V2 130-task corpus.
 
@@ -386,7 +386,7 @@ For `deepseek-v4-flash:free × hermes × v2`, the published row is **Intercepted
 
 <br/>
 
-# <img src="static/icons/chart-bar.svg" width="28" height="28"> ClawBench-Lite
+# <img src="assets/icons/chart-bar.svg" width="28" height="28"> ClawBench-Lite
 
 **New here? Run this first.** [`test-cases/v1-lite/`](test-cases/v1-lite/) is a **20-task curated subset** of the V1 153-task corpus, selected for household-name sites, real-world relevance, difficulty, and category diversity. It matches the 20-tasks-per-source convention of [browser-use/benchmark](https://github.com/browser-use/benchmark) and gives you a credible signal at a fraction of the full-benchmark cost.
 
@@ -396,13 +396,13 @@ The Lite suite is a first-class task directory: run it with `--cases-suite v1-li
 
 <br/>
 
-# <img src="static/icons/play.svg" width="28" height="28"> Demos
+# <img src="assets/icons/play.svg" width="28" height="28"> Demos
 
 Each ClawBench run produces a full MP4 session recording. See the [project page](https://claw-bench.com) for V1 task recordings.
 
 <br/>
 
-# <img src="static/icons/circle-question.svg" width="28" height="28"> Example Walkthrough
+# <img src="assets/icons/circle-question.svg" width="28" height="28"> Example Walkthrough
 
 Curious what one task actually looks like, start to finish? Here's task **001** end to end.
 
@@ -444,7 +444,7 @@ All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidenc
 
 <br/>
 
-# <img src="static/icons/chart-bar.svg" width="28" height="28"> Results
+# <img src="assets/icons/chart-bar.svg" width="28" height="28"> Results
 
 <div align="center">
 
@@ -610,7 +610,7 @@ ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recordin
 
 <br/>
 
-# <img src="static/icons/terminal.svg" width="28" height="28"> CLI
+# <img src="assets/icons/terminal.svg" width="28" height="28"> CLI
 
 ```bash
 # Interactive TUI (recommended):
@@ -642,7 +642,7 @@ V1 tasks are in [`test-cases/v1/`](test-cases/v1/) (153 tasks). V2 tasks are in 
 
 <br/>
 
-# <img src="static/icons/chart-bar.svg" width="28" height="28"> Evaluation
+# <img src="assets/icons/chart-bar.svg" width="28" height="28"> Evaluation
 
 Evaluation is a **post-session** step -- first run agents to collect trajectories, then evaluate them against human reference runs.
 
@@ -660,7 +660,7 @@ See [eval/README.md](eval/README.md) for the full evaluation guide and Claude Co
 
 <br/>
 
-# <img src="static/icons/circle-question.svg" width="28" height="28"> FAQ
+# <img src="assets/icons/circle-question.svg" width="28" height="28"> FAQ
 
 <details>
 <summary><b>What data does each run produce?</b></summary>
@@ -753,7 +753,7 @@ Come hang out with researchers, builders, and contributors working on real-world
 <sub><b>English community</b><br/>Agent builders, researchers, contributors</sub>
 </td>
 <td align="center" width="33%">
-<a href="static/community/wechat_grp_422.jpg">
+<a href="assets/community/wechat_grp_422.jpg">
 <img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E7%BE%A4-%E5%8A%A0%E5%85%A5-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="微信群">
 </a>
 <br/>

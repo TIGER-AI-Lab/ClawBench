@@ -13,13 +13,5 @@ build/
 .idea/
 .vscode/
 *.log
-
-# ClawBench-Lite upstream adapter build artifacts
-clawbench_lite_v1.plaintext.json
-ClawBench_Lite_V1.enc
-
-# PyPI alias distributions are generated on demand by
-# ``scripts/build-aliases.py`` from a template — source of truth is the
-# root ``pyproject.toml`` and ``src/``, so these directories
-# are pure build output and never belong in git.
-packaging/aliases/
+.pytest_cache/
+run-logs/
