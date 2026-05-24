@@ -6,4 +6,6 @@ RUN pip install --no-cache-dir 'litellm[proxy]==1.83.9'
 COPY harnesses/browser-use/setup-browser-use.sh /setup-browser-use.sh
 COPY harnesses/browser-use/run-browser-use.sh /run-harness.sh
 COPY harnesses/browser-use/run-browser-use-agent.py /run-browser-use-agent.py
-RUN chmod +x /setup-browser-use.sh /run-harness.sh
+COPY harnesses/browser-use/browser-use-usage-logger.py /tmp/browser_use_usage_logger.py
+COPY harnesses/browser-use/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-browser-use.sh /run-harness.sh /usage-emitter.py

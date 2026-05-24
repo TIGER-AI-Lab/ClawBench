@@ -8,7 +8,8 @@ source /tmp/pi-env.sh
 
 # Start LiteLLM translation proxy.
 echo "Starting API translation proxy (litellm)..."
-litellm --config /tmp/litellm-config.yaml --port 4000 \
+PYTHONPATH="/tmp${PYTHONPATH:+:$PYTHONPATH}" \
+  litellm --config /tmp/litellm-config.yaml --port 4000 \
   > /data/proxy.log 2>&1 &
 PROXY_PID=$!
 for i in $(seq 1 30); do
@@ -79,6 +80,7 @@ PI_BROWSER_PROMPT="Complete the task using the browser_* tools attached to the e
 cd "$WORKSPACE"
 echo "Starting Pi agent (model=${PI_PROVIDER}/${PI_MODEL_ID}, thinking=${PI_THINKING})..."
 PI_RAW_MESSAGES=/data/agent-messages.raw.jsonl
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" pi \
   --mode json \
   --print \
@@ -97,6 +99,8 @@ PATH="$SAFE_BIN" pi \
   "$INSTRUCTION" \
   > "$PI_RAW_MESSAGES" 2> /data/agent.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness pi --input "$PI_RAW_MESSAGES" --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 # Watchdog: detect agent no action for 300s
@@ -147,6 +151,7 @@ echo "$STOP_REASON" > /data/.stop-reason
 
 # Kill Pi and proxy processes
 kill $AGENT_PID 2>/dev/null || true
+kill $USAGE_PID 2>/dev/null || true
 kill $PROXY_PID 2>/dev/null || true
 pkill -f "@earendil-works/pi-coding-agent" 2>/dev/null || true
 pkill -f "litellm" 2>/dev/null || true
@@ -177,6 +182,7 @@ PYEOF
 else
   : > /data/agent-messages.jsonl
 fi
+python3 /usage-emitter.py --harness pi --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 rm -f /data/agent.log /data/proxy.log
 

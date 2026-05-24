@@ -77,9 +77,12 @@ case "${THINKING_LEVEL:-off}" in
 esac
 # --mcp-config is variadic; use -- to stop it consuming the prompt.
 CLAUDE_ARGS+=(--mcp-config /tmp/claude-mcp.json -- "$INSTRUCTION")
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" claude "${CLAUDE_ARGS[@]}" \
   > /data/agent-messages.jsonl 2> /data/agent.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness claude-code --input /data/agent-messages.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 # Watchdog: detect agent no action for 300s
@@ -130,11 +133,13 @@ echo "$STOP_REASON" > /data/.stop-reason
 
 # Kill Claude Code, MCP, and proxy processes
 kill $AGENT_PID 2>/dev/null || true
+kill $USAGE_PID 2>/dev/null || true
 kill $PROXY_PID 2>/dev/null || true
 pkill -f "@anthropic-ai/claude-code" 2>/dev/null || true
 pkill -f "@playwright/mcp" 2>/dev/null || true
 pkill -f "litellm" 2>/dev/null || true
 sleep 2
+python3 /usage-emitter.py --harness claude-code --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 curl -sf -X POST http://localhost:7878/api/stop || true
 

@@ -17,4 +17,5 @@ RUN find /usr/local/lib/node_modules/openclaw/dist -name '*.js' -exec \
 
 COPY harnesses/openclaw/setup-openclaw.sh /setup-openclaw.sh
 COPY harnesses/openclaw/run-openclaw.sh /run-harness.sh
-RUN chmod +x /setup-openclaw.sh /run-harness.sh
+COPY harnesses/openclaw/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-openclaw.sh /run-harness.sh /usage-emitter.py

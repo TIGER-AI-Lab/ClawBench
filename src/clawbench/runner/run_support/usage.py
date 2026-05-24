@@ -1,4 +1,4 @@
-"""Token and estimated-cost accounting for agent transcripts."""
+"""Token and estimated-cost aggregation for harness-generated usage rows."""
 
 from __future__ import annotations
 
@@ -50,10 +50,13 @@ def _first_int(data: dict[str, Any], keys: Iterable[str]) -> int:
 def _normalize_usage(raw: dict[str, Any]) -> dict[str, int]:
     input_details = raw.get("input_tokens_details")
     output_details = raw.get("output_tokens_details")
+    cache_details = raw.get("cache")
     if not isinstance(input_details, dict):
         input_details = {}
     if not isinstance(output_details, dict):
         output_details = {}
+    if not isinstance(cache_details, dict):
+        cache_details = {}
 
     explicit_cache_read = _first_int(
         raw,
@@ -64,8 +67,12 @@ def _normalize_usage(raw: dict[str, Any]) -> dict[str, int]:
             "cache_read_input_tokens",
         ),
     )
-    nested_cache_read = _first_int(
+    nested_input_cache_read = _first_int(
         input_details, ("cached_tokens", "cache_read_tokens")
+    )
+    nested_cache_read = nested_input_cache_read or _first_int(
+        cache_details,
+        ("read", "cache_read_tokens"),
     )
 
     usage = {
@@ -96,7 +103,8 @@ def _normalize_usage(raw: dict[str, Any]) -> dict[str, int]:
                 "cache_write_tokens",
                 "cache_creation_input_tokens",
             ),
-        ),
+        )
+        or _first_int(cache_details, ("write", "cache_write_tokens")),
         "reasoning_tokens": _first_int(
             raw,
             (
@@ -116,8 +124,11 @@ def _normalize_usage(raw: dict[str, Any]) -> dict[str, int]:
             ),
         ),
     }
-    if nested_cache_read and not explicit_cache_read:
-        usage["input_tokens"] = max(usage["input_tokens"] - nested_cache_read, 0)
+    if nested_input_cache_read and not explicit_cache_read:
+        usage["input_tokens"] = max(
+            usage["input_tokens"] - nested_input_cache_read,
+            0,
+        )
     usage["total_tokens"] = (
         usage["input_tokens"]
         + usage["output_tokens"]
@@ -197,12 +208,14 @@ def _pricing_rates(model_row: dict[str, Any] | None) -> dict[str, Decimal | None
     pricing = model_row.get("pricing") if isinstance(model_row, dict) else None
     if not isinstance(pricing, dict):
         pricing = {}
+    completion_rate = _to_decimal(pricing.get("completion"))
     return {
         "input_tokens": _to_decimal(pricing.get("prompt")),
-        "output_tokens": _to_decimal(pricing.get("completion")),
+        "output_tokens": completion_rate,
         "cache_read_tokens": _to_decimal(pricing.get("input_cache_read")),
         "cache_write_tokens": _to_decimal(pricing.get("input_cache_write")),
-        "reasoning_tokens": _to_decimal(pricing.get("internal_reasoning")),
+        "reasoning_tokens": _to_decimal(pricing.get("internal_reasoning"))
+        or completion_rate,
     }
 
 
@@ -262,8 +275,10 @@ def _extract_usage_events(
     seen_keys: set[str] = set()
     observed_models: set[str] = set()
     api_calls = 0
-    session_aggregate: dict[str, int] | None = None
-    session_api_calls: int | None = None
+    estimated_cost = Decimal("0")
+    saw_cost = False
+    saw_price_unavailable = False
+    matched_models: set[str] = set()
 
     for line in lines:
         if not line.strip():
@@ -275,60 +290,50 @@ def _extract_usage_events(
         if not isinstance(event, dict):
             continue
 
-        for key in ("model", "model_id", "modelId"):
-            value = event.get(key)
-            if isinstance(value, str) and value:
-                observed_models.add(value.removeprefix("openrouter/"))
-
-        if event.get("type") == "session_meta":
-            for key in ("model", "model_id"):
-                value = event.get(key)
-                if isinstance(value, str) and value:
-                    observed_models.add(value.removeprefix("openrouter/"))
-            normalized = _normalize_usage(event)
-            if normalized["total_tokens"]:
-                session_aggregate = normalized
-            if isinstance(event.get("api_call_count"), int):
-                session_api_calls = event["api_call_count"]
+        if event.get("type") != "usage":
             continue
 
-        usage_owner: dict[str, Any] | None = None
-        raw_usage = event.get("usage")
-        if isinstance(raw_usage, dict):
-            usage_owner = event
-        else:
-            message = event.get("message")
-            if isinstance(message, dict):
-                for key in ("model", "model_id", "modelId"):
-                    value = message.get(key)
-                    if isinstance(value, str) and value:
-                        observed_models.add(value.removeprefix("openrouter/"))
-                raw_usage = message.get("usage")
-                if isinstance(raw_usage, dict):
-                    usage_owner = message
-
-        if not isinstance(raw_usage, dict) or usage_owner is None:
-            continue
-
-        usage_key = _event_usage_key(event, usage_owner)
+        call_id = event.get("call_id") or event.get("id")
+        usage_key = str(call_id) if call_id else None
         if usage_key and usage_key in seen_keys:
             continue
         if usage_key:
             seen_keys.add(usage_key)
 
-        normalized = _normalize_usage(raw_usage)
+        normalized = {
+            "input_tokens": _to_int(event.get("input_tokens")),
+            "output_tokens": _to_int(event.get("output_tokens")),
+            "cache_read_tokens": _to_int(event.get("cache_read_tokens")),
+            "cache_write_tokens": _to_int(event.get("cache_write_tokens")),
+            "reasoning_tokens": _to_int(event.get("reasoning_tokens")),
+            "reported_total_tokens": _to_int(event.get("reported_total_tokens")),
+            "total_tokens": _to_int(event.get("total_tokens")),
+        }
+        if normalized["total_tokens"] == 0:
+            normalized["total_tokens"] = (
+                normalized["input_tokens"]
+                + normalized["output_tokens"]
+                + normalized["cache_read_tokens"]
+                + normalized["cache_write_tokens"]
+                + normalized["reasoning_tokens"]
+            ) or normalized["reported_total_tokens"]
         if normalized["total_tokens"]:
             api_calls += 1
             _merge_usage(totals, normalized)
-
-    if session_aggregate is not None:
-        totals = session_aggregate
-        if session_api_calls is not None:
-            api_calls = session_api_calls
-        elif api_calls == 0:
-            api_calls = 1
-    elif session_api_calls is not None and api_calls == 0:
-        api_calls = session_api_calls
+            cost = event.get("estimated_cost_usd")
+            if isinstance(cost, (int, float, str)):
+                dec_cost = _to_decimal(cost)
+                if dec_cost is not None:
+                    estimated_cost += dec_cost
+                    saw_cost = True
+            if event.get("cost_status") == "price_unavailable":
+                saw_price_unavailable = True
+            model = event.get("model")
+            if isinstance(model, str) and model:
+                observed_models.add(model.removeprefix("openrouter/"))
+            matched = event.get("matched_model_id")
+            if isinstance(matched, str) and matched:
+                matched_models.add(matched)
 
     if totals["total_tokens"] == 0:
         totals["total_tokens"] = (
@@ -338,6 +343,11 @@ def _extract_usage_events(
             + totals["cache_write_tokens"]
             + totals["reasoning_tokens"]
         ) or totals["reported_total_tokens"]
+    totals["__estimated_cost_microusd"] = int(estimated_cost * Decimal("1000000"))
+    totals["__saw_cost"] = 1 if saw_cost else 0
+    totals["__saw_price_unavailable"] = 1 if saw_price_unavailable else 0
+    if len(matched_models) == 1:
+        totals["__matched_model"] = next(iter(matched_models))  # type: ignore[assignment]
 
     return totals, api_calls, observed_models, len(seen_keys)
 
@@ -349,22 +359,19 @@ def summarize_usage_lines(
     pricing_models: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     totals, api_calls, observed_models, usage_events = _extract_usage_events(lines)
-    configured_model = str(model_cfg.get("model", "")) if model_cfg else ""
-    base_url = str(model_cfg.get("base_url", "")) if model_cfg else ""
-    candidates = [configured_model, *sorted(observed_models)]
 
-    models = pricing_models
-    if models is None and "openrouter.ai" in base_url:
-        models = fetch_openrouter_pricing(base_url=base_url or None)
-    models = models or {}
-    model_row = resolve_openrouter_model(candidates, models)
-    cost, missing_rates = _estimate_cost_usd(totals, model_row)
-    if totals["total_tokens"] == 0:
-        cost = None
+    model_row = None
+    cost = None
+    missing_rates: list[str] = []
+    matched_model = totals.get("__matched_model")
+    if isinstance(matched_model, str):
+        model_row = {"id": matched_model}
+    if totals.get("__saw_cost"):
+        cost = totals.get("__estimated_cost_microusd", 0) / 1000000
 
     if totals["total_tokens"] == 0 and api_calls == 0:
         status = "usage_unavailable"
-    elif cost is None:
+    elif cost is None or totals.get("__saw_price_unavailable"):
         status = "price_unavailable"
     else:
         status = "estimated"
@@ -395,19 +402,24 @@ def summarize_usage_file(
     model_cfg: dict[str, Any] | None = None,
     pricing_models: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    usage_source = "transient_usage_jsonl" if path.name == "usage.jsonl" else path.name
     try:
         with path.open(encoding="utf-8", errors="replace") as f:
-            return summarize_usage_lines(
+            summary = summarize_usage_lines(
                 f,
                 model_cfg=model_cfg,
                 pricing_models=pricing_models,
             )
+            summary["usage_source"] = usage_source
+            return summary
     except OSError:
-        return summarize_usage_lines(
+        summary = summarize_usage_lines(
             (),
             model_cfg=model_cfg,
             pricing_models=pricing_models,
         )
+        summary["usage_source"] = usage_source
+        return summary
 
 
 def summarize_usage_text(

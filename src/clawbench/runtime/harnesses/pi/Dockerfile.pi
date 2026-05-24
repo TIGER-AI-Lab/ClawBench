@@ -18,4 +18,6 @@ RUN pip install --no-cache-dir 'litellm[proxy]==1.83.9'
 
 COPY harnesses/pi/setup-pi.sh /setup-pi.sh
 COPY harnesses/pi/run-pi.sh /run-harness.sh
-RUN chmod +x /setup-pi.sh /run-harness.sh
+COPY harnesses/pi/pi-usage-logger.py /tmp/pi_usage_logger.py
+COPY harnesses/pi/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-pi.sh /run-harness.sh /usage-emitter.py

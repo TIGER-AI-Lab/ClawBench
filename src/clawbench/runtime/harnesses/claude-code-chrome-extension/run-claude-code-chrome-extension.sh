@@ -426,9 +426,12 @@ case "${THINKING_LEVEL:-off}" in
 esac
 CLAUDE_ARGS+=(-- "$INSTRUCTION")
 
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" claude "${CLAUDE_ARGS[@]}" \
   > /data/agent-messages.jsonl 2> /data/agent.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness claude-code-chrome-extension --input /data/agent-messages.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 # --- Watchdog ---------------------------------------------------------------
@@ -484,6 +487,7 @@ echo "$STOP_REASON" > /data/.stop-reason
 # subprocess is parented to the agent; both need an explicit pkill after we
 # take down the direct children.
 kill "$AGENT_PID"  2>/dev/null || true
+kill "$USAGE_PID" 2>/dev/null || true
 kill "$RETRY_PROXY_PID" 2>/dev/null || true
 kill "$PROXY_PID"  2>/dev/null || true
 kill "$MOCK_PID"   2>/dev/null || true
@@ -495,6 +499,7 @@ pkill -f "litellm"                    2>/dev/null || true
 pkill -f "mock-anthropic-api"         2>/dev/null || true
 pkill -f "fake-anthropic-bridge"      2>/dev/null || true
 sleep 2
+python3 /usage-emitter.py --harness claude-code-chrome-extension --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 curl -sf -X POST http://localhost:7878/api/stop || true
 rm -f /data/.stop-requested

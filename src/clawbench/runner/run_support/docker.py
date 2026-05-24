@@ -469,7 +469,7 @@ def _container_usage_summary(
                 name,
                 "sh",
                 "-c",
-                _agent_message_probe_script(harness),
+                "if [ -s /data/usage.jsonl ]; then cat /data/usage.jsonl; fi",
             ],
             capture_output=True,
             text=True,

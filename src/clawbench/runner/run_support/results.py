@@ -94,6 +94,7 @@ def collect_run_metrics(
     actions_file = data_dir / "actions.jsonl"
     requests_file = data_dir / "requests.jsonl"
     messages_file = data_dir / "agent-messages.jsonl"
+    usage_file = data_dir / "usage.jsonl"
     screenshots_dir = data_dir / "screenshots"
     recording_file = data_dir / "recording.mp4"
     interception_file = data_dir / "interception.json"
@@ -204,7 +205,7 @@ def collect_run_metrics(
     elif browser_use_model_outputs:
         metrics["api_calls"] = browser_use_model_outputs
 
-    usage = summarize_usage_file(messages_file, model_cfg=model_cfg)
+    usage = summarize_usage_file(usage_file, model_cfg=model_cfg)
     if usage["api_calls"] > metrics["api_calls"]:
         metrics["api_calls"] = usage["api_calls"]
     metrics["usage"] = usage
@@ -362,6 +363,11 @@ def print_results(
         print(f"Request method: {result['request']['method']}")
         if result["request"].get("body"):
             print(f"Body: {json.dumps(result['request']['body'])[:300]}")
-    usage = summarize_usage_file(data_dir / "agent-messages.jsonl", model_cfg=model_cfg)
+    usage = summarize_usage_file(data_dir / "usage.jsonl", model_cfg=model_cfg)
     print(format_usage_summary(usage))
     return intercepted
+
+
+def remove_transient_usage_artifact(output_dir: Path) -> None:
+    """Remove the harness handoff artifact after run-meta.json has usage."""
+    (output_dir / "data" / "usage.jsonl").unlink(missing_ok=True)

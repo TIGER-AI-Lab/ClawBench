@@ -249,8 +249,11 @@ HERMES_ARGS=(chat
   --model "$HERMES_MODEL_NAME"
   --provider "$HERMES_PROVIDER"
   -q "$HERMES_INSTRUCTION")
+: > /data/usage.jsonl
 python3 /hermes-capture.py "${HERMES_ARGS[@]}" > /tmp/hermes-stdout.log 2> /tmp/hermes-stderr.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness hermes --input /tmp/hermes-live-agent-messages.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 if ! kill -0 $AGENT_PID 2>/dev/null; then
@@ -315,10 +318,12 @@ echo "$STOP_REASON" > /data/.stop-reason
 # Terminate Hermes first so it can flush its session, then clean up the native
 # browser helper process if it is still alive.
 terminate_hermes "$AGENT_PID"
+kill "$USAGE_PID" 2>/dev/null || true
 pkill -f "agent-browser" 2>/dev/null || true
 sleep 2
 
 promote_hermes_transcript
+python3 /usage-emitter.py --harness hermes --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 cp /tmp/hermes-stdout.log /data/agent-stdout.log 2>/dev/null || true
 cp /tmp/hermes-stderr.log /data/agent-stderr.log 2>/dev/null || true
 cp /tmp/hermes-export.log /data/hermes-export.log 2>/dev/null || true

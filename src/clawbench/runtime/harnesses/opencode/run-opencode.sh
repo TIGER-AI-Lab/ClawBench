@@ -52,9 +52,12 @@ case "${THINKING_LEVEL:-medium}" in
   *) OPENCODE_ARGS+=(--thinking) ;;
 esac
 OPENCODE_ARGS+=("$INSTRUCTION")
+: > /data/usage.jsonl
 opencode "${OPENCODE_ARGS[@]}" \
   > /data/agent-messages.jsonl 2> /data/agent.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness opencode --input /data/agent-messages.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 # Watchdog: detect agent no action for 300s
@@ -105,9 +108,11 @@ echo "$STOP_REASON" > /data/.stop-reason
 
 # Kill opencode and any MCP child processes
 kill $AGENT_PID 2>/dev/null || true
+kill $USAGE_PID 2>/dev/null || true
 pkill -f "opencode" 2>/dev/null || true
 pkill -f "@playwright/mcp" 2>/dev/null || true
 sleep 2
+python3 /usage-emitter.py --harness opencode --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 curl -sf -X POST http://localhost:7878/api/stop || true
 

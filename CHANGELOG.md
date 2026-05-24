@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Added display of live token cost estimation during the run.
 
+### Fixed
+- Fixed the issue that Claude Code Chrome Extension harness cannot be build due to upstream changes and pinned to a fixed version.
+
 ## [0.4.1] - 2026-05-23
 ### Fixed
 - Fixed several mismatches in task definitions and the provided extra information.

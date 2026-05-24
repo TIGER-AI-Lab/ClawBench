@@ -15,4 +15,5 @@ RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g \
 
 COPY harnesses/opencode/setup-opencode.sh /setup-opencode.sh
 COPY harnesses/opencode/run-opencode.sh /run-harness.sh
-RUN chmod +x /setup-opencode.sh /run-harness.sh
+COPY harnesses/opencode/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-opencode.sh /run-harness.sh /usage-emitter.py

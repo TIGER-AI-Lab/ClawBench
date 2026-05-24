@@ -63,8 +63,11 @@ if [ -n "$MAX_TOKENS" ]; then
   AGENT_CMD+=(--max-tokens "$MAX_TOKENS")
 fi
 cd "$WORKSPACE"
+: > /data/usage.jsonl
 "${AGENT_CMD[@]}" > /data/agent.log 2>&1 &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness openclaw --input /root/.openclaw/agents/main/sessions/clawbench.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 
 # Watchdog: wait for agent activity, then detect idle (no new actions for 300s)
 IDLE_THRESHOLD=300
@@ -114,12 +117,14 @@ echo "$STOP_REASON" > /data/.stop-reason
 
 # Kill all openclaw processes
 kill $AGENT_PID 2>/dev/null || true
+kill $USAGE_PID 2>/dev/null || true
 kill $GATEWAY_PID 2>/dev/null || true
 pkill -f "openclaw" 2>/dev/null || true
 sleep 2
 
 # Copy OpenClaw session transcript to /data
 cp /root/.openclaw/agents/main/sessions/clawbench.jsonl /data/agent-messages.jsonl 2>/dev/null || true
+python3 /usage-emitter.py --harness openclaw --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 # Finalize bookkeeping (eval promotion, etc.) — recording keeps running
 curl -sf -X POST http://localhost:7878/api/stop || true

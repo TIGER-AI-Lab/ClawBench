@@ -58,12 +58,13 @@ src/
     setup.sh                     # Local extension launch helper
     README.md
   harnesses/
-    harnesses.yaml              # Central harness registry: images, Dockerfiles, scripts
+    harnesses.yaml              # Central harness registry: images, scripts, usage emitters
     harness.schema.json         # JSON Schema for harnesses.yaml
     base/
       Dockerfile.base            # Shared Chromium, Xvfb, noVNC, server, extension image
       entrypoint.sh              # Shared container startup logic
     openclaw/
+      usage-emitter.py           # Harness-local JSONL usage artifact emitter
     ...                          # other harnesses
 ```
 
@@ -143,8 +144,10 @@ Model entries are validated against `models/model.schema.json`.
 14. Removes the container, deletes the disposable email, and removes the temporary personal info directory.
 
 Check `clawbench/runtime/harnesses/harnesses.yaml` for the supported harnesses
-and their Dockerfile, setup script, run script, helper-file, and
-agent-message source mappings.
+and their Dockerfile, setup script, run script, `usage_emitter`, helper-file,
+and agent-message source mappings. `usage_emitter` is a dedicated registry
+field pointing to a harness-local emitter; `extra_files` is only for other
+harness-specific support files.
 
 Use `--harness <name>` to select one. The default is `openclaw`.
 

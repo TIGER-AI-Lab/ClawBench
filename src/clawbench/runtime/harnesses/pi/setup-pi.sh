@@ -86,7 +86,10 @@ proxy_config = {
         "model_name": model_name,
         "litellm_params": litellm_params,
     }],
-    "litellm_settings": {"drop_params": True},
+    "litellm_settings": {
+        "drop_params": True,
+        "success_callback": ["pi_usage_logger.proxy_handler_instance"],
+    },
 }
 proxy_path = Path("/tmp/litellm-config.yaml")
 proxy_path.write_text(yaml.dump(proxy_config, default_flow_style=False))

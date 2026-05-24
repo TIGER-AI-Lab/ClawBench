@@ -235,16 +235,21 @@ RUN chmod +x /usr/local/bin/fake-anthropic-bridge.py
 
 # --- Unpack the Claude in Chrome extension from the Web Store ---------------
 # Download the .crx once at build time so the container has no outbound
-# dependency at run time. The inlined Python script strips the CRX3 header,
+# dependency at run time. This URL is the versioned blob currently returned by
+# the Chrome Web Store update endpoint for extension version 1.0.72.
+# The inlined Python script strips the CRX3 header,
 # unzips the payload, and injects the extension's original public key into
 # manifest.json so Chrome loads it under the original extension id
 # (fcoeoabgfenejglbffodgkkbkcdhcgfn) — that id is what the Claude Code CLI's
 # native-messaging allow-list expects.
+ARG CLAUDE_IN_CHROME_CRX_URL="https://clients2.googleusercontent.com/crx/blobs/AXJDbcCe7Rt2vHvMkvZou5r3pa1doh0i2ovwYyZVkkGgj0nX0bMP-zkeHiMeofTpH4AM9wr23dfwyXf5E9tpib-PvpGDcjChlD0Z3AU4tuAOwQFKU2Yjy4VVrUhrg9RbwkQpAMZSmuWyQpl_555JbFGxSQceKle50ryw9g/FCOEOABGFENEJGLBFFODGKKBKCDHCGFN_1_0_72_0.crx"
+ARG CLAUDE_IN_CHROME_CRX_SHA256="a22375eea12ab077d82a7a2210bb02a45f55740c61091bf61e97dd473dcc9b79"
+ARG CLAUDE_IN_CHROME_VERSION="1.0.72"
 RUN mkdir -p /app/claude-in-chrome \
-    && CRX_ID=fcoeoabgfenejglbffodgkkbkcdhcgfn \
     && wget --tries=3 -qO /tmp/claude.crx \
-    "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=131.0.0.0&acceptformat=crx2,crx3&x=id%3D${CRX_ID}%26installsource%3Dondemand%26uc" \
-    && python3 - /tmp/claude.crx /app/claude-in-chrome <<'PYEOF' \
+    "$CLAUDE_IN_CHROME_CRX_URL" \
+    && printf '%s  /tmp/claude.crx\n' "$CLAUDE_IN_CHROME_CRX_SHA256" | sha256sum -c - \
+    && python3 - /tmp/claude.crx /app/claude-in-chrome "$CLAUDE_IN_CHROME_VERSION" <<'PYEOF' \
     && rm /tmp/claude.crx \
     && ls /app/claude-in-chrome/manifest.json
 import base64, hashlib, io, json, struct, sys, zipfile
@@ -252,6 +257,7 @@ from pathlib import Path
 
 crx_path = Path(sys.argv[1])
 out_dir = Path(sys.argv[2])
+expected_version = sys.argv[3]
 data = crx_path.read_bytes()
 assert data[:4] == b"Cr24", f"Not a CRX file: {data[:4]!r}"
 version = struct.unpack("<I", data[4:8])[0]
@@ -329,9 +335,15 @@ else:
 out_dir.mkdir(parents=True, exist_ok=True)
 zipfile.ZipFile(io.BytesIO(data[zip_start:])).extractall(out_dir)
 
+manifest_path = out_dir / "manifest.json"
+manifest = json.loads(manifest_path.read_text())
+actual_version = manifest.get("version")
+if actual_version != expected_version:
+    raise SystemExit(
+        f"ERROR: Claude in Chrome CRX version drifted: "
+        f"expected {expected_version}, got {actual_version}")
+
 if public_key:
-    manifest_path = out_dir / "manifest.json"
-    manifest = json.loads(manifest_path.read_text())
     manifest["key"] = base64.b64encode(public_key).decode()
     manifest_path.write_text(json.dumps(manifest, indent=2))
     digest = hashlib.sha256(public_key).digest()[:16]
@@ -376,9 +388,11 @@ def patch_file(path):
         text = text.replace('"wss://api.anthropic.com"',
                             '"ws://127.0.0.1:4001"', 1)
         patches.append(f"{path.name}: wsApiBaseUrl")
-    # 3. Bypass OAuth null-returns inside the bridge connector. Older builds
-    # used Na/nn in PermissionManager; newer 1.0.70 builds use Ba/un in
-    # mcpPermissions. Patch both shapes so extension updates fail less often.
+    # 3. Bypass OAuth null-returns inside the bridge connector. Extension
+    # updates regularly rename the minified helpers:
+    #   1.0.70-ish: u()/h() with Na/nn or Ba/un state helpers
+    #   1.0.72-ish: h()/p() with Ba/un state helpers
+    # Patch all known shapes so Web Store updates fail less often.
     oauth_null = 'if(o=await u(),!o)return Na=!1,nn(),!1;'
     oauth_fix = 'if(o=await u(),!o)o="fake-oauth-token";'
     if oauth_null in text:
@@ -399,48 +413,85 @@ def patch_file(path):
     if userid_null in text:
         text = text.replace(userid_null, userid_fix, 1)
         patches.append(f"{path.name}: userId null-return")
+    oauth_null = 'if(o=await h(),!o)return Ba=!1,un(),!1;'
+    oauth_fix = 'if(o=await h(),!o)o="fake-oauth-token";'
+    if oauth_null in text:
+        text = text.replace(oauth_null, oauth_fix, 1)
+        patches.append(f"{path.name}: OAuth null-return")
+    userid_null = 'if(t=await p(o),!t)return Ba=!1,un(),!1;'
+    userid_fix = 'if(t=await p(o),!t)t="clawbench-user";'
+    if userid_null in text:
+        text = text.replace(userid_null, userid_fix, 1)
+        patches.append(f"{path.name}: userId null-return")
     # 4. Make the extension's auth helpers local-only. This prevents both the
     # visible OAuth launcher and the non-interactive silent reauth path from
     # opening claude.ai tabs while still satisfying side panel/native-host
     # status checks that expect auth to be valid.
-    text, count = re.subn(
+    text, count_old = re.subn(
         r'async function Te\(\)\{.*?\}const xe=',
         'async function Te(){return"success"}const xe=',
         text,
         count=1,
         flags=re.S,
     )
-    if count:
+    text, count_new = re.subn(
+        r'async function Ae\(\)\{.*?\}const Oe=',
+        'async function Ae(){return"success"}const Oe=',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count_old or count_new:
         patches.append(f"{path.name}: silent OAuth no-op")
-    text, count = re.subn(
+    text, count_old = re.subn(
         r'let Ae=null;const Oe=\(\)=>Ae\|\|.*?\),Ae\);const Ce=async\(\)=>\{if\(!\(await Oe\(\)\)\.isValid\)return;return await j\(F\.ACCESS_TOKEN\)\|\|void 0\}',
         'let Ae=null;const Oe=()=>Promise.resolve({isValid:!0,isRefreshed:!1});const Ce=async()=>await j(F.ACCESS_TOKEN)||"fake-oauth-token"',
         text,
         count=1,
         flags=re.S,
     )
-    if count:
+    text, count_new = re.subn(
+        r'let Ce=null;const Pe=\(\)=>Ce\|\|.*?\),Ce\);const ke=async',
+        'let Ce=null;const Pe=()=>Promise.resolve({isValid:!0,isRefreshed:!1});const ke=async',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count_old or count_new:
         patches.append(f"{path.name}: auth valid")
-    text, count = re.subn(
+    text, count_old = re.subn(
         r'Re=async t=>\{const e=t\?\?await Ce\(\);.*?\},Ie=async',
         'Re=async t=>"clawbench-user",Ie=async',
         text,
         count=1,
         flags=re.S,
     )
-    if count:
+    text, count_new = re.subn(
+        r'Re=async t=>\{const e=t\?\?await ke\(\);.*?\},Le=async',
+        'Re=async t=>"clawbench-user",Le=async',
+        text,
+        count=1,
+        flags=re.S,
+    )
+    if count_old or count_new:
         patches.append(f"{path.name}: userId helper")
 
     # 5. Stop the extension from opening a visible claude.ai OAuth tab during
     # startup. The bridge gets fake credentials above; this keeps benchmark
     # action logs focused on the task page instead of the auth splash.
-    text, count = re.subn(
+    text, count_old = re.subn(
         r'Le=async\(\)=>\{const t=E\(\),e=ve\(32\).*?chrome\.tabs\.create\(\{url:o\}\)\}',
         'Le=async()=>{await G({[F.ACCESS_TOKEN]:"fake-oauth-token",[F.REFRESH_TOKEN]:"fake-refresh-token",[F.TOKEN_EXPIRY]:Date.now()+31536e6,[F.ACCOUNT_UUID]:"clawbench-user"})}',
         text,
         count=1,
     )
-    if count:
+    text, count_new = re.subn(
+        r'Ne=async\(\)=>\{const t=P\(\),e=we\(32\).*?chrome\.tabs\.create\(\{url:s\}\)\}',
+        'Ne=async()=>{await J({[W.ACCESS_TOKEN]:"fake-oauth-token",[W.REFRESH_TOKEN]:"fake-refresh-token",[W.TOKEN_EXPIRY]:Date.now()+31536e6,[W.ACCOUNT_UUID]:"clawbench-user"})}',
+        text,
+        count=1,
+    )
+    if count_old or count_new:
         patches.append(f"{path.name}: OAuth launch no-op")
     if text != original:
         path.write_text(text)
@@ -553,4 +604,5 @@ ENV EXTRA_LOAD_EXTENSIONS=/app/claude-in-chrome
 # --- Harness scripts --------------------------------------------------------
 COPY harnesses/claude-code-chrome-extension/setup-claude-code-chrome-extension.sh /setup-claude-code-chrome-extension.sh
 COPY harnesses/claude-code-chrome-extension/run-claude-code-chrome-extension.sh /run-harness.sh
-RUN chmod +x /setup-claude-code-chrome-extension.sh /run-harness.sh
+COPY harnesses/claude-code-chrome-extension/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-claude-code-chrome-extension.sh /run-harness.sh /usage-emitter.py

@@ -36,6 +36,7 @@ def test_classify_run_success_from_synthetic_output(tmp_path: Path) -> None:
     assert result["failure_category"] is None
     assert result["infra_failure"] is False
     assert result["metrics"]["actions"] == 1
+    assert "data/usage.jsonl" not in result["metrics"]["missing_files"]
 
 
 def test_classify_run_flags_missing_recording(tmp_path: Path) -> None:
@@ -105,6 +106,18 @@ def test_print_results_includes_usage_summary(
     out = capsys.readouterr().out
     assert "Usage: 123 total" in out
     assert "estimated cost $0.004200" in out
+
+
+def test_remove_transient_usage_artifact(tmp_path: Path) -> None:
+    from clawbench.runner.run_support.results import remove_transient_usage_artifact
+
+    usage = tmp_path / "data" / "usage.jsonl"
+    usage.parent.mkdir()
+    usage.write_text("{}\n")
+
+    remove_transient_usage_artifact(tmp_path)
+
+    assert not usage.exists()
 
 
 def test_run_metadata_redacts_model_and_judge_secrets(

@@ -7,8 +7,9 @@ set -e
 source /tmp/browser-use-env.sh
 
 echo "Starting API translation proxy (litellm)..."
-litellm --config /tmp/litellm-config.yaml --port 4000 \
-  > /tmp/browser-use-litellm.log 2>&1 &
+PYTHONPATH="/tmp${PYTHONPATH:+:$PYTHONPATH}" \
+  litellm --config /tmp/litellm-config.yaml --port 4000 \
+  > /data/proxy.log 2>&1 &
 PROXY_PID=$!
 for i in $(seq 1 30); do
   if curl -sf http://localhost:4000/health/liveliness > /dev/null 2>&1; then
@@ -16,7 +17,7 @@ for i in $(seq 1 30); do
     break
   fi
   if [ "$i" -eq 30 ]; then
-    echo "API proxy not ready after 30s — check /tmp/browser-use-litellm.log"
+    echo "API proxy not ready after 30s — check /data/proxy.log"
     echo "proxy_failed" > /data/.stop-reason
     exit 1
   fi
@@ -60,6 +61,7 @@ ln -sf "$(command -v python3)" "$SAFE_BIN/python3"
 # /tmp so the post-run cleanup doesn't include them in the run output.
 cd "$WORKSPACE"
 echo "Starting browser-use agent (model=${BU_MODEL_NAME})..."
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" python3 /run-browser-use-agent.py \
   > /tmp/browser-use-stdout.log 2> /tmp/browser-use-stderr.log &
 AGENT_PID=$!
@@ -119,6 +121,7 @@ pkill -f "browser_use"           2>/dev/null || true
 pkill -f "playwright"            2>/dev/null || true
 pkill -f "litellm"               2>/dev/null || true
 sleep 2
+python3 /usage-emitter.py --harness browser-use --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 
 curl -sf -X POST http://localhost:7878/api/stop || true
 

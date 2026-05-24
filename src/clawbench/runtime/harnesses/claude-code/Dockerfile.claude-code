@@ -18,4 +18,5 @@ RUN pip install --no-cache-dir 'litellm[proxy]==1.83.9'
 
 COPY harnesses/claude-code/setup-claude-code.sh /setup-claude-code.sh
 COPY harnesses/claude-code/run-claude-code.sh /run-harness.sh
-RUN chmod +x /setup-claude-code.sh /run-harness.sh
+COPY harnesses/claude-code/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-claude-code.sh /run-harness.sh /usage-emitter.py

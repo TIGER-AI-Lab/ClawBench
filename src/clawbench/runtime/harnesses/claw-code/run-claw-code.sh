@@ -81,6 +81,7 @@ case "${THINKING_LEVEL:-off}" in
 esac
 
 CLAW_ARGS+=(prompt "$INSTRUCTION")
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" claw "${CLAW_ARGS[@]}" \
   > /data/agent.log 2>&1 &
 AGENT_PID=$!
@@ -146,6 +147,7 @@ sleep 2
 LATEST_SESSION=$(ls -t "$WORKSPACE"/.claw/sessions/*/*.jsonl 2>/dev/null | head -n 1)
 if [ -n "$LATEST_SESSION" ]; then
   cp "$LATEST_SESSION" /data/agent-messages.jsonl
+  python3 /usage-emitter.py --harness claw-code --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 else
   echo "WARN: no .claw/sessions file produced"
   : > /data/agent-messages.jsonl

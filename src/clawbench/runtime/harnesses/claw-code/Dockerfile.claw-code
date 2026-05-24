@@ -46,4 +46,5 @@ COPY --from=claw-builder /out/claw /usr/local/bin/claw
 
 COPY harnesses/claw-code/setup-claw-code.sh /setup-claw-code.sh
 COPY harnesses/claw-code/run-claw-code.sh   /run-harness.sh
-RUN chmod +x /setup-claw-code.sh /run-harness.sh
+COPY harnesses/claw-code/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-claw-code.sh /run-harness.sh /usage-emitter.py

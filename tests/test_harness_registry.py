@@ -41,9 +41,17 @@ EXPECTED_EXTRA_FILES = {
     "claude-code-chrome-extension": (
         "claude-code-chrome-extension/mock-anthropic-api.py",
     ),
-    "browser-use": ("browser-use/run-browser-use-agent.py",),
+    "browser-use": (
+        "browser-use/run-browser-use-agent.py",
+        "browser-use/browser-use-usage-logger.py",
+    ),
     "claw-code": ("claw-code/claw-code-ndjson.patch.py",),
     "hermes": ("hermes/hermes-capture.py",),
+    "pi": ("pi/pi-usage-logger.py",),
+}
+
+EXPECTED_USAGE_EMITTERS = {
+    harness: f"{harness}/usage-emitter.py" for harness in EXPECTED_HARNESSES
 }
 
 EXPECTED_AGENT_MESSAGE_SOURCES = {
@@ -122,6 +130,13 @@ def test_harness_registry_matches_current_harness_contract() -> None:
             .as_posix()
             == run_script
         )
+        usage_emitter = HARNESS_REGISTRY.harness_usage_emitters[harness]
+        assert (
+            usage_emitter.relative_to(
+                HARNESS_REGISTRY.base_dockerfile.parents[1]
+            ).as_posix()
+            == EXPECTED_USAGE_EMITTERS[harness]
+        )
         assert all(
             extra_file.is_file()
             for extra_file in HARNESS_REGISTRY.harness_extra_files[harness]
@@ -161,6 +176,8 @@ def test_harness_registry_tracks_all_dockerfile_harness_copies() -> None:
             HARNESS_REGISTRY.harness_run_scripts[harness],
             *HARNESS_REGISTRY.harness_extra_files[harness],
         }
+        usage_emitter = HARNESS_REGISTRY.harness_usage_emitters[harness]
+        copied_sources[HARNESS_REGISTRY.harness_dockerfiles[harness]].add(usage_emitter)
 
     copy_re = re.compile(r"^\s*COPY\s+harnesses/(\S+)")
     for dockerfile, expected_sources in copied_sources.items():
@@ -179,9 +196,11 @@ def _write_registry_fixture(tmp_path: Path, harnesses_yaml: str) -> Path:
         "alpha/Dockerfile.alpha",
         "alpha/setup-alpha.sh",
         "alpha/run-alpha.sh",
+        "alpha/usage-emitter.py",
         "beta/Dockerfile.beta",
         "beta/setup-beta.sh",
         "beta/run-beta.sh",
+        "beta/usage-emitter.py",
     ):
         path = tmp_path / rel_path
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -209,11 +228,13 @@ harnesses:
     dockerfile: alpha/Dockerfile.alpha
     setup_script: alpha/setup-alpha.sh
     run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
   - name: alpha
     image: clawbench-alpha-2
     dockerfile: beta/Dockerfile.beta
     setup_script: beta/setup-beta.sh
     run_script: beta/run-beta.sh
+    usage_emitter: beta/usage-emitter.py
 """,
     )
 
@@ -236,11 +257,13 @@ harnesses:
     dockerfile: alpha/Dockerfile.alpha
     setup_script: alpha/setup-alpha.sh
     run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
   - name: beta
     image: clawbench-beta
     dockerfile: beta/Dockerfile.beta
     setup_script: beta/setup-beta.sh
     run_script: beta/run-beta.sh
+    usage_emitter: beta/usage-emitter.py
 """,
     )
 
@@ -263,6 +286,7 @@ harnesses:
     dockerfile: alpha/Dockerfile.alpha
     setup_script: alpha/setup-alpha.sh
     run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
     extra_files:
       - alpha/missing-helper.py
 """,
@@ -287,6 +311,7 @@ harnesses:
     dockerfile: alpha/Dockerfile.alpha
     setup_script: alpha/missing-setup.sh
     run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
 """,
     )
 
@@ -311,6 +336,7 @@ harnesses:
     dockerfile: alpha/Dockerfile.alpha
     setup_script: alpha/setup-alpha.sh
     run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
     agent_message_sources:
       - type: latest_glob
         pattern: /tmp/safe/*.jsonl;rm

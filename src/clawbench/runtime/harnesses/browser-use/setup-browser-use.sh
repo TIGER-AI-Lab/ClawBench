@@ -86,7 +86,10 @@ proxy_config = {
     }],
     # drop_params: silently ignore fields the upstream doesn't accept
     # instead of erroring out (e.g. service_tier for non-OpenAI).
-    "litellm_settings": {"drop_params": True},
+    "litellm_settings": {
+        "drop_params": True,
+        "success_callback": ["browser_use_usage_logger.proxy_handler_instance"],
+    },
 }
 Path("/tmp/litellm-config.yaml").write_text(
     yaml.dump(proxy_config, default_flow_style=False))
@@ -98,6 +101,8 @@ os.chmod("/tmp/litellm-config.yaml", 0o600)
 env_path = Path("/tmp/browser-use-env.sh")
 env_path.write_text(
     f'export BU_MODEL_NAME="{model_name}"\n'
+    f'export BU_UPSTREAM_BASE_URL="{base_url}"\n'
+    f'export BU_UPSTREAM_MODEL_ID="{resolved_model}"\n'
     f'export BU_BASE_URL="http://localhost:4000"\n'
     f'export BU_API_KEY="sk-proxy-placeholder"\n'
     f'export BU_TEMPERATURE="{os.environ.get("TEMPERATURE", "0.0")}"\n'

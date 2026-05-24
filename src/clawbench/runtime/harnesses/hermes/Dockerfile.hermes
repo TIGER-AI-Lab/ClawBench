@@ -16,4 +16,5 @@ RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g agent-browser@0.26.0
 COPY harnesses/hermes/setup-hermes.sh /setup-hermes.sh
 COPY harnesses/hermes/run-hermes.sh /run-harness.sh
 COPY harnesses/hermes/hermes-capture.py /hermes-capture.py
-RUN chmod +x /setup-hermes.sh /run-harness.sh /hermes-capture.py
+COPY harnesses/hermes/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-hermes.sh /run-harness.sh /hermes-capture.py /usage-emitter.py

@@ -72,9 +72,12 @@ CODEX_ARGS=(exec
   --skip-git-repo-check
   --dangerously-bypass-approvals-and-sandbox
   -- "$INSTRUCTION")
+: > /data/usage.jsonl
 PATH="$SAFE_BIN" codex "${CODEX_ARGS[@]}" \
   > /tmp/codex-stdout.jsonl 2> /tmp/codex-agent.log &
 AGENT_PID=$!
+python3 /usage-emitter.py --harness codex --input /tmp/codex-stdout.jsonl --output /data/usage.jsonl --watch &
+USAGE_PID=$!
 sleep 3
 
 # Watchdog: detect agent no action for 300s
@@ -125,6 +128,7 @@ echo "$STOP_REASON" > /data/.stop-reason
 
 # Kill Codex, MCP, and LiteLLM proxy processes
 kill $AGENT_PID 2>/dev/null || true
+kill $USAGE_PID 2>/dev/null || true
 kill $PROXY_PID 2>/dev/null || true
 pkill -f "@openai/codex"      2>/dev/null || true
 pkill -f "@playwright/mcp"    2>/dev/null || true
@@ -137,9 +141,11 @@ LATEST_ROLLOUT=$(find /root/.codex/sessions -name "rollout-*.jsonl" -type f \
 if [ -n "$LATEST_ROLLOUT" ]; then
   cp "$LATEST_ROLLOUT" /data/agent-messages.jsonl
   echo "Promoted session rollout to /data/agent-messages.jsonl"
+  python3 /usage-emitter.py --harness codex --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 elif [ -s /tmp/codex-stdout.jsonl ]; then
   cp /tmp/codex-stdout.jsonl /data/agent-messages.jsonl
   echo "WARN: no rollout found; fell back to stdout capture"
+  python3 /usage-emitter.py --harness codex --input /data/agent-messages.jsonl --output /data/usage.jsonl || true
 fi
 
 curl -sf -X POST http://localhost:7878/api/stop || true

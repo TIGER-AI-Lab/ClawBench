@@ -116,6 +116,7 @@
         "dockerfile",
         "setup_script",
         "run_script",
+        "usage_emitter",
         "agent_message_sources"
       ],
       "properties": {
@@ -134,6 +135,9 @@
           "$ref": "#/$defs/relativePath"
         },
         "run_script": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "usage_emitter": {
           "$ref": "#/$defs/relativePath"
         },
         "extra_files": {

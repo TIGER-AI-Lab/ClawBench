@@ -24,4 +24,5 @@ RUN pip install --no-cache-dir 'litellm[proxy]==1.83.9'
 
 COPY harnesses/codex/setup-codex.sh /setup-codex.sh
 COPY harnesses/codex/run-codex.sh /run-harness.sh
-RUN chmod +x /setup-codex.sh /run-harness.sh
+COPY harnesses/codex/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-codex.sh /run-harness.sh /usage-emitter.py

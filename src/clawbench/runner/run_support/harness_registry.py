@@ -31,6 +31,7 @@ class HarnessRegistry:
     harness_dockerfiles: dict[str, Path]
     harness_setup_scripts: dict[str, Path]
     harness_run_scripts: dict[str, Path]
+    harness_usage_emitters: dict[str, Path]
     harness_extra_files: dict[str, tuple[Path, ...]]
     harness_agent_message_sources: dict[str, tuple[AgentMessageSource, ...]]
 
@@ -180,6 +181,7 @@ def load_harness_registry(path: Path = HARNESS_REGISTRY_YAML) -> HarnessRegistry
     dockerfiles: dict[str, Path] = {}
     setup_scripts: dict[str, Path] = {}
     run_scripts: dict[str, Path] = {}
+    usage_emitters: dict[str, Path] = {}
     extra_files: dict[str, tuple[Path, ...]] = {}
     agent_message_sources: dict[str, tuple[AgentMessageSource, ...]] = {}
     for index, entry in enumerate(entries):
@@ -207,6 +209,12 @@ def load_harness_registry(path: Path = HARNESS_REGISTRY_YAML) -> HarnessRegistry
             path,
             "run_script",
         )
+        usage_emitters[name] = _resolve_registry_file(
+            root,
+            _required_str(entry, "usage_emitter", path),
+            path,
+            "usage_emitter",
+        )
         extra_files[name] = tuple(
             _resolve_registry_file(root, rel_path, path, "extra_files")
             for rel_path in _optional_str_list(entry, "extra_files", path)
@@ -227,6 +235,7 @@ def load_harness_registry(path: Path = HARNESS_REGISTRY_YAML) -> HarnessRegistry
         harness_dockerfiles=dockerfiles,
         harness_setup_scripts=setup_scripts,
         harness_run_scripts=run_scripts,
+        harness_usage_emitters=usage_emitters,
         harness_extra_files=extra_files,
         harness_agent_message_sources=agent_message_sources,
     )

@@ -44,6 +44,7 @@ from clawbench.runner.run_support.results import (
     classify_run,
     ensure_interception,
     print_results,
+    remove_transient_usage_artifact,
 )
 from clawbench.runner.run_support.task import (
     build_instruction,
@@ -453,6 +454,7 @@ def main():
             )
         )
         write_run_meta(output_dir, meta)
+        remove_transient_usage_artifact(output_dir)
 
         if do_upload:
             phase = "uploading"
@@ -496,6 +498,7 @@ def main():
             extra_info_warnings=extra_info_warnings,
         )
         write_run_meta(output_dir, meta)
+        remove_transient_usage_artifact(output_dir)
         print(f"ERROR: {phase} failed: {e}")
         sys.exit(2)
     finally:
