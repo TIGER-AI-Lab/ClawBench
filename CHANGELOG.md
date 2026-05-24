@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - Fixed the issue that Claude Code Chrome Extension harness cannot be build due to upstream changes and pinned to a fixed version.
+- Fixed the issue that in TUI the color highlight is not moving properly with the selection arrow.
 
 ## [0.4.1] - 2026-05-23
 ### Fixed

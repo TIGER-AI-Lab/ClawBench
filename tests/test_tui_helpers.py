@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import subprocess
 import sys
 import types
@@ -150,6 +151,18 @@ def test_tui_theme_save_and_load_round_trips(
     assert tui._load_saved_theme() == "light"
     config_file.write_text('{"theme": "invalid"}', encoding="utf-8")
     assert tui._load_saved_theme() is None
+
+
+def test_tui_select_default_only_places_cursor() -> None:
+    select_prompt = importlib.import_module("questionary.prompts.select")
+    control = select_prompt.InquirerControl(
+        ["first", "second"],
+        default="first",
+        initial_choice="first",
+    )
+
+    assert control.pointed_at == 0
+    assert control.selected_options == []
 
 
 def test_tui_require_tty_exits_for_non_interactive_streams(

@@ -1,5 +1,6 @@
 """Interactive TUI for ClawBench — select mode, models, and cases with rich UI."""
 
+import importlib
 import inspect
 import json
 import multiprocessing
@@ -88,6 +89,20 @@ def _patch_questionary_defaults() -> None:
                 changed = True
         if changed:
             fn.__defaults__ = tuple(new)
+
+    # In questionary 2.1.x, select(default=...) both places the cursor and
+    # marks the default row as "selected". That makes the visual highlight
+    # look stuck on the original row after the cursor moves. Keep default as
+    # the initial cursor only; checkbox prompts still use the normal control.
+    select_prompt = importlib.import_module("questionary.prompts.select")
+    base_control = getattr(select_prompt, "InquirerControl")
+    if getattr(base_control, "__name__", "") != "_SelectInquirerControl":
+
+        class _SelectInquirerControl(base_control):
+            def _is_selected(self, choice):
+                return False
+
+        setattr(select_prompt, "InquirerControl", _SelectInquirerControl)
 
 
 _patch_questionary_defaults()
