@@ -14,10 +14,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  harness-build:
+  validate-and-select:
     runs-on: ubuntu-latest
-    env:
-      DOCKER_BUILD_PARALLELISM: "3"
+    outputs:
+      count: ${{ steps.dockerfiles.outputs.count }}
+      matrix: ${{ steps.dockerfiles.outputs.matrix }}
 
     steps:
       - uses: actions/checkout@v6
@@ -67,37 +68,6 @@ jobs:
           load_harness_registry(registry_path)
           print(f"Validated {registry_path} against {schema_path}")
           PY
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v5.1.0
-        with:
-          daemon-config: |
-            {
-              "features": {
-                "containerd-snapshotter": true
-              }
-            }
-
-      - name: Restore harness build cache
-        id: docker-cache
-        uses: actions/cache@v5.0.5
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-harness-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-harness-buildx-
-
-      - name: Inspect restored harness build cache
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ -d /tmp/.buildx-cache ]]; then
-            echo "Restored cache scopes:"
-            find /tmp/.buildx-cache -mindepth 1 -maxdepth 1 -type d -print | sort
-            du -sh /tmp/.buildx-cache || true
-          else
-            echo "No harness build cache restored."
-          fi
 
       - name: Select harness Dockerfiles
         id: dockerfiles
@@ -182,10 +152,13 @@ jobs:
             fi
           fi
 
+          matrix_json="$(
+            printf '%s\n' "${selected_dockerfiles[@]}" \
+              | python -c 'import json, pathlib, sys; dockerfiles=[line.strip() for line in sys.stdin if line.strip()]; print(json.dumps({"include":[{"harness":pathlib.Path(path).parent.name,"dockerfile":path,"image":"clawbench-" + pathlib.Path(path).parent.name} for path in dockerfiles]}, separators=(",", ":")))'
+          )"
+
           {
-            echo "dockerfiles<<EOF"
-            printf '%s\n' "${selected_dockerfiles[@]}"
-            echo "EOF"
+            echo "matrix=${matrix_json}"
             echo "count=${#selected_dockerfiles[@]}"
           } >> "${GITHUB_OUTPUT}"
 
@@ -210,126 +183,102 @@ jobs:
             done
           } >> "${GITHUB_STEP_SUMMARY}"
 
-      - name: Build harness Docker images
+  build-base:
+    runs-on: ubuntu-latest
+    needs: validate-and-select
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v5.1.0
+        with:
+          daemon-config: |
+            {
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
+
+      - name: Build base Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: src/clawbench/runtime
+          file: src/clawbench/runtime/harnesses/base/Dockerfile.base
+          tags: |
+            clawbench-base
+            clawbench-base:amd64
+          load: true
+          provenance: false
+          cache-from: type=gha,scope=base
+          cache-to: type=gha,mode=max,scope=base,ignore-error=true
+
+      - name: Summarize base build
         shell: bash
         run: |
-          set -euo pipefail
-          runtime_root="src/clawbench/runtime"
-          harness_root="${runtime_root}/harnesses"
-          base_dockerfile="${harness_root}/base/Dockerfile.base"
-          cache_root="/tmp/.buildx-cache"
-          cache_update="/tmp/.buildx-cache-update"
-          status_root="/tmp/clawbench-harness-build-status"
-          parallelism="${DOCKER_BUILD_PARALLELISM:-3}"
-
-          rm -rf "${cache_update}" "${status_root}"
-          mkdir -p "${cache_root}" "${cache_update}" "${status_root}"
-
           {
-            echo
             echo "## Harness build results"
-            echo
-            echo "- Restored cache key: \`${{ steps.docker-cache.outputs.cache-matched-key || 'none' }}\`"
-            echo "- Exact cache hit: \`${{ steps.docker-cache.outputs.cache-hit || 'false' }}\`"
             echo
             echo "| Image | Status |"
             echo "| --- | --- |"
+            echo "| \`clawbench-base\`, \`clawbench-base:amd64\` | Passed |"
           } >> "${GITHUB_STEP_SUMMARY}"
 
-          build_with_cache() {
-            local dockerfile="$1"
-            local image="$2"
-            local scope="$3"
-            local cache_args=()
+  build-harness:
+    runs-on: ubuntu-latest
+    needs:
+      - validate-and-select
+      - build-base
+    if: needs.validate-and-select.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.validate-and-select.outputs.matrix) }}
 
-            if [[ -f "${cache_root}/${scope}/index.json" ]]; then
-              echo "[cache] ${scope}: hit at ${cache_root}/${scope}"
-              cache_args+=(--cache-from "type=local,src=${cache_root}/${scope}")
-            else
-              echo "[cache] ${scope}: miss"
-            fi
+    steps:
+      - uses: actions/checkout@v6
 
-            docker buildx build \
-              --load \
-              --progress=plain \
-              --provenance=false \
-              -f "${dockerfile}" \
-              -t "${image}" \
-              "${cache_args[@]}" \
-              --cache-to "type=local,dest=${cache_update}/${scope},mode=max" \
-              "${runtime_root}"
-          }
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v5.1.0
+        with:
+          daemon-config: |
+            {
+              "features": {
+                "containerd-snapshotter": true
+              }
+            }
 
-          if build_with_cache "${base_dockerfile}" "clawbench-base" "base"; then
-            docker tag clawbench-base clawbench-base:amd64
-            echo "| \`clawbench-base\`, \`clawbench-base:amd64\` | Passed |" >> "${GITHUB_STEP_SUMMARY}"
-          else
-            echo "| \`clawbench-base\`, \`clawbench-base:amd64\` | Failed |" >> "${GITHUB_STEP_SUMMARY}"
-            exit 1
-          fi
+      - name: Load base Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: src/clawbench/runtime
+          file: src/clawbench/runtime/harnesses/base/Dockerfile.base
+          tags: |
+            clawbench-base
+            clawbench-base:amd64
+          load: true
+          provenance: false
+          cache-from: type=gha,scope=base
 
-          build_harness() {
-            local dockerfile="$1"
-            local harness
-            local image
-            local status
+      - name: Build harness Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: src/clawbench/runtime
+          file: ${{ matrix.dockerfile }}
+          tags: ${{ matrix.image }}
+          load: true
+          provenance: false
+          cache-from: |
+            type=gha,scope=base
+            type=gha,scope=${{ matrix.harness }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.harness }},ignore-error=true
 
-            harness="$(basename "$(dirname "${dockerfile}")")"
-            image="clawbench-${harness}"
-            status="${status_root}/${harness}.status"
-
-            echo "[${harness}] Starting ${image}"
-            set -o pipefail
-            if build_with_cache "${dockerfile}" "${image}" "${harness}" 2>&1 | sed -u "s/^/[${harness}] /"; then
-              echo "passed" > "${status}"
-              echo "[${harness}] Finished ${image}"
-            else
-              echo "failed" > "${status}"
-              echo "[${harness}] Failed ${image}"
-              return 1
-            fi
-          }
-
-          export -f build_with_cache build_harness
-          export runtime_root cache_root cache_update status_root
-
-          mapfile -t selected_dockerfiles <<'EOF'
-          ${{ steps.dockerfiles.outputs.dockerfiles }}
-          EOF
-          filtered_dockerfiles=()
-          for dockerfile in "${selected_dockerfiles[@]}"; do
-            [[ -n "${dockerfile}" ]] && filtered_dockerfiles+=("${dockerfile}")
-          done
-          selected_dockerfiles=("${filtered_dockerfiles[@]}")
-
-          if (( ${#selected_dockerfiles[@]} > 0 )); then
-            echo "Building ${#selected_dockerfiles[@]} harness image(s) with parallelism=${parallelism}"
-            set +e
-            printf '%s\0' "${selected_dockerfiles[@]}" \
-              | xargs -0 -n 1 -P "${parallelism}" bash -c "build_harness \"\$1\"" _
-            harness_status=$?
-            set -e
-
-            for dockerfile in "${selected_dockerfiles[@]}"; do
-              [[ -n "${dockerfile}" ]] || continue
-              harness="$(basename "$(dirname "${dockerfile}")")"
-              image="clawbench-${harness}"
-              if [[ "$(cat "${status_root}/${harness}.status" 2>/dev/null || true)" == "passed" ]]; then
-                echo "| \`${image}\` | Passed |" >> "${GITHUB_STEP_SUMMARY}"
-              else
-                echo "| \`${image}\` | Failed |" >> "${GITHUB_STEP_SUMMARY}"
-              fi
-            done
-
-            if (( harness_status != 0 )); then
-              exit "${harness_status}"
-            fi
-          fi
-
-          for scope_dir in "${cache_update}"/*; do
-            [[ -d "${scope_dir}" ]] || continue
-            scope="$(basename "${scope_dir}")"
-            rm -rf "${cache_root:?}/${scope}"
-            mv "${scope_dir}" "${cache_root}/${scope}"
-          done
-          rm -rf "${cache_update}"
+      - name: Summarize harness build
+        shell: bash
+        run: |
+          {
+            echo "## Harness build results"
+            echo
+            echo "| Image | Status |"
+            echo "| --- | --- |"
+            echo "| \`${{ matrix.image }}\` | Passed |"
+          } >> "${GITHUB_STEP_SUMMARY}"
