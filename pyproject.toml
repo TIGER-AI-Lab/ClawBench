@@ -18,8 +18,8 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://claw-bench.com"
-Repository = "https://github.com/reacher-z/ClawBench"
-Issues = "https://github.com/reacher-z/ClawBench/issues"
+Repository = "https://github.com/TIGER-AI-Lab/ClawBench"
+Issues = "https://github.com/TIGER-AI-Lab/ClawBench/issues"
 Paper = "https://arxiv.org/abs/2604.08523"
 
 [project.scripts]

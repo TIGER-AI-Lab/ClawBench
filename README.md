@@ -1,28 +1,28 @@
 <div align="center">
 
-<a href="https://github.com/reacher-z/ClawBench">
+<a href="https://github.com/TIGER-AI-Lab/ClawBench">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
     <img alt="ClawBench" src="assets/hero-light.svg" width="820">
   </picture>
 </a>
 
-[![Star this repo](https://img.shields.io/badge/%E2%98%85%20Star%20this%20repo-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench)
+[![Star this repo](https://img.shields.io/badge/%E2%98%85%20Star%20this%20repo-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench)
 [![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
 [![HF Daily Paper](https://img.shields.io/badge/Daily_Paper-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/papers/2604.08523)
 [![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
 [![HF Trace Dataset](https://img.shields.io/badge/Trace_Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 [![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
-[![GitHub stars](https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/reacher-z/ClawBench)
+[![GitHub stars](https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/TIGER-AI-Lab/ClawBench)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
-[![Codespaces](https://img.shields.io/badge/Codespaces-Open-181717?style=flat-square&logo=github&logoColor=white)](https://codespaces.new/reacher-z/ClawBench?quickstart=1)
+[![Codespaces](https://img.shields.io/badge/Codespaces-Open-181717?style=flat-square&logo=github&logoColor=white)](https://codespaces.new/TIGER-AI-Lab/ClawBench?quickstart=1)
 
 [![PyPI downloads](https://img.shields.io/pypi/dm/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbench-eval/)
 [![PyPI version](https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbench-eval/)
-[![Last commit](https://img.shields.io/github/last-commit/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/commits/main)
-[![Contributors](https://img.shields.io/github/contributors/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/contributors)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
-[![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench/commits/main)
+[![Contributors](https://img.shields.io/github/contributors/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench/graphs/contributors)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench/graphs/commit-activity)
+[![License](https://img.shields.io/github/license/TIGER-AI-Lab/ClawBench?style=flat-square&color=A42E2B)](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/LICENSE)
 
 <p align="center"><sub><i>Featured in</i></sub></p>
 <p align="center">
@@ -38,7 +38,7 @@
 </p>
 
 <p align="center">
-  <a href="https://deepwiki.com/reacher-z/ClawBench"><img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" /></a>
+  <a href="https://deepwiki.com/TIGER-AI-Lab/ClawBench"><img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" /></a>
 </p>
 
 </div>
@@ -53,7 +53,7 @@
 <a href="#-human-quick-start"><img src="https://img.shields.io/badge/Run%20in%20one%20line%20of%20code-4F46E5?style=for-the-badge&labelColor=4F46E5&logoColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMjYzLjQtMjdMMjc4LjIgOS44IDMxNSAyNC42YzMgMS4yIDUgNC4yIDUgNy40cy0yIDYuMi01IDcuNEwyNzguMiA1NC4yIDI2My40IDkxYy0xLjIgMy00LjIgNS03LjQgNXMtNi4yLTItNy40LTVMMjMzLjggNTQuMiAxOTcgMzkuNGMtMy0xLjItNS00LjItNS03LjRzMi02LjIgNS03LjRMMjMzLjggOS44IDI0OC42LTI3YzEuMi0zIDQuMi01IDcuNC01czYuMiAyIDcuNCA1ek0xMTAuNyA0MS43bDIxLjUgNTAuMSA1MC4xIDIxLjVjNS45IDIuNSA5LjcgOC4zIDkuNyAxNC43cy0zLjggMTIuMi05LjcgMTQuN2wtNTAuMSAyMS41LTIxLjUgNTAuMWMtMi41IDUuOS04LjMgOS43LTE0LjcgOS43cy0xMi4yLTMuOC0xNC43LTkuN0w1OS44IDE2NC4yIDkuNyAxNDIuN0MzLjggMTQwLjIgMCAxMzQuNCAwIDEyOHMzLjgtMTIuMiA5LjctMTQuN0w1OS44IDkxLjggODEuMyA0MS43QzgzLjggMzUuOCA4OS42IDMyIDk2IDMyczEyLjIgMy44IDE0LjcgOS43ek00NjQgMzA0YzYuNCAwIDEyLjIgMy44IDE0LjcgOS43bDIxLjUgNTAuMSA1MC4xIDIxLjVjNS45IDIuNSA5LjcgOC4zIDkuNyAxNC43cy0zLjggMTIuMi05LjcgMTQuN2wtNTAuMSAyMS41LTIxLjUgNTAuMWMtMi41IDUuOS04LjMgOS43LTE0LjcgOS43cy0xMi4yLTMuOC0xNC43LTkuN2wtMjEuNS01MC4xLTUwLjEtMjEuNWMtNS45LTIuNS05LjctOC4zLTkuNy0xNC43czMuOC0xMi4yIDkuNy0xNC43bDUwLjEtMjEuNSAyMS41LTUwLjFjMi41LTUuOSA4LjMtOS43IDE0LjctOS43ek00NjAgMGMxMSAwIDIxLjYgNC40IDI5LjUgMTIuMmw0Mi4zIDQyLjNDNTM5LjYgNjIuNCA1NDQgNzMgNTQ0IDg0cy00LjQgMjEuNi0xMi4yIDI5LjVsLTg4LjIgODguMi0xMDEuMy0xMDEuMyA4OC4yLTg4LjJDNDM4LjQgNC40IDQ0OSAwIDQ2MCAwek00NC4yIDM5OC41TDMwOC40IDEzNC4zIDQwOS43IDIzNS42IDE0NS41IDQ5OS44QzEzNy42IDUwNy42IDEyNyA1MTIgMTE2IDUxMnMtMjEuNi00LjQtMjkuNS0xMi4yTDQ0LjIgNDU3LjVDMzYuNCA0NDkuNiAzMiA0MzkgMzIgNDI4czQuNC0yMS42IDEyLjItMjkuNXoiLz48L3N2Zz4=" alt="Run in one line of code"></a>
 
 ```bash
-git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
+git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
 ```
 
 <sub><i>Clone → configure → run. &nbsp; Root uv package. &nbsp; Docker-isolated harnesses.</i></sub>
@@ -145,7 +145,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 ## News
 
-- **[2026.05.20]** — V2 is now the default corpus + lenient judge + 6 first-class harnesses. [Details →](https://github.com/reacher-z/ClawBench/blob/main/docs/v1-vs-v2.md)
+- **[2026.05.20]** — V2 is now the default corpus + lenient judge + 6 first-class harnesses. [Details →](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/docs/v1-vs-v2.md)
 - **[2026.05.16]** — Added Claw-Eval suite: 19 browser-research tasks with final-answer submission. [Details →](test-cases/claw-eval/)
 - **[2026.05.12]** — Canonical leaderboard moved to TIGER-Lab/ClawBench Gradio Space. [Details →](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
 - **[2026.05.11]** — V2 leaderboard ships: top so far `glm-5.1 / hermes` at 18.5% reward / 48.5% intercepted. [Details →](https://claw-bench.com/leaderboard)
@@ -221,7 +221,7 @@ The installed commands are still `clawbench`, `clawbench-run`, and
 For those want more granular control and contribution, clone the repo and run the root `uv` package entrypoint:
 
 ```bash
-git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
+git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
 ```
 
 **Prerequisites:** [Python 3.11+](https://python.org), [uv](https://docs.astral.sh/uv/), and a container engine — [Docker](https://www.docker.com/) **or** [Podman](https://podman.io/). ClawBench auto-detects whichever is installed; force one with `export CONTAINER_ENGINE=docker` or `export CONTAINER_ENGINE=podman`.
@@ -332,7 +332,7 @@ Open the noVNC URL the script prints, complete the task by hand, then close the 
 Prefer the repo checkout if you want to modify the driver, the bundled V1/V2 test cases, or the container build itself.
 
 ```bash
-git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench
+git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench
 cp models/models.example.yaml models/models.yaml   # edit: add your model API keys
 # .env is already provided for PurelyMail; edit only for your own creds or HF upload
 ./run.sh                                           # interactive TUI
@@ -735,7 +735,7 @@ We welcome contributions -- especially new test cases. If you've ever ordered gr
 - [Add a new test case](CONTRIBUTING.md#adding-a-new-test-case) (~30 min, no container expertise needed)
 - [Add a new category](CONTRIBUTING.md#what-were-looking-for) of 10+ tasks &rarr; co-author invitation on the next paper revision
 - [Submit a new model](CONTRIBUTING.md#what-were-looking-for) to the public leaderboard
-- Browse [good first issues](https://github.com/reacher-z/ClawBench/labels/good%20first%20issue)
+- Browse [good first issues](https://github.com/TIGER-AI-Lab/ClawBench/labels/good%20first%20issue)
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and contributor recognition policy.
 
@@ -760,7 +760,7 @@ Come hang out with researchers, builders, and contributors working on real-world
 <sub><b>中文社区</b><br/>研究者、开发者、贡献者交流</sub>
 </td>
 <td align="center" width="33%">
-<a href="https://github.com/reacher-z/ClawBench/discussions">
+<a href="https://github.com/TIGER-AI-Lab/ClawBench/discussions">
 <img src="https://img.shields.io/badge/GitHub-Discussions-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Discussions">
 </a>
 <br/>
@@ -842,7 +842,7 @@ If you use ClawBench in your research, please cite:
 Questions, suggestions, or research collaboration? Reach the maintainer:
 
 - **Yuxuan Zhang** &mdash; `reacher` &lbrack;at&rbrack; `cs.ubc.ca` (UBC, NAIL Group) &middot; [Homepage &#8599;](https://reacher-z.github.io)
-- For bug reports or feature requests, please [open a GitHub issue](https://github.com/reacher-z/ClawBench/issues/new/choose) &mdash; it's faster than email and gets seen by all maintainers.
+- For bug reports or feature requests, please [open a GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) &mdash; it's faster than email and gets seen by all maintainers.
 
 ## Core Contributors
 
@@ -915,12 +915,12 @@ Questions, suggestions, or research collaboration? Reach the maintainer:
 ## Support ClawBench
 
 If ClawBench is useful for your research or product work,
-the single most helpful thing you can do is **[star the repo](https://github.com/reacher-z/ClawBench)** —
+the single most helpful thing you can do is **[star the repo](https://github.com/TIGER-AI-Lab/ClawBench)** —
 it surfaces the benchmark to other AI-agent researchers and helps us justify
 continued dataset curation.
 
 <p align="center">
-<a href="https://github.com/reacher-z/ClawBench">
+<a href="https://github.com/TIGER-AI-Lab/ClawBench">
 <img src="https://img.shields.io/badge/%E2%98%85%20Star%20this%20repo-181717?style=for-the-badge&logo=github&logoColor=white" alt="Star this repo">
 </a>
 </p>
@@ -928,18 +928,18 @@ continued dataset curation.
 Open to contributions — new test cases, bug fixes, or evaluation submissions for a model we haven't scored yet. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 <p align="center">
-<a href="https://github.com/reacher-z/ClawBench/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=reacher-z/ClawBench" alt="Contributors">
+<a href="https://github.com/TIGER-AI-Lab/ClawBench/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=TIGER-AI-Lab/ClawBench" alt="Contributors">
 </a>
 </p>
 
 ## Star History
 
-<a href="https://star-history.com/#reacher-z/ClawBench&Date">
+<a href="https://star-history.com/#TIGER-AI-Lab/ClawBench&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=reacher-z/ClawBench&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=reacher-z/ClawBench&type=Date" />
-    <img alt="ClawBench Star History" src="https://api.star-history.com/svg?repos=reacher-z/ClawBench&type=Date" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=TIGER-AI-Lab/ClawBench&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=TIGER-AI-Lab/ClawBench&type=Date" />
+    <img alt="ClawBench Star History" src="https://api.star-history.com/svg?repos=TIGER-AI-Lab/ClawBench&type=Date" width="600" />
   </picture>
 </a>
 
