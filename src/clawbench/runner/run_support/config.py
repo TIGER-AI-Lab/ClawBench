@@ -24,6 +24,7 @@ HARNESSES = (
     "claw-code",
     "hermes",
     "pi",
+    "harbor",
 )
 DEFAULT_HARNESS = "openclaw"
 BASE_IMAGE = "clawbench-base"

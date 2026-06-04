@@ -38,6 +38,7 @@ _HARNESS_DOCKERFILES: dict[str, Path] = {
     "claw-code": HARNESS_ROOT / "claw-code" / "Dockerfile.claw-code",
     "hermes": HARNESS_ROOT / "hermes" / "Dockerfile.hermes",
     "pi": HARNESS_ROOT / "pi" / "Dockerfile.pi",
+    "harbor": HARNESS_ROOT / "harbor" / "Dockerfile.harbor",
 }
 
 
