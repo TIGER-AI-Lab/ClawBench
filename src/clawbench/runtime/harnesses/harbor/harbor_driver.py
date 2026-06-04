@@ -28,7 +28,6 @@ LiteLLM): ``gemini/<model>`` / ``openai/<model>`` / ``anthropic/<model>`` /
 import asyncio
 import json
 import os
-import shlex
 import subprocess
 import sys
 from pathlib import Path
