@@ -93,31 +93,40 @@ class ClawbenchHarnessAgent(BaseAgent):
 
     # ------------------------------------------------------------------ setup
     async def setup(self, environment: BaseEnvironment) -> None:
-        """Boot the ClawBench in-container services and wait for Chrome CDP."""
-        # Start the services entrypoint in the background; it backgrounds Chrome,
-        # the extension-server, socat and noVNC, then blocks on `wait`.
+        """Wait for the ClawBench services (Chrome+CDP); start them if needed.
+
+        The clawbench-harbor-task image bakes ``SERVICES_ONLY=1`` so its
+        ``ENTRYPOINT`` auto-boots Chrome/CDP/extension-server even under Harbor's
+        ``sleep infinity`` CMD. We first wait for readiness; only if the image was
+        built without that hook do we start the services ourselves.
+        """
+        if await self._wait_ready(environment, timeout=15):
+            self.logger.info("ClawBench services already running (CDP ready).")
+            return
+
+        self.logger.info("Starting ClawBench services (SERVICES_ONLY)...")
         await environment.exec(
             "mkdir -p /data && "
-            "SERVICES_ONLY=1 nohup /entrypoint.sh "
-            "> /data/services.log 2>&1 &"
+            "SERVICES_ONLY=1 nohup /entrypoint.sh > /data/services.log 2>&1 &"
         )
+        if not await self._wait_ready(environment, timeout=60):
+            log = await environment.exec("tail -40 /data/services.log 2>/dev/null")
+            self.logger.warning(
+                "ClawBench services not ready: %s", log.stdout or log.stderr
+            )
+            raise RuntimeError("ClawBench services failed to start (no Chrome CDP)")
 
-        # Wait for the services-ready marker, then for Chrome CDP to answer.
+    async def _wait_ready(self, environment: BaseEnvironment, timeout: int) -> bool:
+        """Poll for the services-ready marker (if present) and a live Chrome CDP."""
         ready_cmd = (
-            "for i in $(seq 1 60); do "
-            "  if [ -f /data/.services-ready ] && "
-            f"     curl -sf {CDP_VERSION_URL} >/dev/null 2>&1; then "
+            f"for i in $(seq 1 {timeout}); do "
+            f"  if curl -sf {CDP_VERSION_URL} >/dev/null 2>&1; then "
             "    echo READY; exit 0; "
             "  fi; sleep 1; "
             "done; echo TIMEOUT; exit 1"
         )
         result = await environment.exec(ready_cmd)
-        if "READY" not in (result.stdout or ""):
-            self.logger.warning(
-                "ClawBench services not ready: %s",
-                (result.stdout or "") + (result.stderr or ""),
-            )
-            raise RuntimeError("ClawBench services failed to start (no Chrome CDP)")
+        return "READY" in (result.stdout or "")
 
     # -------------------------------------------------------------------- run
     def _resolve_model_env(self) -> dict[str, str]:
