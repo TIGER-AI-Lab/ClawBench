@@ -205,6 +205,17 @@ echo "============================================"
 echo "noVNC ready: http://localhost:6080/vnc.html"
 echo "============================================"
 
+# Services-only mode: boot Chrome/CDP/extension-server/socat/noVNC (done above)
+# then block, leaving an external orchestrator (e.g. Harbor) to drive the agent
+# via `docker exec` and to run the verifier. The interceptor still produces
+# /data/interception.json exactly as in agent mode.
+if [ "$SERVICES_ONLY" = "1" ]; then
+  echo "SERVICES_ONLY=1: ClawBench services running; waiting for external driver."
+  echo "ready" > /data/.services-ready
+  wait
+  exit 0
+fi
+
 # Human mode: wait for VNC disconnect or eval match
 if [ "$HUMAN_MODE" = "1" ]; then
   echo "Human mode active."

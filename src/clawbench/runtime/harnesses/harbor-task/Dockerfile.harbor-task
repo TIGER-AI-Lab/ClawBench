@@ -1,0 +1,24 @@
+# Services-mode image for running ClawBench tasks *via Harbor* (Harbor-as-runner).
+#
+# It layers on `clawbench-harbor` (the Terminus-2 harness image, which already
+# carries clawbench-base's Chrome + CDP + recorder extension + interceptor, plus
+# the agent-browser `ab` CDP bridge and tmux). On top of that it bakes the
+# `clawbench` Python package so the in-container Harbor verifier can run
+# `python -m clawbench.harbor.verify` to score `/data/interception.json`.
+#
+# Build context is the repo's `runtime/` dir (DOCKER_CONTEXT_ROOT). The clawbench
+# source is copied in from there. Harbor runs this image with its CMD overridden
+# to `sleep infinity`, so the ClawbenchHarnessAgent boots the services itself by
+# running `/entrypoint.sh` with SERVICES_ONLY=1, then drives the harness.
+FROM clawbench-harbor
+
+# Bake the pure-Python clawbench package (scoring is stdlib-only) into the
+# image's base Python (3.11). --no-deps keeps the verify path lightweight: it
+# only imports clawbench.runner.run_support.results and clawbench.runner.judge,
+# both stdlib-only, plus clawbench.harbor.{verify,model_map}.
+COPY clawbench-src /opt/clawbench-src
+RUN uv pip install --system --no-deps /opt/clawbench-src \
+    && python3 -c "import clawbench.harbor.verify, clawbench.harbor.model_map"
+
+# Default working dir for the harness; the agent overrides as needed.
+WORKDIR /root/workspace
