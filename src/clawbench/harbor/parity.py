@@ -103,7 +103,7 @@ def run_harbor(
     cmd = [
         "harbor",
         "run",
-        "--dataset",
+        "--path",
         str(harbor_task_dir),
         "--agent-import-path",
         "clawbench.harbor.agent:ClawbenchHarnessAgent",

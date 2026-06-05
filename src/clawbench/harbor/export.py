@@ -14,7 +14,7 @@ A Harbor task directory has the canonical shape::
 
 Harbor runs it with::
 
-    harbor run --dataset <out>/<case> \\
+    harbor run --path <out>/<case> \\
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \\
       --agent clawbench --ak harness=harbor \\
       --model gemini/gemini-3.5-flash --env docker

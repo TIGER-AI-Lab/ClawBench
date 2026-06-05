@@ -7,7 +7,7 @@ kwarg, because Harbor's import-path mode only forwards ``--ak key=value`` kwargs
 to the agent constructor (the ``--agent`` value is the registry *name*, which is
 ignored for custom import paths):
 
-    harbor run --dataset <task-dir> \
+    harbor run --path <task-dir> \
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \
       --agent clawbench --ak harness=hermes \
       --model gemini/gemini-3.5-flash --env docker
