@@ -170,12 +170,25 @@ def build_litellm_model(base_url: str, model_name: str, api_type: str, key: str)
     Returns ``(litellm_model, api_base, env_vars)``. ``env_vars`` are the
     provider credentials LiteLLM reads from the process environment.
 
+    The canonical mapping lives in ``clawbench.harbor.model_map`` so the runner
+    direction shares the exact same logic. That package is not installed in this
+    minimal harness container, so when the import fails we fall back to the inline
+    copy below — kept byte-for-byte equivalent and covered by the model_map tests.
+
     Gemini note: LiteLLM's native ``gemini/<model>`` provider talks to Google's
     native generative-language API using ``GEMINI_API_KEY`` and does NOT post to
     ``/chat/completions`` — so it sidesteps the 404 that hits raw OpenAI-compat
     callers on the native Gemini root. A custom Gemini base_url (e.g. an
     OpenAI-compat proxy) is forwarded as ``api_base``.
     """
+    try:
+        from clawbench.harbor.model_map import build_litellm_model as _shared
+    except ImportError:
+        pass
+    else:
+        mapped = _shared(base_url, model_name, api_type, key)
+        return mapped.model, mapped.api_base, mapped.env
+
     base_url = base_url.rstrip("/")
     env: dict[str, str] = {}
 
