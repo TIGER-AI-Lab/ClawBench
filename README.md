@@ -184,6 +184,8 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 > **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/NAIL-Group/ClawBench/blob/main/leaderboard/results.csv).
 
+> **Hugging Face Space maintainers:** [`docs/huggingface-space-metadata.md`](docs/huggingface-space-metadata.md) has a Space README front matter template for `thumbnail:`, `models:`, `datasets:`, and weekly metadata refreshes.
+
 ## How It Works
 
 ```
