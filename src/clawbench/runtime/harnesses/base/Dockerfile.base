@@ -23,12 +23,12 @@ RUN git clone --depth 1 --branch v1.6.0 https://github.com/novnc/noVNC.git /opt/
 COPY --from=ghcr.io/astral-sh/uv:0.11.6 /uv /usr/local/bin/uv
 
 WORKDIR /app
-COPY extension-server/pyproject.toml extension-server/uv.lock ./src/extension-server/
-WORKDIR /app/src/extension-server
+COPY runtime-server/pyproject.toml runtime-server/uv.lock ./src/runtime-server/
+WORKDIR /app/src/runtime-server
 RUN UV_PYTHON_PREFERENCE=only-system uv sync --frozen
 
 WORKDIR /app
-COPY extension-server/server.py ./src/extension-server/server.py
+COPY runtime-server/server.py ./src/runtime-server/server.py
 
 COPY chrome-extension/ ./src/chrome-extension/
 

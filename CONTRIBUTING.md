@@ -108,11 +108,11 @@ If the task requires additional context (e.g., a pre-filled profile, a specific 
 
 ## Code changes
 
-For changes to the framework itself (test driver, extension server, Chrome extension, container):
+For changes to the framework itself (test driver, runtime server, Chrome extension, container):
 
 1. Read the relevant sub-README for component-specific documentation:
    - [README.md#-cli](README.md#-cli)
-   - [src/clawbench/runtime/extension-server/README.md](src/clawbench/runtime/extension-server/README.md)
+   - [src/clawbench/runtime/runtime-server/README.md](src/clawbench/runtime/runtime-server/README.md)
    - [src/clawbench/runtime/chrome-extension/README.md](src/clawbench/runtime/chrome-extension/README.md)
 2. Open an issue first for anything beyond a small bug fix so we can align on approach before you spend time.
 3. Open a PR with a clear description of the change and how you tested it.

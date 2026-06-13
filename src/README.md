@@ -45,15 +45,13 @@ src/
     utils/
       paths.py                   # Shared PROJECT_ROOT / HARNESS_ROOT discovery
       hf_upload.py               # Optional HuggingFace upload helpers
-  extension-server/
-    server.py                    # FastAPI server for actions, screenshots, recording, request interception
+  runtime-server/
+    server.py                    # CDP instrumentation server for actions, screenshots, requests, recording
     pyproject.toml               # Container-only uv project
     uv.lock
     README.md
   chrome-extension/
     manifest.json
-    content.js                   # DOM action capture
-    background.js                # Screenshot capture + server relay
     stealth.js                   # Browser fingerprint hardening patches
     setup.sh                     # Local extension launch helper
     README.md

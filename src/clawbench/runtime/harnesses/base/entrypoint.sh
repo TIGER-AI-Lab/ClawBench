@@ -10,7 +10,7 @@ export DISPLAY=:99
 sleep 1
 
 # Start the server
-cd /app/src/extension-server
+cd /app/src/runtime-server
 uv run --no-sync uvicorn server:app --host 0.0.0.0 --port 7878 &
 sleep 1
 

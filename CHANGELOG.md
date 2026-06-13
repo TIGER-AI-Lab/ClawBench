@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+### Changed
+- Refactored the container runtime to move the action recording and screenshot capturing logic into the CDP server rather than the Chrome extension, making it possible to integrate remote browsers in the future.
+
 ## [0.6.0] - 2026-06-04
 ### Added
 - Added support for the [Harbor](https://github.com/harbor-framework/harbor) framework.
