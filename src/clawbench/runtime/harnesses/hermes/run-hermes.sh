@@ -245,7 +245,6 @@ HERMES_ARGS=(chat
   --yolo
   --ignore-rules
   --toolsets "browser,file"
-  --max-turns 90
   --model "$HERMES_MODEL_NAME"
   --provider "$HERMES_PROVIDER"
   -q "$HERMES_INSTRUCTION")

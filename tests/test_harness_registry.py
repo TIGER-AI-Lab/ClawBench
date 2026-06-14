@@ -11,9 +11,9 @@ import yaml
 from jsonschema import Draft202012Validator
 
 from clawbench.runner.run_support.harness_registry import (
-    AgentMessageSource,
     HARNESS_REGISTRY,
     HARNESS_REGISTRY_YAML,
+    AgentMessageSource,
     load_harness_registry,
 )
 
@@ -27,7 +27,6 @@ EXPECTED_HARNESSES = (
     "claw-code",
     "hermes",
     "pi",
-    "harbor",
 )
 
 EXPECTED_SCRIPTS = {
