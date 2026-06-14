@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - Refactored the container runtime to move the action recording and screenshot capturing logic into the CDP server rather than the Chrome extension, making it possible to integrate remote browsers in the future.
 
+### Removed
+- Removed harbor as a runtime harness. Rather, it will be used as a benchmark runner to better utilize its capabilities.
+
 ## [0.6.0] - 2026-06-04
 ### Added
 - Added support for the [Harbor](https://github.com/harbor-framework/harbor) framework.
