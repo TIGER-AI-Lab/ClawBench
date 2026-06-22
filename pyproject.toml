@@ -28,6 +28,7 @@ clawbench-run = "clawbench.runner.run:main"
 clawbench-batch = "clawbench.runner.batch:main"
 clawbench-rescore = "clawbench.eval.rescore:main"
 clawbench-reproduce = "clawbench.eval.reproduce:main"
+clawbench-harbor-adapt = "clawbench.eval.harbor_adapter:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clawbench"]

@@ -20,15 +20,31 @@ uv run clawbench-run test-cases/v1/886-entertainment-hobbies-experience-topgolf 
 
 # Batch run
 uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
+
+# Harbor V2 dataset adapter
+uv run clawbench-harbor-adapt --output-dir ./harbor-datasets/clawbench-v2 --overwrite
+
+# Example Harbor runs after adaptation:
+# OpenClaw via OpenRouter/OpenAI-compatible API:
+uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off --env-file .env
+
+# Hermes via OpenRouter:
+uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a hermes -m deepseek/deepseek-v4-flash --env-file .env
 ```
 
 The console scripts are defined in the root `pyproject.toml`:
 
-| Script            | Module              | Purpose                        |
-| ----------------- | ------------------- | ------------------------------ |
-| `clawbench`       | `clawbench.tui:main`          | Interactive terminal UI        |
-| `clawbench-run`   | `clawbench.runner.run:main`   | Single test-case runner        |
-| `clawbench-batch` | `clawbench.runner.batch:main` | Model x test-case batch runner |
+| Script                    | Module                                | Purpose                              |
+| ------------------------- | ------------------------------------- | ------------------------------------ |
+| `clawbench`               | `clawbench.tui:main`                  | Interactive terminal UI              |
+| `clawbench-run`           | `clawbench.runner.run:main`           | Single test-case runner              |
+| `clawbench-batch`         | `clawbench.runner.batch:main`         | Model x test-case batch runner       |
+| `clawbench-harbor-adapt`  | `clawbench.eval.harbor_adapter:main`  | Convert V2 tasks into Harbor dataset |
+
+The Harbor adapter emits task environments with the ClawBench browser runtime,
+CDP recorder/interceptor, noVNC, and verifier helpers. It does not package a
+ClawBench-native harness; Harbor installs and runs the selected `-a` agent
+inside the task container.
 
 ## Directory Map
 

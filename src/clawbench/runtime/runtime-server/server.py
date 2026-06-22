@@ -32,6 +32,26 @@ eval_schema = None
 eval_interceptor_ready = False
 
 
+def stop_ffmpeg_recording(timeout: int = 10) -> str:
+    global ffmpeg_proc
+    if not ffmpeg_proc or ffmpeg_proc.poll() is not None:
+        return "already_stopped"
+
+    ffmpeg_proc.send_signal(signal.SIGINT)
+    try:
+        ffmpeg_proc.wait(timeout=timeout)
+        return "stopped"
+    except subprocess.TimeoutExpired:
+        ffmpeg_proc.terminate()
+        try:
+            ffmpeg_proc.wait(timeout=3)
+            return "terminated"
+        except subprocess.TimeoutExpired:
+            ffmpeg_proc.kill()
+            ffmpeg_proc.wait(timeout=3)
+            return "killed"
+
+
 ACTION_CAPTURE_SCRIPT = r"""
 (function () {
   "use strict";
@@ -513,6 +533,10 @@ async def lifespan(app: FastAPI):
             "ultrafast",
             "-crf",
             "28",
+            "-pix_fmt",
+            "yuv420p",
+            "-movflags",
+            "+frag_keyframe+empty_moov+default_base_moof",
             str(RECORDING_PATH),
         ],
         stdout=subprocess.DEVNULL,
@@ -528,9 +552,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    if ffmpeg_proc and ffmpeg_proc.poll() is None:
-        ffmpeg_proc.send_signal(signal.SIGINT)
-        ffmpeg_proc.wait(timeout=5)
+    stop_ffmpeg_recording(timeout=5)
 
 
 app = FastAPI(lifespan=lifespan)
@@ -674,8 +696,11 @@ async def stop():
 
 @app.post("/api/stop-recording")
 async def stop_recording():
-    global ffmpeg_proc
-    if ffmpeg_proc and ffmpeg_proc.poll() is None:
-        ffmpeg_proc.send_signal(signal.SIGINT)
-        ffmpeg_proc.wait(timeout=10)
-    return {"status": "recording_stopped", "has_recording": RECORDING_PATH.exists()}
+    status = stop_ffmpeg_recording(timeout=10)
+    size = RECORDING_PATH.stat().st_size if RECORDING_PATH.exists() else 0
+    return {
+        "status": "recording_stopped",
+        "recorder_status": status,
+        "has_recording": RECORDING_PATH.exists(),
+        "recording_size": size,
+    }

@@ -15,3 +15,5 @@ build/
 *.log
 .pytest_cache/
 run-logs/
+harbor-datasets/
+harbor-jobs/
