@@ -227,7 +227,7 @@ uv tool install clawbench-eval
 ```
 
 也可以使用 `pipx install clawbench-eval` 或 `python -m pip install clawbench-eval`。
-安装后的命令仍然是 `clawbench`、`clawbench-run` 和 `clawbench-batch`。
+安装后的命令仍然是 `clawbench`、`clawbench-run`、`clawbench-batch` 和 `clawbench-harbor-adapt`。
 
 如果你想要更细粒度的控制或参与贡献，可以克隆仓库并运行根目录 `uv` 包入口:
 
@@ -308,7 +308,7 @@ $EDITOR models/models.yaml
 > [!NOTE]
 > **首次运行会构建容器镜像**（Chromium + ffmpeg + noVNC + 所选 agent harness 依赖）。构建时会实时显示进度 spinner + 当前 step，后续运行直接走 layer 缓存，秒级完成。
 
-**2. 跑你的第一个任务** (四选一):
+**2. 跑你的第一个任务** (任选一种):
 
 > [!TIP]
 > **推荐 &rarr; 交互式 TUI** &nbsp; 引导式选择模型 + 测试用例
@@ -335,6 +335,78 @@ uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats --human
 打开脚本打印的 noVNC URL,在浏览器里亲手完成任务,完事后关掉标签页。端口被占时会自动换一个。
 
 **(d) 搭配外部 browser agent** —— 使用 Human mode 运行，打开 noVNC URL，让外部 browser agent 控制该浏览器会话；ClawBench 会照常录制和拦截。
+
+**(e) 通过 Harbor Framework 跑 V2** —— 先把 V2 cases 转成 Harbor 本地 dataset，再让 Harbor 启动 ClawBench 浏览器 runtime，并通过 CDP 连接它自己的 agent。
+
+Harbor 路径使用 Harbor 的 Docker provider；即使你平时用 Podman 跑原生 ClawBench，这里也需要 Docker 可用。
+
+```bash
+# 转换全部 V2 任务为 Harbor-compatible task 目录。
+uv run clawbench-harbor-adapt \
+  --output-dir ./harbor-datasets/clawbench-v2 \
+  --overwrite
+
+# 可选：只生成一个任务用于 smoke test。
+uv run clawbench-harbor-adapt \
+  --output-dir ./harbor-datasets/clawbench-v2-smoke \
+  --limit 1 \
+  --overwrite
+
+# 配置 Harbor reward 使用的 verifier judge。
+export CLAWBENCH_JUDGE_BASE_URL="https://your-judge-provider.example/v1"
+export CLAWBENCH_JUDGE_API_KEY="your-judge-api-key"
+export CLAWBENCH_JUDGE_MODEL="deepseek-v4-pro"
+export CLAWBENCH_JUDGE_API_TYPE="openai-completions"
+
+# 用 Harbor 运行。若已安装 Harbor，也可以直接使用 harbor run。
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a "<agent>" \
+  -m "<model>" \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}"
+```
+
+生成出的 Harbor environment 包含 Chromium、ClawBench recorder/interceptor、noVNC 和 runtime helper scripts，但不安装 ClawBench 原生 harness。Harbor 会根据 `-a` 在 task container 里安装/运行所选 agent。
+
+PurelyMail 凭据通过 `--env-file .env` 传给环境。计分要求同时满足 request intercepted 和 judge match；请用 `--ve CLAWBENCH_JUDGE_*` 把 judge 配置传给 Harbor verifier。如果缺少 judge base URL 或 API key，已拦截任务也会得到 reward `0`，原因是 `missing judge configuration`。
+
+具体 agent 示例：
+
+```bash
+# OpenClaw 通过 OpenRouter 的 OpenAI-compatible endpoint 运行。
+export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+export OPENAI_API_KEY="$OPENROUTER_API_KEY"
+
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a openclaw \
+  -m openai/deepseek/deepseek-v4-flash \
+  --ak thinking=off \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}" \
+  --jobs-dir ./harbor-jobs/openclaw-deepseek-flash
+
+# Hermes 通过 OpenRouter 运行。
+export OPENROUTER_API_KEY="your-openrouter-key"
+
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a hermes \
+  -m deepseek/deepseek-v4-flash \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}" \
+  --jobs-dir ./harbor-jobs/hermes-deepseek-flash
+```
 
 <details>
 <summary><b>从源码开发</b> &nbsp;— 克隆 + ``./run.sh``（面向贡献者）</summary>
@@ -533,6 +605,18 @@ uv run clawbench-batch --models claude-sonnet-4-6 --cases-suite v2 --all-cases -
 
 # 批量运行自定义 case 目录:
 uv run clawbench-batch --models claude-sonnet-4-6 --cases-dir custom-cases --all-cases
+
+# 转换 V2 任务为本地 Harbor dataset:
+uv run clawbench-harbor-adapt --output-dir ./harbor-datasets/clawbench-v2 --overwrite
+
+# 运行生成的 Harbor dataset:
+uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a "<agent>" -m "<model>" --env-file .env
+
+# 示例:
+#   OpenClaw 通过 OpenRouter/OpenAI-compatible API:
+#     -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off
+#   Hermes 通过 OpenRouter:
+#     -a hermes -m deepseek/deepseek-v4-flash
 ```
 
 V1 任务位于 [`test-cases/v1/`](../test-cases/v1/)（153 个任务）。V2 任务位于 `test-cases/v2/`（130 个任务），Lite 位于 `test-cases/v1-lite/`（20 个任务）。所有 suite 都使用 [`test-cases/task.schema.json`](../test-cases/task.schema.json)。测试用例编写细节见 [CONTRIBUTING.md](../CONTRIBUTING.md)；输出结构与评测流程见 [eval/README.md](../eval/README.md)。
