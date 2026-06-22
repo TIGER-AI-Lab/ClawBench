@@ -4,7 +4,7 @@ This document specifies how a ClawBench run is scored. It is the canonical refer
 
 - **Live leaderboard:** https://huggingface.co/spaces/TIGER-Lab/ClawBench
 - **Website snapshot:** https://claw-bench.com/leaderboard
-- **HF data card table:** https://huggingface.co/datasets/NAIL-Group/ClawBench
+- **Current HF leaderboard CSV:** https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv
 
 Anyone can reproduce every number on the leaderboard from the public traces in [`NAIL-Group/ClawBenchV1Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) and [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) by running `scripts/clawbench_rescore.py` (see [Reproducibility](#reproducibility) below).
 
@@ -145,6 +145,25 @@ The leaderboard row is one row per batch, with columns from the script's output:
 model,harness,dataset,passed,total,pass_rate,wall_hours
 glm-5.1,hermes,v2,24,130,18.46,11.35
 ```
+
+### Leaderboard provenance
+
+The current public leaderboard rows are published from
+[`TIGER-Lab/ClawBench`](https://huggingface.co/datasets/TIGER-Lab/ClawBench)
+at `leaderboard/results.csv`. Older mirrors or data-card tables can lag behind
+that CSV, so use the TIGER-Lab dataset as the canonical source for the latest
+rows.
+
+For V2 rows, the backing traces live in
+[`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace).
+Each row should be traceable to a model/harness batch directory and its
+`rescore-summary*.json` output. When checking or updating a row, record:
+
+- leaderboard CSV row (`model`, `harness`, `dataset`, `passed`, `total`)
+- trace dataset and batch prefix
+- `rescore-summary*.json` path used for the row
+- judge/rubric variant, such as lenient vs. strict
+- verification date
 
 ## Reproducibility
 

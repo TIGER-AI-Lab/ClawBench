@@ -182,7 +182,7 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
-> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/NAIL-Group/ClawBench/blob/main/leaderboard/results.csv).
+> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to the current [`leaderboard/results.csv`](https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv) source.
 
 ## How It Works
 
