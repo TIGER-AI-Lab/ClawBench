@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added support for the [Harbor framework](https://github.com/harbor-framework/harbor) through an adaptor to generate harbor-compatible task definitions.
+
 ### Changed
 - Refactored the container runtime to move the action recording and screenshot capturing logic into the CDP server rather than the Chrome extension, making it possible to integrate remote browsers in the future.
 
