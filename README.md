@@ -10,7 +10,7 @@
 [![Star this repo](https://img.shields.io/badge/%E2%98%85%20Star%20this%20repo-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench)
 [![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
 [![HF Daily Paper](https://img.shields.io/badge/Daily_Paper-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/papers/2604.08523)
-[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
+[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
 [![HF Trace Dataset](https://img.shields.io/badge/Trace_Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 [![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
 [![GitHub stars](https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/reacher-z/ClawBench)
@@ -122,7 +122,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <td align="center" valign="top">
 
 📦 **Download the data**<br/>
-[`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
+[`hf download NAIL-Group/ClawBench`](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
 <sub>Tasks · rubrics · metadata</sub>
 
 </td>
@@ -178,7 +178,7 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                                  | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
 | **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)**                                                                                   | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
-| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
+| **[TIGER-Lab/ClawBenchV2Trace](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace` |
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
