@@ -4,9 +4,9 @@ This document specifies how a ClawBench run is scored. It is the canonical refer
 
 - **Live leaderboard:** https://huggingface.co/spaces/TIGER-Lab/ClawBench
 - **Website snapshot:** https://claw-bench.com/leaderboard
-- **HF data card table:** https://huggingface.co/datasets/NAIL-Group/ClawBench
+- **HF data card table:** https://huggingface.co/spaces/TIGER-Lab/ClawBench
 
-Anyone can reproduce every number on the leaderboard from the public traces in [`NAIL-Group/ClawBenchV1Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) and [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) by running `scripts/clawbench_rescore.py` (see [Reproducibility](#reproducibility) below).
+Anyone can reproduce every number on the leaderboard from the public traces in [`TIGER-Lab/ClawBenchV1Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) and [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) by running `scripts/clawbench_rescore.py` (see [Reproducibility](#reproducibility) below).
 
 ## Summary
 
