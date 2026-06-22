@@ -356,7 +356,7 @@ fi
 #     CLI's --chrome-native-host shim is spawned) ----------------------------
 echo "Waiting for Edge CDP..."
 for i in $(seq 1 30); do
-  if curl -sf http://127.0.0.1:9222/json/version > /dev/null 2>&1; then
+  if curl -sf "${CLAWBENCH_BROWSER_CDP_URL%/}/json/version" > /dev/null 2>&1; then
     echo "Edge CDP ready"
     break
   fi

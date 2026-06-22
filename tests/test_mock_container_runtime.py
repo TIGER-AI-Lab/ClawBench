@@ -142,6 +142,7 @@ def test_docker_run_builds_agent_container_command_with_mock_runtime(
     assert "HTTPS_PROXY=http://host.docker.internal:8080" in cmd
     assert "NO_PROXY=localhost,127.0.0.1" in cmd
     assert "MODEL_NAME=provider/model" in cmd
+    assert "CLAWBENCH_BROWSER_CDP_URL=http://127.0.0.1:9222" in cmd
     assert "THINKING_LEVEL=medium" in cmd
     assert "TEMPERATURE=0.2" in cmd
     assert "MAX_TOKENS=1234" in cmd
@@ -193,6 +194,7 @@ def test_docker_run_human_uses_podman_network_flags_with_mock_runtime(
     assert "HUMAN_MODE=1" in cmd
     assert "INSTRUCTION=Manual task" in cmd
     assert "TIME_LIMIT_S=120" in cmd
+    assert "CLAWBENCH_BROWSER_CDP_URL=http://127.0.0.1:9222" in cmd
     assert "6091:6080" in cmd
     assert cmd[-1] == "clawbench-base"
 

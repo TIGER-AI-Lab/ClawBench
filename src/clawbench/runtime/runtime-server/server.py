@@ -23,7 +23,7 @@ EVAL_SCHEMA_PATH = Path("/eval-schema.json")
 REQUESTS_FILE = DATA_DIR / "requests.jsonl"
 INTERCEPTION_FILE = DATA_DIR / "interception.json"
 
-CDP_URL = "http://127.0.0.1:9222"
+CDP_URL = os.environ.get("CLAWBENCH_BROWSER_CDP_URL", "http://127.0.0.1:9222")
 ACTION_BINDING = "__clawbenchAction"
 SCREENSHOT_THROTTLE_MS = 500
 

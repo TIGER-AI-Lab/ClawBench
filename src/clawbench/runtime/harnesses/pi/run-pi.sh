@@ -38,7 +38,7 @@ fi
 # launching its own Chrome instance.
 echo "Waiting for Chrome CDP..."
 for i in $(seq 1 30); do
-  if curl -sf http://127.0.0.1:9222/json/version > /tmp/chrome-version.json 2>/dev/null; then
+  if curl -sf "${CLAWBENCH_BROWSER_CDP_URL%/}/json/version" > /tmp/chrome-version.json 2>/dev/null; then
     export BU_CDP_WS
     BU_CDP_WS=$(python3 - <<'PYEOF'
 import json

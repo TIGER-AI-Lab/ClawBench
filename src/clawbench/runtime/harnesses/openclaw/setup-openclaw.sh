@@ -83,7 +83,7 @@ cat > ~/.openclaw/openclaw.json << JSONEOF
     "defaultProfile": "container",
     "profiles": {
       "container": {
-        "cdpUrl": "http://127.0.0.1:9222",
+        "cdpUrl": "$CLAWBENCH_BROWSER_CDP_URL",
         "color": "#FB542B"
       }
     }

@@ -4,6 +4,8 @@ set -e
 # Ensure /data exists for recording output and diagnostic logs
 mkdir -p /data
 
+export CLAWBENCH_BROWSER_CDP_URL="${CLAWBENCH_BROWSER_CDP_URL:-http://127.0.0.1:9222}"
+
 # Start virtual display
 Xvfb :99 -screen 0 1920x1080x24 &
 export DISPLAY=:99

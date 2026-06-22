@@ -35,6 +35,10 @@ console = Console()
 
 BASE_DOCKERFILE = HARNESS_REGISTRY.base_dockerfile
 _HARNESS_DOCKERFILES: dict[str, Path] = HARNESS_REGISTRY.harness_dockerfiles
+DEFAULT_BROWSER_CDP_URL = os.environ.get(
+    "CLAWBENCH_BROWSER_CDP_URL",
+    "http://127.0.0.1:9222",
+)
 
 
 def step(msg: str):
@@ -337,6 +341,8 @@ def docker_run_human(
         f"INSTRUCTION={instruction}",
         "-e",
         f"TIME_LIMIT_S={time_limit_s}",
+        "-e",
+        f"CLAWBENCH_BROWSER_CDP_URL={DEFAULT_BROWSER_CDP_URL}",
         "-p",
         f"{host_port}:6080",
         "-v",
@@ -380,6 +386,8 @@ def docker_run(
         f"INSTRUCTION={instruction}",
         "-e",
         f"TIME_LIMIT_S={time_limit_s}",
+        "-e",
+        f"CLAWBENCH_BROWSER_CDP_URL={DEFAULT_BROWSER_CDP_URL}",
         "-v",
         f"{schema_path.resolve()}:/eval-schema.json:ro",
         "-v",
