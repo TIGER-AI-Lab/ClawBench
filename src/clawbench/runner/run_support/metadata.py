@@ -177,6 +177,11 @@ def _run_flags_meta(
         "harness": "human" if args.human else args.harness,
         "judge": None if args.no_judge else args.judge,
         "no_judge": bool(args.no_judge),
+        "browser_runtime": getattr(args, "browser_runtime", None) or "local",
+        "browser_cdp_url_provided": bool(getattr(args, "browser_cdp_url", None)),
+        "browser_runtime_options_provided": bool(
+            getattr(args, "browser_runtime_options", None)
+        ),
         "output_base": _display_path(output_base),
         "output_base_kind": _path_kind(output_base),
         "output_dir": _display_path(output_dir),
@@ -207,6 +212,7 @@ def make_run_meta(
     run_dir_name: str | None = None,
     host_port: int | None = None,
     personal_info_metadata: dict[str, Any] | None = None,
+    browser_runtime: dict[str, Any] | None = None,
     failure_reason: str | None = None,
     extra_info_warnings: list[str] | None = None,
 ) -> dict[str, Any]:
@@ -247,6 +253,7 @@ def make_run_meta(
         "run_metrics": classification["metrics"],
         "usage": classification["metrics"].get("usage"),
         "runtime": _runtime_meta(harness),
+        "browser_runtime": browser_runtime,
         "task": _task_meta(
             task=task,
             task_json_sha256=task_json_sha256,

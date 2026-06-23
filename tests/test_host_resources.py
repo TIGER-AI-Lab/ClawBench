@@ -104,6 +104,22 @@ def test_harnesses_use_shared_browser_cdp_env() -> None:
     assert offenders == []
 
 
+def test_harnesses_are_browser_provider_neutral() -> None:
+    forbidden = ("STEEL", "BROWSERBASE", "steel", "browserbase")
+    offenders = []
+    for path in (RUNTIME_ROOT / "harnesses").rglob("*"):
+        if not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        if any(token in text for token in forbidden):
+            offenders.append(path.relative_to(REPO_ROOT).as_posix())
+
+    assert offenders == []
+
+
 def test_runtime_server_cdp_url_comes_from_env_with_local_default() -> None:
     server_path = RUNTIME_ROOT / "runtime-server" / "server.py"
     tree = ast.parse(server_path.read_text(encoding="utf-8"))

@@ -35,6 +35,10 @@ fi
 # Wait for Chrome CDP to be ready
 echo "Waiting for Chrome CDP..."
 for i in $(seq 1 30); do
+  if [[ "$CLAWBENCH_BROWSER_CDP_URL" == ws://* || "$CLAWBENCH_BROWSER_CDP_URL" == wss://* ]]; then
+    echo "Chrome CDP ready"
+    break
+  fi
   if curl -sf "${CLAWBENCH_BROWSER_CDP_URL%/}/json/version" > /dev/null 2>&1; then
     echo "Chrome CDP ready"
     break
