@@ -5,13 +5,16 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import socket
 import urllib.parse
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from clawbench.runner.run_support.docker import DEFAULT_BROWSER_CDP_URL, pick_free_port
-
 BROWSER_RUNTIME_CHOICES = ("local", "remote-cdp", "steel", "browserbase")
+DEFAULT_BROWSER_CDP_URL = os.environ.get(
+    "CLAWBENCH_BROWSER_CDP_URL",
+    "http://127.0.0.1:9222",
+)
 
 
 class BrowserRuntimeError(RuntimeError):
@@ -116,6 +119,13 @@ def _env_value(env: dict[str, str], key: str) -> str | None:
     return value if value else None
 
 
+def _pick_free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(("127.0.0.1", 0))
+        return int(s.getsockname()[1])
+
+
 class LocalBrowserRuntimeProvider:
     name = "local"
 
@@ -125,7 +135,7 @@ class LocalBrowserRuntimeProvider:
             mode="local",
             cdp_url=DEFAULT_BROWSER_CDP_URL,
             recording_mode="x11",
-            local_viewer_port=pick_free_port(6080),
+            local_viewer_port=_pick_free_port(),
         )
 
     def cleanup(self, session: BrowserSession) -> None:
