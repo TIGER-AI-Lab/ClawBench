@@ -23,7 +23,8 @@ EVAL_SCHEMA_PATH = Path("/eval-schema.json")
 REQUESTS_FILE = DATA_DIR / "requests.jsonl"
 INTERCEPTION_FILE = DATA_DIR / "interception.json"
 
-CDP_URL = "http://127.0.0.1:9222"
+CDP_URL = os.environ.get("CLAWBENCH_BROWSER_CDP_URL", "http://127.0.0.1:9222")
+RECORDING_MODE = os.environ.get("CLAWBENCH_RECORDING_MODE", "x11")
 ACTION_BINDING = "__clawbenchAction"
 SCREENSHOT_THROTTLE_MS = 500
 
@@ -34,6 +35,8 @@ eval_interceptor_ready = False
 
 def stop_ffmpeg_recording(timeout: int = 10) -> str:
     global ffmpeg_proc
+    if RECORDING_MODE == "disabled":
+        return "disabled"
     if not ffmpeg_proc or ffmpeg_proc.poll() is not None:
         return "already_stopped"
 
@@ -232,24 +235,27 @@ def start_cdp_handler(
 ):
     """Connect to Chrome via CDP, log all requests, and optionally block by URL pattern + method + body/params."""
 
-    # Wait for Chrome CDP to be ready
-    ws_url = None
+    # Wait for CDP to be ready. Local Chromium exposes an HTTP CDP root; remote
+    # providers may hand us the browser WebSocket URL directly.
+    ws = None
     for _ in range(30):
         try:
-            version = json.loads(
-                urllib.request.urlopen(f"{CDP_URL}/json/version").read()
-            )
-            ws_url = version["webSocketDebuggerUrl"]
+            if CDP_URL.startswith(("ws://", "wss://")):
+                ws = websocket.create_connection(CDP_URL)
+            else:
+                version = json.loads(
+                    urllib.request.urlopen(f"{CDP_URL}/json/version").read()
+                )
+                ws = websocket.create_connection(version["webSocketDebuggerUrl"])
             break
         except Exception:
             time.sleep(1)
-    if not ws_url:
+    if ws is None:
         print("[cdp] CDP not available, skipping handler", flush=True)
         return
 
     global eval_interceptor_ready
 
-    ws = websocket.create_connection(ws_url)
     msg_id = [1]
 
     def send(method, params=None, session_id=None):
@@ -513,35 +519,39 @@ async def lifespan(app: FastAPI):
         match_body = eval_schema.get("body")
         match_params = eval_schema.get("params")
 
-    # Start screen recording of the Xvfb display
-    display = os.environ.get("DISPLAY", ":99")
-    ffmpeg_proc = subprocess.Popen(
-        [
-            "ffmpeg",
-            "-y",
-            "-f",
-            "x11grab",
-            "-video_size",
-            "1920x1080",
-            "-framerate",
-            "15",
-            "-i",
-            display,
-            "-c:v",
-            "libx264",
-            "-preset",
-            "ultrafast",
-            "-crf",
-            "28",
-            "-pix_fmt",
-            "yuv420p",
-            "-movflags",
-            "+frag_keyframe+empty_moov+default_base_moof",
-            str(RECORDING_PATH),
-        ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    if RECORDING_MODE == "disabled":
+        print("[recording] disabled", flush=True)
+        ffmpeg_proc = None
+    else:
+        # Start screen recording of the Xvfb display
+        display = os.environ.get("DISPLAY", ":99")
+        ffmpeg_proc = subprocess.Popen(
+            [
+                "ffmpeg",
+                "-y",
+                "-f",
+                "x11grab",
+                "-video_size",
+                "1920x1080",
+                "-framerate",
+                "15",
+                "-i",
+                display,
+                "-c:v",
+                "libx264",
+                "-preset",
+                "ultrafast",
+                "-crf",
+                "28",
+                "-pix_fmt",
+                "yuv420p",
+                "-movflags",
+                "+frag_keyframe+empty_moov+default_base_moof",
+                str(RECORDING_PATH),
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
 
     # Start CDP handler: always logs requests, optionally blocks by URL pattern + method + body/params
     threading.Thread(

@@ -28,6 +28,7 @@ from pathlib import Path
 base_url = os.environ["BASE_URL"].rstrip("/")
 model_name = os.environ["MODEL_NAME"]
 api_type = os.environ["API_TYPE"]
+browser_cdp_url = os.environ["CLAWBENCH_BROWSER_CDP_URL"]
 
 # Pick a single API key (first from API_KEYS list, else API_KEY).
 keys_json = os.environ.get("API_KEYS", "")
@@ -132,7 +133,7 @@ agent:
   show_reasoning: true
   max_turns: 90
 browser:
-  cdp_url: "http://127.0.0.1:9222"
+  cdp_url: {yaml_scalar(browser_cdp_url)}
   cloud_provider: "local"
   allow_private_urls: true
   command_timeout: 60
@@ -154,7 +155,7 @@ run_env = {
     "HERMES_MODEL_NAME": resolved_model,
     "HERMES_PROVIDER": provider,
     "HERMES_API_MODE": api_mode,
-    "BROWSER_CDP_URL": "http://127.0.0.1:9222",
+    "BROWSER_CDP_URL": browser_cdp_url,
     "NO_COLOR": "1",
     "TERM": "xterm-256color",
 }
@@ -171,6 +172,6 @@ os.chmod(run_env_path, 0o600)
 print(
     "Hermes config: "
     f"model={resolved_model}, provider={provider}, api_mode={api_mode}, "
-    f"reasoning_effort={reasoning_effort}, browser_cdp=http://127.0.0.1:9222"
+    f"reasoning_effort={reasoning_effort}, browser_cdp={browser_cdp_url}"
 )
 PYEOF

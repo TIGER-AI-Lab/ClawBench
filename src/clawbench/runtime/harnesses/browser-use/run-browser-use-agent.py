@@ -237,7 +237,7 @@ async def main() -> None:
                 available_files.append(str(p))
 
     llm = make_llm()
-    browser = Browser(cdp_url="http://127.0.0.1:9222")
+    browser = Browser(cdp_url=os.environ["CLAWBENCH_BROWSER_CDP_URL"])
     tools = Tools()  # default: browser-only actions, no shell escape
 
     OUT.write_text("")  # truncate

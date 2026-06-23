@@ -149,7 +149,7 @@ config = {
             "type": "local",
             "command": [
                 "npx", "@playwright/mcp",
-                "--cdp-endpoint", "http://127.0.0.1:9222",
+                "--cdp-endpoint", os.environ["CLAWBENCH_BROWSER_CDP_URL"],
             ],
             "enabled": True,
         },

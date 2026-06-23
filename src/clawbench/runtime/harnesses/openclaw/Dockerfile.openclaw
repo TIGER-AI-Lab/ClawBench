@@ -10,10 +10,10 @@ RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 # Pin openclaw version — patched below for #47879 (--autoConnect → --browserUrl)
 RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g openclaw@2026.3.13
 
-# Patch: replace --autoConnect with --browserUrl http://127.0.0.1:9222 in all dist files
+# Patch: replace --autoConnect with --browserUrl from the runtime CDP env in all dist files
 # See https://github.com/openclaw/openclaw/issues/47879
 RUN find /usr/local/lib/node_modules/openclaw/dist -name '*.js' -exec \
-    sed -i 's/"--autoConnect"/"--browserUrl","http:\/\/127.0.0.1:9222"/g' {} +
+    sed -i 's/"--autoConnect"/"--browserUrl",process.env.CLAWBENCH_BROWSER_CDP_URL/g' {} +
 
 COPY harnesses/openclaw/setup-openclaw.sh /setup-openclaw.sh
 COPY harnesses/openclaw/run-openclaw.sh /run-harness.sh

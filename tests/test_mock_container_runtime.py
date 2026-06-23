@@ -142,9 +142,53 @@ def test_docker_run_builds_agent_container_command_with_mock_runtime(
     assert "HTTPS_PROXY=http://host.docker.internal:8080" in cmd
     assert "NO_PROXY=localhost,127.0.0.1" in cmd
     assert "MODEL_NAME=provider/model" in cmd
+    assert "CLAWBENCH_BROWSER_CDP_URL=http://127.0.0.1:9222" in cmd
+    assert "CLAWBENCH_BROWSER_MODE=local" in cmd
+    assert "CLAWBENCH_RECORDING_MODE=x11" in cmd
     assert "THINKING_LEVEL=medium" in cmd
     assert "TEMPERATURE=0.2" in cmd
     assert "MAX_TOKENS=1234" in cmd
+    assert cmd[-1] == "clawbench-codex"
+
+
+def test_docker_run_remote_browser_sidecar_command_with_mock_runtime(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    docker = _import_docker_helpers(monkeypatch)
+    commands: list[list[str]] = []
+    schema_path = tmp_path / "eval-schema.json"
+    personal_info_dir = tmp_path / "my-info"
+    schema_path.write_text("{}")
+    personal_info_dir.mkdir()
+    monkeypatch.setattr(docker, "run", lambda cmd: commands.append(cmd))
+
+    docker.docker_run(
+        "container-name",
+        "Complete this task",
+        schema_path,
+        personal_info_dir,
+        {
+            "model": "provider/model",
+            "base_url": "https://api.example.test/v1",
+            "api_type": "openai-completions",
+        },
+        time_limit_s=60,
+        host_port=None,
+        harness="codex",
+        browser_cdp_url="wss://remote.example.test/session/devtools?apiKey=secret",
+        browser_mode="remote",
+        recording_mode="disabled",
+    )
+
+    cmd = commands[0]
+    assert "-p" not in cmd
+    assert (
+        "CLAWBENCH_BROWSER_CDP_URL=wss://remote.example.test/session/devtools?apiKey=secret"
+        in cmd
+    )
+    assert "CLAWBENCH_BROWSER_MODE=remote" in cmd
+    assert "CLAWBENCH_RECORDING_MODE=disabled" in cmd
     assert cmd[-1] == "clawbench-codex"
 
 
@@ -193,6 +237,9 @@ def test_docker_run_human_uses_podman_network_flags_with_mock_runtime(
     assert "HUMAN_MODE=1" in cmd
     assert "INSTRUCTION=Manual task" in cmd
     assert "TIME_LIMIT_S=120" in cmd
+    assert "CLAWBENCH_BROWSER_CDP_URL=http://127.0.0.1:9222" in cmd
+    assert "CLAWBENCH_BROWSER_MODE=local" in cmd
+    assert "CLAWBENCH_RECORDING_MODE=x11" in cmd
     assert "6091:6080" in cmd
     assert cmd[-1] == "clawbench-base"
 
