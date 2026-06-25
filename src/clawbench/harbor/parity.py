@@ -100,6 +100,9 @@ def run_harbor(
 ) -> dict[str, Any]:
     """Run ``harbor run`` against an exported task dir and read the reward."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    # NB: do not pass ``--agent clawbench`` -- ``--agent`` is typed as Harbor's
+    # ``AgentName`` enum (oracle/terminus/hermes/...), so it fails validation.
+    # ``--agent-import-path`` alone selects ClawbenchHarnessAgent (see agent.py).
     cmd = [
         "harbor",
         "run",
@@ -107,8 +110,6 @@ def run_harbor(
         str(harbor_task_dir),
         "--agent-import-path",
         "clawbench.harbor.agent:ClawbenchHarnessAgent",
-        "--agent",
-        "clawbench",
         "--ak",
         f"harness={harness}",
         "--model",
