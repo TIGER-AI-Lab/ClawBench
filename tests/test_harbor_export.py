@@ -46,16 +46,22 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     out = tmp_path / "out"
     out.mkdir()
     ok, msg = export.export_case(
-        case, out, base_image="clawbench-harbor-task", no_judge=True, judge_env={}
+        case,
+        out,
+        base_image="localhost/clawbench-harbor-task:latest",
+        no_judge=True,
+        judge_env={},
     )
     assert ok, msg
     dst = out / case.name
 
-    # Canonical Harbor files exist.
+    # Canonical Harbor files exist. PREBUILT mode: docker-compose.yaml, NO Dockerfile.
     assert (dst / "task.toml").is_file()
     assert (dst / "instruction.md").is_file()
-    assert (dst / "environment" / "Dockerfile").is_file()
+    assert (dst / "environment" / "docker-compose.yaml").is_file()
+    assert not (dst / "environment" / "Dockerfile").exists()
     assert (dst / "environment" / "eval-schema.json").is_file()
+    assert (dst / "environment" / "instruction.txt").is_file()
     assert (dst / "tests" / "test.sh").is_file()
 
     # task.toml parses and carries the expected sections/metadata.
@@ -71,15 +77,20 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     assert "agent" in cfg and "verifier" in cfg and "environment" in cfg
     assert cfg["agent"]["timeout_sec"] == float(time_limit_s := 30 * 60)
     assert cfg["verifier"]["timeout_sec"] >= time_limit_s
+    # PREBUILT mode: [environment].docker_image points at the local image -> Harbor
+    # uses docker-compose-prebuilt.yaml (no build).
+    assert cfg["environment"]["docker_image"] == "localhost/clawbench-harbor-task:latest"
 
     # eval-schema.json baked verbatim.
     baked = json.loads((dst / "environment" / "eval-schema.json").read_text())
     assert baked["url_pattern"] == "myrecipes\\.com/collections/bookmarks/save"
 
-    # Dockerfile FROM the services image, copying schema + persona + instruction.
-    dockerfile = (dst / "environment" / "Dockerfile").read_text()
-    assert "FROM clawbench-harbor-task" in dockerfile
-    assert "COPY eval-schema.json /eval-schema.json" in dockerfile
+    # docker-compose.yaml delivers the per-task files via bind mounts (no build).
+    compose = (dst / "environment" / "docker-compose.yaml").read_text()
+    assert "./eval-schema.json:/eval-schema.json:ro" in compose
+    assert "./instruction.txt:/clawbench/instruction.txt:ro" in compose
+    assert "./my-info:/clawbench/my-info:ro" in compose
+    assert "pull_policy: never" in compose
 
     # test.sh runs the verifier shim and falls back to a 0.0 reward.
     test_sh = (dst / "tests" / "test.sh").read_text()

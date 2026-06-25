@@ -3,20 +3,32 @@
 A Harbor task directory has the canonical shape::
 
     <case>/
-      task.toml          # version + [metadata] + [verifier]/[agent] timeouts
-      instruction.md     # the task prompt (reuses run_support.task.build_instruction)
+      task.toml             # version + [metadata] + [verifier]/[agent] + [environment].docker_image
+      instruction.md        # the task prompt (reuses run_support.task.build_instruction)
       environment/
-        Dockerfile       # FROM the services-mode image, bakes eval-schema + persona
-        eval-schema.json # the interceptor's match schema
-        my-info/...      # the fixed persona bundle
+        docker-compose.yaml # PREBUILT mode: image: ${PREBUILT_IMAGE_NAME} + bind mounts
+        eval-schema.json    # the interceptor's match schema (bind-mounted to /eval-schema.json)
+        instruction.txt     # plain instruction (bind-mounted to /clawbench/instruction.txt)
+        my-info/...         # the fixed persona bundle (bind-mounted to /clawbench/my-info)
       tests/
-        test.sh          # the verifier: python -m clawbench.harbor.verify
+        test.sh             # the verifier: python -m clawbench.harbor.verify
 
-Harbor runs it with::
+PREBUILT mode (no ``docker compose build``): ``[environment].docker_image`` points
+at the already-built ``localhost/clawbench-harbor-task`` podman image, so Harbor
+selects ``docker-compose-prebuilt.yaml`` (``image: ${PREBUILT_IMAGE_NAME}`` +
+``command: sleep infinity``) instead of booting an isolated BuildKit container that
+cannot see podman's local images. Because there is no build layer, the per-task
+files are delivered at runtime via **bind mounts** declared in the task's own
+``environment/docker-compose.yaml`` (relative paths resolve against the staged
+``environment/`` dir). The interceptor reads ``/eval-schema.json`` at service
+startup, so it must be present at container creation — a mount guarantees that.
+
+Harbor runs it with (NO ``--agent`` flag — that is invalid with
+``--agent-import-path``, which only accepts registry enum values)::
 
     harbor run --path <out>/<case> \\
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \\
-      --agent clawbench --ak harness=harbor \\
+      --ak harness=harbor --ak api_key=<GEMINI_KEY> \\
       --model gemini/gemini-3.5-flash --env docker
 
 Honest gap: per-run disposable email + personalized /my-info has no Harbor
@@ -39,7 +51,10 @@ from clawbench.harbor.model_map import judge_api_type
 from clawbench.runner.run_support.task import build_instruction, validate_task_data
 from clawbench.utils.paths import SHARED_ROOT
 
-DEFAULT_BASE_IMAGE = "clawbench-harbor-task"
+# Prebuilt image used as ``[environment].docker_image``. The ``localhost/`` prefix
+# is the podman local-registry namespace, so Harbor's ``docker inspect`` resolves
+# it without ever attempting a remote pull (which is what BuildKit did before).
+DEFAULT_BASE_IMAGE = "localhost/clawbench-harbor-task:latest"
 DEFAULT_JUDGE_MODEL = "gemini-3.5-flash"
 
 # Heuristic signals that a task needs a fresh, verifiable email inbox or account
@@ -137,6 +152,7 @@ def build_task_toml(
     time_limit_s: int,
     no_judge: bool,
     judge_env: dict[str, str],
+    base_image: str,
 ) -> str:
     """Render task.toml for a ClawBench case (Harbor schema version 1.0)."""
     metadata = task.get("metadata") or {}
@@ -181,29 +197,51 @@ def build_task_toml(
         for k, v in verifier_env.items():
             lines.append(f'{k} = "{_toml_escape(v)}"')
 
+    # PREBUILT mode: pointing [environment].docker_image at the already-built
+    # local image makes Harbor pick docker-compose-prebuilt.yaml (no build). With
+    # no environment/Dockerfile present, should_use_prebuilt_docker_image() returns
+    # True, and PREBUILT_IMAGE_NAME is set from this value. The per-task files are
+    # delivered by the bind mounts in environment/docker-compose.yaml instead of a
+    # COPY build layer.
     lines += [
         "",
         "[agent]",
         f"timeout_sec = {float(time_limit_s)}",
         "",
         "[environment]",
+        f'docker_image = "{_toml_escape(base_image)}"',
         "build_timeout_sec = 1800.0",
         'network_mode = "public"',
     ]
     return "\n".join(lines) + "\n"
 
 
-def build_dockerfile(base_image: str) -> str:
-    """Render environment/Dockerfile: bake the per-task eval schema + persona."""
+def build_compose() -> str:
+    """Render environment/docker-compose.yaml for PREBUILT mode (no build).
+
+    Layered *after* Harbor's docker-compose-prebuilt.yaml (which already sets
+    ``image: ${PREBUILT_IMAGE_NAME}`` and ``command: sleep infinity``), so this
+    file only needs to add the per-task bind mounts that a COPY build layer used
+    to provide. ``pull_policy: never`` keeps compose from attempting a remote pull
+    for the local-only image. Relative sources resolve against the staged
+    ``environment/`` dir (Harbor's compose ``--project-directory``).
+
+    Mounts:
+      * eval-schema.json -> /eval-schema.json   (interceptor reads at startup)
+      * instruction.txt  -> /clawbench/instruction.txt (judge fallback)
+      * my-info          -> /clawbench/my-info  (agent copies to /my-info at run)
+    """
     return (
-        f"# ClawBench task environment (Harbor-as-runner).\n"
-        f"FROM {base_image}\n\n"
-        "# The interceptor reads /eval-schema.json to decide Stage-1 matches.\n"
-        "COPY eval-schema.json /eval-schema.json\n\n"
-        "# Bake the fixed persona bundle; the agent copies it to /my-info at run.\n"
-        "COPY my-info /clawbench/my-info\n\n"
-        "# The task instruction (for the judge fallback when INSTRUCTION is unset).\n"
-        "COPY instruction.txt /clawbench/instruction.txt\n"
+        "# ClawBench task environment (Harbor-as-runner, PREBUILT mode).\n"
+        "# No build: uses the local image via docker-compose-prebuilt.yaml; this\n"
+        "# overlay only adds the per-task bind mounts the interceptor + agent need.\n"
+        "services:\n"
+        "  main:\n"
+        "    pull_policy: never\n"
+        "    volumes:\n"
+        "      - ./eval-schema.json:/eval-schema.json:ro\n"
+        "      - ./instruction.txt:/clawbench/instruction.txt:ro\n"
+        "      - ./my-info:/clawbench/my-info:ro\n"
     )
 
 
@@ -260,21 +298,22 @@ def export_case(
             time_limit_s=time_limit_s,
             no_judge=no_judge,
             judge_env=judge_env,
+            base_image=base_image,
         )
     )
-    # instruction.md (+ a plain instruction.txt baked for the judge fallback)
+    # instruction.md (+ a plain instruction.txt bind-mounted for the judge fallback)
     instruction = build_instruction(task)
     (dst / "instruction.md").write_text(instruction)
     (dst / "environment" / "instruction.txt").write_text(
         str(task.get("instruction", ""))
     )
-    # environment/eval-schema.json
+    # environment/eval-schema.json (bind-mounted to /eval-schema.json)
     (dst / "environment" / "eval-schema.json").write_text(
         json.dumps(task["eval_schema"], indent=2)
     )
-    # environment/Dockerfile
-    (dst / "environment" / "Dockerfile").write_text(build_dockerfile(base_image))
-    # environment/my-info (fixed persona)
+    # environment/docker-compose.yaml (PREBUILT mode: bind mounts, no build)
+    (dst / "environment" / "docker-compose.yaml").write_text(build_compose())
+    # environment/my-info (fixed persona, bind-mounted to /clawbench/my-info)
     my_info = dst / "environment" / "my-info"
     my_info.mkdir()
     persona_src = SHARED_ROOT / "alex_green_personal_info.json"
@@ -313,7 +352,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--base-image",
         default=DEFAULT_BASE_IMAGE,
-        help=f"Services-mode base image for environment/Dockerfile (default: {DEFAULT_BASE_IMAGE}).",
+        help="Prebuilt services-mode image set as [environment].docker_image "
+        f"(default: {DEFAULT_BASE_IMAGE}). Must already exist locally; PREBUILT "
+        "mode never pulls it.",
     )
     parser.add_argument(
         "--judge",

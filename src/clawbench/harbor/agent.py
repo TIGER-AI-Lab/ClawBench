@@ -4,12 +4,13 @@
 exposes every browser ClawBench harness (harbor/hermes/pi/openclaw/browser-use/
 claw-code/opencode/...) as a Harbor agent. The harness is selected via an agent
 kwarg, because Harbor's import-path mode only forwards ``--ak key=value`` kwargs
-to the agent constructor (the ``--agent`` value is the registry *name*, which is
-ignored for custom import paths):
+to the agent constructor. Do **not** pass ``--agent`` — that flag is typed as the
+``AgentName`` enum (oracle/terminus/hermes/...), so ``--agent clawbench`` fails
+validation. ``--agent-import-path`` alone sets ``config.agent.import_path``:
 
     harbor run --path <task-dir> \
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \
-      --agent clawbench --ak harness=hermes \
+      --ak harness=hermes --ak api_key=<API_KEY> \
       --model gemini/gemini-3.5-flash --env docker
 
 Lifecycle inside the Harbor-managed container (CMD overridden to ``sleep
