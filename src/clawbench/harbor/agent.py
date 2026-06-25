@@ -41,10 +41,23 @@ from clawbench.harbor.model_map import build_litellm_model
 # Map ClawBench LiteLLM provider prefix back to a (BASE_URL, API_TYPE) contract.
 # This is the inverse of model_map.build_litellm_model and is used to translate a
 # Harbor `provider/model` string into the env vars the harnesses read.
+#
+# Gemini note: ClawBench drives Gemini over its **OpenAI-compatible** endpoint
+# (``/v1beta/openai/chat/completions``) and its credentials are issued for that
+# path -- exactly as the Harbor verifier's judge does (the judge api_type is
+# derived via ``model_map.judge_api_type`` -> ``openai-completions``). We therefore
+# map gemini to ``openai-completions`` so ``build_litellm_model`` forwards the
+# ``/v1beta/openai`` base as ``api_base`` (LiteLLM ``openai/<model>`` -> POST
+# ``/chat/completions``). Using ``google-generative-ai`` instead would make
+# ``build_litellm_model`` set ``api_base=None`` (its base starts with
+# ``generativelanguage.googleapis.com``), silently DISCARDING the OpenAI-compat
+# base and routing to LiteLLM's native Gemini provider (``generateContent``) -- the
+# endpoint ClawBench's keys are *not* issued for, which fails auth and produces a
+# 0-action ``infra_failure`` (the bug this maps around).
 _PROVIDER_DEFAULTS: dict[str, tuple[str, str]] = {
     "gemini": (
         "https://generativelanguage.googleapis.com/v1beta/openai",
-        "google-generative-ai",
+        "openai-completions",
     ),
     "anthropic": ("https://api.anthropic.com", "anthropic-messages"),
     "openai": ("https://api.openai.com/v1", "openai-completions"),
@@ -70,6 +83,9 @@ class ClawbenchHarnessAgent(BaseAgent):
         api_type: str | None = None,
         api_key: str | None = None,
         time_limit_s: int | None = None,
+        thinking_level: str | None = None,
+        temperature: str | None = None,
+        max_tokens: str | None = None,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -79,6 +95,15 @@ class ClawbenchHarnessAgent(BaseAgent):
         self._api_type = api_type or os.environ.get("CLAWBENCH_API_TYPE")
         self._api_key = api_key or os.environ.get("CLAWBENCH_API_KEY")
         self._time_limit_s = time_limit_s
+        # Optional model knobs, mirroring the native runner's docker_run env
+        # contract (these come from models.yaml natively; here from --ak kwargs).
+        # The harbor harness reads THINKING_LEVEL (-> Terminus reasoning_effort);
+        # TEMPERATURE/MAX_TOKENS are consumed by the LiteLLM-backed harnesses too.
+        self._thinking_level = thinking_level or os.environ.get(
+            "CLAWBENCH_THINKING_LEVEL"
+        )
+        self._temperature = temperature
+        self._max_tokens = max_tokens
 
     @staticmethod
     def name() -> str:
@@ -192,6 +217,16 @@ class ClawbenchHarnessAgent(BaseAgent):
         env["INSTRUCTION"] = instruction
         if self._time_limit_s:
             env["TIME_LIMIT_S"] = str(self._time_limit_s)
+        # Forward optional model knobs only when set, mirroring the native runner
+        # (docker_run adds these conditionally). THINKING_LEVEL is what gemini-style
+        # "thinking" models need; without it the harbor harness runs with
+        # reasoning_effort=none (still valid, just not at parity with the native run).
+        if self._thinking_level:
+            env["THINKING_LEVEL"] = str(self._thinking_level)
+        if self._temperature is not None:
+            env["TEMPERATURE"] = str(self._temperature)
+        if self._max_tokens is not None:
+            env["MAX_TOKENS"] = str(self._max_tokens)
 
         # Make the personal-info bundle available where the harnesses expect it.
         await environment.exec(
@@ -218,6 +253,43 @@ class ClawbenchHarnessAgent(BaseAgent):
             context.metadata = {}
         context.metadata["clawbench_harness"] = self.harness
         context.metadata["clawbench_run_script"] = run_script
+
+        # Surface the inner harness diagnostics so a model/credential error is not
+        # silently swallowed (the run produced reward 0 with stop_reason
+        # "harbor_failed" and no visible cause). /run-harness.sh records a
+        # machine-readable reason in /data/.stop-reason and redirects the agent's
+        # stdout/stderr to /tmp/harbor-*.log; it deletes /data/*.log on exit but
+        # leaves /tmp/* and /data/.stop-reason, so read those here. We read after
+        # the run (not just on a non-zero exit) because the watchdog wrapper exits 0
+        # even when the inner agent died on its first LLM call.
+        stop_reason, inner_err = await self._collect_harness_diagnostics(environment)
+        if stop_reason:
+            context.metadata["clawbench_stop_reason"] = stop_reason
+        failed = bool(inner_err) or (stop_reason or "").endswith("_failed")
+        if inner_err:
+            log = self.logger.warning if failed else self.logger.info
+            log(
+                "ClawBench harness stop_reason=%s; inner error:\n%s",
+                stop_reason or "?",
+                inner_err,
+            )
+        elif failed:
+            self.logger.warning("ClawBench harness stop_reason=%s", stop_reason)
+
+    async def _collect_harness_diagnostics(
+        self, environment: BaseEnvironment
+    ) -> tuple[str, str]:
+        """Read the inner harness stop-reason and any captured stderr tail.
+
+        Returns ``(stop_reason, inner_error_tail)``; either may be empty.
+        """
+        diag = await environment.exec(
+            "cat /data/.stop-reason 2>/dev/null; "
+            "echo '<<<STDERR>>>'; tail -n 40 /tmp/harbor-stderr.log 2>/dev/null"
+        )
+        blob = diag.stdout or ""
+        reason, _, stderr_tail = blob.partition("<<<STDERR>>>")
+        return reason.strip(), stderr_tail.strip()
 
     def populate_context_post_run(self, context: AgentContext) -> None:
         """Best-effort: surface the synced agent-messages count if present."""
