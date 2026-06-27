@@ -110,11 +110,12 @@ def build_litellm_model(
 ) -> LiteLLMModel:
     """Map ClawBench ``(base_url, model_name, api_type)`` to LiteLLM terms.
 
-    Gemini note: LiteLLM's native ``gemini/<model>`` provider talks to Google's
-    native generative-language API using ``GEMINI_API_KEY`` and does NOT post to
-    ``/chat/completions`` — so it sidesteps the 404 that hits raw OpenAI-compat
-    callers on the native Gemini root. A custom Gemini base_url (e.g. an
-    OpenAI-compat proxy) is forwarded as ``api_base``.
+    Gemini note: a ``google-generative-ai`` model whose base_url is the
+    OpenAI-compatible endpoint (``/v1beta/openai`` or any ``/openai`` base) is
+    routed through LiteLLM's ``openai/<model>`` provider with ``api_base=base_url``
+    so it POSTs ``/chat/completions`` (the path those keys are issued for). The
+    native Google generative-language root (no ``/openai``) uses LiteLLM's
+    ``gemini/<model>`` provider with ``GEMINI_API_KEY`` and ``api_base=None``.
     """
     base_url = base_url.rstrip("/")
     env: dict[str, str] = {}
@@ -137,6 +138,15 @@ def build_litellm_model(
         return LiteLLMModel(f"anthropic/{model_name}", api_base, env, "anthropic")
 
     if api_type == "google-generative-ai":
+        # An OpenAI-compatible Gemini endpoint (``/v1beta/openai`` or any ``/openai``
+        # base) must route through LiteLLM's *openai* provider so the api_base is
+        # preserved (POST ``/chat/completions``). LiteLLM's native ``gemini``
+        # provider would drop the api_base and POST ``generateContent`` -- the
+        # endpoint these OpenAI-compat keys are NOT issued for (silent auth failure
+        # / 0 actions). This keeps the agent-path fix robust at the model_map layer.
+        if "/v1beta/openai" in base_url or base_url.endswith("/openai"):
+            env["OPENAI_API_KEY"] = key
+            return LiteLLMModel(f"openai/{model_name}", base_url, env, "openai")
         env["GEMINI_API_KEY"] = key
         env["GOOGLE_API_KEY"] = key
         # Native Google root is the default for LiteLLM's gemini provider; only
