@@ -24,11 +24,14 @@ files are delivered at runtime via **bind mounts** declared in the task's own
 startup, so it must be present at container creation — a mount guarantees that.
 
 Harbor runs it with (NO ``--agent`` flag — that is invalid with
-``--agent-import-path``, which only accepts registry enum values)::
+``--agent-import-path``, which only accepts registry enum values). The judge API
+key is NOT baked into ``task.toml`` (a shareable artifact); inject it at runtime
+with ``--ve JUDGE_API_KEY=...`` when judging is enabled::
 
     harbor run --path <out>/<case> \\
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \\
       --ak harness=harbor --ak api_key=<GEMINI_KEY> \\
+      --ve JUDGE_API_KEY=<JUDGE_KEY> \\
       --model gemini/gemini-3.5-flash --env docker
 
 Honest gap: per-run disposable email + personalized /my-info has no Harbor
@@ -48,7 +51,11 @@ from pathlib import Path
 from typing import Any
 
 from clawbench.harbor.model_map import judge_api_type
-from clawbench.runner.run_support.task import build_instruction, validate_task_data
+from clawbench.runner.run_support.task import (
+    build_instruction,
+    copy_extra_info,
+    validate_task_data,
+)
 from clawbench.utils.paths import SHARED_ROOT
 
 # Prebuilt image used as ``[environment].docker_image``. The ``localhost/`` prefix
@@ -190,7 +197,14 @@ def build_task_toml(
     ]
     verifier_env: dict[str, str] = {}
     if not no_judge:
-        verifier_env.update(judge_env)
+        # task.toml is a *shareable* artifact, so no secrets may be baked in. Only
+        # the non-secret judge config (model/base_url/api_type) goes into
+        # [verifier.env]; JUDGE_API_KEY must reach the verifier at runtime via
+        # ``harbor run --ve JUDGE_API_KEY=...`` (see clawbench.harbor.verify and
+        # clawbench.harbor.parity).
+        verifier_env.update(
+            {k: v for k, v in judge_env.items() if k != "JUDGE_API_KEY"}
+        )
     if verifier_env:
         lines.append("")
         lines.append("[verifier.env]")
@@ -319,6 +333,9 @@ def export_case(
     persona_src = SHARED_ROOT / "alex_green_personal_info.json"
     if persona_src.exists():
         shutil.copy2(persona_src, my_info / "alex_green_personal_info.json")
+    # Also copy every extra_info file the task references: build_instruction() lists
+    # them under /my-info/, so the agent prompt must not point at missing files.
+    copy_extra_info(task, case_dir, my_info)
     # tests/test.sh
     test_sh = dst / "tests" / "test.sh"
     test_sh.write_text(build_test_sh(no_judge))
@@ -407,6 +424,11 @@ def main(argv: list[str] | None = None) -> int:
         skipped_md.write_text("\n".join(lines) + "\n")
 
     print(f"\nExported {len(exported)} task(s), skipped {len(skipped)} -> {args.out}")
+    if not args.no_judge:
+        print(
+            "NOTE: the judge API key is NOT baked into task.toml (shareable "
+            "artifact). Pass it at runtime: harbor run ... --ve JUDGE_API_KEY=<key>"
+        )
     return 0
 
 
