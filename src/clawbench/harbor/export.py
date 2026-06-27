@@ -260,17 +260,18 @@ def build_compose() -> str:
 
 
 def build_test_sh(no_judge: bool) -> str:
-    """Render tests/test.sh: the Harbor verifier that writes reward.txt."""
+    """Render tests/test.sh: the Harbor verifier that writes reward.json/reward.txt."""
     no_judge_flag = " --no-judge" if no_judge else ""
     return (
         "#!/bin/bash\n"
         "# Harbor verifier for a ClawBench task. Reuses ClawBench's pure-Python\n"
         "# Stage-1 (+ optional Stage-2 judge) scoring and writes the reward to\n"
-        "# /logs/verifier/reward.txt (Harbor's reward file).\n"
+        "# /logs/verifier/reward.json (canonical) and reward.txt (fallback).\n"
         "set -uo pipefail\n"
         "mkdir -p /logs/verifier\n"
-        f"python3 -m clawbench.harbor.verify{no_judge_flag} "
-        "|| echo 0.0 > /logs/verifier/reward.txt\n"
+        f"python3 -m clawbench.harbor.verify{no_judge_flag} || {{ "
+        'echo \'{"reward": 0.0}\' > /logs/verifier/reward.json; '
+        "echo 0.0 > /logs/verifier/reward.txt; }\n"
     )
 
 

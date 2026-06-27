@@ -8,14 +8,19 @@ native runner:
   read ``/data/interception.json`` (produced by the in-container interceptor) and
   decide whether the agent's final request matched the eval schema.
 * **Stage 2** — ``runner.judge.judge_request`` asks an LLM whether the intercepted
-  request actually fulfils the instruction. Skipped when ``--no-judge`` (or
-  ``CLAWBENCH_NO_JUDGE=1``) is set, or when no judge model is configured.
+  request actually fulfils the instruction. Skipped ONLY when ``--no-judge`` (or
+  ``CLAWBENCH_NO_JUDGE=1``) is set. If judging is required but no judge config /
+  credentials are present, the verifier **fails closed** (reward 0.0 + diagnostic)
+  rather than silently passing.
 
 reward = 1.0 if intercepted AND (no_judge OR judge.match) else 0.0
 
-The float is written to Harbor's ``reward.txt`` (``/logs/verifier/reward.txt`` by
-default; override with ``--reward-file`` or ``HARBOR_REWARD_FILE`` for tests). A
-diagnostic ``verify-result.json`` is written next to the reward file.
+The reward is written to BOTH ``/logs/verifier/reward.json`` (the canonical
+``{"reward": <float>}`` that Harbor 0.13.1 reads first) and ``/logs/verifier/
+reward.txt`` (the bare-float fallback Harbor reads when reward.json is absent).
+``--reward-file`` / ``HARBOR_REWARD_FILE`` overrides the txt path (reward.json is
+written alongside it). A diagnostic ``verify-result.json`` is written next to the
+reward files.
 """
 
 from __future__ import annotations
@@ -34,6 +39,7 @@ from clawbench.runner.run_support.results import (
 )
 
 # Harbor's Linux convention; see harbor.models.trial.paths.EnvironmentPaths.
+# Harbor 0.13.1 reads reward.json first, falling back to reward.txt; we write both.
 DEFAULT_REWARD_FILE = Path("/logs/verifier/reward.txt")
 # ClawBench output root inside the container: /data is the run dir's data/ dir,
 # so the "output_dir" the results helpers expect is its parent.
@@ -118,7 +124,23 @@ def compute_reward(
         "judge": None,
         "judge_match": None,
         "no_judge": no_judge,
+        "error": None,
     }
+
+    # Fail closed: judging is required (``--no-judge`` not set) but no judge config
+    # / credentials reached the verifier -- e.g. ``harbor run --ve JUDGE_API_KEY=``
+    # was omitted, or JUDGE_MODEL/BASE_URL/API_TYPE/API_KEY are not all set. A
+    # missing judge must NEVER be treated as an automatic pass.
+    if not no_judge and judge_cfg is None:
+        result["error"] = (
+            "judge required but not configured: set JUDGE_MODEL / JUDGE_BASE_URL / "
+            "JUDGE_API_TYPE / JUDGE_API_KEY (inject the key at runtime via "
+            "`harbor run --ve JUDGE_API_KEY=...`), or pass --no-judge to score "
+            "Stage 1 only."
+        )
+        result["pass"] = False
+        result["reward"] = 0.0
+        return result
 
     judge_match: bool | None = None
     if intercepted and not no_judge and judge_cfg is not None:
@@ -144,12 +166,30 @@ def compute_reward(
         judge_match = judge_result.get("match")
         result["judge_match"] = judge_match
 
-    passed = bool(
-        intercepted and (no_judge or judge_cfg is None or judge_match is True)
-    )
+    # judge_cfg is guaranteed non-None here when judging is required (the missing
+    # case fails closed above), so a required judge must return match=True to pass.
+    passed = bool(intercepted and (no_judge or judge_match is True))
     result["pass"] = passed
     result["reward"] = 1.0 if passed else 0.0
     return result
+
+
+def _write_reward(reward_file: Path, result: dict[str, Any]) -> None:
+    """Persist the reward + diagnostic for Harbor.
+
+    Writes the canonical ``reward.json`` (``{"reward": <float>}``, read first by
+    Harbor 0.13.1) AND the bare-float ``reward.txt`` fallback, plus a richer
+    ``verify-result.json`` diagnostic. ``reward.json`` sits next to ``reward_file``.
+    """
+    reward_file.parent.mkdir(parents=True, exist_ok=True)
+    reward = float(result["reward"])
+    (reward_file.with_name("reward.json")).write_text(
+        json.dumps({"reward": reward})
+    )
+    reward_file.write_text(f"{reward}")
+    (reward_file.parent / "verify-result.json").write_text(
+        json.dumps(result, indent=2, ensure_ascii=False)
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -191,17 +231,15 @@ def main(argv: list[str] | None = None) -> int:
         judge_context=judge_context,
     )
 
-    reward_file.parent.mkdir(parents=True, exist_ok=True)
-    reward_file.write_text(f"{result['reward']}")
-    (reward_file.parent / "verify-result.json").write_text(
-        json.dumps(result, indent=2, ensure_ascii=False)
-    )
+    _write_reward(reward_file, result)
 
     print(
         f"ClawBench reward: {result['reward']} "
         f"(intercepted={result['intercepted']}, "
         f"judge_match={result['judge_match']}, no_judge={result['no_judge']})"
     )
+    if result.get("error"):
+        print(f"ClawBench verify error: {result['error']}")
     return 0
 
 
