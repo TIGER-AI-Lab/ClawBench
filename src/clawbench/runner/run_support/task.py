@@ -142,6 +142,33 @@ def normalize_extra_info(raw: Any) -> tuple[list[dict[str, str]], list[str]]:
     return entries, warnings
 
 
+def validate_extra_info_path(task_dir: Path, rel_path: str) -> Path:
+    """Resolve an extra_info ``path`` and guard against path traversal.
+
+    A task's ``extra_info[].path`` is attacker-controlled data that gets copied
+    into the staged my-info bundle (and, via the Harbor exporter, into a
+    *shareable* export). Without containment checks a crafted absolute path or a
+    ``..`` escape could copy arbitrary host files into that bundle. We therefore
+    reject absolute paths and require the resolved source to stay within
+    ``task_dir``; symlinks are resolved before the check, so a symlink that
+    points outside the task dir is rejected too. Returns the (unresolved) source
+    path so callers keep the existing copy semantics for valid inputs.
+    """
+    if os.path.isabs(rel_path):
+        raise ValueError(
+            f"extra_info path must be relative to the task dir, "
+            f"got absolute path: {rel_path!r}"
+        )
+    src = task_dir / rel_path
+    try:
+        src.resolve().relative_to(task_dir.resolve())
+    except ValueError:
+        raise ValueError(
+            f"extra_info path escapes the task dir: {rel_path!r}"
+        ) from None
+    return src
+
+
 def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list[str]:
     """Copy extra_info files from the test case into the my-info dir."""
     entries, warnings = normalize_extra_info(task.get("extra_info"))
@@ -151,7 +178,7 @@ def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list
         rel_path = info.get("path")
         if not rel_path:
             continue
-        src = task_dir / rel_path
+        src = validate_extra_info_path(task_dir, rel_path)
         if not src.exists():
             warning = f"extra_info path not found: {src}"
             warnings.append(warning)

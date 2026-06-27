@@ -122,10 +122,27 @@ jobs:
                       for index, item in enumerate(extra_info):
                           if not isinstance(item, dict) or not item.get("path"):
                               continue
-                          extra_path = task_file.parent / item["path"]
+                          rel_path = item["path"]
+                          task_dir = task_file.parent
+                          extra_path = task_dir / rel_path
+                          # Reject path traversal: an absolute path or a `..` escape
+                          # would let a crafted task pull arbitrary host files into
+                          # the staged my-info bundle / shareable Harbor export.
+                          if Path(rel_path).is_absolute():
+                              errors.append(
+                                  f"{task_file}: extra_info[{index}].path must be relative: {rel_path}"
+                              )
+                              continue
+                          try:
+                              extra_path.resolve().relative_to(task_dir.resolve())
+                          except ValueError:
+                              errors.append(
+                                  f"{task_file}: extra_info[{index}].path escapes the task dir: {rel_path}"
+                              )
+                              continue
                           if not extra_path.exists():
                               errors.append(
-                                  f"{task_file}: extra_info[{index}].path does not exist: {item['path']}"
+                                  f"{task_file}: extra_info[{index}].path does not exist: {rel_path}"
                               )
 
                   if errors:

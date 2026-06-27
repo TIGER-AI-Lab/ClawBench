@@ -58,6 +58,7 @@ from clawbench.runner.run_support.task import (
     copy_extra_info,
     normalize_extra_info,
     prepare_personal_info,
+    validate_extra_info_path,
     validate_task_data,
 )
 from clawbench.utils.paths import SHARED_ROOT
@@ -407,6 +408,19 @@ def export_case(
     skip, reason = needs_email_or_signup(task)
     if skip:
         return False, f"SKIP {reason}"
+
+    # Harbor export validator: a shareable export must never embed host files
+    # pulled in via a crafted extra_info path. copy_extra_info() enforces this
+    # too, but we re-check up front so a malicious task fails fast and ships
+    # nothing partial (the dst tree is created below).
+    extra_entries, _ = normalize_extra_info(task.get("extra_info"))
+    for entry in extra_entries:
+        rel = entry.get("path")
+        if rel:
+            try:
+                validate_extra_info_path(case_dir, rel)
+            except ValueError as e:
+                return False, f"unsafe extra_info path: {e}"
 
     case = case_dir.name
     time_limit_s = int(float(task["time_limit"]) * 60)

@@ -235,6 +235,31 @@ def test_export_fails_when_referenced_extra_info_file_missing(tmp_path: Path) ->
     assert not (out / case.name).exists()
 
 
+def test_export_rejects_extra_info_path_traversal(tmp_path: Path) -> None:
+    # A shareable Harbor export must never embed host files pulled in via a
+    # crafted extra_info path. Both an absolute path and a `..` escape are
+    # rejected, and nothing partial is shipped.
+    secret = tmp_path / "secret.txt"
+    secret.write_text("top secret")
+    out = tmp_path / "out"
+    out.mkdir()
+
+    for idx, evil_path in enumerate((str(secret), "../secret.txt")):
+        case = _write_case(tmp_path / "v2", f"v2-traversal-{idx}")
+        task = json.loads((case / "task.json").read_text())
+        task["extra_info"] = [{"path": evil_path, "description": "evil"}]
+        (case / "task.json").write_text(json.dumps(task, indent=2))
+
+        ok, msg = export.export_case(
+            case, out, base_image="x", no_judge=True, judge_env={}
+        )
+
+        assert not ok
+        assert "unsafe extra_info path" in msg
+        assert not (out / case.name).exists()
+        assert not (out / case.name / "environment" / "my-info" / "secret.txt").exists()
+
+
 def test_task_toml_escapes_multiline_and_control_chars(tmp_path: Path) -> None:
     # _toml_escape must handle newlines/tabs/control chars so a multiline
     # description still yields parseable TOML.
