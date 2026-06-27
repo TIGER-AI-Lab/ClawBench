@@ -220,6 +220,87 @@ def test_compute_reward_fails_closed_when_judge_required_but_missing(
     assert result["error"] and "judge required" in result["error"]
 
 
+def test_judge_context_forwarded_to_judge_request(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # round-4 MINOR: the verifier must pass the task's judge_context through to
+    # judge_request so Harbor judging matches native (run.py passes it natively).
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+
+    captured: dict = {}
+
+    def fake_judge_request(model_cfg, judge_model_name, instruction, intercept, **kw):
+        captured["judge_context"] = kw.get("judge_context")
+        return {
+            "match": True,
+            "reason": "ok",
+            "judge_model": judge_model_name,
+            "raw": None,
+            "error": None,
+        }
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", fake_judge_request)
+    ctx = {"target_collection": "Want to Try", "min_items": 1}
+    result = verify.compute_reward(
+        data,
+        no_judge=False,
+        judge_cfg=JUDGE_CFG,
+        instruction="Add Baked Ziti",
+        judge_context=ctx,
+    )
+    assert result["pass"] is True
+    assert captured["judge_context"] == ctx
+
+
+def test_main_reads_judge_context_from_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The exported [verifier.env].JUDGE_CONTEXT (a JSON string) must be parsed and
+    # forwarded by main() -> compute_reward -> judge_request.
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    for k, v in JUDGE_CFG.items():
+        monkeypatch.setenv(f"JUDGE_{k.upper()}", v)
+    ctx = {"city": "Vancouver"}
+    monkeypatch.setenv("JUDGE_CONTEXT", json.dumps(ctx))
+    monkeypatch.delenv("CLAWBENCH_NO_JUDGE", raising=False)
+
+    captured: dict = {}
+
+    def fake_judge_request(model_cfg, judge_model_name, instruction, intercept, **kw):
+        captured["judge_context"] = kw.get("judge_context")
+        return {
+            "match": True,
+            "reason": "ok",
+            "judge_model": judge_model_name,
+            "raw": None,
+            "error": None,
+        }
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", fake_judge_request)
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(["--data-dir", str(data), "--reward-file", str(reward_file)])
+    assert rc == 0
+    assert captured["judge_context"] == ctx
+    assert reward_file.read_text().strip() == "1.0"
+
+
+def test_read_judge_context_ignores_blank_and_invalid(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("JUDGE_CONTEXT", raising=False)
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "")
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "not-json")
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "[1, 2]")  # not a dict
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", '{"k": "v"}')
+    assert verify._read_judge_context() == {"k": "v"}
+
+
 def test_ensure_interception_creates_file_when_missing(tmp_path: Path) -> None:
     # No interception.json: ensure_interception should synthesize a not-intercepted
     # result from the stop-reason marker, and reward should be 0.

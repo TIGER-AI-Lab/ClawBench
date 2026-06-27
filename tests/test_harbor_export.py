@@ -75,7 +75,12 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     schema = json.loads(cfg["metadata"]["clawbench_eval_schema"])
     assert schema["method"] == "POST"
     assert "agent" in cfg and "verifier" in cfg and "environment" in cfg
-    assert cfg["agent"]["timeout_sec"] == float(time_limit_s := 30 * 60)
+    # Outer Harbor agent timeout includes the harness cleanup grace (round-4 MAJOR):
+    # equalling the raw limit would kill the agent mid-cleanup before the verifier.
+    from clawbench.harbor.constants import HARNESS_CLEANUP_GRACE_S
+
+    time_limit_s = 30 * 60
+    assert cfg["agent"]["timeout_sec"] == float(time_limit_s + HARNESS_CLEANUP_GRACE_S)
     assert cfg["verifier"]["timeout_sec"] >= time_limit_s
     # PREBUILT mode: [environment].docker_image points at the local image -> Harbor
     # uses docker-compose-prebuilt.yaml (no build).
@@ -294,6 +299,93 @@ def test_main_exports_directory_and_writes_skipped_md(
     assert not (out / "v2-reg").exists()
     skipped = (out / "SKIPPED.md").read_text()
     assert "v2-reg" in skipped
+
+
+def test_export_bakes_real_time_limit_into_compose_and_agent_timeout(
+    tmp_path: Path,
+) -> None:
+    # round-4 MAJOR: the exported package must carry the task's real time limit so
+    # the in-container harness uses it (not its 1800s default) and Harbor's outer
+    # agent timeout leaves room for cleanup grace.
+    from clawbench.harbor.constants import HARNESS_CLEANUP_GRACE_S
+
+    case = _write_case(tmp_path / "v2", "v2-timelimit", time_limit=5)  # 5 min -> 300s
+    out = tmp_path / "out"
+    out.mkdir()
+    ok, msg = export.export_case(case, out, base_image="x", no_judge=True, judge_env={})
+    assert ok, msg
+
+    # The compose overlay bakes the real limit into the container env (the only
+    # channel docker-compose-exec inherits); it must be 300, never the 1800 default.
+    compose = (out / case.name / "environment" / "docker-compose.yaml").read_text()
+    assert 'CLAWBENCH_TIME_LIMIT_S: "300"' in compose
+    assert "1800" not in compose
+
+    # Outer Harbor [agent].timeout_sec = real_limit + cleanup grace.
+    cfg = tomllib.loads((out / case.name / "task.toml").read_text())
+    assert cfg["agent"]["timeout_sec"] == float(300 + HARNESS_CLEANUP_GRACE_S)
+    # And the run-harbor.sh harness reads CLAWBENCH_TIME_LIMIT_S as a fallback.
+    from clawbench.utils.paths import HARNESS_ROOT
+
+    run_harbor = (HARNESS_ROOT / "harbor" / "run-harbor.sh").read_text()
+    assert "${TIME_LIMIT_S:-${CLAWBENCH_TIME_LIMIT_S:-1800}}" in run_harbor
+
+
+def test_export_bakes_judge_context_into_verifier_env(tmp_path: Path) -> None:
+    # round-4 MINOR: a task carrying judge_context must serialize it into the
+    # verifier env so Harbor judging matches the native runner (which passes
+    # task["judge_context"] to judge_request).
+    case = _write_case(tmp_path / "v2", "v2-judgectx")
+    task = json.loads((case / "task.json").read_text())
+    task["judge_context"] = {"target_collection": "Want to Try", "min_items": 1}
+    (case / "task.json").write_text(json.dumps(task, indent=2))
+
+    out = tmp_path / "out"
+    out.mkdir()
+    judge_env = {
+        "JUDGE_MODEL": "gemini-3.5-flash",
+        "JUDGE_BASE_URL": "https://generativelanguage.googleapis.com/v1beta/openai",
+        "JUDGE_API_TYPE": "openai-completions",
+        "JUDGE_API_KEY": "secret",
+    }
+    ok, msg = export.export_case(
+        case, out, base_image="x", no_judge=False, judge_env=judge_env
+    )
+    assert ok, msg
+    cfg = tomllib.loads((out / case.name / "task.toml").read_text())
+    baked = json.loads(cfg["verifier"]["env"]["JUDGE_CONTEXT"])
+    assert baked == {"target_collection": "Want to Try", "min_items": 1}
+
+
+def test_export_omits_judge_context_when_absent_or_no_judge(tmp_path: Path) -> None:
+    # No judge_context on the task -> no JUDGE_CONTEXT baked (matches native, which
+    # passes judge_context=None). Also never baked under --no-judge (no judging).
+    case = _write_case(tmp_path / "v2", "v2-judgectx-with-ctx")
+    task = json.loads((case / "task.json").read_text())
+    task["judge_context"] = {"k": "v"}
+    (case / "task.json").write_text(json.dumps(task, indent=2))
+    out = tmp_path / "out"
+    out.mkdir()
+    ok, _ = export.export_case(case, out, base_image="x", no_judge=True, judge_env={})
+    assert ok
+    text = (out / case.name / "task.toml").read_text()
+    assert "JUDGE_CONTEXT" not in text
+
+    case2 = _write_case(tmp_path / "v2b", "v2-no-ctx")  # no judge_context key
+    out2 = tmp_path / "out2"
+    out2.mkdir()
+    judge_env = {
+        "JUDGE_MODEL": "gemini-3.5-flash",
+        "JUDGE_BASE_URL": "https://generativelanguage.googleapis.com/v1beta/openai",
+        "JUDGE_API_TYPE": "openai-completions",
+        "JUDGE_API_KEY": "secret",
+    }
+    ok2, _ = export.export_case(
+        case2, out2, base_image="x", no_judge=False, judge_env=judge_env
+    )
+    assert ok2
+    cfg2 = tomllib.loads((out2 / case2.name / "task.toml").read_text())
+    assert "JUDGE_CONTEXT" not in cfg2["verifier"]["env"]
 
 
 def test_sanitize_name() -> None:

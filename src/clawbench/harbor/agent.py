@@ -42,6 +42,7 @@ from harbor.agents.base import BaseAgent
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
+from clawbench.harbor.constants import HARNESS_CLEANUP_GRACE_S
 from clawbench.harbor.model_map import build_litellm_model
 
 # Map ClawBench LiteLLM provider prefix back to a (BASE_URL, API_TYPE) contract.
@@ -75,12 +76,31 @@ _PROVIDER_DEFAULTS: dict[str, tuple[str, str]] = {
 # cannot select a different harness from the one baked image, so it is rejected.
 DEFAULT_HARNESS = "harbor"
 CDP_VERSION_URL = "http://127.0.0.1:9222/json/version"
-# /run-harness.sh self-stops its agent at TIME_LIMIT_S, then spends ~20s on
-# mandatory cleanup (kill agent, promote transcript, 15s grace recording, stop
-# recording). The agent's exec() timeout must exceed TIME_LIMIT_S by at least this
-# grace, or it kills the harness mid-cleanup -- aborting the trial before the
-# verifier runs, so no reward is ever written for a run that hits its time limit.
-HARNESS_CLEANUP_GRACE_S = 60
+# Env var the exported task package serializes the per-task time limit into (see
+# clawbench.harbor.export.build_compose). The agent reads it as a fallback when no
+# explicit time_limit_s kwarg was passed, so a standalone ``harbor run`` of an
+# exported task still honours the real limit instead of the harness 1800s default.
+TIME_LIMIT_ENV_VAR = "CLAWBENCH_TIME_LIMIT_S"
+# HARNESS_CLEANUP_GRACE_S is defined in clawbench.harbor.constants (harbor-free so
+# export can reuse it) and re-exported here for back-compat.
+__all__ = ["ClawbenchHarnessAgent", "HARNESS_CLEANUP_GRACE_S"]
+
+
+def _coerce_time_limit_s(value: object) -> int | None:
+    """Coerce a time limit to positive int seconds, or None if unset/invalid.
+
+    The value may arrive as an int (native kwarg), a string (``--ak
+    time_limit_s=300`` or the ``CLAWBENCH_TIME_LIMIT_S`` env var -- both reach the
+    agent as strings), or None. A non-positive or unparseable value is treated as
+    "no limit" (None) so downstream ``if self._time_limit_s`` guards stay correct.
+    """
+    if value is None:
+        return None
+    try:
+        coerced = int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+    return coerced if coerced > 0 else None
 
 
 class ClawbenchHarnessAgent(BaseAgent):
@@ -96,7 +116,7 @@ class ClawbenchHarnessAgent(BaseAgent):
         base_url: str | None = None,
         api_type: str | None = None,
         api_key: str | None = None,
-        time_limit_s: int | None = None,
+        time_limit_s: int | str | None = None,
         thinking_level: str | None = None,
         temperature: str | None = None,
         max_tokens: str | None = None,
@@ -119,7 +139,15 @@ class ClawbenchHarnessAgent(BaseAgent):
         self._base_url = base_url or os.environ.get("CLAWBENCH_BASE_URL")
         self._api_type = api_type or os.environ.get("CLAWBENCH_API_TYPE")
         self._api_key = api_key or os.environ.get("CLAWBENCH_API_KEY")
-        self._time_limit_s = time_limit_s
+        # The exported task serializes the per-task limit into the container env as
+        # CLAWBENCH_TIME_LIMIT_S; honour an explicit kwarg first, else that env var.
+        # Coerce to int because --ak/env values reach the agent as strings, and the
+        # exec timeout below does integer arithmetic with HARNESS_CLEANUP_GRACE_S.
+        self._time_limit_s = _coerce_time_limit_s(
+            time_limit_s
+            if time_limit_s is not None
+            else os.environ.get(TIME_LIMIT_ENV_VAR)
+        )
         # Optional model knobs, mirroring the native runner's docker_run env
         # contract (these come from models.yaml natively; here from --ak kwargs).
         # The harbor harness reads THINKING_LEVEL (-> Terminus reasoning_effort);

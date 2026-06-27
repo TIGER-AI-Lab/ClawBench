@@ -197,3 +197,58 @@ def test_run_exec_timeout_none_without_time_limit(tmp_path: Path) -> None:
     run_calls = [c for c in env.calls if c["command"] == "/run-harness.sh"]
     assert run_calls, env.calls
     assert run_calls[0]["timeout_sec"] is None
+
+
+class _EnvRecordingEnv:
+    """Async environment that records each exec()'s command, env dict, timeout."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    async def exec(self, command: str, env=None, timeout_sec=None, **_kw):  # noqa: ANN001
+        self.calls.append({"command": command, "env": env, "timeout_sec": timeout_sec})
+        return SimpleNamespace(stdout="", stderr="", return_code=0)
+
+
+def test_time_limit_kwarg_string_is_coerced_to_int(tmp_path: Path) -> None:
+    # round-4 MAJOR: --ak time_limit_s=300 reaches the agent as a STRING. It must be
+    # coerced to int so TIME_LIMIT_S is set and the exec timeout arithmetic works.
+    from clawbench.harbor.agent import HARNESS_CLEANUP_GRACE_S
+
+    agent = _glm_agent(tmp_path, time_limit_s="300")
+    assert agent._time_limit_s == 300
+    env = _EnvRecordingEnv()
+    ctx = SimpleNamespace(metadata=None)
+    asyncio.run(agent.run("do the task", env, ctx))  # type: ignore[arg-type]
+    run_calls = [c for c in env.calls if c["command"] == "/run-harness.sh"]
+    assert run_calls, env.calls
+    assert run_calls[0]["timeout_sec"] == 300 + HARNESS_CLEANUP_GRACE_S
+    assert run_calls[0]["env"]["TIME_LIMIT_S"] == "300"
+
+
+def test_time_limit_read_from_clawbench_env_var(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # round-4 MAJOR: an exported standalone `harbor run` passes no time_limit_s
+    # kwarg; the agent falls back to the CLAWBENCH_TIME_LIMIT_S env the package
+    # serializes, coerced to int.
+    monkeypatch.setenv("CLAWBENCH_TIME_LIMIT_S", "450")
+    agent = _glm_agent(tmp_path)  # no time_limit_s kwarg
+    assert agent._time_limit_s == 450
+
+
+def test_time_limit_kwarg_overrides_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("CLAWBENCH_TIME_LIMIT_S", "450")
+    agent = _glm_agent(tmp_path, time_limit_s=120)
+    assert agent._time_limit_s == 120
+
+
+def test_invalid_time_limit_is_treated_as_no_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("CLAWBENCH_TIME_LIMIT_S", raising=False)
+    for bad in ("", "abc", "0", "-5"):
+        agent = _glm_agent(tmp_path, time_limit_s=bad)
+        assert agent._time_limit_s is None, bad

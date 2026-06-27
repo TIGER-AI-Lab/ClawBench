@@ -50,6 +50,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from clawbench.harbor.constants import HARNESS_CLEANUP_GRACE_S
 from clawbench.harbor.model_map import judge_api_type
 from clawbench.runner.run_support.task import (
     BUILTIN_MY_INFO_FILES,
@@ -260,6 +261,14 @@ def build_task_toml(
         verifier_env.update(
             {k: v for k, v in judge_env.items() if k != "JUDGE_API_KEY"}
         )
+        # Forward the task's judge_context so Harbor judging matches native (the
+        # native runner passes task["judge_context"] to judge_request, see
+        # runner.run). It is task data (not a secret) like eval_schema, so it is
+        # safe to bake into the shareable task.toml. verify.py reads JUDGE_CONTEXT
+        # from the verifier env and passes it to judge_request(judge_context=...).
+        judge_context = task.get("judge_context")
+        if isinstance(judge_context, dict) and judge_context:
+            verifier_env["JUDGE_CONTEXT"] = json.dumps(judge_context, ensure_ascii=True)
     if verifier_env:
         lines.append("")
         lines.append("[verifier.env]")
@@ -272,10 +281,15 @@ def build_task_toml(
     # True, and PREBUILT_IMAGE_NAME is set from this value. The per-task files are
     # delivered by the bind mounts in environment/docker-compose.yaml instead of a
     # COPY build layer.
+    # Outer Harbor agent timeout: the harness self-stops at TIME_LIMIT_S then needs
+    # ~20s of mandatory cleanup (transcript/recording/reward). If Harbor's own
+    # [agent].timeout_sec equalled the raw limit it would kill the agent mid-cleanup
+    # -> the verifier never runs and the trial errors with no reward. Add the same
+    # cleanup grace the agent's exec() timeout uses (clawbench.harbor.agent).
     lines += [
         "",
         "[agent]",
-        f"timeout_sec = {float(time_limit_s)}",
+        f"timeout_sec = {float(time_limit_s + HARNESS_CLEANUP_GRACE_S)}",
         "",
         "[environment]",
         f'docker_image = "{_toml_escape(base_image)}"',
@@ -285,7 +299,7 @@ def build_task_toml(
     return "\n".join(lines) + "\n"
 
 
-def build_compose() -> str:
+def build_compose(time_limit_s: int) -> str:
     """Render environment/docker-compose.yaml for PREBUILT mode (no build).
 
     Layered *after* Harbor's docker-compose-prebuilt.yaml (which already sets
@@ -294,6 +308,15 @@ def build_compose() -> str:
     to provide. ``pull_policy: never`` keeps compose from attempting a remote pull
     for the local-only image. Relative sources resolve against the staged
     ``environment/`` dir (Harbor's compose ``--project-directory``).
+
+    The ``environment:`` block bakes the task's real time limit into the container
+    as ``CLAWBENCH_TIME_LIMIT_S``. This is the self-contained channel for the
+    limit: ``docker compose exec`` (how the agent runs ``/run-harness.sh``)
+    inherits the container's ``environment``, so run-harbor.sh reads the real limit
+    instead of falling back to its 1800s default -- even for a standalone
+    ``harbor run`` where the agent received no ``time_limit_s`` kwarg. ([agent].env
+    and [environment].env do NOT reach exec'd commands, so a mount-style env var is
+    the only reliable in-container delivery.)
 
     Mounts:
       * eval-schema.json -> /eval-schema.json   (interceptor reads at startup)
@@ -307,6 +330,10 @@ def build_compose() -> str:
         "services:\n"
         "  main:\n"
         "    pull_policy: never\n"
+        "    environment:\n"
+        # Quoted so YAML keeps it a string; run-harbor.sh reads it via
+        # ${TIME_LIMIT_S:-${CLAWBENCH_TIME_LIMIT_S:-1800}}.
+        f'      CLAWBENCH_TIME_LIMIT_S: "{int(time_limit_s)}"\n'
         "    volumes:\n"
         "      - ./eval-schema.json:/eval-schema.json:ro\n"
         "      - ./instruction.txt:/clawbench/instruction.txt:ro\n"
@@ -406,8 +433,9 @@ def export_case(
     (env_dir / "instruction.txt").write_text(str(task.get("instruction", "")))
     # environment/eval-schema.json (bind-mounted to /eval-schema.json)
     (env_dir / "eval-schema.json").write_text(json.dumps(task["eval_schema"], indent=2))
-    # environment/docker-compose.yaml (PREBUILT mode: bind mounts, no build)
-    (env_dir / "docker-compose.yaml").write_text(build_compose())
+    # environment/docker-compose.yaml (PREBUILT mode: bind mounts + baked time
+    # limit, no build)
+    (env_dir / "docker-compose.yaml").write_text(build_compose(time_limit_s))
 
     # environment/my-info: stage the *full* canonical persona bundle exactly as the
     # native runner does. prepare_personal_info() is the single source of all three

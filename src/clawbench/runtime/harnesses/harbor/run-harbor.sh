@@ -57,7 +57,11 @@ fi
 
 # Watchdog: detect agent no action for 300s (same contract as pi/hermes).
 IDLE_THRESHOLD=300
-MAX_WAIT=${TIME_LIMIT_S:-1800}
+# Honour the per-task limit: the agent sets TIME_LIMIT_S when it knows it; for a
+# standalone exported `harbor run` the limit is baked into the container env as
+# CLAWBENCH_TIME_LIMIT_S (see clawbench.harbor.export.build_compose). Only fall
+# back to 1800 when neither is set.
+MAX_WAIT=${TIME_LIMIT_S:-${CLAWBENCH_TIME_LIMIT_S:-1800}}
 ELAPSED=0
 LAST_SIZE=0
 IDLE=0
