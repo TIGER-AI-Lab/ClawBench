@@ -4,8 +4,10 @@ Runs the same ``{case × model}`` cell two ways and diffs the scoring outcome:
 
 * **native** — ``python -m clawbench.runner.run <case> <model> --harness <h>``,
   reading ``run-meta.json``'s ``intercepted`` / ``judge_match`` / ``pass``.
-* **harbor** — ``clawbench-export-harbor`` then ``harbor run ... --env docker``,
-  reading the verifier's ``reward.txt`` (1.0 == pass) and ``verify-result.json``
+* **harbor** — ``clawbench-export-harbor`` then ``harbor run ... --env docker``
+  (with ``--ve JUDGE_API_KEY=...`` when judging, since the key is never baked into
+  the shareable task.toml), reading the verifier's ``reward.json`` (1.0 == pass,
+  json-first then ``reward.txt`` fallback) and ``verify-result.json``
   (``intercepted`` / ``judge_match``).
 
 Because both paths share the exact same Stage-1 (``results.py``) and Stage-2
@@ -24,6 +26,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -70,17 +73,38 @@ def run_native(
     }
 
 
+def _read_reward(trial_root: Path) -> float | None:
+    """Read the Harbor reward, json-first (mirrors Harbor 0.13.1's precedence).
+
+    Harbor reads ``reward.json`` (``{"reward": <float>}``) first and falls back to
+    the bare-float ``reward.txt``; the parity reader does the same so it agrees
+    with whatever Harbor recorded.
+    """
+    jsons = sorted(trial_root.rglob("reward.json"))
+    if jsons:
+        try:
+            blob = json.loads(jsons[-1].read_text())
+            val = blob.get("reward") if isinstance(blob, dict) else None
+            if val is not None:
+                return float(val)
+        except (OSError, ValueError, json.JSONDecodeError):
+            pass
+    txts = sorted(trial_root.rglob("reward.txt"))
+    if txts:
+        try:
+            return float(txts[-1].read_text().strip())
+        except (OSError, ValueError):
+            pass
+    return None
+
+
 def _read_harbor_result(trial_root: Path) -> dict[str, Any]:
     """Read the Harbor verifier reward + verify-result.json from a run tree."""
     result: dict[str, Any] = {"intercept": None, "judge": None, "pass": None}
-    rewards = sorted(trial_root.rglob("reward.txt"))
-    if rewards:
-        try:
-            reward = float(rewards[-1].read_text().strip())
-            result["pass"] = reward >= 1.0
-            result["reward"] = reward
-        except (OSError, ValueError):
-            pass
+    reward = _read_reward(trial_root)
+    if reward is not None:
+        result["pass"] = reward >= 1.0
+        result["reward"] = reward
     verifies = sorted(trial_root.rglob("verify-result.json"))
     if verifies:
         try:
@@ -97,8 +121,15 @@ def run_harbor(
     model: str,
     harness: str,
     output_dir: Path,
+    *,
+    judge_api_key: str | None = None,
 ) -> dict[str, Any]:
-    """Run ``harbor run`` against an exported task dir and read the reward."""
+    """Run ``harbor run`` against an exported task dir and read the reward.
+
+    ``judge_api_key`` is injected into the verifier at runtime via ``--ve
+    JUDGE_API_KEY=...`` (the key is never baked into the shareable task.toml; see
+    clawbench.harbor.export). Omit it for ``--no-judge`` exports.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     # NB: do not pass ``--agent clawbench`` -- ``--agent`` is typed as Harbor's
     # ``AgentName`` enum (oracle/terminus/hermes/...), so it fails validation.
@@ -119,6 +150,8 @@ def run_harbor(
         "--output-dir",
         str(output_dir),
     ]
+    if judge_api_key:
+        cmd += ["--ve", f"JUDGE_API_KEY={judge_api_key}"]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     result = _read_harbor_result(output_dir)
     result["returncode"] = proc.returncode
@@ -158,6 +191,24 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--no-judge", action="store_true")
     parser.add_argument(
+        "--judge",
+        default="gemini-3.5-flash",
+        help="Judge model key in models.yaml used to resolve the runtime "
+        "JUDGE_API_KEY for the Harbor verifier (ignored with --no-judge).",
+    )
+    parser.add_argument(
+        "--models-yaml",
+        type=Path,
+        default=None,
+        help="Path to models.yaml for resolving the judge key (default: workspace).",
+    )
+    parser.add_argument(
+        "--judge-api-key",
+        default=None,
+        help="Judge API key to inject via 'harbor run --ve JUDGE_API_KEY=...'. "
+        "Defaults to $JUDGE_API_KEY, then the key resolved from models.yaml.",
+    )
+    parser.add_argument(
         "--skip-native", action="store_true", help="Only run the Harbor side."
     )
     parser.add_argument(
@@ -167,6 +218,17 @@ def main(argv: list[str] | None = None) -> int:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     case = args.case_dir.name
+
+    # Resolve the judge key once (never baked into task.toml; injected at runtime).
+    judge_api_key: str | None = None
+    if not args.no_judge and not args.skip_harbor:
+        judge_api_key = args.judge_api_key or os.environ.get("JUDGE_API_KEY")
+        if not judge_api_key:
+            from clawbench.harbor.export import _load_judge_env
+
+            judge_api_key = _load_judge_env(args.judge, args.models_yaml).get(
+                "JUDGE_API_KEY"
+            )
 
     native: dict[str, Any] = {}
     harbor: dict[str, Any] = {}
@@ -187,6 +249,7 @@ def main(argv: list[str] | None = None) -> int:
             args.harbor_model,
             args.harness,
             args.out_dir / "harbor",
+            judge_api_key=judge_api_key,
         )
         print(f"  harbor: {harbor.get('intercept')=} {harbor.get('pass')=}")
 
