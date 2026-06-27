@@ -4,12 +4,25 @@ import hashlib
 import json
 import os
 import shutil
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
 from clawbench.runner.run_support.resume import generate_resume_pdf
 
 RESUME_TEMPLATE = Path(__file__).resolve().parent / "resume_template.json"
+
+# Built-in persona files build_instruction() advertises under /my-info/, as
+# (filename, description) pairs. Single source of truth so the Harbor exporter can
+# stage and validate exactly the files the prompt references (clawbench.harbor.export).
+BUILTIN_MY_INFO_FILES: tuple[tuple[str, str], ...] = (
+    (
+        "alex_green_personal_info.json",
+        "name, address, phone, date of birth, financial info",
+    ),
+    ("email_credentials.json", "email address and password for logging in"),
+    ("alex_green_resume.pdf", "professional resume"),
+)
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -129,6 +142,33 @@ def normalize_extra_info(raw: Any) -> tuple[list[dict[str, str]], list[str]]:
     return entries, warnings
 
 
+def validate_extra_info_path(task_dir: Path, rel_path: str) -> Path:
+    """Resolve an extra_info ``path`` and guard against path traversal.
+
+    A task's ``extra_info[].path`` is attacker-controlled data that gets copied
+    into the staged my-info bundle (and, via the Harbor exporter, into a
+    *shareable* export). Without containment checks a crafted absolute path or a
+    ``..`` escape could copy arbitrary host files into that bundle. We therefore
+    reject absolute paths and require the resolved source to stay within
+    ``task_dir``; symlinks are resolved before the check, so a symlink that
+    points outside the task dir is rejected too. Returns the (unresolved) source
+    path so callers keep the existing copy semantics for valid inputs.
+    """
+    if os.path.isabs(rel_path):
+        raise ValueError(
+            f"extra_info path must be relative to the task dir, "
+            f"got absolute path: {rel_path!r}"
+        )
+    src = task_dir / rel_path
+    try:
+        src.resolve().relative_to(task_dir.resolve())
+    except ValueError:
+        raise ValueError(
+            f"extra_info path escapes the task dir: {rel_path!r}"
+        ) from None
+    return src
+
+
 def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list[str]:
     """Copy extra_info files from the test case into the my-info dir."""
     entries, warnings = normalize_extra_info(task.get("extra_info"))
@@ -138,7 +178,7 @@ def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list
         rel_path = info.get("path")
         if not rel_path:
             continue
-        src = task_dir / rel_path
+        src = validate_extra_info_path(task_dir, rel_path)
         if not src.exists():
             warning = f"extra_info path not found: {src}"
             warnings.append(warning)
@@ -161,13 +201,18 @@ def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list
     return warnings
 
 
-def build_instruction(task: dict) -> str:
+def build_instruction(
+    task: dict, *, builtin_files: Sequence[tuple[str, str]] | None = None
+) -> str:
     instruction = task.get("instruction")
     if not isinstance(instruction, str) or not instruction.strip():
         raise ValueError("task instruction must be a non-empty string")
 
-    parts = [instruction]
-    parts.append(
+    # Advertise only the built-in my-info files actually available. Defaults to the
+    # full bundle (native runner); the Harbor exporter passes the subset it staged
+    # so the prompt never references a file that is missing from /my-info/.
+    files = BUILTIN_MY_INFO_FILES if builtin_files is None else tuple(builtin_files)
+    persona = (
         "\n---\n"
         "You are my personal browser assistant. I am delegating this task to you "
         "because I do not have time to do it myself. You are acting on my behalf "
@@ -183,10 +228,13 @@ def build_instruction(task: dict) -> str:
         "Do NOT use command-line tools, scripts, or direct API/SMTP calls "
         "to accomplish the task.\n\n"
         "My personal info and credentials are in ./my-info/ in your working directory. "
-        "Key files include:\n"
-        "- alex_green_personal_info.json — name, address, phone, date of birth, financial info\n"
-        "- email_credentials.json — email address and password for logging in\n"
-        "- alex_green_resume.pdf — professional resume\n\n"
+    )
+    if files:
+        persona += "Key files include:\n" + "".join(
+            f"- {name} — {desc}\n" for name, desc in files
+        )
+    persona += (
+        "\n"
         "You have my full permission to use all of these files for any purpose "
         "the task requires, including logging into websites, creating accounts, filling out forms, "
         "sending emails, writing reviews, making reservations, submitting applications, "
@@ -199,6 +247,7 @@ def build_instruction(task: dict) -> str:
         "If an account registration is required, you can use the email and password provided, and you can receive emails at that address if needed. "
         "---"
     )
+    parts = [instruction, persona]
     normalized_extras, _ = normalize_extra_info(task.get("extra_info"))
     file_extras = [
         (Path(info["path"]).name, info["description"])

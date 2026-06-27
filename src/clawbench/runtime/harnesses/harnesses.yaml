@@ -112,3 +112,14 @@ harnesses:
         path: /data/agent-messages.jsonl
       - type: file
         path: /data/agent-messages.raw.jsonl
+  - name: harbor
+    image: clawbench-harbor
+    dockerfile: harbor/Dockerfile.harbor
+    setup_script: harbor/setup-harbor.sh
+    run_script: harbor/run-harbor.sh
+    usage_emitter: harbor/usage-emitter.py
+    extra_files:
+      - harbor/harbor_driver.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl

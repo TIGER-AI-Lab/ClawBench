@@ -27,6 +27,7 @@ EXPECTED_HARNESSES = (
     "claw-code",
     "hermes",
     "pi",
+    "harbor",
 )
 
 EXPECTED_SCRIPTS = {

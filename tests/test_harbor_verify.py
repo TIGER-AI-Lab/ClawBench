@@ -1,0 +1,313 @@
+"""Tests for clawbench.harbor.verify reward logic against fixture interceptions."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from clawbench.harbor import verify
+
+
+def _write_interception(data_dir: Path, *, intercepted: bool) -> None:
+    data_dir.mkdir(parents=True, exist_ok=True)
+    blob = {
+        "intercepted": intercepted,
+        "stop_reason": "eval_matched" if intercepted else "time_limit_exceeded",
+        "request": (
+            {
+                "url": "https://myrecipes.com/collections/bookmarks/save",
+                "method": "POST",
+                "body": {"recipe": "Baked Ziti", "collection": "Want to Try"},
+            }
+            if intercepted
+            else None
+        ),
+        "schema": {"url_pattern": "save", "method": "POST"},
+    }
+    (data_dir / "interception.json").write_text(json.dumps(blob, indent=2))
+    # Minimal supporting files so classify_run does not crash.
+    (data_dir / "actions.jsonl").write_text("")
+    (data_dir / "requests.jsonl").write_text("")
+    (data_dir / "agent-messages.jsonl").write_text("")
+
+
+JUDGE_CFG = {
+    "model": "gemini-3.5-flash",
+    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "api_type": "openai-completions",
+    "api_key": "k",
+}
+
+
+def _patch_judge(monkeypatch: pytest.MonkeyPatch, match: bool | None) -> None:
+    def fake_judge_request(model_cfg, judge_model_name, instruction, intercept, **kw):
+        return {
+            "match": match,
+            "reason": "stubbed",
+            "judge_model": judge_model_name,
+            "raw": None,
+            "error": None,
+        }
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", fake_judge_request)
+
+
+def test_intercepted_and_judge_match_is_pass(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    _patch_judge(monkeypatch, True)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=JUDGE_CFG, instruction="Add Baked Ziti"
+    )
+    assert result["intercepted"] is True
+    assert result["judge_match"] is True
+    assert result["pass"] is True
+    assert result["reward"] == 1.0
+
+
+def test_intercepted_but_judge_mismatch_is_fail(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    _patch_judge(monkeypatch, False)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=JUDGE_CFG, instruction="Add Baked Ziti"
+    )
+    assert result["intercepted"] is True
+    assert result["judge_match"] is False
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+
+
+def test_intercepted_judge_inconclusive_is_fail(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    _patch_judge(monkeypatch, None)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=JUDGE_CFG, instruction="Add Baked Ziti"
+    )
+    assert result["judge_match"] is None
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+
+
+def test_not_intercepted_is_fail_and_judge_not_called(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=False)
+
+    def boom(*a, **k):  # pragma: no cover - must not be called
+        raise AssertionError("judge must not run when not intercepted")
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", boom)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=JUDGE_CFG, instruction="Add Baked Ziti"
+    )
+    assert result["intercepted"] is False
+    assert result["judge"] is None
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+
+
+def test_no_judge_intercepted_is_pass(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+
+    def boom(*a, **k):  # pragma: no cover - must not be called
+        raise AssertionError("judge must not run with no_judge=True")
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", boom)
+    result = verify.compute_reward(data, no_judge=True, judge_cfg=None, instruction="")
+    assert result["intercepted"] is True
+    assert result["pass"] is True
+    assert result["reward"] == 1.0
+
+
+def test_no_judge_not_intercepted_is_fail(tmp_path: Path) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=False)
+    result = verify.compute_reward(data, no_judge=True, judge_cfg=None, instruction="")
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+
+
+def test_main_writes_reward_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(
+        ["--data-dir", str(data), "--reward-file", str(reward_file), "--no-judge"]
+    )
+    assert rc == 0
+    assert reward_file.read_text().strip() == "1.0"
+    blob = json.loads((reward_file.parent / "verify-result.json").read_text())
+    assert blob["reward"] == 1.0
+    assert blob["intercepted"] is True
+
+
+def test_main_writes_canonical_reward_json_and_txt_fallback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # m1(a): Harbor 0.13.1 reads reward.json first; we must write BOTH the canonical
+    # reward.json ({"reward": <float>}) and the bare-float reward.txt fallback.
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(
+        ["--data-dir", str(data), "--reward-file", str(reward_file), "--no-judge"]
+    )
+    assert rc == 0
+    reward_json = reward_file.with_name("reward.json")
+    assert reward_json.is_file()
+    # reward.json is the canonical, json-first artifact Harbor reads before the txt.
+    assert json.loads(reward_json.read_text()) == {"reward": 1.0}
+    # reward.txt fallback carries the same bare float.
+    assert reward_file.read_text().strip() == "1.0"
+
+
+def test_main_fails_closed_when_judge_required_but_unconfigured(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # m1(c) / M3: judging is required (no --no-judge) but no JUDGE_* env reached the
+    # verifier -> reward 0.0 + a clear diagnostic, never a silent pass.
+    for var in ("JUDGE_MODEL", "JUDGE_BASE_URL", "JUDGE_API_TYPE", "JUDGE_API_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.delenv("CLAWBENCH_NO_JUDGE", raising=False)
+
+    def boom(*a, **k):  # pragma: no cover - must not be called
+        raise AssertionError("judge must not run when unconfigured")
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", boom)
+
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)  # intercepted, yet must NOT pass
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(["--data-dir", str(data), "--reward-file", str(reward_file)])
+    assert rc == 0
+    assert json.loads(reward_file.with_name("reward.json").read_text()) == {
+        "reward": 0.0
+    }
+    assert reward_file.read_text().strip() == "0.0"
+    blob = json.loads((reward_file.parent / "verify-result.json").read_text())
+    assert blob["pass"] is False
+    assert blob["reward"] == 0.0
+    assert blob["error"] and "judge required" in blob["error"]
+
+
+def test_compute_reward_fails_closed_when_judge_required_but_missing(
+    tmp_path: Path,
+) -> None:
+    # Defense-in-depth at the compute_reward layer (no_judge=False, judge_cfg=None).
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=None, instruction="Add Baked Ziti"
+    )
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+    assert result["error"] and "judge required" in result["error"]
+
+
+def test_judge_context_forwarded_to_judge_request(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # round-4 MINOR: the verifier must pass the task's judge_context through to
+    # judge_request so Harbor judging matches native (run.py passes it natively).
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+
+    captured: dict = {}
+
+    def fake_judge_request(model_cfg, judge_model_name, instruction, intercept, **kw):
+        captured["judge_context"] = kw.get("judge_context")
+        return {
+            "match": True,
+            "reason": "ok",
+            "judge_model": judge_model_name,
+            "raw": None,
+            "error": None,
+        }
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", fake_judge_request)
+    ctx = {"target_collection": "Want to Try", "min_items": 1}
+    result = verify.compute_reward(
+        data,
+        no_judge=False,
+        judge_cfg=JUDGE_CFG,
+        instruction="Add Baked Ziti",
+        judge_context=ctx,
+    )
+    assert result["pass"] is True
+    assert captured["judge_context"] == ctx
+
+
+def test_main_reads_judge_context_from_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The exported [verifier.env].JUDGE_CONTEXT (a JSON string) must be parsed and
+    # forwarded by main() -> compute_reward -> judge_request.
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    for k, v in JUDGE_CFG.items():
+        monkeypatch.setenv(f"JUDGE_{k.upper()}", v)
+    ctx = {"city": "Vancouver"}
+    monkeypatch.setenv("JUDGE_CONTEXT", json.dumps(ctx))
+    monkeypatch.delenv("CLAWBENCH_NO_JUDGE", raising=False)
+
+    captured: dict = {}
+
+    def fake_judge_request(model_cfg, judge_model_name, instruction, intercept, **kw):
+        captured["judge_context"] = kw.get("judge_context")
+        return {
+            "match": True,
+            "reason": "ok",
+            "judge_model": judge_model_name,
+            "raw": None,
+            "error": None,
+        }
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", fake_judge_request)
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(["--data-dir", str(data), "--reward-file", str(reward_file)])
+    assert rc == 0
+    assert captured["judge_context"] == ctx
+    assert reward_file.read_text().strip() == "1.0"
+
+
+def test_read_judge_context_ignores_blank_and_invalid(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("JUDGE_CONTEXT", raising=False)
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "")
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "not-json")
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", "[1, 2]")  # not a dict
+    assert verify._read_judge_context() is None
+    monkeypatch.setenv("JUDGE_CONTEXT", '{"k": "v"}')
+    assert verify._read_judge_context() == {"k": "v"}
+
+
+def test_ensure_interception_creates_file_when_missing(tmp_path: Path) -> None:
+    # No interception.json: ensure_interception should synthesize a not-intercepted
+    # result from the stop-reason marker, and reward should be 0.
+    data = tmp_path / "data"
+    data.mkdir(parents=True)
+    (data / ".stop-reason").write_text("time_limit_exceeded")
+    result = verify.compute_reward(data, no_judge=True, judge_cfg=None, instruction="")
+    assert (data / "interception.json").exists()
+    assert result["intercepted"] is False
+    assert result["reward"] == 0.0

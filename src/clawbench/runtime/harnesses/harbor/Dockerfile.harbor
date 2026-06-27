@@ -1,0 +1,40 @@
+FROM node:24-slim AS node-runtime
+
+FROM clawbench-base
+
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+# Terminus 2 (Harbor's terminal agent) drives a tmux session; install tmux so
+# TmuxSession's install probe is a no-op. ClawBench already supplies Chromium.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends tmux \
+    && rm -rf /var/lib/apt/lists/*
+
+# Harbor requires Python >=3.12, but clawbench-base ships Python 3.11 (used by
+# the extension-server). Install Harbor into a dedicated uv-managed 3.12 venv so
+# the base interpreter is left untouched. uv is already vendored in the base.
+ENV HARBOR_VENV=/opt/harbor-venv
+ENV HARBOR_PYTHON="$HARBOR_VENV/bin/python"
+ARG HARBOR_VERSION=0.13.1
+RUN uv venv --python 3.12 "$HARBOR_VENV" \
+    && VIRTUAL_ENV="$HARBOR_VENV" uv pip install --python "$HARBOR_PYTHON" \
+       "harbor==${HARBOR_VERSION}"
+
+# agent-browser is the CDP-attaching browser CLI Terminus runs from its shell to
+# control the shared ClawBench Chrome (same tool the hermes harness uses).
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g agent-browser@0.26.0
+
+# `ab` is a thin wrapper that pins agent-browser to the shared Chrome's CDP port
+# (9222) so Terminus can drive it with short, hard-to-misuse commands and can
+# never accidentally launch a second, unrecorded browser.
+RUN printf '#!/bin/sh\nexec agent-browser --cdp 9222 "$@"\n' > /usr/local/bin/ab \
+    && chmod +x /usr/local/bin/ab
+
+COPY harnesses/harbor/harbor_driver.py /harbor_driver.py
+COPY harnesses/harbor/setup-harbor.sh /setup-harbor.sh
+COPY harnesses/harbor/run-harbor.sh /run-harness.sh
+COPY harnesses/harbor/usage-emitter.py /usage-emitter.py
+RUN chmod +x /harbor_driver.py /setup-harbor.sh /run-harness.sh /usage-emitter.py

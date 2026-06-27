@@ -6,6 +6,8 @@ import ast
 import json
 from pathlib import Path
 
+import pytest
+
 from clawbench.runner.run_support.task import (
     build_instruction,
     copy_extra_info,
@@ -61,6 +63,80 @@ def test_extra_info_copy_and_instruction_are_host_side(tmp_path: Path) -> None:
     assert "Do NOT use command-line tools" in instruction
     assert "meal_plan.json" in instruction
     assert "2-day meal plan" in instruction
+
+
+def test_copy_extra_info_accepts_valid_relative_path(tmp_path: Path) -> None:
+    # A normal relative path under the task dir is copied unchanged.
+    task_dir = tmp_path / "task"
+    (task_dir / "extra_info").mkdir(parents=True)
+    (task_dir / "extra_info" / "data.json").write_text('{"ok": true}')
+    my_info = tmp_path / "my-info"
+    my_info.mkdir()
+    task = {
+        "instruction": "do a thing",
+        "extra_info": [{"path": "extra_info/data.json", "description": "a file"}],
+    }
+
+    warnings = copy_extra_info(task, task_dir, my_info)
+
+    assert warnings == []
+    assert (my_info / "data.json").read_text() == '{"ok": true}'
+
+
+def test_copy_extra_info_rejects_absolute_path(tmp_path: Path) -> None:
+    # An absolute path could exfiltrate any host file into the staged bundle.
+    task_dir = tmp_path / "task"
+    task_dir.mkdir()
+    my_info = tmp_path / "my-info"
+    my_info.mkdir()
+    secret = tmp_path / "secret.txt"
+    secret.write_text("top secret")
+    task = {
+        "instruction": "do a thing",
+        "extra_info": [{"path": str(secret), "description": "evil"}],
+    }
+
+    with pytest.raises(ValueError, match="absolute path"):
+        copy_extra_info(task, task_dir, my_info)
+
+    assert not (my_info / "secret.txt").exists()
+
+
+def test_copy_extra_info_rejects_parent_escape(tmp_path: Path) -> None:
+    # A `..` escape must not reach files outside the task dir.
+    task_dir = tmp_path / "task"
+    task_dir.mkdir()
+    my_info = tmp_path / "my-info"
+    my_info.mkdir()
+    secret = tmp_path / "secret.txt"
+    secret.write_text("top secret")
+    task = {
+        "instruction": "do a thing",
+        "extra_info": [{"path": "../secret.txt", "description": "evil"}],
+    }
+
+    with pytest.raises(ValueError, match="escapes the task dir"):
+        copy_extra_info(task, task_dir, my_info)
+
+    assert not (my_info / "secret.txt").exists()
+
+
+def test_build_instruction_lists_only_available_builtin_files() -> None:
+    # The default lists all built-in my-info files; passing a subset (as the Harbor
+    # exporter does when a built-in can't be staged) drops the rest from the prompt
+    # so it never references a file that is missing from /my-info/.
+    task = {"instruction": "Do a thing.", "extra_info": []}
+    full = build_instruction(task)
+    assert "alex_green_personal_info.json" in full
+    assert "email_credentials.json" in full
+    assert "alex_green_resume.pdf" in full
+
+    subset = build_instruction(
+        task, builtin_files=[("alex_green_personal_info.json", "info")]
+    )
+    assert "alex_green_personal_info.json" in subset
+    assert "email_credentials.json" not in subset
+    assert "alex_green_resume.pdf" not in subset
 
 
 def test_normalize_extra_info_accepts_legacy_and_schema_shapes() -> None:
