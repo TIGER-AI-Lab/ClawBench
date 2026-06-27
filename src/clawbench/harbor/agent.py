@@ -1,16 +1,21 @@
 """A Harbor agent that runs an existing ClawBench harness (scope b).
 
 ``harbor run --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent``
-exposes every browser ClawBench harness (harbor/hermes/pi/openclaw/browser-use/
-claw-code/opencode/...) as a Harbor agent. The harness is selected via an agent
-kwarg, because Harbor's import-path mode only forwards ``--ak key=value`` kwargs
-to the agent constructor. Do **not** pass ``--agent`` — that flag is typed as the
-``AgentName`` enum (oracle/terminus/hermes/...), so ``--agent clawbench`` fails
-validation. ``--agent-import-path`` alone sets ``config.agent.import_path``:
+runs a ClawBench harness as a Harbor agent. The single prebuilt
+``clawbench-harbor-task`` image always runs harbor's ``/run-harness.sh``, so the
+only supported value today is ``--ak harness=harbor``; any other value raises (a
+``--ak harness=hermes`` could not actually select a different harness from the one
+baked image, so it must not silently mis-run). Per-harness images are future work.
+The harness is passed as an agent kwarg because Harbor's import-path mode only
+forwards ``--ak key=value`` kwargs to the agent constructor. Do **not** pass
+``--agent`` — that flag is typed as the ``AgentName`` enum
+(oracle/terminus/hermes/...), so ``--agent clawbench`` fails validation.
+``--agent-import-path`` alone sets ``config.agent.import_path``:
 
     harbor run --path <task-dir> \
       --agent-import-path clawbench.harbor.agent:ClawbenchHarnessAgent \
-      --ak harness=hermes --ak api_key=<API_KEY> \
+      --ak harness=harbor --ak api_key=<API_KEY> \
+      --ve JUDGE_API_KEY=<JUDGE_KEY> \
       --model gemini/gemini-3.5-flash --env docker
 
 Lifecycle inside the Harbor-managed container (CMD overridden to ``sleep
@@ -64,7 +69,9 @@ _PROVIDER_DEFAULTS: dict[str, tuple[str, str]] = {
     "openrouter": ("https://openrouter.ai/api/v1", "openai-completions"),
 }
 
-# Harnesses known to ClawBench. Defaults to ``harbor`` (the validated path).
+# The only harness the single prebuilt clawbench-harbor-task image can run. The
+# `harness` kwarg is validated against this in __init__ (see M6): a different value
+# cannot select a different harness from the one baked image, so it is rejected.
 DEFAULT_HARNESS = "harbor"
 CDP_VERSION_URL = "http://127.0.0.1:9222/json/version"
 
@@ -90,6 +97,17 @@ class ClawbenchHarnessAgent(BaseAgent):
     ) -> None:
         super().__init__(*args, **kwargs)
         self.harness = harness or os.environ.get("CLAWBENCH_HARNESS") or DEFAULT_HARNESS
+        if self.harness != DEFAULT_HARNESS:
+            # The single prebuilt clawbench-harbor-task image always runs harbor's
+            # /run-harness.sh, so the `harness` kwarg cannot actually select a
+            # different harness -- it would silently run the wrong one. Fail loudly
+            # until per-harness images exist (future work).
+            raise ValueError(
+                f"harness={self.harness!r} is not supported: the single prebuilt "
+                f"clawbench-harbor-task image always runs harbor's /run-harness.sh. "
+                f"Only --ak harness={DEFAULT_HARNESS!r} is supported "
+                f"(per-harness images are future work)."
+            )
         # Allow overrides; otherwise derived from the model provider / env.
         self._base_url = base_url or os.environ.get("CLAWBENCH_BASE_URL")
         self._api_type = api_type or os.environ.get("CLAWBENCH_API_TYPE")
@@ -235,9 +253,9 @@ class ClawbenchHarnessAgent(BaseAgent):
         )
 
         run_script = "/run-harness.sh"
-        # When a non-default harness is requested we still call /run-harness.sh:
-        # each harness image installs its own runner there. The `harness` kwarg
-        # selects which image was baked at export time; record it for clarity.
+        # Only harness="harbor" reaches here (validated in __init__): the single
+        # prebuilt image installs its runner at /run-harness.sh. Recorded for
+        # clarity in the trial metadata below.
         self.logger.info(
             "Running ClawBench harness=%s model=%s", self.harness, self.model_name
         )
