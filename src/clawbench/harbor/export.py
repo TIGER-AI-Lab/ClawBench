@@ -54,6 +54,7 @@ from clawbench.harbor.model_map import judge_api_type
 from clawbench.runner.run_support.task import (
     build_instruction,
     copy_extra_info,
+    normalize_extra_info,
     validate_task_data,
 )
 from clawbench.utils.paths import SHARED_ROOT
@@ -149,7 +150,32 @@ def _load_judge_env(
 
 
 def _toml_escape(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"')
+    """Escape a string for a TOML basic ("...") string.
+
+    No TOML writer is vendored, so render escapes by hand. TOML basic strings
+    forbid raw control characters: backslash and double-quote take their
+    short escapes, the common control chars get ``\\n``/``\\r``/``\\t``/``\\b``/``\\f``,
+    and any other control char (U+0000..U+001F, U+007F) becomes a ``\\uXXXX``
+    escape -- otherwise a multiline/control-char description yields invalid TOML.
+    """
+    short = {
+        "\\": "\\\\",
+        '"': '\\"',
+        "\b": "\\b",
+        "\t": "\\t",
+        "\n": "\\n",
+        "\f": "\\f",
+        "\r": "\\r",
+    }
+    out: list[str] = []
+    for ch in value:
+        if ch in short:
+            out.append(short[ch])
+        elif ord(ch) < 0x20 or ord(ch) == 0x7F:
+            out.append(f"\\u{ord(ch):04X}")
+        else:
+            out.append(ch)
+    return "".join(out)
 
 
 def build_task_toml(
@@ -336,7 +362,22 @@ def export_case(
         shutil.copy2(persona_src, my_info / "alex_green_personal_info.json")
     # Also copy every extra_info file the task references: build_instruction() lists
     # them under /my-info/, so the agent prompt must not point at missing files.
-    copy_extra_info(task, case_dir, my_info)
+    copy_warnings = copy_extra_info(task, case_dir, my_info)
+    # M4: copy_extra_info only warns-and-continues on a missing/unreadable file, but
+    # build_instruction() unconditionally advertises every path entry under
+    # /my-info/. Shipping an instruction that points at a file we failed to stage is
+    # a silent data bug, so fail loudly instead. The referenced names mirror
+    # build_instruction()'s file list exactly (normalize_extra_info -> Path(...).name).
+    extra_entries, _ = normalize_extra_info(task.get("extra_info"))
+    referenced = [Path(e["path"]).name for e in extra_entries if e.get("path")]
+    missing = [name for name in referenced if not (my_info / name).is_file()]
+    if missing:
+        shutil.rmtree(dst, ignore_errors=True)
+        raise RuntimeError(
+            f"{case}: extra_info file(s) referenced by the instruction are missing "
+            f"from my-info: {', '.join(sorted(missing))}. "
+            f"copy_extra_info warnings: {copy_warnings or 'none'}"
+        )
     # tests/test.sh
     test_sh = dst / "tests" / "test.sh"
     test_sh.write_text(build_test_sh(no_judge))

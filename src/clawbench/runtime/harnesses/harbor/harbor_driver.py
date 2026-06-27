@@ -206,6 +206,16 @@ def build_litellm_model(base_url: str, model_name: str, api_type: str, key: str)
         return f"anthropic/{model_name}", api_base, env
 
     if api_type == "google-generative-ai":
+        # An OpenAI-compatible Gemini endpoint (``/v1beta/openai`` or any ``/openai``
+        # base) must route through LiteLLM's *openai* provider so the api_base is
+        # preserved (POST ``/chat/completions``). LiteLLM's native ``gemini``
+        # provider would drop the api_base and POST ``generateContent`` -- the
+        # endpoint these OpenAI-compat keys are NOT issued for (silent auth failure
+        # / 0 actions). This mirrors model_map.build_litellm_model exactly so the
+        # fallback stays byte-for-byte equivalent to the shared mapping.
+        if "/v1beta/openai" in base_url or base_url.endswith("/openai"):
+            env["OPENAI_API_KEY"] = key
+            return f"openai/{model_name}", base_url, env
         env["GEMINI_API_KEY"] = key
         env["GOOGLE_API_KEY"] = key
         # Native Google root is the default for LiteLLM's gemini provider; only

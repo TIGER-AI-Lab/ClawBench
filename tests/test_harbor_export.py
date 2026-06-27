@@ -170,6 +170,42 @@ def test_export_copies_all_extra_info_into_my_info(tmp_path: Path) -> None:
     assert "address_info.json" in instruction
 
 
+def test_export_fails_when_referenced_extra_info_file_missing(tmp_path: Path) -> None:
+    # M4: copy_extra_info only warns on a missing file, but build_instruction()
+    # still advertises it under /my-info/. Export must FAIL rather than ship an
+    # instruction that points at a non-existent file.
+    case = _write_case(tmp_path / "v2", "v2-missing-extra")
+    task = json.loads((case / "task.json").read_text())
+    task["extra_info"] = [
+        {"path": "extra_info/nope.json", "description": "A file that does not exist"}
+    ]
+    (case / "task.json").write_text(json.dumps(task, indent=2))
+    out = tmp_path / "out"
+    out.mkdir()
+    with pytest.raises(RuntimeError, match="missing from my-info"):
+        export.export_case(case, out, base_image="x", no_judge=True, judge_env={})
+    # Nothing partial is shipped for the failed case.
+    assert not (out / case.name).exists()
+
+
+def test_task_toml_escapes_multiline_and_control_chars(tmp_path: Path) -> None:
+    # _toml_escape must handle newlines/tabs/control chars so a multiline
+    # description still yields parseable TOML.
+    case = _write_case(tmp_path / "v2", "v2-multiline")
+    task = json.loads((case / "task.json").read_text())
+    weird = 'Line one\nLine two\tTabbed\r\nQuote " and back\\slash\x07bell'
+    task["metadata"]["description"] = weird
+    (case / "task.json").write_text(json.dumps(task, indent=2))
+    out = tmp_path / "out"
+    out.mkdir()
+    ok, msg = export.export_case(case, out, base_image="x", no_judge=True, judge_env={})
+    assert ok, msg
+    text = (out / case.name / "task.toml").read_text()
+    # Must parse, and the description must round-trip exactly.
+    cfg = tomllib.loads(text)
+    assert cfg["task"]["description"] == weird
+
+
 def test_registration_class_is_skipped(tmp_path: Path) -> None:
     case = _write_case(tmp_path / "v2", "v2-signup", cls="registration")
     out = tmp_path / "out"

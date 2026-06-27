@@ -34,6 +34,7 @@ infinity``):
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
@@ -226,7 +227,9 @@ class ClawbenchHarnessAgent(BaseAgent):
             "MODEL_NAME": bare_model,
             "BASE_URL": base_url,
             "API_TYPE": api_type,
-            "API_KEYS": f'["{api_key}"]',
+            # json.dumps so a key containing quotes/backslashes still yields valid
+            # JSON (the harness parses API_KEYS with json.loads).
+            "API_KEYS": json.dumps([api_key]),
             "API_KEY": api_key,
         }
         return env

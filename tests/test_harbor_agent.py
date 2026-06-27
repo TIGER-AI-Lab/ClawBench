@@ -51,6 +51,24 @@ def test_gemini_default_routes_through_openai_compat(tmp_path: Path) -> None:
     assert mapped.env == {"OPENAI_API_KEY": "k"}
 
 
+def test_api_keys_env_is_valid_json_for_special_chars(tmp_path: Path) -> None:
+    # API_KEYS is parsed with json.loads by the harness; a key with quotes or
+    # backslashes must still yield valid JSON (not f-string interpolation).
+    import json
+
+    weird = 'ab"c\\d'
+    agent = _agent(
+        tmp_path,
+        "openai/glm-5.1",
+        api_key=weird,
+        base_url="https://api.z.ai/api/paas/v4",
+        api_type="openai-completions",
+    )
+    env = agent._resolve_model_env()
+    assert json.loads(env["API_KEYS"]) == [weird]
+    assert env["API_KEY"] == weird
+
+
 def test_explicit_base_url_and_api_type_override_provider_defaults(
     tmp_path: Path,
 ) -> None:
