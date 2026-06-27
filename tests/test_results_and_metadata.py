@@ -57,6 +57,23 @@ def test_classify_run_flags_missing_recording(tmp_path: Path) -> None:
     assert "missing_or_empty_recording" in result["infra_flags"]
 
 
+def test_classify_run_allows_missing_recording_when_disabled(tmp_path: Path) -> None:
+    data = tmp_path / "data"
+    data.mkdir()
+    _write_jsonl(data / "actions.jsonl", [{"type": "click"}])
+    _write_jsonl(data / "requests.jsonl", [{"url": "https://example.test"}])
+    _write_jsonl(data / "agent-messages.jsonl", [{"model_output": {"ok": True}}])
+    (data / "screenshots").mkdir()
+    (data / "screenshots" / "0001.png").write_bytes(b"png")
+    (data / "interception.json").write_text(json.dumps({"stop_reason": "matched"}))
+
+    result = classify_run(tmp_path, intercepted=True, recording_required=False)
+
+    assert "missing_or_empty_recording" not in result["infra_flags"]
+    assert "missing:data/recording.mp4" not in result["infra_flags"]
+    assert "data/recording.mp4" not in result["metrics"]["missing_files"]
+
+
 def test_classify_run_detects_api_or_credit_evidence(tmp_path: Path) -> None:
     data = tmp_path / "data"
     data.mkdir()
@@ -165,6 +182,9 @@ def test_run_metadata_redacts_model_and_judge_secrets(
         judge="judge-model",
         no_judge=False,
         output_dir=tmp_path,
+        browser_runtime="steel",
+        browser_cdp_url=None,
+        browser_runtime_options=None,
     )
     classification = {
         "result_category": "success",
@@ -212,6 +232,19 @@ def test_run_metadata_redacts_model_and_judge_secrets(
         duration=1.2,
         intercepted=True,
         classification=classification,
+        browser_runtime={
+            "provider": "steel",
+            "mode": "remote",
+            "session_id": "sess_123",
+            "cdp_url": "wss://steel.example.test/devtools?apiKey=%5BREDACTED%5D",
+            "viewer_url": "https://viewer.example.test/sess_123",
+            "debug_url": None,
+            "recording_mode": "disabled",
+            "local_viewer_port": None,
+            "cleanup_status": "released",
+            "cleanup_error": None,
+            "metadata": {"api_key": "[REDACTED]"},
+        },
     )
 
     dumped = json.dumps(meta)
@@ -220,5 +253,7 @@ def test_run_metadata_redacts_model_and_judge_secrets(
     assert "hidden" not in dumped
     assert meta["model_config"]["api_key_count"] == 2
     assert meta["judge_config"]["api_key_count"] == 2
+    assert meta["browser_runtime"]["cdp_url"].endswith("apiKey=%5BREDACTED%5D")
+    assert meta["browser_runtime"]["cleanup_status"] == "released"
     assert meta["usage"]["estimated_cost_usd"] == 0.0042
     assert meta["run_metrics"]["usage"]["total_tokens"] == 123

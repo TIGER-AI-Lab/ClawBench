@@ -121,7 +121,7 @@ mcp_settings = {
             # infinite respawn loop. Using the globally-installed binary
             # starts instantly.
             "command": "/usr/local/bin/playwright-mcp",
-            "args": ["--cdp-endpoint", "http://127.0.0.1:9222"],
+            "args": ["--cdp-endpoint", os.environ["CLAWBENCH_BROWSER_CDP_URL"]],
         },
     },
     # Permission mode is set via the CLI flag `--permission-mode danger-full-access`

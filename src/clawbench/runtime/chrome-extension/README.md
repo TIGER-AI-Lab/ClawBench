@@ -1,14 +1,13 @@
 # ClawBench Chrome Extension
 
-This is the source code for the ClawBench Chrome Extension, which acts as the client for the ClawBench benchmarking framework.
+This is the source code for the ClawBench Chrome Extension, which provides browser fingerprint hardening for benchmark runs.
 
 The extension is responsible for the following tasks:
 
-- Collecting every browser action performed by the user or agent and sending it to the ClawBench server.
-- Taking screenshots after browser actions, with high-frequency events throttled.
-- Keeping the active tab aligned with the agent's work so server-side screen recording and screenshots capture the right browser state.
+- Injecting `stealth.js` at `document_start` in the page's `MAIN` world.
+- Applying anti-bot-detection patches for webdriver, plugins, WebGL, permissions, and related browser fingerprints.
 
-The extension should auto start when any non-built-in page is loaded, and should stop when the browser is closed. No UI or configuration is needed for the extension, as all configuration is done on the server side.
+Action capture, screenshot capture, request logging, request interception, and tab activation are handled by the runtime server over CDP. The extension does not send data to the server.
 
 A `setup.sh` script is provided to load the extension into Chrome. Linux and macOS are supported.
 
@@ -16,15 +15,13 @@ A `setup.sh` script is provided to load the extension into Chrome. Linux and mac
 
 | File | Description |
 |------|-------------|
-| `manifest.json` | Manifest V3 extension definition. Permissions: `activeTab`, `tabs`. Content scripts injected on all URLs. |
+| `manifest.json` | Manifest V3 extension definition. Loads `stealth.js` on all URLs. |
 | `stealth.js` | Anti-bot-detection patches. Runs at `document_start` in `MAIN` world. Overrides `navigator.webdriver`, plugins, WebGL, permissions, etc. |
-| `content.js` | Injected into every non-chrome:// page. Listens for DOM events, extracts metadata, sends to background. Runs at `document_idle` in `ISOLATED` world. |
-| `background.js` | Service worker. Relays actions to server via HTTP POST. Captures screenshots with `chrome.tabs.captureVisibleTab`. |
 | `setup.sh` | Detects Chrome/Chromium binary on macOS or Linux and launches with `--load-extension` and remote debugging enabled. |
 
 ## Event Capture
 
-### Captured Events
+Browser event capture now lives in `src/clawbench/runtime/runtime-server/server.py`. The server injects capture listeners through CDP and preserves the historical action schema:
 
 `click`, `keydown`, `keyup`, `input`, `scroll`, `change`, `submit`, plus a synthetic `pageLoad` on each navigation.
 
@@ -123,5 +120,3 @@ Run Chrome with the extension loaded:
 ```bash
 ./setup.sh https://example.com
 ```
-
-The server must be running on `http://localhost:7878` for the extension to send data.

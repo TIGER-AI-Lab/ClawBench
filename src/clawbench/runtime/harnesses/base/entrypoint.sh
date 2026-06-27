@@ -4,16 +4,31 @@ set -e
 # Ensure /data exists for recording output and diagnostic logs
 mkdir -p /data
 
-# Start virtual display
-Xvfb :99 -screen 0 1920x1080x24 &
-export DISPLAY=:99
-sleep 1
+export CLAWBENCH_BROWSER_CDP_URL="${CLAWBENCH_BROWSER_CDP_URL:-http://127.0.0.1:9222}"
+export CLAWBENCH_BROWSER_MODE="${CLAWBENCH_BROWSER_MODE:-local}"
+if [ -z "${CLAWBENCH_RECORDING_MODE:-}" ]; then
+  if [ "$CLAWBENCH_BROWSER_MODE" = "remote" ]; then
+    export CLAWBENCH_RECORDING_MODE="disabled"
+  else
+    export CLAWBENCH_RECORDING_MODE="x11"
+  fi
+else
+  export CLAWBENCH_RECORDING_MODE
+fi
+
+if [ "$CLAWBENCH_BROWSER_MODE" = "local" ]; then
+  # Start virtual display
+  Xvfb :99 -screen 0 1920x1080x24 &
+  export DISPLAY=:99
+  sleep 1
+fi
 
 # Start the server
-cd /app/src/extension-server
+cd /app/src/runtime-server
 uv run --no-sync uvicorn server:app --host 0.0.0.0 --port 7878 &
 sleep 1
 
+if [ "$CLAWBENCH_BROWSER_MODE" = "local" ]; then
 # Start Chrome with extension (dummy profile to reduce bot detection)
 mkdir -p /tmp/chrome-profile/Default
 
@@ -204,6 +219,10 @@ sleep 1
 echo "============================================"
 echo "noVNC ready: http://localhost:6080/vnc.html"
 echo "============================================"
+else
+  echo "Remote browser mode active; local Chrome, extension, Xvfb, and noVNC are disabled."
+  echo "CDP endpoint: $CLAWBENCH_BROWSER_CDP_URL"
+fi
 
 # Services-only mode: boot Chrome/CDP/extension-server/socat/noVNC (done above)
 # then block, leaving an external orchestrator (e.g. Harbor) to drive the agent
@@ -218,6 +237,11 @@ fi
 
 # Human mode: wait for VNC disconnect or eval match
 if [ "$HUMAN_MODE" = "1" ]; then
+  if [ "$CLAWBENCH_BROWSER_MODE" != "local" ]; then
+    echo "ERROR: human mode requires local browser mode"
+    echo "browser_runtime_setup_failed" > /data/.stop-reason
+    exit 1
+  fi
   echo "Human mode active."
   if [ -n "$INSTRUCTION" ]; then
     echo ""

@@ -118,6 +118,8 @@ else:
 def toml_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace("\"", "\\\"")
 
+browser_cdp_url = toml_escape(os.environ["CLAWBENCH_BROWSER_CDP_URL"])
+
 toml = f'''\
 model = "{toml_escape(model_name)}"
 model_provider = "clawbench"
@@ -141,7 +143,7 @@ wire_api = "responses"
 # Codex manages the Playwright MCP itself
 [mcp_servers.playwright]
 command = "npx"
-args = ["@playwright/mcp", "--cdp-endpoint", "http://127.0.0.1:9222"]
+args = ["@playwright/mcp", "--cdp-endpoint", "{browser_cdp_url}"]
 '''
 config_path = Path(os.path.expanduser("~/.codex/config.toml"))
 config_path.write_text(toml)

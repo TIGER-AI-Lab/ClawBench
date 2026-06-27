@@ -39,7 +39,7 @@ wheels = [
 ]
 
 [[package]]
-name = "clawbench-extension-server"
+name = "clawbench-runtime-server"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

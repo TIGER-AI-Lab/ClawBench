@@ -95,6 +95,7 @@ def _line_has_api_or_credit_evidence(line: str) -> bool:
 def collect_run_metrics(
     output_dir: Path,
     model_cfg: dict[str, Any] | None = None,
+    recording_required: bool = True,
 ) -> dict[str, Any]:
     data_dir = output_dir / "data"
     actions_file = data_dir / "actions.jsonl"
@@ -121,13 +122,16 @@ def collect_run_metrics(
         "api_or_credit_evidence": None,
     }
 
-    for rel in (
+    required_files = [
         "data/actions.jsonl",
         "data/requests.jsonl",
         "data/agent-messages.jsonl",
         "data/interception.json",
-        "data/recording.mp4",
-    ):
+    ]
+    if recording_required:
+        required_files.append("data/recording.mp4")
+
+    for rel in required_files:
         if not (output_dir / rel).exists():
             metrics["missing_files"].append(rel)
 
@@ -239,8 +243,13 @@ def classify_run(
     intercepted: bool,
     default_failure_category: str | None = None,
     model_cfg: dict[str, Any] | None = None,
+    recording_required: bool = True,
 ) -> dict[str, Any]:
-    metrics = collect_run_metrics(output_dir, model_cfg=model_cfg)
+    metrics = collect_run_metrics(
+        output_dir,
+        model_cfg=model_cfg,
+        recording_required=recording_required,
+    )
     infra_flags: list[str] = []
     if metrics["api_calls"] == 0:
         infra_flags.append("zero_api_calls")
@@ -250,7 +259,7 @@ def classify_run(
         infra_flags.append("zero_requests")
     if metrics["messages"] == 0:
         infra_flags.append("zero_agent_messages")
-    if metrics["recording_bytes"] == 0:
+    if recording_required and metrics["recording_bytes"] == 0:
         infra_flags.append("missing_or_empty_recording")
     for rel in metrics["missing_files"]:
         infra_flags.append(f"missing:{rel}")

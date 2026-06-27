@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import signal
@@ -25,6 +26,13 @@ from clawbench.runner.run_support.config import (
     load_runtime_env,
     resolve_task_file,
 )
+from clawbench.runner.run_support.browser_runtime import (
+    BROWSER_RUNTIME_CHOICES,
+    BrowserRuntimeError,
+    BrowserRuntimeProvider,
+    BrowserSession,
+    make_browser_runtime_provider,
+)
 from clawbench.runner.run_support.docker import (
     console,
     docker_build,
@@ -35,7 +43,6 @@ from clawbench.runner.run_support.docker import (
     docker_run_human,
     docker_wait,
     fix_data_ownership as _fix_data_ownership,
-    pick_free_port as _pick_free_port,
     step,
 )
 from clawbench.runner.run_support.email import create_email, delete_email
@@ -112,6 +119,25 @@ def main():
         help=f"Coding-agent harness (default: {DEFAULT_HARNESS})",
     )
     parser.add_argument(
+        "--browser-runtime",
+        choices=BROWSER_RUNTIME_CHOICES,
+        default=None,
+        help=(
+            "Browser runtime provider: local, remote-cdp, steel, or browserbase "
+            "(default: CLAWBENCH_BROWSER_RUNTIME or local)"
+        ),
+    )
+    parser.add_argument(
+        "--browser-cdp-url",
+        default=None,
+        help="CDP endpoint for --browser-runtime remote-cdp",
+    )
+    parser.add_argument(
+        "--browser-runtime-options",
+        default=None,
+        help="JSON object with provider-specific browser runtime options",
+    )
+    parser.add_argument(
         "--judge",
         default="deepseek-v4-pro",
         help=(
@@ -133,6 +159,7 @@ def main():
 
     # Load infrastructure config from .env (PurelyMail only)
     env = load_runtime_env()
+    runtime_env = {**env, **os.environ}
     infra_required = ["PURELY_MAIL_API_KEY", "PURELY_MAIL_DOMAIN"]
     missing = [k for k in infra_required if not env.get(k)]
     if missing:
@@ -141,6 +168,18 @@ def main():
         sys.exit(1)
     pm_key: str = env["PURELY_MAIL_API_KEY"]
     pm_domain: str = env["PURELY_MAIL_DOMAIN"]
+
+    try:
+        browser_runtime_provider: BrowserRuntimeProvider = (
+            make_browser_runtime_provider(
+                args,
+                runtime_env,
+            )
+        )
+    except BrowserRuntimeError as e:
+        parser.error(str(e))
+    if args.human and browser_runtime_provider.name != "local":
+        parser.error("human mode currently supports only --browser-runtime local")
 
     # HuggingFace upload (optional)
     hf_env = {
@@ -179,6 +218,44 @@ def main():
     host_port: int | None = None
     judge_cfg: dict | None = None
     personal_info_metadata: dict[str, Any] | None = None
+    browser_session: BrowserSession | None = None
+    browser_runtime_cleaned = False
+
+    def _browser_runtime_meta() -> dict[str, Any]:
+        if browser_session is not None:
+            return browser_session.to_metadata()
+        mode = "local" if browser_runtime_provider.name == "local" else "remote"
+        return {
+            "provider": browser_runtime_provider.name,
+            "mode": mode,
+            "session_id": None,
+            "cdp_url": None,
+            "viewer_url": None,
+            "debug_url": None,
+            "recording_mode": "x11" if mode == "local" else "disabled",
+            "local_viewer_port": None,
+            "cleanup_status": None,
+            "cleanup_error": None,
+            "metadata": {},
+        }
+
+    def _recording_required() -> bool:
+        return browser_session is None or browser_session.recording_mode != "disabled"
+
+    def _cleanup_browser_runtime() -> None:
+        nonlocal browser_runtime_cleaned
+        if browser_session is None or browser_runtime_cleaned:
+            return
+        try:
+            browser_runtime_provider.cleanup(browser_session)
+            if browser_session.cleanup_status is None:
+                browser_session.cleanup_status = "cleaned"
+        except BrowserRuntimeError as e:
+            browser_session.cleanup_status = "failed"
+            browser_session.cleanup_error = str(e)
+            console.print(f"[yellow]Browser runtime cleanup failed:[/] {e}")
+        finally:
+            browser_runtime_cleaned = True
 
     # Load and validate task after output_dir exists so task-data failures
     # still leave a run-meta.json for batch/report classification.
@@ -213,6 +290,7 @@ def main():
             duration=duration,
             intercepted=False,
             classification=classification,
+            browser_runtime=_browser_runtime_meta(),
             failure_reason=f"task_data: {e}",
         )
         write_run_meta(output_dir, meta)
@@ -246,6 +324,7 @@ def main():
                 duration=duration,
                 intercepted=False,
                 classification=classification,
+                browser_runtime=_browser_runtime_meta(),
                 failure_reason=f"infra_failure: container build exited {e.code}",
             )
             write_run_meta(output_dir, meta)
@@ -280,10 +359,16 @@ def main():
         print(instruction[:500])
 
         if args.human:
+            phase = "starting_browser_runtime"
+            browser_session = browser_runtime_provider.start(task, time_limit_s)
+            host_port = browser_session.local_viewer_port
+            if host_port is None:
+                raise RuntimeError(
+                    "local browser runtime did not allocate a viewer port"
+                )
+
             phase = "starting_container"
             step("Starting container (human mode)")
-            # Avoid hard-coded 6080:6080 collisions under concurrent runs.
-            host_port = _pick_free_port(6080)
             docker_run_human(
                 container,
                 instruction,
@@ -291,6 +376,9 @@ def main():
                 personal_info_tmp,
                 time_limit_s,
                 host_port=host_port,
+                browser_cdp_url=browser_session.cdp_url,
+                browser_mode=browser_session.mode,
+                recording_mode=browser_session.recording_mode,
             )
 
             # Graceful stop on Ctrl+C: give container time to flush recording
@@ -315,10 +403,13 @@ def main():
 
             step(f"Waiting for human (max {task['time_limit']}min)")
         else:
+            assert model_cfg is not None
+            phase = "starting_browser_runtime"
+            browser_session = browser_runtime_provider.start(task, time_limit_s)
+            host_port = browser_session.local_viewer_port
+
             phase = "starting_container"
             step("Starting container")
-            assert model_cfg is not None
-            host_port = _pick_free_port(6080)
             docker_run(
                 container,
                 instruction,
@@ -328,15 +419,29 @@ def main():
                 time_limit_s=time_limit_s,
                 host_port=host_port,
                 harness=args.harness,
+                browser_cdp_url=browser_session.cdp_url,
+                browser_mode=browser_session.mode,
+                recording_mode=browser_session.recording_mode,
             )
 
-            vnc_url = f"http://localhost:{host_port}/vnc.html"
-            console.print(f"\n  noVNC: [link={vnc_url}]{vnc_url}[/link]")
-            if host_port != 6080:
+            if browser_session.mode == "local" and host_port is not None:
+                vnc_url = f"http://localhost:{host_port}/vnc.html"
+                console.print(f"\n  noVNC: [link={vnc_url}]{vnc_url}[/link]")
+                if host_port != 6080:
+                    console.print(
+                        f"  [dim](port 6080 was busy, auto-picked {host_port})[/dim]"
+                    )
+                console.print("  Open the URL above to watch the agent in real-time.\n")
+            elif browser_session.viewer_url:
+                viewer_url = browser_session.viewer_url
                 console.print(
-                    f"  [dim](port 6080 was busy, auto-picked {host_port})[/dim]"
+                    f"\n  Browser viewer: [link={viewer_url}]{viewer_url}[/link]\n"
                 )
-            console.print("  Open the URL above to watch the agent in real-time.\n")
+            else:
+                console.print(
+                    f"\n  Remote browser: {browser_session.provider} "
+                    "(no viewer URL provided)\n"
+                )
 
             step(f"Agent running (max {task['time_limit']}min)")
 
@@ -417,10 +522,18 @@ def main():
                 )
                 print(f"Judge skipped due to error: {e}")
 
+        phase = "cleaning_browser_runtime"
+        _cleanup_browser_runtime()
+
         # Write run metadata
         phase = "writing_run_meta"
         duration = time.time() - start_time
-        classification = classify_run(output_dir, intercepted, model_cfg=model_cfg)
+        classification = classify_run(
+            output_dir,
+            intercepted,
+            model_cfg=model_cfg,
+            recording_required=_recording_required(),
+        )
         meta = make_run_meta(
             task=task,
             task_json_sha256=task_json_sha256,
@@ -440,6 +553,7 @@ def main():
             duration=duration,
             intercepted=intercepted,
             classification=classification,
+            browser_runtime=_browser_runtime_meta(),
             extra_info_warnings=extra_info_warnings,
         )
         if judge_result is not None:
@@ -464,7 +578,11 @@ def main():
 
     except Exception as e:
         category = "infra_failure"
-        if phase == "building_instruction":
+        if isinstance(e, BrowserRuntimeError):
+            category = e.category
+        elif phase == "starting_browser_runtime":
+            category = "browser_runtime_setup_failed"
+        elif phase == "building_instruction":
             category = "build_instruction"
         elif phase == "writing_eval_schema":
             category = "task_data"
@@ -473,8 +591,15 @@ def main():
                 ensure_interception(output_dir)
         except Exception:
             pass
+        _cleanup_browser_runtime()
         duration = time.time() - start_time
-        classification = classify_run(output_dir, False, category, model_cfg=model_cfg)
+        classification = classify_run(
+            output_dir,
+            False,
+            category,
+            model_cfg=model_cfg,
+            recording_required=_recording_required(),
+        )
         meta = make_run_meta(
             task=task,
             task_json_sha256=task_json_sha256,
@@ -494,6 +619,7 @@ def main():
             duration=duration,
             intercepted=False,
             classification=classification,
+            browser_runtime=_browser_runtime_meta(),
             failure_reason=f"{category}: {phase}: {type(e).__name__}: {e}",
             extra_info_warnings=extra_info_warnings,
         )
@@ -504,6 +630,7 @@ def main():
     finally:
         step("Cleanup")
         docker_rm(container)
+        _cleanup_browser_runtime()
         if email:
             delete_email(pm_key, email)
         if personal_info_tmp and personal_info_tmp.exists():

@@ -25,7 +25,7 @@ ClawBench/
       runtime/
         shared/
           alex_green_personal_info.json
-        extension-server/         # Container-only uv project for server deps
+        runtime-server/           # Container-only uv project for server deps
         chrome-extension/         # Recording extension
         harnesses/                # Dockerfiles + setup/run scripts
   models/
@@ -139,7 +139,7 @@ test-output/<model>/<harness>-<case>-<model>-<timestamp>/
 ## Key Documentation
 
 - [README.md#-cli](README.md#-cli) -- CLI usage, batch runner flags, output format
-- [src/clawbench/runtime/extension-server/README.md](src/clawbench/runtime/extension-server/README.md) -- FastAPI server, endpoints, screen recording
+- [src/clawbench/runtime/runtime-server/README.md](src/clawbench/runtime/runtime-server/README.md) -- FastAPI server, endpoints, screen recording
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- how to add new test cases
 - [eval/README.md](eval/README.md) -- evaluation guide and Claude Code prompt template
 - [eval/agentic_eval.md](eval/agentic_eval.md) -- evaluator rubric for PASS/FAIL judgment

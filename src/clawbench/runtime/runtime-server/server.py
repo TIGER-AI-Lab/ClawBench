@@ -23,11 +23,139 @@ EVAL_SCHEMA_PATH = Path("/eval-schema.json")
 REQUESTS_FILE = DATA_DIR / "requests.jsonl"
 INTERCEPTION_FILE = DATA_DIR / "interception.json"
 
-CDP_URL = "http://127.0.0.1:9222"
+CDP_URL = os.environ.get("CLAWBENCH_BROWSER_CDP_URL", "http://127.0.0.1:9222")
+RECORDING_MODE = os.environ.get("CLAWBENCH_RECORDING_MODE", "x11")
+ACTION_BINDING = "__clawbenchAction"
+SCREENSHOT_THROTTLE_MS = 500
 
 ffmpeg_proc = None
 eval_schema = None
 eval_interceptor_ready = False
+
+
+def stop_ffmpeg_recording(timeout: int = 10) -> str:
+    global ffmpeg_proc
+    if RECORDING_MODE == "disabled":
+        return "disabled"
+    if not ffmpeg_proc or ffmpeg_proc.poll() is not None:
+        return "already_stopped"
+
+    ffmpeg_proc.send_signal(signal.SIGINT)
+    try:
+        ffmpeg_proc.wait(timeout=timeout)
+        return "stopped"
+    except subprocess.TimeoutExpired:
+        ffmpeg_proc.terminate()
+        try:
+            ffmpeg_proc.wait(timeout=3)
+            return "terminated"
+        except subprocess.TimeoutExpired:
+            ffmpeg_proc.kill()
+            ffmpeg_proc.wait(timeout=3)
+            return "killed"
+
+
+ACTION_CAPTURE_SCRIPT = r"""
+(function () {
+  "use strict";
+
+  if (window.__clawbenchActionCaptureInstalled) return;
+  window.__clawbenchActionCaptureInstalled = true;
+
+  const THROTTLE_MS = 500;
+  const lastSent = {};
+
+  function getXPath(el) {
+    if (!el || el.nodeType !== 1) return "";
+    const parts = [];
+    while (el && el.nodeType === 1) {
+      let idx = 1;
+      for (let sib = el.previousElementSibling; sib; sib = sib.previousElementSibling) {
+        if (sib.tagName === el.tagName) idx++;
+      }
+      parts.unshift(`${el.tagName.toLowerCase()}[${idx}]`);
+      el = el.parentElement;
+    }
+    return "/" + parts.join("/");
+  }
+
+  function classNameFor(target) {
+    if (!target || target.className === undefined) return "";
+    if (typeof target.className === "string") return target.className;
+    if (target.className && typeof target.className.baseVal === "string") {
+      return target.className.baseVal;
+    }
+    return String(target.className || "");
+  }
+
+  function emit(payload) {
+    try {
+      if (typeof window.__clawbenchAction === "function") {
+        window.__clawbenchAction(JSON.stringify(payload));
+      }
+    } catch (_) {}
+  }
+
+  function buildPayload(type, e) {
+    const target = e.target || {};
+    const payload = {
+      type,
+      timestamp: Date.now(),
+      url: location.href,
+      target: {
+        tagName: target.tagName || "",
+        id: target.id || "",
+        className: classNameFor(target),
+        textContent: (target.textContent || "").slice(0, 100),
+        xpath: getXPath(target),
+      },
+    };
+    if (e.clientX !== undefined) {
+      payload.x = e.clientX;
+      payload.y = e.clientY;
+    }
+    if (e.key) payload.key = e.key;
+    if (target.value !== undefined) payload.value = String(target.value).slice(0, 200);
+    if (type === "scroll") {
+      payload.scrollX = window.scrollX;
+      payload.scrollY = window.scrollY;
+    }
+    return payload;
+  }
+
+  function throttled(type) {
+    return type === "scroll" || type === "input";
+  }
+
+  function send(type, e) {
+    if (throttled(type)) {
+      const now = Date.now();
+      if (lastSent[type] && now - lastSent[type] < THROTTLE_MS) return;
+      lastSent[type] = now;
+    }
+    emit(buildPayload(type, e));
+  }
+
+  ["click", "keydown", "keyup", "input", "scroll", "change", "submit"].forEach((evt) => {
+    document.addEventListener(evt, (e) => send(evt, e), true);
+  });
+
+  function sendPageLoad() {
+    emit({
+      type: "pageLoad",
+      timestamp: Date.now(),
+      url: location.href,
+      title: document.title,
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", sendPageLoad, { once: true });
+  } else {
+    setTimeout(sendPageLoad, 0);
+  }
+})();
+"""
 
 
 def _const_fields_match(expected, actual):
@@ -96,37 +224,48 @@ def _log_request(log_file, params):
     log_file.flush()
 
 
+def _log_action(log_file, payload):
+    """Append a browser action payload to actions.jsonl."""
+    log_file.write(json.dumps(payload) + "\n")
+    log_file.flush()
+
+
 def start_cdp_handler(
     url_pattern=None, required_method=None, match_body=None, match_params=None
 ):
     """Connect to Chrome via CDP, log all requests, and optionally block by URL pattern + method + body/params."""
 
-    # Wait for Chrome CDP to be ready
-    ws_url = None
+    # Wait for CDP to be ready. Local Chromium exposes an HTTP CDP root; remote
+    # providers may hand us the browser WebSocket URL directly.
+    ws = None
     for _ in range(30):
         try:
-            version = json.loads(
-                urllib.request.urlopen(f"{CDP_URL}/json/version").read()
-            )
-            ws_url = version["webSocketDebuggerUrl"]
+            if CDP_URL.startswith(("ws://", "wss://")):
+                ws = websocket.create_connection(CDP_URL)
+            else:
+                version = json.loads(
+                    urllib.request.urlopen(f"{CDP_URL}/json/version").read()
+                )
+                ws = websocket.create_connection(version["webSocketDebuggerUrl"])
             break
         except Exception:
             time.sleep(1)
-    if not ws_url:
+    if ws is None:
         print("[cdp] CDP not available, skipping handler", flush=True)
         return
 
     global eval_interceptor_ready
 
-    ws = websocket.create_connection(ws_url)
     msg_id = [1]
 
     def send(method, params=None, session_id=None):
-        msg = {"id": msg_id[0], "method": method, "params": params or {}}
+        current_id = msg_id[0]
+        msg = {"id": current_id, "method": method, "params": params or {}}
         if session_id:
             msg["sessionId"] = session_id
         ws.send(json.dumps(msg))
         msg_id[0] += 1
+        return current_id
 
     # Auto-attach to all targets with flatten so events come on this connection.
     # waitForDebuggerOnStart=True pauses new targets until we explicitly resume
@@ -147,12 +286,41 @@ def start_cdp_handler(
     else:
         print("[cdp] Request logger connected (no intercept pattern)", flush=True)
 
-    # Track sessions where Fetch is enabled, and map sessions to target IDs
-    # so we can bring the correct tab to front when it receives activity.
+    # Track page sessions and async screenshot requests. Fetch handles network
+    # logging/interception; Runtime bindings carry DOM action payloads back to
+    # the server; Page.captureScreenshot replaces extension screenshots.
     fetch_sessions = set()
+    instrumented_sessions = set()
     session_to_target = {}  # sessionId -> targetId
     active_target = [None]  # mutable ref: currently active targetId
-    log_file = open(REQUESTS_FILE, "a")
+    pending_screenshots = {}  # CDP command id -> timestamp
+    last_screenshot = [0.0]
+    requests_log_file = open(REQUESTS_FILE, "a")
+    actions_log_file = open(ACTIONS_FILE, "a")
+
+    def request_screenshot(session_id, timestamp):
+        if not session_id:
+            return
+        now = time.time() * 1000
+        if now - last_screenshot[0] < SCREENSHOT_THROTTLE_MS:
+            return
+        last_screenshot[0] = now
+        screenshot_id = send(
+            "Page.captureScreenshot",
+            {"format": "png", "captureBeyondViewport": False},
+            session_id,
+        )
+        pending_screenshots[screenshot_id] = timestamp
+
+    def activate_session_target(session_id, reason):
+        target_id = session_to_target.get(session_id)
+        if target_id and target_id != active_target[0]:
+            send("Target.activateTarget", {"targetId": target_id})
+            active_target[0] = target_id
+            print(
+                f"[cdp] Auto-focused tab {target_id[:12]}... ({reason})",
+                flush=True,
+            )
 
     try:
         while True:
@@ -162,6 +330,20 @@ def start_cdp_handler(
                 break
             msg = json.loads(raw)
             session_id = msg.get("sessionId")
+
+            if msg.get("id") in pending_screenshots:
+                ts = pending_screenshots.pop(msg["id"])
+                data = msg.get("result", {}).get("data")
+                if data:
+                    try:
+                        (SCREENSHOTS_DIR / f"{ts}.png").write_bytes(
+                            base64.b64decode(data)
+                        )
+                    except Exception as e:
+                        print(f"[cdp] Screenshot write failed: {e}", flush=True)
+                elif "error" in msg:
+                    print(f"[cdp] Screenshot failed: {msg['error']}", flush=True)
+                continue
 
             # When a new target attaches, enable Fetch then resume execution.
             # Because waitForDebuggerOnStart=True, the target is paused until
@@ -174,6 +356,29 @@ def start_cdp_handler(
                 target_id = msg["params"]["targetInfo"]["targetId"]
                 if target_type == "page":
                     session_to_target[child_session] = target_id
+                    if child_session not in instrumented_sessions:
+                        send("Runtime.enable", {}, child_session)
+                        send("Page.enable", {}, child_session)
+                        send(
+                            "Runtime.addBinding",
+                            {"name": ACTION_BINDING},
+                            child_session,
+                        )
+                        send(
+                            "Page.addScriptToEvaluateOnNewDocument",
+                            {"source": ACTION_CAPTURE_SCRIPT},
+                            child_session,
+                        )
+                        send(
+                            "Runtime.evaluate",
+                            {"expression": ACTION_CAPTURE_SCRIPT},
+                            child_session,
+                        )
+                        instrumented_sessions.add(child_session)
+                        print(
+                            f"[cdp] Action capture enabled on session {child_session[:12]}...",
+                            flush=True,
+                        )
                     if child_session not in fetch_sessions:
                         send(
                             "Fetch.enable",
@@ -193,6 +398,22 @@ def start_cdp_handler(
                 send("Runtime.runIfWaitingForDebugger", {}, child_session)
                 continue
 
+            if msg.get("method") == "Runtime.bindingCalled":
+                params = msg.get("params", {})
+                if params.get("name") != ACTION_BINDING:
+                    continue
+                try:
+                    payload = json.loads(params.get("payload", "{}"))
+                except json.JSONDecodeError:
+                    print("[cdp] Ignoring malformed action payload", flush=True)
+                    continue
+                activate_session_target(session_id, "action")
+                _log_action(actions_log_file, payload)
+                request_screenshot(
+                    session_id, payload.get("timestamp", int(time.time() * 1000))
+                )
+                continue
+
             if msg.get("method") != "Fetch.requestPaused":
                 if "error" in msg and msg.get("id"):
                     print(f"[cdp] CDP error: {msg['error']}", flush=True)
@@ -207,17 +428,10 @@ def start_cdp_handler(
             # screenshots always show the tab the agent is working on.
             resource_type = params.get("resourceType", "")
             if resource_type == "Document" and session_id:
-                target_id = session_to_target.get(session_id)
-                if target_id and target_id != active_target[0]:
-                    send("Target.activateTarget", {"targetId": target_id})
-                    active_target[0] = target_id
-                    print(
-                        f"[cdp] Auto-focused tab {target_id[:12]}... (Document request)",
-                        flush=True,
-                    )
+                activate_session_target(session_id, "Document request")
 
             # Log every non-internal request
-            _log_request(log_file, params)
+            _log_request(requests_log_file, params)
 
             # If no intercept pattern, just continue the request
             if not url_pattern:
@@ -280,7 +494,8 @@ def start_cdp_handler(
             except Exception:
                 pass
     finally:
-        log_file.close()
+        requests_log_file.close()
+        actions_log_file.close()
         ws.close()
 
 
@@ -304,31 +519,39 @@ async def lifespan(app: FastAPI):
         match_body = eval_schema.get("body")
         match_params = eval_schema.get("params")
 
-    # Start screen recording of the Xvfb display
-    display = os.environ.get("DISPLAY", ":99")
-    ffmpeg_proc = subprocess.Popen(
-        [
-            "ffmpeg",
-            "-y",
-            "-f",
-            "x11grab",
-            "-video_size",
-            "1920x1080",
-            "-framerate",
-            "15",
-            "-i",
-            display,
-            "-c:v",
-            "libx264",
-            "-preset",
-            "ultrafast",
-            "-crf",
-            "28",
-            str(RECORDING_PATH),
-        ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    if RECORDING_MODE == "disabled":
+        print("[recording] disabled", flush=True)
+        ffmpeg_proc = None
+    else:
+        # Start screen recording of the Xvfb display
+        display = os.environ.get("DISPLAY", ":99")
+        ffmpeg_proc = subprocess.Popen(
+            [
+                "ffmpeg",
+                "-y",
+                "-f",
+                "x11grab",
+                "-video_size",
+                "1920x1080",
+                "-framerate",
+                "15",
+                "-i",
+                display,
+                "-c:v",
+                "libx264",
+                "-preset",
+                "ultrafast",
+                "-crf",
+                "28",
+                "-pix_fmt",
+                "yuv420p",
+                "-movflags",
+                "+frag_keyframe+empty_moov+default_base_moof",
+                str(RECORDING_PATH),
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
 
     # Start CDP handler: always logs requests, optionally blocks by URL pattern + method + body/params
     threading.Thread(
@@ -339,9 +562,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    if ffmpeg_proc and ffmpeg_proc.poll() is None:
-        ffmpeg_proc.send_signal(signal.SIGINT)
-        ffmpeg_proc.wait(timeout=5)
+    stop_ffmpeg_recording(timeout=5)
 
 
 app = FastAPI(lifespan=lifespan)
@@ -485,8 +706,11 @@ async def stop():
 
 @app.post("/api/stop-recording")
 async def stop_recording():
-    global ffmpeg_proc
-    if ffmpeg_proc and ffmpeg_proc.poll() is None:
-        ffmpeg_proc.send_signal(signal.SIGINT)
-        ffmpeg_proc.wait(timeout=10)
-    return {"status": "recording_stopped", "has_recording": RECORDING_PATH.exists()}
+    status = stop_ffmpeg_recording(timeout=10)
+    size = RECORDING_PATH.stat().st_size if RECORDING_PATH.exists() else 0
+    return {
+        "status": "recording_stopped",
+        "recorder_status": status,
+        "has_recording": RECORDING_PATH.exists(),
+        "recording_size": size,
+    }

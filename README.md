@@ -10,7 +10,7 @@
 [![Star this repo](https://img.shields.io/badge/%E2%98%85%20Star%20this%20repo-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench)
 [![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
 [![HF Daily Paper](https://img.shields.io/badge/Daily_Paper-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/papers/2604.08523)
-[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
+[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
 [![HF Trace Dataset](https://img.shields.io/badge/Trace_Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 [![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
 [![GitHub stars](https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/reacher-z/ClawBench)
@@ -122,7 +122,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 <td align="center" valign="top">
 
 📦 **Download the data**<br/>
-[`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
+[`hf download NAIL-Group/ClawBench`](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
 <sub>Tasks · rubrics · metadata</sub>
 
 </td>
@@ -178,11 +178,11 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | **[NAIL-Group/ClawBench](https://huggingface.co/datasets/NAIL-Group/ClawBench)** _(also mirrored at [TIGER-Lab/ClawBench](https://huggingface.co/datasets/TIGER-Lab/ClawBench))_ | Task definitions, rubrics, and metadata for V1 (153 tasks) and V2 (130 tasks) — what to attempt and how it's judged.                                                                                  | `hf download --repo-type dataset NAIL-Group/ClawBench`        |
 | **[NAIL-Group/ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)**                                                                                   | One directory per V1 model run, each with `recording.mp4`, `requests.jsonl`, `actions.jsonl`, `agent-messages.jsonl`, `interception.json`, and `run-meta.json` — everything we used to score the run. | `hf download --repo-type dataset NAIL-Group/ClawBenchV1Trace` |
-| **[NAIL-Group/ClawBenchV2Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace` |
+| **[TIGER-Lab/ClawBenchV2Trace](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace)**                                                                                   | Same 5-layer bundle for **V2** model runs. Rolling — new models added as they're evaluated.                                                                                                           | `hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace` |
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
-> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/NAIL-Group/ClawBench/blob/main/leaderboard/results.csv).
+> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to the current [`leaderboard/results.csv`](https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv) source.
 
 ## How It Works
 
@@ -215,8 +215,8 @@ uv tool install clawbench-eval
 ```
 
 You can also use `pipx install clawbench-eval` or `python -m pip install clawbench-eval`.
-The installed commands are still `clawbench`, `clawbench-run`, and
-`clawbench-batch`.
+The installed commands are still `clawbench`, `clawbench-run`,
+`clawbench-batch`, and `clawbench-harbor-adapt`.
 
 For those want more granular control and contribution, clone the repo and run the root `uv` package entrypoint:
 
@@ -325,6 +325,78 @@ uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats --human
 Open the noVNC URL the script prints, complete the task by hand, then close the tab. Port is auto-assigned if 6080 is busy.
 
 **(d) Pair with an external browser agent** — run in Human mode, open the noVNC URL, and let an external browser agent control that browser session while ClawBench records and intercepts it.
+
+**(e) Run V2 through Harbor Framework** — convert the V2 cases into a local Harbor dataset, then let Harbor start the ClawBench browser runtime and connect its agent over CDP.
+
+Harbor runs use Harbor's Docker provider, so make sure Docker is available even if you normally use Podman for native ClawBench runs.
+
+```bash
+# Convert all V2 tasks into Harbor-compatible task directories.
+uv run clawbench-harbor-adapt \
+  --output-dir ./harbor-datasets/clawbench-v2 \
+  --overwrite
+
+# Optional smoke dataset with one generated task.
+uv run clawbench-harbor-adapt \
+  --output-dir ./harbor-datasets/clawbench-v2-smoke \
+  --limit 1 \
+  --overwrite
+
+# Configure the verifier judge used for Harbor rewards.
+export CLAWBENCH_JUDGE_BASE_URL="https://your-judge-provider.example/v1"
+export CLAWBENCH_JUDGE_API_KEY="your-judge-api-key"
+export CLAWBENCH_JUDGE_MODEL="deepseek-v4-pro"
+export CLAWBENCH_JUDGE_API_TYPE="openai-completions"
+
+# Run with Harbor. Use "harbor run" directly if Harbor is already installed.
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a "<agent>" \
+  -m "<model>" \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}"
+```
+
+The generated Harbor environment contains Chromium, the ClawBench recorder/interceptor, noVNC, and runtime helper scripts, but no ClawBench-native harness. Harbor installs/runs the selected agent from `-a` inside the task container.
+
+PurelyMail credentials come from `.env` via `--env-file .env`. Scoring requires an intercepted request and a judge match; pass judge credentials to Harbor's verifier with `--ve CLAWBENCH_JUDGE_*`. If the judge base URL or API key is missing, intercepted tasks receive reward `0` with `missing judge configuration`.
+
+Concrete agent examples:
+
+```bash
+# OpenClaw through OpenRouter's OpenAI-compatible endpoint.
+export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+export OPENAI_API_KEY="$OPENROUTER_API_KEY"
+
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a openclaw \
+  -m openai/deepseek/deepseek-v4-flash \
+  --ak thinking=off \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}" \
+  --jobs-dir ./harbor-jobs/openclaw-deepseek-flash
+
+# Hermes through OpenRouter.
+export OPENROUTER_API_KEY="your-openrouter-key"
+
+uvx --from harbor==0.15.0 harbor run \
+  -p ./harbor-datasets/clawbench-v2 \
+  -a hermes \
+  -m deepseek/deepseek-v4-flash \
+  --env-file .env \
+  --ve CLAWBENCH_JUDGE_BASE_URL="$CLAWBENCH_JUDGE_BASE_URL" \
+  --ve CLAWBENCH_JUDGE_API_KEY="$CLAWBENCH_JUDGE_API_KEY" \
+  --ve CLAWBENCH_JUDGE_MODEL="${CLAWBENCH_JUDGE_MODEL:-deepseek-v4-pro}" \
+  --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}" \
+  --jobs-dir ./harbor-jobs/hermes-deepseek-flash
+```
 
 <details>
 <summary><b>Develop from source</b> &nbsp;— clone + ``./run.sh`` for contributors</summary>
@@ -583,23 +655,20 @@ ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recordin
 ┌─────────────────────────────────────────────────┐
 │  Container (Docker / Podman)                    │
 │                                                 │
-│  ┌───────────┐   DOM events  ┌──────────────┐   │
-│  │ content.js├──────────────►│ background.js│   │
-│  │ (per tab) │               │  (service    │   │
-│  └───────────┘               │   worker)    │   │
-│                              └──┬──────┬────┘   │
-│                                 │      │        │
-│                         actions │      │ screenshots
-│                                 │      │        │
-│  ┌──────────┐            ┌──────▼──────▼────┐   │
+│  ┌──────────┐  CDP Fetch/Runtime/Page events    │
+│  │ Chromium ├─────────────────────────────┐     │
+│  │ :9222 CDP│                             │     │
+│  └──────────┘                             │     │
+│                                           │     │
+│  ┌──────────┐            ┌────────────────▼─┐   │
 │  │  Xvfb    │◄──ffmpeg──►│  FastAPI Server  │   │
 │  │ :99      │  x11grab   │  :7878           │   │
 │  └──────────┘            └──────────────────┘   │
 │                                  │              │
-│  ┌──────────┐            ┌───────▼─────────┐    │
-│  │ Chromium │            │     /data       │    │
-│  │ :9222 CDP│            │  actions.jsonl  │    │
-│  └──────────┘            │  requests.jsonl │    │
+│                          ┌───────▼─────────┐    │
+│                          │     /data       │    │
+│                          │  actions.jsonl  │    │
+│                          │  requests.jsonl │    │
 │                          │  screenshots/   │    │
 │                          │  recording.mp4  │    │
 │                          └─────────────────┘    │
@@ -636,6 +705,18 @@ uv run clawbench-batch --models claude-sonnet-4-6 --cases-suite claw-eval --all-
 
 # Batch a custom case directory:
 uv run clawbench-batch --models claude-sonnet-4-6 --cases-dir custom-cases --all-cases
+
+# Convert V2 tasks into a local Harbor dataset:
+uv run clawbench-harbor-adapt --output-dir ./harbor-datasets/clawbench-v2 --overwrite
+
+# Run the generated Harbor dataset:
+uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a "<agent>" -m "<model>" --env-file .env
+
+# Examples:
+#   openclaw via OpenRouter/OpenAI-compatible API:
+#     -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off
+#   hermes via OpenRouter:
+#     -a hermes -m deepseek/deepseek-v4-flash
 ```
 
 V1 tasks are in [`test-cases/v1/`](test-cases/v1/) (153 tasks). V2 tasks are in `test-cases/v2/` (130 tasks), Lite is in `test-cases/v1-lite/` (20 tasks), and converted Claw-Eval tasks live in `test-cases/claw-eval/` (19 tasks). All suites use [`test-cases/task.schema.json`](test-cases/task.schema.json). For test case authoring details, see [CONTRIBUTING.md](CONTRIBUTING.md). For output structure and evaluation guidance, see [eval/README.md](eval/README.md).

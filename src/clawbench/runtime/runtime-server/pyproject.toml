@@ -1,7 +1,7 @@
 [project]
-name = "clawbench-extension-server"
+name = "clawbench-runtime-server"
 version = "0.1.0"
-description = "In-container ClawBench extension data collection server"
+description = "In-container ClawBench CDP instrumentation server"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",

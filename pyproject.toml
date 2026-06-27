@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "clawbench-eval"
-version = "0.5.0"
+version = "0.7.0"
 description = "Benchmarking framework for evaluating AI web agents on real-world online tasks"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -28,6 +28,7 @@ clawbench-run = "clawbench.runner.run:main"
 clawbench-batch = "clawbench.runner.batch:main"
 clawbench-rescore = "clawbench.eval.rescore:main"
 clawbench-reproduce = "clawbench.eval.reproduce:main"
+clawbench-harbor-adapt = "clawbench.eval.harbor_adapter:main"
 clawbench-export-harbor = "clawbench.harbor.export:main"
 clawbench-harbor-parity = "clawbench.harbor.parity:main"
 

@@ -115,7 +115,11 @@ mcp_config = {
     "mcpServers": {
         "playwright": {
             "command": "npx",
-            "args": ["@playwright/mcp", "--cdp-endpoint", "http://127.0.0.1:9222"],
+            "args": [
+                "@playwright/mcp",
+                "--cdp-endpoint",
+                os.environ["CLAWBENCH_BROWSER_CDP_URL"],
+            ],
         },
     },
 }

@@ -15,7 +15,8 @@ ClawBench tasks are browser tasks, so this driver bridges the two faithfully:
   sandbox — the ClawBench container *is* the sandbox.
 * Inside Terminus' tmux shell it exposes the ``agent-browser`` CLI (the same
   CDP-attaching browser tool the hermes harness uses), pre-pointed at the shared
-  Chrome at http://127.0.0.1:9222. Terminus drives the browser via that CLI, so
+  Chrome's CDP endpoint (``$CLAWBENCH_BROWSER_CDP_URL``). Terminus drives the
+  browser via that CLI, so
   every action flows through CDP and is captured by the ClawBench recorder
   extension into /data/actions.jsonl, and the eval interceptor's
   /data/.stop-requested signal still works.
@@ -39,7 +40,11 @@ from harbor.models.agent.context import AgentContext
 
 DATA_DIR = Path("/data")
 LOGS_DIR = Path("/logs/agent")
-CDP_URL = "http://127.0.0.1:9222"
+# The container entrypoint always exports CLAWBENCH_BROWSER_CDP_URL (defaulting to
+# the shared local Chrome) before launching this harness, so read it from the
+# environment rather than hard-coding the endpoint (keeps every harness pointed at
+# the same CDP target — see tests/test_host_resources.py).
+CDP_URL = os.environ.get("CLAWBENCH_BROWSER_CDP_URL", "")
 
 
 class LocalEnvironment(BaseEnvironment):
