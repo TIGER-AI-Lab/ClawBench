@@ -18,7 +18,10 @@ if [ -z "$ENGINE" ]; then
   else echo "ERROR: neither podman nor docker found" >&2; exit 1; fi
 fi
 
-IMAGE_TAG="${1:-clawbench-harbor-task}"
+# Default tag must match export.DEFAULT_BASE_IMAGE so the exported task.toml's
+# [environment].docker_image resolves to this locally-built image (PREBUILT mode
+# never pulls). The localhost/ prefix is podman's local-registry namespace.
+IMAGE_TAG="${1:-localhost/clawbench-harbor-task:latest}"
 
 # Resolve repo paths relative to this script: .../src/clawbench/runtime/harnesses/harbor-task
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
