@@ -20,6 +20,12 @@ INFRA_STOP_REASONS = {
     "pi_failed",
     "proxy_failed",
     "missing_harness",
+    # Harbor harness infra failures (clawbench.runtime.harnesses.harbor): the
+    # agent-browser CDP bridge could not attach (run-harbor.sh:41), or the Terminus
+    # driver died on startup / crashed (run-harbor.sh:55, harbor_driver.py:368).
+    # Without these, a Harbor infra failure was misclassified as an agent failure.
+    "agent_browser_cdp_failed",
+    "harbor_failed",
 }
 
 API_OR_CREDIT_PATTERNS = (
@@ -311,6 +317,8 @@ def ensure_interception(output_dir: Path):
         "pi_failed": "Session stopped: Pi coding agent process died on startup.",
         "proxy_failed": "Session stopped: LiteLLM API translation proxy failed to start.",
         "missing_harness": "Session stopped: container image was built without a harness layer.",
+        "agent_browser_cdp_failed": "Session stopped: the agent-browser CLI could not attach to Chrome over CDP (Harbor browser bridge failed).",
+        "harbor_failed": "Session stopped: the Harbor agent (Terminus 2) process died on startup or crashed.",
     }
     description = descriptions.get(reason, f"Session stopped: {reason}.")
     schema_file = output_dir / "eval-schema.json"

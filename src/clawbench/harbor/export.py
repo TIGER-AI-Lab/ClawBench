@@ -52,9 +52,11 @@ from typing import Any
 
 from clawbench.harbor.model_map import judge_api_type
 from clawbench.runner.run_support.task import (
+    BUILTIN_MY_INFO_FILES,
     build_instruction,
     copy_extra_info,
     normalize_extra_info,
+    prepare_personal_info,
     validate_task_data,
 )
 from clawbench.utils.paths import SHARED_ROOT
@@ -64,6 +66,33 @@ from clawbench.utils.paths import SHARED_ROOT
 # it without ever attempting a remote pull (which is what BuildKit did before).
 DEFAULT_BASE_IMAGE = "localhost/clawbench-harbor-task:latest"
 DEFAULT_JUDGE_MODEL = "gemini-3.5-flash"
+
+# Harbor bakes a *fixed* persona (no per-run disposable inbox; signup / email-
+# verification tasks are skipped upstream by needs_email_or_signup()). This seeds
+# the generated email_credentials.json so the staged my-info bundle is self-
+# consistent and matches the instruction's file list. It is a placeholder, never a
+# live credential, and is never used for real authentication.
+HARBOR_PERSONA_FALLBACK_EMAIL = "alex.green.uoft@clawbench.cc"
+HARBOR_PERSONA_PASSWORD = "ClawBench-Harbor-Demo-Pw"
+
+
+def _persona_email() -> str:
+    """Email seeded into the baked persona bundle (email_credentials/personal_info).
+
+    Reuses the shared persona's own contact email so the staged my-info files stay
+    self-consistent: prepare_personal_info() overwrites contact.email with this, so
+    passing the existing value round-trips. Falls back to a constant if unreadable.
+    """
+    src = SHARED_ROOT / "alex_green_personal_info.json"
+    try:
+        data = json.loads(src.read_text())
+    except (OSError, json.JSONDecodeError):
+        return HARBOR_PERSONA_FALLBACK_EMAIL
+    email = (data.get("contact") or {}).get("email") if isinstance(data, dict) else None
+    if isinstance(email, str) and email.strip():
+        return email.strip()
+    return HARBOR_PERSONA_FALLBACK_EMAIL
+
 
 # Heuristic signals that a task needs a fresh, verifiable email inbox or account
 # creation — which the Harbor static-image flow cannot provision per run.
@@ -286,8 +315,29 @@ def build_compose() -> str:
 
 
 def build_test_sh(no_judge: bool) -> str:
-    """Render tests/test.sh: the Harbor verifier that writes reward.json/reward.txt."""
+    """Render tests/test.sh: the Harbor verifier that writes reward.json/reward.txt.
+
+    On a *clean* run, ``clawbench.harbor.verify`` writes reward.json, reward.txt and
+    a rich verify-result.json itself. If the verifier process crashes before doing
+    so (import error, OOM, segfault, ...), the fallback here writes a zero reward AND
+    a minimal ``verify-result.json`` carrying the captured stderr, so a verifier
+    crash is diagnosable instead of silently scoring 0.0 with no explanation.
+    """
     no_judge_flag = " --no-judge" if no_judge else ""
+    # Inline diagnostic writer: read the captured stderr and emit a minimal
+    # verify-result.json. Single-quoted heredoc => no bash expansion in the body.
+    diag = (
+        "import json\n"
+        "from pathlib import Path\n"
+        "try:\n"
+        "    err = Path('/logs/verifier/verify-stderr.log').read_text(errors='replace')\n"
+        "except OSError:\n"
+        "    err = ''\n"
+        "err = err.strip()[-4000:] or 'verifier crashed before writing a result'\n"
+        "Path('/logs/verifier/verify-result.json').write_text(\n"
+        "    json.dumps({'pass': False, 'reward': 0.0, 'error': err})\n"
+        ")\n"
+    )
     return (
         "#!/bin/bash\n"
         "# Harbor verifier for a ClawBench task. Reuses ClawBench's pure-Python\n"
@@ -295,9 +345,18 @@ def build_test_sh(no_judge: bool) -> str:
         "# /logs/verifier/reward.json (canonical) and reward.txt (fallback).\n"
         "set -uo pipefail\n"
         "mkdir -p /logs/verifier\n"
-        f"python3 -m clawbench.harbor.verify{no_judge_flag} || {{ "
-        "echo '{\"reward\": 0.0}' > /logs/verifier/reward.json; "
-        "echo 0.0 > /logs/verifier/reward.txt; }\n"
+        f"if ! python3 -m clawbench.harbor.verify{no_judge_flag} "
+        "2> /logs/verifier/verify-stderr.log; then\n"
+        "  cat /logs/verifier/verify-stderr.log >&2 || true\n"
+        "  echo '{\"reward\": 0.0}' > /logs/verifier/reward.json\n"
+        "  echo 0.0 > /logs/verifier/reward.txt\n"
+        "  python3 - <<'PYEOF' || printf '%s' "
+        '\'{"pass": false, "reward": 0.0, '
+        '"error": "verifier crashed before writing a result"}\' '
+        "> /logs/verifier/verify-result.json\n"
+        f"{diag}"
+        "PYEOF\n"
+        "fi\n"
     )
 
 
@@ -342,42 +401,57 @@ def export_case(
             base_image=base_image,
         )
     )
-    # instruction.md (+ a plain instruction.txt bind-mounted for the judge fallback)
-    instruction = build_instruction(task)
-    (dst / "instruction.md").write_text(instruction)
-    (dst / "environment" / "instruction.txt").write_text(
-        str(task.get("instruction", ""))
-    )
+    env_dir = dst / "environment"
+    # environment/instruction.txt (plain instruction, bind-mounted for judge fallback)
+    (env_dir / "instruction.txt").write_text(str(task.get("instruction", "")))
     # environment/eval-schema.json (bind-mounted to /eval-schema.json)
-    (dst / "environment" / "eval-schema.json").write_text(
-        json.dumps(task["eval_schema"], indent=2)
-    )
+    (env_dir / "eval-schema.json").write_text(json.dumps(task["eval_schema"], indent=2))
     # environment/docker-compose.yaml (PREBUILT mode: bind mounts, no build)
-    (dst / "environment" / "docker-compose.yaml").write_text(build_compose())
-    # environment/my-info (fixed persona, bind-mounted to /clawbench/my-info)
-    my_info = dst / "environment" / "my-info"
-    my_info.mkdir()
-    persona_src = SHARED_ROOT / "alex_green_personal_info.json"
-    if persona_src.exists():
-        shutil.copy2(persona_src, my_info / "alex_green_personal_info.json")
-    # Also copy every extra_info file the task references: build_instruction() lists
-    # them under /my-info/, so the agent prompt must not point at missing files.
+    (env_dir / "docker-compose.yaml").write_text(build_compose())
+
+    # environment/my-info: stage the *full* canonical persona bundle exactly as the
+    # native runner does. prepare_personal_info() is the single source of all three
+    # built-in files build_instruction() advertises (alex_green_personal_info.json,
+    # email_credentials.json, alex_green_resume.pdf) -- earlier we only baked
+    # personal_info.json, so the prompt pointed at two missing files. Harbor has no
+    # per-run disposable inbox, so we bake a fixed persona email/password.
+    my_info = env_dir / "my-info"
+    persona_tmp, _ = prepare_personal_info(
+        SHARED_ROOT, _persona_email(), HARBOR_PERSONA_PASSWORD, env_dir
+    )
+    persona_tmp.rename(my_info)
+    # Also stage every extra_info file the task references (warns-only on miss).
     copy_warnings = copy_extra_info(task, case_dir, my_info)
-    # M4: copy_extra_info only warns-and-continues on a missing/unreadable file, but
-    # build_instruction() unconditionally advertises every path entry under
-    # /my-info/. Shipping an instruction that points at a file we failed to stage is
-    # a silent data bug, so fail loudly instead. The referenced names mirror
-    # build_instruction()'s file list exactly (normalize_extra_info -> Path(...).name).
+
+    # Make the instruction advertise ONLY the built-in files we actually staged: a
+    # built-in that genuinely can't be produced (e.g. resume-PDF generation fails)
+    # is dropped from the prompt rather than shipped as a dangling reference.
+    staged_builtins = [
+        (name, desc)
+        for name, desc in BUILTIN_MY_INFO_FILES
+        if (my_info / name).is_file()
+    ]
+    instruction = build_instruction(task, builtin_files=staged_builtins)
+
+    # Hard-fail guard (M4): every file the instruction references under /my-info/
+    # must exist in the staged bundle before we write the archive. Built-ins are
+    # already filtered to staged_builtins, so this also catches extra_info files
+    # that copy_extra_info() only warned about (otherwise a silent prompt/data bug).
     extra_entries, _ = normalize_extra_info(task.get("extra_info"))
-    referenced = [Path(e["path"]).name for e in extra_entries if e.get("path")]
-    missing = [name for name in referenced if not (my_info / name).is_file()]
+    referenced = [name for name, _ in staged_builtins]
+    referenced += [Path(e["path"]).name for e in extra_entries if e.get("path")]
+    missing = sorted({name for name in referenced if not (my_info / name).is_file()})
     if missing:
         shutil.rmtree(dst, ignore_errors=True)
         raise RuntimeError(
-            f"{case}: extra_info file(s) referenced by the instruction are missing "
-            f"from my-info: {', '.join(sorted(missing))}. "
+            f"{case}: file(s) referenced by the instruction are missing from "
+            f"my-info: {', '.join(missing)}. "
             f"copy_extra_info warnings: {copy_warnings or 'none'}"
         )
+
+    # instruction.md (depends on which built-ins were staged above)
+    (dst / "instruction.md").write_text(instruction)
+
     # tests/test.sh
     test_sh = dst / "tests" / "test.sh"
     test_sh.write_text(build_test_sh(no_judge))

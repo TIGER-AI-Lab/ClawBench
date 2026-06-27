@@ -59,6 +59,24 @@ def test_extra_info_copy_and_instruction_are_host_side(tmp_path: Path) -> None:
     assert "2-day meal plan" in instruction
 
 
+def test_build_instruction_lists_only_available_builtin_files() -> None:
+    # The default lists all built-in my-info files; passing a subset (as the Harbor
+    # exporter does when a built-in can't be staged) drops the rest from the prompt
+    # so it never references a file that is missing from /my-info/.
+    task = {"instruction": "Do a thing.", "extra_info": []}
+    full = build_instruction(task)
+    assert "alex_green_personal_info.json" in full
+    assert "email_credentials.json" in full
+    assert "alex_green_resume.pdf" in full
+
+    subset = build_instruction(
+        task, builtin_files=[("alex_green_personal_info.json", "info")]
+    )
+    assert "alex_green_personal_info.json" in subset
+    assert "email_credentials.json" not in subset
+    assert "alex_green_resume.pdf" not in subset
+
+
 def test_normalize_extra_info_accepts_legacy_and_schema_shapes() -> None:
     entries, warnings = normalize_extra_info(
         [

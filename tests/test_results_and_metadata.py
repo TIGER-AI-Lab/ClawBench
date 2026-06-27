@@ -70,6 +70,27 @@ def test_classify_run_detects_api_or_credit_evidence(tmp_path: Path) -> None:
     assert "429" in result["metrics"]["api_or_credit_evidence"]
 
 
+@pytest.mark.parametrize("reason", ["harbor_failed", "agent_browser_cdp_failed"])
+def test_classify_run_harbor_infra_stop_reason(tmp_path: Path, reason: str) -> None:
+    # MAJOR (round-3): Harbor harness infra stop-reasons (run-harbor.sh:41/55,
+    # harbor_driver.py:368) must classify as infra_failure, not as an agent failure.
+    # Give the run otherwise-healthy metrics so the *only* thing forcing infra
+    # classification is the stop_reason (without it -> model_not_intercepted).
+    data = tmp_path / "data"
+    data.mkdir()
+    _write_jsonl(data / "actions.jsonl", [{"type": "click"}])
+    _write_jsonl(data / "requests.jsonl", [{"url": "https://e.test"}])
+    _write_jsonl(data / "agent-messages.jsonl", [{"model_output": {"ok": True}}])
+    (data / "recording.mp4").write_bytes(b"0" * 1024)
+    (data / "interception.json").write_text(json.dumps({"stop_reason": reason}))
+
+    result = classify_run(tmp_path, intercepted=False)
+
+    assert result["failure_category"] == "infra_failure"
+    assert result["infra_failure"] is True
+    assert result["adjusted_eligible"] is False
+
+
 def test_print_results_includes_usage_summary(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

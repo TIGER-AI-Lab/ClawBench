@@ -103,8 +103,50 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     # --no-judge requested -> flag is present.
     assert "--no-judge" in test_sh
 
-    # Persona is copied into the bind-mounted my-info dir.
-    assert (dst / "environment" / "my-info" / "alex_green_personal_info.json").is_file()
+    # Persona is copied into the bind-mounted my-info dir (all three built-ins).
+    my_info = dst / "environment" / "my-info"
+    assert (my_info / "alex_green_personal_info.json").is_file()
+    assert (my_info / "email_credentials.json").is_file()
+    assert (my_info / "alex_green_resume.pdf").is_file()
+
+
+def test_export_stages_all_builtin_my_info_files(tmp_path: Path) -> None:
+    # MAJOR (round-3): build_instruction() advertises three built-in my-info files
+    # (personal_info.json, email_credentials.json, resume.pdf). Export previously
+    # staged only personal_info.json, so the prompt pointed at two missing files.
+    # Invariant: each built-in is staged AND referenced (or neither).
+    from clawbench.runner.run_support.task import BUILTIN_MY_INFO_FILES
+
+    case = _write_case(tmp_path / "v2", "v2-builtins")
+    out = tmp_path / "out"
+    out.mkdir()
+    ok, msg = export.export_case(case, out, base_image="x", no_judge=True, judge_env={})
+    assert ok, msg
+    my_info = out / case.name / "environment" / "my-info"
+    instruction = (out / case.name / "instruction.md").read_text()
+
+    for name, _desc in BUILTIN_MY_INFO_FILES:
+        staged = (my_info / name).is_file()
+        referenced = name in instruction
+        assert staged, f"built-in {name} not staged in my-info"
+        assert staged == referenced, (
+            f"{name}: staged={staged} but referenced={referenced} (must match)"
+        )
+    # The baked credentials are self-consistent with the persona contact email.
+    creds = json.loads((my_info / "email_credentials.json").read_text())
+    assert creds["email"] == export._persona_email()
+
+
+def test_test_sh_writes_verify_result_diagnostic_on_crash() -> None:
+    # MAJOR (round-3): on a verifier crash the test.sh fallback must write a minimal
+    # /logs/verifier/verify-result.json diagnostic, not just reward.json/txt = 0.0.
+    test_sh = export.build_test_sh(no_judge=True)
+    assert "/logs/verifier/verify-result.json" in test_sh
+    assert '"pass": false' in test_sh  # static printf fallback JSON
+    assert "verify-stderr.log" in test_sh  # stderr captured for the diagnostic
+    # The zero-reward fallback is still written.
+    assert "/logs/verifier/reward.json" in test_sh
+    assert "/logs/verifier/reward.txt" in test_sh
 
 
 def test_export_with_judge_bakes_verifier_env(tmp_path: Path) -> None:
