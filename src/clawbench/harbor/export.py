@@ -270,7 +270,7 @@ def build_test_sh(no_judge: bool) -> str:
         "set -uo pipefail\n"
         "mkdir -p /logs/verifier\n"
         f"python3 -m clawbench.harbor.verify{no_judge_flag} || {{ "
-        'echo \'{"reward": 0.0}\' > /logs/verifier/reward.json; '
+        "echo '{\"reward\": 0.0}' > /logs/verifier/reward.json; "
         "echo 0.0 > /logs/verifier/reward.txt; }\n"
     )
 

@@ -183,9 +183,7 @@ def _write_reward(reward_file: Path, result: dict[str, Any]) -> None:
     """
     reward_file.parent.mkdir(parents=True, exist_ok=True)
     reward = float(result["reward"])
-    (reward_file.with_name("reward.json")).write_text(
-        json.dumps({"reward": reward})
-    )
+    (reward_file.with_name("reward.json")).write_text(json.dumps({"reward": reward}))
     reward_file.write_text(f"{reward}")
     (reward_file.parent / "verify-result.json").write_text(
         json.dumps(result, indent=2, ensure_ascii=False)
