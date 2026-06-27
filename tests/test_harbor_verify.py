@@ -157,6 +157,69 @@ def test_main_writes_reward_file(
     assert blob["intercepted"] is True
 
 
+def test_main_writes_canonical_reward_json_and_txt_fallback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # m1(a): Harbor 0.13.1 reads reward.json first; we must write BOTH the canonical
+    # reward.json ({"reward": <float>}) and the bare-float reward.txt fallback.
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(
+        ["--data-dir", str(data), "--reward-file", str(reward_file), "--no-judge"]
+    )
+    assert rc == 0
+    reward_json = reward_file.with_name("reward.json")
+    assert reward_json.is_file()
+    # reward.json is the canonical, json-first artifact Harbor reads before the txt.
+    assert json.loads(reward_json.read_text()) == {"reward": 1.0}
+    # reward.txt fallback carries the same bare float.
+    assert reward_file.read_text().strip() == "1.0"
+
+
+def test_main_fails_closed_when_judge_required_but_unconfigured(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # m1(c) / M3: judging is required (no --no-judge) but no JUDGE_* env reached the
+    # verifier -> reward 0.0 + a clear diagnostic, never a silent pass.
+    for var in ("JUDGE_MODEL", "JUDGE_BASE_URL", "JUDGE_API_TYPE", "JUDGE_API_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.delenv("CLAWBENCH_NO_JUDGE", raising=False)
+
+    def boom(*a, **k):  # pragma: no cover - must not be called
+        raise AssertionError("judge must not run when unconfigured")
+
+    monkeypatch.setattr("clawbench.runner.judge.judge_request", boom)
+
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)  # intercepted, yet must NOT pass
+    reward_file = tmp_path / "logs" / "verifier" / "reward.txt"
+    rc = verify.main(["--data-dir", str(data), "--reward-file", str(reward_file)])
+    assert rc == 0
+    assert json.loads(reward_file.with_name("reward.json").read_text()) == {
+        "reward": 0.0
+    }
+    assert reward_file.read_text().strip() == "0.0"
+    blob = json.loads((reward_file.parent / "verify-result.json").read_text())
+    assert blob["pass"] is False
+    assert blob["reward"] == 0.0
+    assert blob["error"] and "judge required" in blob["error"]
+
+
+def test_compute_reward_fails_closed_when_judge_required_but_missing(
+    tmp_path: Path,
+) -> None:
+    # Defense-in-depth at the compute_reward layer (no_judge=False, judge_cfg=None).
+    data = tmp_path / "data"
+    _write_interception(data, intercepted=True)
+    result = verify.compute_reward(
+        data, no_judge=False, judge_cfg=None, instruction="Add Baked Ziti"
+    )
+    assert result["pass"] is False
+    assert result["reward"] == 0.0
+    assert result["error"] and "judge required" in result["error"]
+
+
 def test_ensure_interception_creates_file_when_missing(tmp_path: Path) -> None:
     # No interception.json: ensure_interception should synthesize a not-intercepted
     # result from the stop-reason marker, and reward should be 0.

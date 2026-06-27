@@ -79,7 +79,9 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     assert cfg["verifier"]["timeout_sec"] >= time_limit_s
     # PREBUILT mode: [environment].docker_image points at the local image -> Harbor
     # uses docker-compose-prebuilt.yaml (no build).
-    assert cfg["environment"]["docker_image"] == "localhost/clawbench-harbor-task:latest"
+    assert (
+        cfg["environment"]["docker_image"] == "localhost/clawbench-harbor-task:latest"
+    )
 
     # eval-schema.json baked verbatim.
     baked = json.loads((dst / "environment" / "eval-schema.json").read_text())
@@ -92,12 +94,17 @@ def test_export_case_produces_harbor_task_dir(tmp_path: Path) -> None:
     assert "./my-info:/clawbench/my-info:ro" in compose
     assert "pull_policy: never" in compose
 
-    # test.sh runs the verifier shim and falls back to a 0.0 reward.
+    # test.sh runs the verifier shim and falls back to a 0.0 reward in BOTH the
+    # canonical reward.json and the reward.txt fallback (M1).
     test_sh = (dst / "tests" / "test.sh").read_text()
     assert "python3 -m clawbench.harbor.verify" in test_sh
+    assert "/logs/verifier/reward.json" in test_sh
     assert "/logs/verifier/reward.txt" in test_sh
     # --no-judge requested -> flag is present.
     assert "--no-judge" in test_sh
+
+    # Persona is copied into the bind-mounted my-info dir.
+    assert (dst / "environment" / "my-info" / "alex_green_personal_info.json").is_file()
 
 
 def test_export_with_judge_bakes_verifier_env(tmp_path: Path) -> None:
@@ -118,12 +125,49 @@ def test_export_with_judge_bakes_verifier_env(tmp_path: Path) -> None:
         judge_env=judge_env,
     )
     assert ok
-    cfg = tomllib.loads((out / case.name / "task.toml").read_text())
+    task_toml_text = (out / case.name / "task.toml").read_text()
+    cfg = tomllib.loads(task_toml_text)
+    # Non-secret judge config IS baked into [verifier.env].
     assert cfg["verifier"]["env"]["JUDGE_MODEL"] == "gemini-3.5-flash"
     assert cfg["verifier"]["env"]["JUDGE_API_TYPE"] == "openai-completions"
+    # C1 / m1(b): the judge API key must NEVER be baked into the shareable task.toml
+    # (it is injected at runtime via `harbor run --ve JUDGE_API_KEY=...`).
+    assert "JUDGE_API_KEY" not in cfg["verifier"]["env"]
+    assert "JUDGE_API_KEY" not in task_toml_text
+    assert "secret" not in task_toml_text
     # test.sh should NOT carry --no-judge when judging is on.
     test_sh = (out / case.name / "tests" / "test.sh").read_text()
     assert "--no-judge" not in test_sh
+
+
+def test_export_copies_all_extra_info_into_my_info(tmp_path: Path) -> None:
+    # M4: every extra_info file the task references must land in environment/my-info
+    # so build_instruction()'s /my-info/ file list never points at a missing file.
+    case = _write_case(tmp_path / "v2", "v2-extra")
+    task = json.loads((case / "task.json").read_text())
+    (case / "extra_info").mkdir()
+    (case / "extra_info" / "address_info.json").write_text('{"city": "Vancouver"}')
+    task["extra_info"] = [
+        {"path": "extra_info/address_info.json", "description": "Address info"}
+    ]
+    (case / "task.json").write_text(json.dumps(task, indent=2))
+
+    out = tmp_path / "out"
+    out.mkdir()
+    ok, msg = export.export_case(
+        case,
+        out,
+        base_image="localhost/clawbench-harbor-task:latest",
+        no_judge=True,
+        judge_env={},
+    )
+    assert ok, msg
+    my_info = out / case.name / "environment" / "my-info"
+    assert (my_info / "alex_green_personal_info.json").is_file()
+    assert (my_info / "address_info.json").is_file()
+    # The exported instruction references the copied file by name.
+    instruction = (out / case.name / "instruction.md").read_text()
+    assert "address_info.json" in instruction
 
 
 def test_registration_class_is_skipped(tmp_path: Path) -> None:

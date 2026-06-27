@@ -7,17 +7,45 @@ import pytest
 from clawbench.harbor import model_map as mm
 
 
-def test_gemini_native_root_uses_gemini_provider_no_api_base() -> None:
+def test_gemini_openai_compat_base_routes_through_openai_provider() -> None:
+    # M5: a /v1beta/openai base with google-generative-ai must route through the
+    # openai provider so the api_base is preserved (POST /chat/completions); the
+    # native gemini provider would drop it and POST generateContent.
     mapped = mm.build_litellm_model(
         "https://generativelanguage.googleapis.com/v1beta/openai",
         "gemini-3.5-flash",
         "google-generative-ai",
         "k",
     )
+    assert mapped.model == "openai/gemini-3.5-flash"
+    assert mapped.provider == "openai"
+    assert mapped.api_base == "https://generativelanguage.googleapis.com/v1beta/openai"
+    assert mapped.env == {"OPENAI_API_KEY": "k"}
+
+
+def test_gemini_generic_openai_suffix_routes_through_openai_provider() -> None:
+    # Any base ending in /openai is OpenAI-compatible -> openai provider.
+    mapped = mm.build_litellm_model(
+        "https://proxy.example.com/openai",
+        "gemini-3.5-flash",
+        "google-generative-ai",
+        "k",
+    )
+    assert mapped.model == "openai/gemini-3.5-flash"
+    assert mapped.api_base == "https://proxy.example.com/openai"
+
+
+def test_gemini_true_native_root_uses_gemini_provider_no_api_base() -> None:
+    # The native generative-language root (no /openai) still uses LiteLLM's gemini
+    # provider with no api_base override.
+    mapped = mm.build_litellm_model(
+        "https://generativelanguage.googleapis.com",
+        "gemini-3.5-flash",
+        "google-generative-ai",
+        "k",
+    )
     assert mapped.model == "gemini/gemini-3.5-flash"
     assert mapped.provider == "gemini"
-    # base_url starts with the native Google host -> LiteLLM gemini provider
-    # default (no api_base override).
     assert mapped.api_base is None
     assert mapped.env["GEMINI_API_KEY"] == "k"
     assert mapped.env["GOOGLE_API_KEY"] == "k"

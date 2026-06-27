@@ -86,6 +86,18 @@ def test_missing_api_key_raises(tmp_path: Path) -> None:
         agent._resolve_model_env()
 
 
+def test_non_harbor_harness_is_rejected(tmp_path: Path) -> None:
+    # M6: the single prebuilt image always runs /run-harness.sh, so a non-harbor
+    # harness cannot be honoured and must fail loudly rather than silently mis-run.
+    with pytest.raises(ValueError, match="not supported"):
+        _agent(tmp_path, "gemini/gemini-3.5-flash", api_key="k", harness="hermes")
+
+
+def test_default_harness_is_harbor(tmp_path: Path) -> None:
+    agent = _agent(tmp_path, "gemini/gemini-3.5-flash", api_key="k")
+    assert agent.harness == "harbor"
+
+
 class _FakeEnv:
     """Minimal async environment returning a canned exec result."""
 
