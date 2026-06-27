@@ -133,3 +133,49 @@ def test_collect_harness_diagnostics_empty_when_no_artifacts(tmp_path: Path) -> 
     reason, inner = asyncio.run(agent._collect_harness_diagnostics(env))  # type: ignore[arg-type]
     assert reason == ""
     assert inner == ""
+
+
+class _RecordingEnv:
+    """Async environment that records every exec() call (command + timeout_sec)."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    async def exec(self, command: str, env=None, timeout_sec=None, **_kw):  # noqa: ANN001
+        self.calls.append({"command": command, "timeout_sec": timeout_sec})
+        return SimpleNamespace(stdout="", stderr="", return_code=0)
+
+
+def _glm_agent(tmp_path: Path, **kwargs) -> ClawbenchHarnessAgent:
+    return _agent(
+        tmp_path,
+        "openai/glm-5.1",
+        api_key="k",
+        base_url="https://api.z.ai/api/paas/v4",
+        api_type="openai-completions",
+        **kwargs,
+    )
+
+
+def test_run_exec_timeout_includes_cleanup_grace(tmp_path: Path) -> None:
+    # The harness self-stops at TIME_LIMIT_S then needs ~20s of cleanup; exec() must
+    # outlast that or it kills the harness before the verifier writes a reward.
+    from clawbench.harbor.agent import HARNESS_CLEANUP_GRACE_S
+
+    agent = _glm_agent(tmp_path, time_limit_s=120)
+    env = _RecordingEnv()
+    ctx = SimpleNamespace(metadata=None)
+    asyncio.run(agent.run("do the task", env, ctx))  # type: ignore[arg-type]
+    run_calls = [c for c in env.calls if c["command"] == "/run-harness.sh"]
+    assert run_calls, env.calls
+    assert run_calls[0]["timeout_sec"] == 120 + HARNESS_CLEANUP_GRACE_S
+
+
+def test_run_exec_timeout_none_without_time_limit(tmp_path: Path) -> None:
+    agent = _glm_agent(tmp_path)
+    env = _RecordingEnv()
+    ctx = SimpleNamespace(metadata=None)
+    asyncio.run(agent.run("do the task", env, ctx))  # type: ignore[arg-type]
+    run_calls = [c for c in env.calls if c["command"] == "/run-harness.sh"]
+    assert run_calls, env.calls
+    assert run_calls[0]["timeout_sec"] is None

@@ -74,6 +74,12 @@ _PROVIDER_DEFAULTS: dict[str, tuple[str, str]] = {
 # cannot select a different harness from the one baked image, so it is rejected.
 DEFAULT_HARNESS = "harbor"
 CDP_VERSION_URL = "http://127.0.0.1:9222/json/version"
+# /run-harness.sh self-stops its agent at TIME_LIMIT_S, then spends ~20s on
+# mandatory cleanup (kill agent, promote transcript, 15s grace recording, stop
+# recording). The agent's exec() timeout must exceed TIME_LIMIT_S by at least this
+# grace, or it kills the harness mid-cleanup -- aborting the trial before the
+# verifier runs, so no reward is ever written for a run that hits its time limit.
+HARNESS_CLEANUP_GRACE_S = 60
 
 
 class ClawbenchHarnessAgent(BaseAgent):
@@ -260,10 +266,16 @@ class ClawbenchHarnessAgent(BaseAgent):
             "Running ClawBench harness=%s model=%s", self.harness, self.model_name
         )
 
+        # Give the harness room to finish its self-stop cleanup before exec() kills
+        # it; otherwise a run that reaches TIME_LIMIT_S is killed mid-cleanup and
+        # the verifier never runs (no reward written). None -> no exec timeout.
+        exec_timeout = (
+            self._time_limit_s + HARNESS_CLEANUP_GRACE_S if self._time_limit_s else None
+        )
         result = await environment.exec(
             f"{run_script}",
             env=env,
-            timeout_sec=self._time_limit_s,
+            timeout_sec=exec_timeout,
         )
         # Surface the harness output; the real signal is /data/interception.json.
         self.logger.info("harness exit=%s", getattr(result, "return_code", "?"))
