@@ -1,0 +1,2558 @@
+{
+  "047-daily-life-personal-care-taskrabbit": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "086-job-search-hr-cv-autofill-greenhouse-meta": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 2,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "089-job-search-hr-cv-autofill-simplify-jobs": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 4,
+      "E": 1,
+      "B": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "091-job-search-hr-job-apply-indeed": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "B": 2,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1010-rating-voting-review-myrecipes": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1033-education-learning-registration-khanacademy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1035-education-learning-enrollment-edx": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1045-weworkremotely": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 1,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1065b-daily-life-home-services-handy": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 2,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1088-nonprofit-charity-petition-change": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 1,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1093-personal-management-travel-tripit": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 2,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1095-health-mealplan-eatthismuch": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 1,
+      "D": 4,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1097-beauty-personal-care-shopping-theordinary": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 2,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1100-food-cooking-collection-myrecipes": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1101-hobbies-gaming-discussion-ravelry": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 2,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1102-fitness-social-post-strava": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 2,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1103-fitness-club-strava": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1104-fitness-edit-activity-strava": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1107-hobbies-gaming-forum-boardgamegeek": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 3,
+      "C": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1108-civic-petition-change": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 1,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1111-civic-petition-change": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1112-nonprofit-petition-update-change": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1113-health-mealplan-eatthismuch": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1114-education-enrollment-edx": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1115-education-enrollment-edx": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1116-education-enrollment-edx": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1117": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1118": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1120b-services-booking-handy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1121b-services-booking-handy": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1122-education-course-khanacademy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1123-education-course-khanacademy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1124-education-course-khanacademy": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1125-education-course-khanacademy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1126-food-cooking-collection-myrecipes": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1130-training-class-search-redcross": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "B": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1131-training-add-to-cart-redcross": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 4,
+      "A": 3,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1132-training-enroll-course-redcross": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 4,
+      "A": 3,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1133-newsletter-signup-redcross": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "D": 2,
+      "E": 1,
+      "B": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1134-chapter-finder-redcross": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1135-events-tickets-ticketmaster": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1136-events-tickets-ticketmaster": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 4,
+      "C": 1,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1137-entertainment-watchlist-trakt": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "E": 4,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1138-entertainment-watchlist-trakt": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1139-travel-itinerary-tripit": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "C": 1,
+      "F": 1,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1140-travel-itinerary-tripit": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "C": 3,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1141-travel-itinerary-tripit": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "C": 3,
+      "F": 1,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1144-weworkremotely": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1145-weworkremotely": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1146-weworkremotely": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 2,
+      "C": 4,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1201-beauty-cart-theordinary": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "1202-beauty-cart-quantity-theordinary": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "B": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "179-dev-tech-github-ops-github": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "180-dev-tech-github-ops-github": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 8
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "215-academia-research-paper-tables-overleaf": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "F": 1,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "234-daily-life-events-ticketmaster": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "242-academia-research-research-tools-overleaf": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "247-academia-research-research-tools-semantic-scholar": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 1,
+      "D": 1,
+      "C": 5,
+      "G": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "265-education-learning-general-coursera": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 4,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "266-education-learning-general-leetcode": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "A": 1,
+      "D": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "273-education-learning-general-edx": {
+    "n_runs": 8,
+    "n_intercepted": 4,
+    "n_nonint": 4,
+    "cats": {
+      "F": 2,
+      "C": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "274-office-secretary-tasks-calendar-when2meet": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "E": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "284-office-secretary-tasks-calendar-when2meet": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "E": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "369-entertainment-hobbies-general-goodreads": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "E": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "372-entertainment-hobbies-general-eventbrite": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "413-personal-management-personal-tools-todoist": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 2,
+      "C": 1,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "468-rating-voting-general-glassdoor": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 4,
+      "E": 1,
+      "B": 2,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "469-rating-voting-general-tripadvisor": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 1,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "470-rating-voting-general-trustpilot": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 5,
+      "A": 1,
+      "E": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "474-rating-voting-general-capterra": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "B": 2,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "475-rating-voting-general-g2": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "483-creation-init-general-airtable": {
+    "n_runs": 8,
+    "n_intercepted": 4,
+    "n_nonint": 4,
+    "cats": {
+      "F": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "485-creation-init-general-webflow": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 1,
+      "C": 7
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "486-creation-init-general-mailchimp": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 8
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "487-creation-init-general-typeform": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 8
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "488-creation-init-general-substack": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 1,
+      "C": 7
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "500-office-secretary-tasks-signup-doodle": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "A": 1,
+      "G": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "501-office-secretary-tasks-signup-doodle": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 5
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "502-office-secretary-tasks-calendar-doodle": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 1,
+      "C": 4,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "503-office-secretary-tasks-calendar-doodle": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "D": 1,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "520-shopping-retail-target": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "E": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "521-shopping-retail-target": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "E": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "522-shopping-retail-target": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "E": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "523-shopping-retail-target": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 1,
+      "E": 2,
+      "C": 1,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "530-shopping-marketplace-etsy": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "A": 6,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "531-shopping-marketplace-etsy": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 2,
+      "A": 5,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "533-daily-life-utilities-inmyarea": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 4,
+      "B": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "535-daily-life-shopping-etsy": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "A": 5,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "536-daily-life-shopping-etsy": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "A": 5,
+      "C": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "560": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 1,
+      "C": 5
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "564": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "571-job-search-hr-recruitment-mgmt-workable": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "583-office-secretary-tasks-support-tickets-freshdesk": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 1,
+      "C": 1,
+      "E": 4,
+      "A": 1,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "596-daily-life-fitness-strava": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "597-daily-life-fitness-strava": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "598-academia-research-legal-docs-formswift": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "600-hobbies-crafts-community-ravelry": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "A": 3,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "601-hobbies-gaming-reviews-ravelry": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 2,
+      "C": 3,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "602-hobbies-crafts-community-ravelry": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 2,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "603-hobbies-crafts-community-ravelry": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "C": 5,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "607-hobbies-gaming-reviews-boardgamegeek": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 5,
+      "D": 2,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "608-education-learning-kids-courses-outschool": {
+    "n_runs": 8,
+    "n_intercepted": 5,
+    "n_nonint": 3,
+    "cats": {
+      "F": 2,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "609-education-learning-meditation-spirit-rock-meditation-center": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "D": 6,
+      "A": 1,
+      "E": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "610-hobbies-gaming-reviews-boardgamegeek": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "C": 6,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "630-daily-life-productivity-habitica": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 1,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "631-daily-life-productivity-habitica": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "633-daily-life-productivity-habitica": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "C": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "634-daily-life-productivity-habitica": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "C": 1,
+      "A": 1,
+      "D": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "635-entertainment-tracking-trakt": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "E": 5,
+      "A": 1,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "638-entertainment-tracking-trakt": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "E": 4,
+      "F": 1,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "705-rating-voting-wine-review-vivino": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 1,
+      "C": 5,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "706-rating-voting-beer-review-beeradvocate": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "707-rating-voting-social-wine-untappd": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "708-rating-voting-professor-review-ratemyprofessors": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 4,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "711-creation-init-color-design-coolors": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "E": 1,
+      "C": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "735-home-services-maintenance-house-cleaning-bark": {
+    "n_runs": 8,
+    "n_intercepted": 4,
+    "n_nonint": 4,
+    "cats": {
+      "F": 2,
+      "A": 1,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "737-home-services-maintenance-kitchen-remodel-lowes": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "E": 7,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "763-automotive-vehicle-services-car-lease-autoslash": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "D": 4,
+      "C": 3,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "774-nonprofit-charity-nonprofit-job-apply-charity-village": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "F": 1,
+      "C": 4,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "776-nonprofit-charity-volunteer-signup-idealist": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "C": 6,
+      "B": 1,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "794-beauty-personal-care-salon-booking-styleseat": {
+    "n_runs": 8,
+    "n_intercepted": 1,
+    "n_nonint": 7,
+    "cats": {
+      "C": 6,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "795-pet-animal-care-pet-adoption-aspca": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 2,
+      "G": 1,
+      "A": 2,
+      "B": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "815-pet-animal-care-favorite-pet": {
+    "n_runs": 8,
+    "n_intercepted": 3,
+    "n_nonint": 5,
+    "cats": {
+      "F": 4,
+      "A": 1
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "816-pet-animal-care-remove-favorite": {
+    "n_runs": 8,
+    "n_intercepted": 2,
+    "n_nonint": 6,
+    "cats": {
+      "F": 4,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "817-pet-animal-care-create-adopter-profile": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "901-entertainment-imdb-add-to-watchlist": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "G": 1,
+      "F": 4,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "902-entertainment-imdb-rate-title": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "903-entertainment-imdb-remove-rating": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 4,
+      "A": 4
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "904-entertainment-imdb-create-list": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 6,
+      "A": 2
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  },
+  "905-entertainment-imdb-add-to-list": {
+    "n_runs": 8,
+    "n_intercepted": 0,
+    "n_nonint": 8,
+    "cats": {
+      "F": 5,
+      "A": 3
+    },
+    "models": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "glm-5.1",
+      "deepseek-v4-pro",
+      "owl-alpha",
+      "glm-4.5-air",
+      "ds-v4-flash",
+      "minimax-m2.5"
+    ]
+  }
+}

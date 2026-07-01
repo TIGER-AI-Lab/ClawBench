@@ -1,0 +1,445 @@
+{
+  "name": "CLAWBENCH-LITE",
+  "selector_version": "1.0.0",
+  "generated_from": "test-cases/v2",
+  "k": 30,
+  "note": "One representative per scenario class (metaclass), chosen to preserve platform / outcome-method / pilot-failure-regime coverage. Deterministic.",
+  "coverage": {
+    "n_full": 130,
+    "n_lite": 30,
+    "scenario_classes": {
+      "full": 30,
+      "lite": 30
+    },
+    "platforms": {
+      "full": 63,
+      "lite": 27
+    },
+    "methods": {
+      "full": {
+        "POST": 119,
+        "GET": 10,
+        "PUT": 1
+      },
+      "lite": {
+        "POST": 24,
+        "GET": 5,
+        "PUT": 1
+      }
+    },
+    "graphql": {
+      "full": 18,
+      "lite": 4
+    },
+    "reach_band": {
+      "full": {
+        "hard": 57,
+        "unreached": 55,
+        "mixed": 18
+      },
+      "lite": {
+        "unreached": 10,
+        "mixed": 10,
+        "hard": 10
+      }
+    },
+    "exec_mode_provisional": {
+      "lite": {
+        "repeatable-online": 27,
+        "reset-required": 3
+      }
+    }
+  },
+  "tasks": [
+    {
+      "task_dir": "v2-086-job-search-hr-cv-autofill-greenhouse-meta",
+      "task_id": 86,
+      "metaclass": "job-search-hr",
+      "class": "cv-autofill",
+      "platform": "greenhouse-meta",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "reset-required"
+    },
+    {
+      "task_dir": "v2-179-dev-tech-github-ops-github",
+      "task_id": 179,
+      "metaclass": "dev-tech",
+      "class": "github-ops",
+      "platform": "github",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-215-academia-research-paper-tables-overleaf",
+      "task_id": 215,
+      "metaclass": "academia-research",
+      "class": "paper-tables",
+      "platform": "overleaf",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-274-office-secretary-tasks-calendar-when2meet",
+      "task_id": 274,
+      "metaclass": "office-secretary-tasks",
+      "class": "calendar",
+      "platform": "when2meet",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-469-rating-voting-general-tripadvisor",
+      "task_id": 469,
+      "metaclass": "rating-voting",
+      "class": "general",
+      "platform": "tripadvisor",
+      "method": "POST",
+      "is_graphql": true,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "A",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-487-creation-init-general-typeform",
+      "task_id": 487,
+      "metaclass": "creation-init",
+      "class": "general",
+      "platform": "typeform",
+      "method": "PUT",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-523-shopping-retail-target",
+      "task_id": 523,
+      "metaclass": "shopping",
+      "class": "retail",
+      "platform": "target",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-603-hobbies-crafts-community-ravelry",
+      "task_id": 603,
+      "metaclass": "hobbies-crafts",
+      "class": "community",
+      "platform": "ravelry",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-608-education-learning-kids-courses-outschool",
+      "task_id": 608,
+      "metaclass": "education-learning",
+      "class": "kids-courses",
+      "platform": "outschool",
+      "method": "GET",
+      "is_graphql": false,
+      "reach_rate": 0.625,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-610-hobbies-gaming-reviews-boardgamegeek",
+      "task_id": 610,
+      "metaclass": "entertainment-hobbies",
+      "class": "gaming-reviews",
+      "platform": "boardgamegeek",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-735-home-services-maintenance-house-cleaning-bark",
+      "task_id": 735,
+      "metaclass": "home-services-maintenance",
+      "class": "house-cleaning",
+      "platform": "bark",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.5,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-763-automotive-vehicle-services-car-lease-autoslash",
+      "task_id": 763,
+      "metaclass": "automotive-vehicle-services",
+      "class": "car-lease",
+      "platform": "autoslash",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "D",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-776-nonprofit-charity-volunteer-signup-idealist",
+      "task_id": 776,
+      "metaclass": "nonprofit-charity",
+      "class": "volunteer-signup",
+      "platform": "idealist",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-815-pet-animal-care-favorite-pet",
+      "task_id": 815,
+      "metaclass": "pet-animal-care",
+      "class": "pet-favorite",
+      "platform": "petfinder",
+      "method": "POST",
+      "is_graphql": true,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "reset-required"
+    },
+    {
+      "task_dir": "v2-1045-weworkremotely",
+      "task_id": 1045,
+      "metaclass": "jobs",
+      "class": "posting",
+      "platform": "weworkremotely",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.25,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1065b-daily-life-home-services-handy",
+      "task_id": 1065,
+      "metaclass": "daily-life",
+      "class": "home-services",
+      "platform": "handy",
+      "method": "GET",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1093-personal-management-travel-tripit",
+      "task_id": 1093,
+      "metaclass": "personal-management",
+      "class": "travel",
+      "platform": "tripit",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1097-beauty-personal-care-shopping-theordinary",
+      "task_id": 1097,
+      "metaclass": "beauty-personal-care",
+      "class": "shopping",
+      "platform": "theordinary",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1100-food-cooking-collection-myrecipes",
+      "task_id": 1100,
+      "metaclass": "food-cooking",
+      "class": "collection",
+      "platform": "myrecipes",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.25,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1101-hobbies-gaming-discussion-ravelry",
+      "task_id": 1101,
+      "metaclass": "hobbies-gaming",
+      "class": "discussion",
+      "platform": "ravelry",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.375,
+      "reach_band": "mixed",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1102-fitness-social-post-strava",
+      "task_id": 1102,
+      "metaclass": "fitness",
+      "class": "social",
+      "platform": "strava",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1111-civic-petition-change",
+      "task_id": 1111,
+      "metaclass": "civic-engagement",
+      "class": "petition",
+      "platform": "change",
+      "method": "POST",
+      "is_graphql": true,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1113-health-mealplan-eatthismuch",
+      "task_id": 1113,
+      "metaclass": "health-fitness",
+      "class": "mealplan",
+      "platform": "eatthismuch",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.25,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "A",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1117",
+      "task_id": 1117,
+      "metaclass": "web_task",
+      "class": "registration",
+      "platform": "Eventbrite",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "A",
+      "exec_mode_provisional": "reset-required"
+    },
+    {
+      "task_dir": "v2-1121b-services-booking-handy",
+      "task_id": 1121,
+      "metaclass": "home-services",
+      "class": "booking",
+      "platform": "handy",
+      "method": "GET",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1124-education-course-khanacademy",
+      "task_id": 1124,
+      "metaclass": "education",
+      "class": "course",
+      "platform": "khanacademy",
+      "method": "POST",
+      "is_graphql": true,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "C",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1130-training-class-search-redcross",
+      "task_id": 1130,
+      "metaclass": "charity",
+      "class": "search",
+      "platform": "redcross",
+      "method": "GET",
+      "is_graphql": false,
+      "reach_rate": 0.25,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "F",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1135-events-tickets-ticketmaster",
+      "task_id": 1135,
+      "metaclass": "events",
+      "class": "tickets",
+      "platform": "ticketmaster",
+      "method": "GET",
+      "is_graphql": false,
+      "reach_rate": 0.0,
+      "reach_band": "unreached",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1137-entertainment-watchlist-trakt",
+      "task_id": 1137,
+      "metaclass": "entertainment",
+      "class": "rating",
+      "platform": "trakt",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "E",
+      "exec_mode_provisional": "repeatable-online"
+    },
+    {
+      "task_dir": "v2-1140-travel-itinerary-tripit",
+      "task_id": 1140,
+      "metaclass": "travel",
+      "class": "reservation",
+      "platform": "tripit",
+      "method": "POST",
+      "is_graphql": false,
+      "reach_rate": 0.125,
+      "reach_band": "hard",
+      "dominant_pilot_failure": "A",
+      "exec_mode_provisional": "repeatable-online"
+    }
+  ]
+}
