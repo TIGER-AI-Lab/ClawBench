@@ -1,0 +1,709 @@
+{
+  "policy_version": "1.0.0",
+  "n_tasks": 130,
+  "leakage_groups": {
+    "adopets.app": [
+      "v2-795-pet-animal-care-pet-adoption-aspca"
+    ],
+    "airtable.com": [
+      "v2-483-creation-init-general-airtable"
+    ],
+    "att.com": [
+      "v2-533-daily-life-utilities-inmyarea"
+    ],
+    "autoslash.com": [
+      "v2-763-automotive-vehicle-services-car-lease-autoslash"
+    ],
+    "bark.com": [
+      "v2-735-home-services-maintenance-house-cleaning-bark"
+    ],
+    "beeradvocate.com": [
+      "v2-706-rating-voting-beer-review-beeradvocate"
+    ],
+    "boardgamegeek.com": [
+      "v2-607-hobbies-gaming-reviews-boardgamegeek",
+      "v2-610-hobbies-gaming-reviews-boardgamegeek"
+    ],
+    "capterra.com": [
+      "v2-474-rating-voting-general-capterra"
+    ],
+    "change.org": [
+      "v2-1088-nonprofit-charity-petition-change",
+      "v2-1108-civic-petition-change",
+      "v2-1111-civic-petition-change",
+      "v2-1112-nonprofit-petition-update-change"
+    ],
+    "charityvillage.com": [
+      "v2-774-nonprofit-charity-nonprofit-job-apply-charity-village"
+    ],
+    "coolors.co": [
+      "v2-711-creation-init-color-design-coolors"
+    ],
+    "coursera.org": [
+      "v2-265-education-learning-general-coursera"
+    ],
+    "doodle.com": [
+      "v2-500-office-secretary-tasks-signup-doodle",
+      "v2-501-office-secretary-tasks-signup-doodle",
+      "v2-502-office-secretary-tasks-calendar-doodle",
+      "v2-503-office-secretary-tasks-calendar-doodle"
+    ],
+    "eatthismuch.com": [
+      "v2-1095-health-mealplan-eatthismuch",
+      "v2-1113-health-mealplan-eatthismuch"
+    ],
+    "edx.org": [
+      "v2-1035-education-learning-enrollment-edx",
+      "v2-1114-education-enrollment-edx",
+      "v2-1115-education-enrollment-edx",
+      "v2-1116-education-enrollment-edx",
+      "v2-273-education-learning-general-edx"
+    ],
+    "etsy.com": [
+      "v2-530-shopping-marketplace-etsy",
+      "v2-531-shopping-marketplace-etsy",
+      "v2-535-daily-life-shopping-etsy",
+      "v2-536-daily-life-shopping-etsy"
+    ],
+    "eventbrite.com": [
+      "v2-1117",
+      "v2-1118",
+      "v2-372-entertainment-hobbies-general-eventbrite",
+      "v2-560",
+      "v2-564"
+    ],
+    "formswift.com": [
+      "v2-598-academia-research-legal-docs-formswift"
+    ],
+    "freshdesk.com": [
+      "v2-583-office-secretary-tasks-support-tickets-freshdesk"
+    ],
+    "g2.com": [
+      "v2-475-rating-voting-general-g2"
+    ],
+    "geekdo.com": [
+      "v2-1107-hobbies-gaming-forum-boardgamegeek"
+    ],
+    "github.com": [
+      "v2-179-dev-tech-github-ops-github",
+      "v2-180-dev-tech-github-ops-github"
+    ],
+    "glassdoor.com": [
+      "v2-468-rating-voting-general-glassdoor"
+    ],
+    "goodreads.com": [
+      "v2-369-entertainment-hobbies-general-goodreads"
+    ],
+    "greenhouse.io": [
+      "v2-086-job-search-hr-cv-autofill-greenhouse-meta"
+    ],
+    "habitica.com": [
+      "v2-630-daily-life-productivity-habitica",
+      "v2-631-daily-life-productivity-habitica",
+      "v2-633-daily-life-productivity-habitica",
+      "v2-634-daily-life-productivity-habitica"
+    ],
+    "handy.com": [
+      "v2-1065b-daily-life-home-services-handy",
+      "v2-1120b-services-booking-handy",
+      "v2-1121b-services-booking-handy"
+    ],
+    "idealist.org": [
+      "v2-776-nonprofit-charity-volunteer-signup-idealist"
+    ],
+    "imdb.com": [
+      "v2-901-entertainment-imdb-add-to-watchlist",
+      "v2-902-entertainment-imdb-rate-title",
+      "v2-903-entertainment-imdb-remove-rating",
+      "v2-904-entertainment-imdb-create-list",
+      "v2-905-entertainment-imdb-add-to-list"
+    ],
+    "indeed.com": [
+      "v2-091-job-search-hr-job-apply-indeed"
+    ],
+    "khanacademy.org": [
+      "v2-1033-education-learning-registration-khanacademy",
+      "v2-1122-education-course-khanacademy",
+      "v2-1123-education-course-khanacademy",
+      "v2-1124-education-course-khanacademy",
+      "v2-1125-education-course-khanacademy"
+    ],
+    "leetcode.com": [
+      "v2-266-education-learning-general-leetcode"
+    ],
+    "mailchimp.com": [
+      "v2-486-creation-init-general-mailchimp"
+    ],
+    "myhomeprojectcenter.com": [
+      "v2-737-home-services-maintenance-kitchen-remodel-lowes"
+    ],
+    "myrecipes.com": [
+      "v2-1010-rating-voting-review-myrecipes",
+      "v2-1100-food-cooking-collection-myrecipes",
+      "v2-1126-food-cooking-collection-myrecipes"
+    ],
+    "outschool.com": [
+      "v2-608-education-learning-kids-courses-outschool"
+    ],
+    "overleaf.com": [
+      "v2-215-academia-research-paper-tables-overleaf",
+      "v2-242-academia-research-research-tools-overleaf"
+    ],
+    "petfinder.com": [
+      "v2-815-pet-animal-care-favorite-pet",
+      "v2-816-pet-animal-care-remove-favorite",
+      "v2-817-pet-animal-care-create-adopter-profile"
+    ],
+    "ratemyprofessors.com": [
+      "v2-708-rating-voting-professor-review-ratemyprofessors"
+    ],
+    "ravelry.com": [
+      "v2-1101-hobbies-gaming-discussion-ravelry",
+      "v2-600-hobbies-crafts-community-ravelry",
+      "v2-601-hobbies-gaming-reviews-ravelry",
+      "v2-602-hobbies-crafts-community-ravelry",
+      "v2-603-hobbies-crafts-community-ravelry"
+    ],
+    "redcross.org": [
+      "v2-1130-training-class-search-redcross",
+      "v2-1131-training-add-to-cart-redcross",
+      "v2-1132-training-enroll-course-redcross",
+      "v2-1133-newsletter-signup-redcross",
+      "v2-1134-chapter-finder-redcross"
+    ],
+    "retreat.guru": [
+      "v2-609-education-learning-meditation-spirit-rock-meditation-center"
+    ],
+    "semanticscholar.org": [
+      "v2-247-academia-research-research-tools-semantic-scholar"
+    ],
+    "simplify.jobs": [
+      "v2-089-job-search-hr-cv-autofill-simplify-jobs"
+    ],
+    "strava.com": [
+      "v2-1102-fitness-social-post-strava",
+      "v2-1103-fitness-club-strava",
+      "v2-1104-fitness-edit-activity-strava",
+      "v2-596-daily-life-fitness-strava",
+      "v2-597-daily-life-fitness-strava"
+    ],
+    "styleseat.com": [
+      "v2-794-beauty-personal-care-salon-booking-styleseat"
+    ],
+    "substack.com": [
+      "v2-488-creation-init-general-substack"
+    ],
+    "target.com": [
+      "v2-520-shopping-retail-target",
+      "v2-521-shopping-retail-target",
+      "v2-522-shopping-retail-target",
+      "v2-523-shopping-retail-target"
+    ],
+    "taskrabbit": [
+      "v2-047-daily-life-personal-care-taskrabbit"
+    ],
+    "theordinary.com": [
+      "v2-1097-beauty-personal-care-shopping-theordinary",
+      "v2-1201-beauty-cart-theordinary",
+      "v2-1202-beauty-cart-quantity-theordinary"
+    ],
+    "ticketmaster.com": [
+      "v2-1135-events-tickets-ticketmaster",
+      "v2-1136-events-tickets-ticketmaster",
+      "v2-234-daily-life-events-ticketmaster"
+    ],
+    "todoist.com": [
+      "v2-413-personal-management-personal-tools-todoist"
+    ],
+    "trakt.tv": [
+      "v2-1137-entertainment-watchlist-trakt",
+      "v2-1138-entertainment-watchlist-trakt",
+      "v2-635-entertainment-tracking-trakt",
+      "v2-638-entertainment-tracking-trakt"
+    ],
+    "tripadvisor.com": [
+      "v2-469-rating-voting-general-tripadvisor"
+    ],
+    "tripit.com": [
+      "v2-1093-personal-management-travel-tripit",
+      "v2-1139-travel-itinerary-tripit",
+      "v2-1140-travel-itinerary-tripit",
+      "v2-1141-travel-itinerary-tripit"
+    ],
+    "trustpilot.com": [
+      "v2-470-rating-voting-general-trustpilot"
+    ],
+    "typeform.com": [
+      "v2-487-creation-init-general-typeform"
+    ],
+    "untappd.com": [
+      "v2-707-rating-voting-social-wine-untappd"
+    ],
+    "vivino.com": [
+      "v2-705-rating-voting-wine-review-vivino"
+    ],
+    "webflow.com": [
+      "v2-485-creation-init-general-webflow"
+    ],
+    "weworkremotely.com": [
+      "v2-1045-weworkremotely",
+      "v2-1144-weworkremotely",
+      "v2-1145-weworkremotely",
+      "v2-1146-weworkremotely"
+    ],
+    "when2meet.com": [
+      "v2-274-office-secretary-tasks-calendar-when2meet",
+      "v2-284-office-secretary-tasks-calendar-when2meet"
+    ],
+    "workable.com": [
+      "v2-571-job-search-hr-recruitment-mgmt-workable"
+    ]
+  },
+  "splits": {
+    "held_out_task": {
+      "train": [
+        "v2-047-daily-life-personal-care-taskrabbit",
+        "v2-086-job-search-hr-cv-autofill-greenhouse-meta",
+        "v2-089-job-search-hr-cv-autofill-simplify-jobs",
+        "v2-091-job-search-hr-job-apply-indeed",
+        "v2-1010-rating-voting-review-myrecipes",
+        "v2-1033-education-learning-registration-khanacademy",
+        "v2-1035-education-learning-enrollment-edx",
+        "v2-1045-weworkremotely",
+        "v2-1065b-daily-life-home-services-handy",
+        "v2-1088-nonprofit-charity-petition-change",
+        "v2-1093-personal-management-travel-tripit",
+        "v2-1095-health-mealplan-eatthismuch",
+        "v2-1097-beauty-personal-care-shopping-theordinary",
+        "v2-1100-food-cooking-collection-myrecipes",
+        "v2-1102-fitness-social-post-strava",
+        "v2-1103-fitness-club-strava",
+        "v2-1108-civic-petition-change",
+        "v2-1111-civic-petition-change",
+        "v2-1114-education-enrollment-edx",
+        "v2-1115-education-enrollment-edx",
+        "v2-1117",
+        "v2-1120b-services-booking-handy",
+        "v2-1122-education-course-khanacademy",
+        "v2-1123-education-course-khanacademy",
+        "v2-1124-education-course-khanacademy",
+        "v2-1130-training-class-search-redcross",
+        "v2-1131-training-add-to-cart-redcross",
+        "v2-1132-training-enroll-course-redcross",
+        "v2-1133-newsletter-signup-redcross",
+        "v2-1135-events-tickets-ticketmaster",
+        "v2-1137-entertainment-watchlist-trakt",
+        "v2-1139-travel-itinerary-tripit",
+        "v2-1140-travel-itinerary-tripit",
+        "v2-1144-weworkremotely",
+        "v2-1145-weworkremotely",
+        "v2-1201-beauty-cart-theordinary",
+        "v2-179-dev-tech-github-ops-github",
+        "v2-215-academia-research-paper-tables-overleaf",
+        "v2-234-daily-life-events-ticketmaster",
+        "v2-247-academia-research-research-tools-semantic-scholar",
+        "v2-265-education-learning-general-coursera",
+        "v2-266-education-learning-general-leetcode",
+        "v2-273-education-learning-general-edx",
+        "v2-274-office-secretary-tasks-calendar-when2meet",
+        "v2-369-entertainment-hobbies-general-goodreads",
+        "v2-372-entertainment-hobbies-general-eventbrite",
+        "v2-413-personal-management-personal-tools-todoist",
+        "v2-468-rating-voting-general-glassdoor",
+        "v2-469-rating-voting-general-tripadvisor",
+        "v2-470-rating-voting-general-trustpilot",
+        "v2-474-rating-voting-general-capterra",
+        "v2-475-rating-voting-general-g2",
+        "v2-483-creation-init-general-airtable",
+        "v2-485-creation-init-general-webflow",
+        "v2-486-creation-init-general-mailchimp",
+        "v2-487-creation-init-general-typeform",
+        "v2-488-creation-init-general-substack",
+        "v2-500-office-secretary-tasks-signup-doodle",
+        "v2-501-office-secretary-tasks-signup-doodle",
+        "v2-502-office-secretary-tasks-calendar-doodle",
+        "v2-520-shopping-retail-target",
+        "v2-521-shopping-retail-target",
+        "v2-522-shopping-retail-target",
+        "v2-530-shopping-marketplace-etsy",
+        "v2-531-shopping-marketplace-etsy",
+        "v2-533-daily-life-utilities-inmyarea",
+        "v2-535-daily-life-shopping-etsy",
+        "v2-560",
+        "v2-564",
+        "v2-571-job-search-hr-recruitment-mgmt-workable",
+        "v2-583-office-secretary-tasks-support-tickets-freshdesk",
+        "v2-596-daily-life-fitness-strava",
+        "v2-597-daily-life-fitness-strava",
+        "v2-598-academia-research-legal-docs-formswift",
+        "v2-600-hobbies-crafts-community-ravelry",
+        "v2-601-hobbies-gaming-reviews-ravelry",
+        "v2-602-hobbies-crafts-community-ravelry",
+        "v2-603-hobbies-crafts-community-ravelry",
+        "v2-607-hobbies-gaming-reviews-boardgamegeek",
+        "v2-608-education-learning-kids-courses-outschool",
+        "v2-609-education-learning-meditation-spirit-rock-meditation-center",
+        "v2-610-hobbies-gaming-reviews-boardgamegeek",
+        "v2-630-daily-life-productivity-habitica",
+        "v2-631-daily-life-productivity-habitica",
+        "v2-633-daily-life-productivity-habitica",
+        "v2-635-entertainment-tracking-trakt",
+        "v2-638-entertainment-tracking-trakt",
+        "v2-705-rating-voting-wine-review-vivino",
+        "v2-706-rating-voting-beer-review-beeradvocate",
+        "v2-707-rating-voting-social-wine-untappd",
+        "v2-708-rating-voting-professor-review-ratemyprofessors",
+        "v2-711-creation-init-color-design-coolors",
+        "v2-735-home-services-maintenance-house-cleaning-bark",
+        "v2-737-home-services-maintenance-kitchen-remodel-lowes",
+        "v2-763-automotive-vehicle-services-car-lease-autoslash",
+        "v2-774-nonprofit-charity-nonprofit-job-apply-charity-village",
+        "v2-776-nonprofit-charity-volunteer-signup-idealist",
+        "v2-794-beauty-personal-care-salon-booking-styleseat",
+        "v2-795-pet-animal-care-pet-adoption-aspca",
+        "v2-815-pet-animal-care-favorite-pet",
+        "v2-816-pet-animal-care-remove-favorite",
+        "v2-901-entertainment-imdb-add-to-watchlist",
+        "v2-902-entertainment-imdb-rate-title",
+        "v2-903-entertainment-imdb-remove-rating",
+        "v2-904-entertainment-imdb-create-list"
+      ],
+      "eval": [
+        "v2-1101-hobbies-gaming-discussion-ravelry",
+        "v2-1104-fitness-edit-activity-strava",
+        "v2-1107-hobbies-gaming-forum-boardgamegeek",
+        "v2-1112-nonprofit-petition-update-change",
+        "v2-1113-health-mealplan-eatthismuch",
+        "v2-1116-education-enrollment-edx",
+        "v2-1118",
+        "v2-1121b-services-booking-handy",
+        "v2-1125-education-course-khanacademy",
+        "v2-1126-food-cooking-collection-myrecipes",
+        "v2-1134-chapter-finder-redcross",
+        "v2-1136-events-tickets-ticketmaster",
+        "v2-1138-entertainment-watchlist-trakt",
+        "v2-1141-travel-itinerary-tripit",
+        "v2-1146-weworkremotely",
+        "v2-1202-beauty-cart-quantity-theordinary",
+        "v2-180-dev-tech-github-ops-github",
+        "v2-242-academia-research-research-tools-overleaf",
+        "v2-284-office-secretary-tasks-calendar-when2meet",
+        "v2-503-office-secretary-tasks-calendar-doodle",
+        "v2-523-shopping-retail-target",
+        "v2-536-daily-life-shopping-etsy",
+        "v2-634-daily-life-productivity-habitica",
+        "v2-817-pet-animal-care-create-adopter-profile",
+        "v2-905-entertainment-imdb-add-to-list"
+      ]
+    },
+    "held_out_website": {
+      "train": [
+        "v2-047-daily-life-personal-care-taskrabbit",
+        "v2-086-job-search-hr-cv-autofill-greenhouse-meta",
+        "v2-089-job-search-hr-cv-autofill-simplify-jobs",
+        "v2-091-job-search-hr-job-apply-indeed",
+        "v2-1010-rating-voting-review-myrecipes",
+        "v2-1035-education-learning-enrollment-edx",
+        "v2-1045-weworkremotely",
+        "v2-1065b-daily-life-home-services-handy",
+        "v2-1088-nonprofit-charity-petition-change",
+        "v2-1093-personal-management-travel-tripit",
+        "v2-1095-health-mealplan-eatthismuch",
+        "v2-1100-food-cooking-collection-myrecipes",
+        "v2-1101-hobbies-gaming-discussion-ravelry",
+        "v2-1102-fitness-social-post-strava",
+        "v2-1103-fitness-club-strava",
+        "v2-1104-fitness-edit-activity-strava",
+        "v2-1107-hobbies-gaming-forum-boardgamegeek",
+        "v2-1108-civic-petition-change",
+        "v2-1111-civic-petition-change",
+        "v2-1112-nonprofit-petition-update-change",
+        "v2-1113-health-mealplan-eatthismuch",
+        "v2-1114-education-enrollment-edx",
+        "v2-1115-education-enrollment-edx",
+        "v2-1116-education-enrollment-edx",
+        "v2-1117",
+        "v2-1118",
+        "v2-1120b-services-booking-handy",
+        "v2-1121b-services-booking-handy",
+        "v2-1126-food-cooking-collection-myrecipes",
+        "v2-1130-training-class-search-redcross",
+        "v2-1131-training-add-to-cart-redcross",
+        "v2-1132-training-enroll-course-redcross",
+        "v2-1133-newsletter-signup-redcross",
+        "v2-1134-chapter-finder-redcross",
+        "v2-1135-events-tickets-ticketmaster",
+        "v2-1136-events-tickets-ticketmaster",
+        "v2-1139-travel-itinerary-tripit",
+        "v2-1140-travel-itinerary-tripit",
+        "v2-1141-travel-itinerary-tripit",
+        "v2-1144-weworkremotely",
+        "v2-1145-weworkremotely",
+        "v2-1146-weworkremotely",
+        "v2-179-dev-tech-github-ops-github",
+        "v2-180-dev-tech-github-ops-github",
+        "v2-215-academia-research-paper-tables-overleaf",
+        "v2-234-daily-life-events-ticketmaster",
+        "v2-242-academia-research-research-tools-overleaf",
+        "v2-265-education-learning-general-coursera",
+        "v2-266-education-learning-general-leetcode",
+        "v2-273-education-learning-general-edx",
+        "v2-372-entertainment-hobbies-general-eventbrite",
+        "v2-413-personal-management-personal-tools-todoist",
+        "v2-468-rating-voting-general-glassdoor",
+        "v2-469-rating-voting-general-tripadvisor",
+        "v2-470-rating-voting-general-trustpilot",
+        "v2-474-rating-voting-general-capterra",
+        "v2-475-rating-voting-general-g2",
+        "v2-483-creation-init-general-airtable",
+        "v2-486-creation-init-general-mailchimp",
+        "v2-487-creation-init-general-typeform",
+        "v2-488-creation-init-general-substack",
+        "v2-500-office-secretary-tasks-signup-doodle",
+        "v2-501-office-secretary-tasks-signup-doodle",
+        "v2-502-office-secretary-tasks-calendar-doodle",
+        "v2-503-office-secretary-tasks-calendar-doodle",
+        "v2-530-shopping-marketplace-etsy",
+        "v2-531-shopping-marketplace-etsy",
+        "v2-533-daily-life-utilities-inmyarea",
+        "v2-535-daily-life-shopping-etsy",
+        "v2-536-daily-life-shopping-etsy",
+        "v2-560",
+        "v2-564",
+        "v2-583-office-secretary-tasks-support-tickets-freshdesk",
+        "v2-596-daily-life-fitness-strava",
+        "v2-597-daily-life-fitness-strava",
+        "v2-598-academia-research-legal-docs-formswift",
+        "v2-600-hobbies-crafts-community-ravelry",
+        "v2-601-hobbies-gaming-reviews-ravelry",
+        "v2-602-hobbies-crafts-community-ravelry",
+        "v2-603-hobbies-crafts-community-ravelry",
+        "v2-607-hobbies-gaming-reviews-boardgamegeek",
+        "v2-608-education-learning-kids-courses-outschool",
+        "v2-610-hobbies-gaming-reviews-boardgamegeek",
+        "v2-630-daily-life-productivity-habitica",
+        "v2-631-daily-life-productivity-habitica",
+        "v2-633-daily-life-productivity-habitica",
+        "v2-634-daily-life-productivity-habitica",
+        "v2-706-rating-voting-beer-review-beeradvocate",
+        "v2-707-rating-voting-social-wine-untappd",
+        "v2-708-rating-voting-professor-review-ratemyprofessors",
+        "v2-711-creation-init-color-design-coolors",
+        "v2-735-home-services-maintenance-house-cleaning-bark",
+        "v2-763-automotive-vehicle-services-car-lease-autoslash",
+        "v2-774-nonprofit-charity-nonprofit-job-apply-charity-village",
+        "v2-794-beauty-personal-care-salon-booking-styleseat",
+        "v2-795-pet-animal-care-pet-adoption-aspca",
+        "v2-901-entertainment-imdb-add-to-watchlist",
+        "v2-902-entertainment-imdb-rate-title",
+        "v2-903-entertainment-imdb-remove-rating",
+        "v2-904-entertainment-imdb-create-list",
+        "v2-905-entertainment-imdb-add-to-list"
+      ],
+      "eval": [
+        "v2-1033-education-learning-registration-khanacademy",
+        "v2-1097-beauty-personal-care-shopping-theordinary",
+        "v2-1122-education-course-khanacademy",
+        "v2-1123-education-course-khanacademy",
+        "v2-1124-education-course-khanacademy",
+        "v2-1125-education-course-khanacademy",
+        "v2-1137-entertainment-watchlist-trakt",
+        "v2-1138-entertainment-watchlist-trakt",
+        "v2-1201-beauty-cart-theordinary",
+        "v2-1202-beauty-cart-quantity-theordinary",
+        "v2-247-academia-research-research-tools-semantic-scholar",
+        "v2-274-office-secretary-tasks-calendar-when2meet",
+        "v2-284-office-secretary-tasks-calendar-when2meet",
+        "v2-369-entertainment-hobbies-general-goodreads",
+        "v2-485-creation-init-general-webflow",
+        "v2-520-shopping-retail-target",
+        "v2-521-shopping-retail-target",
+        "v2-522-shopping-retail-target",
+        "v2-523-shopping-retail-target",
+        "v2-571-job-search-hr-recruitment-mgmt-workable",
+        "v2-609-education-learning-meditation-spirit-rock-meditation-center",
+        "v2-635-entertainment-tracking-trakt",
+        "v2-638-entertainment-tracking-trakt",
+        "v2-705-rating-voting-wine-review-vivino",
+        "v2-737-home-services-maintenance-kitchen-remodel-lowes",
+        "v2-776-nonprofit-charity-volunteer-signup-idealist",
+        "v2-815-pet-animal-care-favorite-pet",
+        "v2-816-pet-animal-care-remove-favorite",
+        "v2-817-pet-animal-care-create-adopter-profile"
+      ],
+      "eval_platforms": [
+        "goodreads",
+        "idealist",
+        "khanacademy",
+        "lowes",
+        "petfinder",
+        "semantic-scholar",
+        "spirit-rock",
+        "target",
+        "theordinary",
+        "trakt",
+        "vivino",
+        "webflow",
+        "when2meet",
+        "workable"
+      ]
+    },
+    "held_out_website_and_action": {
+      "train": [
+        "v2-047-daily-life-personal-care-taskrabbit",
+        "v2-086-job-search-hr-cv-autofill-greenhouse-meta",
+        "v2-089-job-search-hr-cv-autofill-simplify-jobs",
+        "v2-091-job-search-hr-job-apply-indeed",
+        "v2-1010-rating-voting-review-myrecipes",
+        "v2-1033-education-learning-registration-khanacademy",
+        "v2-1035-education-learning-enrollment-edx",
+        "v2-1045-weworkremotely",
+        "v2-1065b-daily-life-home-services-handy",
+        "v2-1088-nonprofit-charity-petition-change",
+        "v2-1093-personal-management-travel-tripit",
+        "v2-1097-beauty-personal-care-shopping-theordinary",
+        "v2-1100-food-cooking-collection-myrecipes",
+        "v2-1101-hobbies-gaming-discussion-ravelry",
+        "v2-1102-fitness-social-post-strava",
+        "v2-1103-fitness-club-strava",
+        "v2-1104-fitness-edit-activity-strava",
+        "v2-1107-hobbies-gaming-forum-boardgamegeek",
+        "v2-1108-civic-petition-change",
+        "v2-1111-civic-petition-change",
+        "v2-1112-nonprofit-petition-update-change",
+        "v2-1114-education-enrollment-edx",
+        "v2-1115-education-enrollment-edx",
+        "v2-1116-education-enrollment-edx",
+        "v2-1117",
+        "v2-1118",
+        "v2-1120b-services-booking-handy",
+        "v2-1121b-services-booking-handy",
+        "v2-1122-education-course-khanacademy",
+        "v2-1123-education-course-khanacademy",
+        "v2-1124-education-course-khanacademy",
+        "v2-1125-education-course-khanacademy",
+        "v2-1126-food-cooking-collection-myrecipes",
+        "v2-1130-training-class-search-redcross",
+        "v2-1131-training-add-to-cart-redcross",
+        "v2-1132-training-enroll-course-redcross",
+        "v2-1133-newsletter-signup-redcross",
+        "v2-1134-chapter-finder-redcross",
+        "v2-1135-events-tickets-ticketmaster",
+        "v2-1136-events-tickets-ticketmaster",
+        "v2-1137-entertainment-watchlist-trakt",
+        "v2-1138-entertainment-watchlist-trakt",
+        "v2-1139-travel-itinerary-tripit",
+        "v2-1140-travel-itinerary-tripit",
+        "v2-1141-travel-itinerary-tripit",
+        "v2-1144-weworkremotely",
+        "v2-1145-weworkremotely",
+        "v2-1146-weworkremotely",
+        "v2-1201-beauty-cart-theordinary",
+        "v2-1202-beauty-cart-quantity-theordinary",
+        "v2-215-academia-research-paper-tables-overleaf",
+        "v2-234-daily-life-events-ticketmaster",
+        "v2-242-academia-research-research-tools-overleaf",
+        "v2-247-academia-research-research-tools-semantic-scholar",
+        "v2-265-education-learning-general-coursera",
+        "v2-266-education-learning-general-leetcode",
+        "v2-273-education-learning-general-edx",
+        "v2-274-office-secretary-tasks-calendar-when2meet",
+        "v2-284-office-secretary-tasks-calendar-when2meet",
+        "v2-369-entertainment-hobbies-general-goodreads",
+        "v2-372-entertainment-hobbies-general-eventbrite",
+        "v2-413-personal-management-personal-tools-todoist",
+        "v2-468-rating-voting-general-glassdoor",
+        "v2-469-rating-voting-general-tripadvisor",
+        "v2-470-rating-voting-general-trustpilot",
+        "v2-474-rating-voting-general-capterra",
+        "v2-475-rating-voting-general-g2",
+        "v2-483-creation-init-general-airtable",
+        "v2-485-creation-init-general-webflow",
+        "v2-486-creation-init-general-mailchimp",
+        "v2-487-creation-init-general-typeform",
+        "v2-488-creation-init-general-substack",
+        "v2-500-office-secretary-tasks-signup-doodle",
+        "v2-501-office-secretary-tasks-signup-doodle",
+        "v2-502-office-secretary-tasks-calendar-doodle",
+        "v2-503-office-secretary-tasks-calendar-doodle",
+        "v2-520-shopping-retail-target",
+        "v2-521-shopping-retail-target",
+        "v2-522-shopping-retail-target",
+        "v2-523-shopping-retail-target",
+        "v2-530-shopping-marketplace-etsy",
+        "v2-531-shopping-marketplace-etsy",
+        "v2-533-daily-life-utilities-inmyarea",
+        "v2-535-daily-life-shopping-etsy",
+        "v2-536-daily-life-shopping-etsy",
+        "v2-560",
+        "v2-564",
+        "v2-571-job-search-hr-recruitment-mgmt-workable",
+        "v2-583-office-secretary-tasks-support-tickets-freshdesk",
+        "v2-596-daily-life-fitness-strava",
+        "v2-597-daily-life-fitness-strava",
+        "v2-598-academia-research-legal-docs-formswift",
+        "v2-600-hobbies-crafts-community-ravelry",
+        "v2-601-hobbies-gaming-reviews-ravelry",
+        "v2-602-hobbies-crafts-community-ravelry",
+        "v2-603-hobbies-crafts-community-ravelry",
+        "v2-607-hobbies-gaming-reviews-boardgamegeek",
+        "v2-608-education-learning-kids-courses-outschool",
+        "v2-609-education-learning-meditation-spirit-rock-meditation-center",
+        "v2-610-hobbies-gaming-reviews-boardgamegeek",
+        "v2-630-daily-life-productivity-habitica",
+        "v2-631-daily-life-productivity-habitica",
+        "v2-633-daily-life-productivity-habitica",
+        "v2-634-daily-life-productivity-habitica",
+        "v2-635-entertainment-tracking-trakt",
+        "v2-638-entertainment-tracking-trakt",
+        "v2-705-rating-voting-wine-review-vivino",
+        "v2-706-rating-voting-beer-review-beeradvocate",
+        "v2-707-rating-voting-social-wine-untappd",
+        "v2-708-rating-voting-professor-review-ratemyprofessors",
+        "v2-711-creation-init-color-design-coolors",
+        "v2-774-nonprofit-charity-nonprofit-job-apply-charity-village",
+        "v2-776-nonprofit-charity-volunteer-signup-idealist",
+        "v2-794-beauty-personal-care-salon-booking-styleseat",
+        "v2-795-pet-animal-care-pet-adoption-aspca",
+        "v2-815-pet-animal-care-favorite-pet",
+        "v2-816-pet-animal-care-remove-favorite",
+        "v2-817-pet-animal-care-create-adopter-profile",
+        "v2-901-entertainment-imdb-add-to-watchlist",
+        "v2-902-entertainment-imdb-rate-title",
+        "v2-903-entertainment-imdb-remove-rating",
+        "v2-904-entertainment-imdb-create-list",
+        "v2-905-entertainment-imdb-add-to-list"
+      ],
+      "eval": [
+        "v2-1095-health-mealplan-eatthismuch",
+        "v2-1113-health-mealplan-eatthismuch",
+        "v2-179-dev-tech-github-ops-github",
+        "v2-180-dev-tech-github-ops-github",
+        "v2-735-home-services-maintenance-house-cleaning-bark",
+        "v2-737-home-services-maintenance-kitchen-remodel-lowes",
+        "v2-763-automotive-vehicle-services-car-lease-autoslash"
+      ],
+      "eval_metaclasses": [
+        "automotive-vehicle-services",
+        "dev-tech",
+        "health-fitness",
+        "home-services-maintenance"
+      ]
+    },
+    "repeated_in_distribution": {
+      "tasks": [
+        "v2-047-daily-life-personal-care-taskrabbit",
+        "v2-086-job-search-hr-cv-autofill-greenhouse-meta",
+        "v2-089-job-search-hr-cv-autofill-simplify-jobs",
+        "v2-091-job-search-hr-job-apply-indeed",
+        "v2-1010-rating-voting-review-myrecipes",
+        "v2-1033-education-learning-registration-khanacademy",
+        "v2-1035-education-learning-enrollment-edx",
+        "v2-1045-weworkremotely",
+        "v2-1065b-daily-life-home-services-handy",
+        "v2-1088-nonprofit-charity-petition-change"
+      ],
+      "n_repeats": 3
+    }
+  }
+}
