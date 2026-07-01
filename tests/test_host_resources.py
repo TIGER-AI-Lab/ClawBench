@@ -6,11 +6,14 @@ import ast
 import json
 from pathlib import Path
 
+import pytest
+
 from clawbench.runner.run_support.task import (
     build_instruction,
     copy_extra_info,
     normalize_extra_info,
     prepare_personal_info,
+    validate_extra_info_path,
 )
 from clawbench.utils.paths import ASSET_ROOT, SHARED_ROOT
 
@@ -61,6 +64,36 @@ def test_extra_info_copy_and_instruction_are_host_side(tmp_path: Path) -> None:
     assert "Do NOT use command-line tools" in instruction
     assert "meal_plan.json" in instruction
     assert "2-day meal plan" in instruction
+
+
+def test_validate_extra_info_path_accepts_valid_relative(tmp_path: Path) -> None:
+    (tmp_path / "info.json").write_text("{}")
+    src = validate_extra_info_path(tmp_path, "info.json")
+    assert src == tmp_path / "info.json"
+
+
+def test_validate_extra_info_path_rejects_absolute(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="absolute"):
+        validate_extra_info_path(tmp_path, "/etc/passwd")
+
+
+def test_validate_extra_info_path_rejects_dotdot_escape(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="escapes"):
+        validate_extra_info_path(tmp_path, "../../etc/passwd")
+
+
+def test_copy_extra_info_skips_traversal(tmp_path: Path) -> None:
+    """A malicious extra_info path must not copy files from outside the task dir."""
+    secret = tmp_path / "secret.txt"
+    secret.write_text("top secret")
+    task_dir = tmp_path / "case"
+    task_dir.mkdir()
+    my_info = tmp_path / "my-info"
+    my_info.mkdir()
+    task = {"extra_info": [{"path": "../secret.txt"}]}
+    with pytest.raises(ValueError, match="escapes"):
+        copy_extra_info(task, task_dir, my_info)
+    assert not (my_info / "secret.txt").exists()
 
 
 def test_normalize_extra_info_accepts_legacy_and_schema_shapes() -> None:

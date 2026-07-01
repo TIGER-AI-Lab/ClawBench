@@ -129,6 +129,30 @@ def normalize_extra_info(raw: Any) -> tuple[list[dict[str, str]], list[str]]:
     return entries, warnings
 
 
+def validate_extra_info_path(task_dir: Path, rel_path: str) -> Path:
+    """Resolve an extra_info path and reject anything outside ``task_dir``.
+
+    A task's ``extra_info[].path`` is untrusted input. Without a guard, an
+    absolute path or one containing ``..`` could make ``copy_extra_info`` read
+    arbitrary host files into the staged my-info dir (which may be shipped in a
+    shareable export). Reject absolute paths and any target whose resolved
+    location — symlinks followed — escapes ``task_dir``. Returns the unresolved
+    ``task_dir / rel_path`` so normal copy semantics are unchanged.
+    """
+    if Path(rel_path).is_absolute():
+        raise ValueError(
+            f"extra_info path must be relative, got absolute: {rel_path!r}"
+        )
+    src = task_dir / rel_path
+    try:
+        src.resolve().relative_to(task_dir.resolve())
+    except ValueError as e:
+        raise ValueError(
+            f"extra_info path escapes the task directory: {rel_path!r}"
+        ) from e
+    return src
+
+
 def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list[str]:
     """Copy extra_info files from the test case into the my-info dir."""
     entries, warnings = normalize_extra_info(task.get("extra_info"))
@@ -138,7 +162,7 @@ def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list
         rel_path = info.get("path")
         if not rel_path:
             continue
-        src = task_dir / rel_path
+        src = validate_extra_info_path(task_dir, rel_path)
         if not src.exists():
             warning = f"extra_info path not found: {src}"
             warnings.append(warning)
