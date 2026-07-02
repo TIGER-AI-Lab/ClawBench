@@ -1,6 +1,50 @@
 #!/bin/bash
 set -e
 
+# === OAuth mode: skip LiteLLM proxy, use codex's default OpenAI provider ===
+# Triggered when CODEX_USE_OAUTH=1 (set by driver when model_cfg.auth_mode == "oauth").
+# Requires /host-codex-auth.json bind-mounted from host ~/.codex/auth.json (read-only).
+# We copy it to /root/.codex/auth.json so any token refresh inside the container
+# stays in the container and never touches the host file.
+if [ "${CODEX_USE_OAUTH:-0}" = "1" ]; then
+  mkdir -p "$HOME/.codex"
+  if [ ! -s /host-codex-auth.json ]; then
+    echo "ERROR: AUTH_MODE=oauth but /host-codex-auth.json missing (mount /home/nick/.codex/auth.json:/host-codex-auth.json:ro)"
+    exit 1
+  fi
+  cp /host-codex-auth.json "$HOME/.codex/auth.json"
+  chmod 600 "$HOME/.codex/auth.json"
+  case "${THINKING_LEVEL:-medium}" in
+    minimal) RE=minimal ;;
+    low)     RE=low ;;
+    medium|adaptive) RE=medium ;;
+    high|xhigh) RE=high ;;
+    *) RE=medium ;;
+  esac
+  cat > "$HOME/.codex/config.toml" <<TOMLEOF
+model = "${MODEL_NAME}"
+model_reasoning_effort = "${RE}"
+model_reasoning_summary = "auto"
+show_raw_agent_reasoning = true
+hide_agent_reasoning = false
+approval_policy = "never"
+sandbox_mode = "read-only"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp", "--cdp-endpoint", "http://127.0.0.1:9222"]
+TOMLEOF
+  chmod 600 "$HOME/.codex/config.toml"
+  # Empty env file (no LiteLLM proxy needed)
+  echo "# OAuth mode — no LiteLLM proxy" > /tmp/codex-env.sh
+  chmod 600 /tmp/codex-env.sh
+  # Sentinel for run-codex.sh to skip LiteLLM startup
+  touch /tmp/codex-oauth-mode
+  echo "Codex config: model=${MODEL_NAME}, mode=oauth, reasoning_effort=${RE}"
+  exit 0
+fi
+# === End OAuth short-circuit ===
+
 # All config comes from env vars set by the test driver (sourced from models.yaml).
 # BASE_URL, MODEL_NAME, and API_TYPE are required.
 if [ -z "$BASE_URL" ] || [ -z "$MODEL_NAME" ] || [ -z "$API_TYPE" ]; then
@@ -43,8 +87,10 @@ if keys_json:
         pass
 if not key and single_key:
     key = single_key
-if not key:
+if not key and api_type != "openai-oauth":
     raise SystemExit("ERROR: no API key provided (API_KEYS or API_KEY)")
+if api_type == "openai-oauth":
+    key = ""
 
 # ── Resolve the upstream model id (OpenRouter only) ──────────────────
 # OpenRouter expects the canonical full id (e.g. "qwen/qwen3.5-...").
@@ -63,6 +109,24 @@ if is_openrouter:
                 break
     except Exception as e:
         print(f"WARN: could not resolve OpenRouter model ID: {e}")
+
+if api_type == "openai-oauth":
+    # ChatGPT OAuth mode: codex calls OpenAI directly via mounted auth.json.
+    # No LiteLLM proxy. No model_provider override. Skip writing config.toml
+    # (host's ~/.codex/config.toml is mounted read-write — we must not clobber
+    # user settings). Pass model + reasoning via codex CLI -c flags at runtime.
+    Path("/tmp/litellm-config.yaml").write_text("# unused in oauth mode\n")
+    os.chmod("/tmp/litellm-config.yaml", 0o600)
+    thinking = (os.environ.get("THINKING_LEVEL") or "medium").lower()
+    Path("/tmp/codex-env.sh").write_text(
+        "export CODEX_USE_OAUTH=1\n"
+        f"export CODEX_MODEL={model_name}\n"
+        f"export CODEX_REASONING={thinking}\n"
+    )
+    os.chmod("/tmp/codex-env.sh", 0o600)
+    print(f"Codex config: model={model_name}, mode=oauth (chatgpt subscription), "
+          f"reasoning_effort={thinking}")
+    raise SystemExit(0)
 
 # ── Pick the LiteLLM provider prefix ────────────────────────────────
 # The prefix tells LiteLLM which native API format to translate to.

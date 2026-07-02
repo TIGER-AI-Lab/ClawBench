@@ -29,6 +29,25 @@ base_url = os.environ["BASE_URL"].rstrip("/")
 model_name = os.environ["MODEL_NAME"]
 api_type = os.environ["API_TYPE"]
 
+# Detect provider from base URL — Hermes only accepts a closed set of
+# provider names; ``custom`` is rejected. Map known endpoints explicitly.
+HERMES_PROVIDER_BY_HOST = {
+    "openrouter.ai": "openrouter",
+    "z.ai": "zai",
+    "open.bigmodel.cn": "zai",
+    "api.x.ai": "xai",
+    "kimi.moonshot.cn": "kimi-coding",
+    "api.moonshot.cn": "kimi-coding",
+    "nous.ai": "nous",
+    "stepfun.com": "stepfun",
+    "minimax.chat": "minimax",
+    "minimaxi.com": "minimax",
+    "ollama.com": "ollama-cloud",
+    "huggingface.co": "huggingface",
+    "arcee.ai": "arcee",
+    "nvidia.com": "nvidia",
+}
+
 # Pick a single API key (first from API_KEYS list, else API_KEY).
 keys_json = os.environ.get("API_KEYS", "")
 single_key = os.environ.get("API_KEY", "")
@@ -76,14 +95,28 @@ if is_openrouter:
         f"OPENROUTER_BASE_URL={base_url}",
     ])
 elif api_type == "openai-completions":
-    provider = "custom"
+    # Pick provider from host (hermes rejects "custom"). Default to "auto".
+    from urllib.parse import urlparse
+    host = (urlparse(base_url).hostname or "").lower()
+    provider = "auto"
+    for suffix, prov in HERMES_PROVIDER_BY_HOST.items():
+        if host == suffix or host.endswith("." + suffix):
+            provider = prov
+            break
     api_mode = "chat_completions"
     dotenv_lines.extend([
         f"OPENAI_API_KEY={key}",
         f"OPENAI_BASE_URL={base_url}",
     ])
+    if provider == "zai":
+        dotenv_lines.extend([
+            f"ZAI_API_KEY={key}",
+            f"ZHIPU_API_KEY={key}",
+            f"Z_API_KEY={key}",
+            f"ZAI_BASE_URL={base_url}",
+        ])
 elif api_type == "openai-responses":
-    provider = "custom"
+    provider = "auto"
     api_mode = "codex_responses"
     dotenv_lines.extend([
         f"OPENAI_API_KEY={key}",

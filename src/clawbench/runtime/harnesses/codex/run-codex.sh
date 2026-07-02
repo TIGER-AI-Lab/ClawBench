@@ -7,23 +7,28 @@ set -e
 # Source the env vars written by setup (CODEX_API_KEY).
 source /tmp/codex-env.sh
 
-# Start LiteLLM translation proxy.
-echo "Starting API translation proxy (litellm)..."
-litellm --config /tmp/litellm-config.yaml --port 4000 \
-  > /tmp/codex-litellm.log 2>&1 &
-PROXY_PID=$!
-for i in $(seq 1 30); do
-  if curl -sf http://localhost:4000/health/liveliness > /dev/null 2>&1; then
-    echo "API proxy ready"
-    break
-  fi
-  if [ "$i" -eq 30 ]; then
-    echo "API proxy not ready after 30s — check /tmp/codex-litellm.log"
-    echo "proxy_failed" > /data/.stop-reason
-    exit 1
-  fi
-  sleep 1
-done
+# Start LiteLLM translation proxy (skipped in OAuth mode — codex
+# calls OpenAI directly via the host-mounted ~/.codex/auth.json).
+if [ "${CODEX_USE_OAUTH:-0}" = "1" ]; then
+  echo "Codex OAuth mode: skipping LiteLLM proxy"
+else
+  echo "Starting API translation proxy (litellm)..."
+  litellm --config /tmp/litellm-config.yaml --port 4000 \
+    > /tmp/codex-litellm.log 2>&1 &
+  PROXY_PID=$!
+  for i in $(seq 1 30); do
+    if curl -sf http://localhost:4000/health/liveliness > /dev/null 2>&1; then
+      echo "API proxy ready"
+      break
+    fi
+    if [ "$i" -eq 30 ]; then
+      echo "API proxy not ready after 30s — check /tmp/codex-litellm.log"
+      echo "proxy_failed" > /data/.stop-reason
+      exit 1
+    fi
+    sleep 1
+  done
+fi
 
 # Copy /my-info/ into the workspace so the agent can access it via ./my-info/
 WORKSPACE=/root/workspace
@@ -70,8 +75,14 @@ echo "Starting Codex CLI agent (model=${MODEL_NAME})..."
 CODEX_ARGS=(exec
   --json
   --skip-git-repo-check
-  --dangerously-bypass-approvals-and-sandbox
-  -- "$INSTRUCTION")
+  --dangerously-bypass-approvals-and-sandbox)
+if [ "${CODEX_USE_OAUTH:-0}" = "1" ]; then
+  CODEX_ARGS+=(-c "model=${CODEX_MODEL:-gpt-5.5}"
+               -c "model_reasoning_effort=\"${CODEX_REASONING:-medium}\""
+               -c "approval_policy=\"never\""
+               -c "sandbox_mode=\"read-only\"")
+fi
+CODEX_ARGS+=(-- "$INSTRUCTION")
 PATH="$SAFE_BIN" codex "${CODEX_ARGS[@]}" \
   > /tmp/codex-stdout.jsonl 2> /tmp/codex-agent.log &
 AGENT_PID=$!

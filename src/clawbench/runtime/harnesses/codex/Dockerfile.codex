@@ -15,7 +15,7 @@ RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 # See also: openai/codex#12114 (downgrade-to-0.120.0 workaround
 # confirmed in-thread).
 RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g \
-    @openai/codex@0.120.0 \
+    @openai/codex@0.130.0 \
     @playwright/mcp@0.0.70
 
 # LiteLLM proxy translates Codex's Responses-API requests into whatever
