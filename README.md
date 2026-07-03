@@ -292,6 +292,15 @@ cp models/models.example.yaml models/models.yaml
 $EDITOR models/models.yaml
 ```
 
+For task correctness judgement, an api key for the `deepseek-v4-pro` model is required for consistent behavior. Please fill in the new the API setups in the `models.yaml` before making any judgements.
+
+```
+deepseek-v4-pro:
+  api_key: "sk-..."
+  base_url: <api_base_url>
+  api_type: openai-completions
+```
+
 PurelyMail credentials for disposable run emails are provided in the committed `.env`.
 You only need to edit `.env` if you want to use your own PurelyMail account or enable optional HuggingFace upload.
 

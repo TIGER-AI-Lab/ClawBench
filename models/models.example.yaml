@@ -14,7 +14,7 @@ qwen3.5-397b-a17b:
 # openai-completions / openai-responses / anthropic-messages api_type.
 deepseek-v4-pro:
   api_key: "sk-..."
-  base_url: https://api.deepseek.com
+  base_url: <api_base_url>
   api_type: openai-completions
 
 # For multiple API keys (round-robin), use api_keys instead of api_key:
