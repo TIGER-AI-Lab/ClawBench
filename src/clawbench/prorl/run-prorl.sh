@@ -53,6 +53,12 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 
+# The staged setup.sh writes personal info to /app/my-info, but ClawBench
+# harnesses read /my-info. Bridge the two so the agent sees credentials/resume.
+if [ -d /app/my-info ] && [ ! -e /my-info ]; then
+  ln -sfn /app/my-info /my-info
+fi
+
 # Hand off to the harness runner baked into the image. It connects to the
 # existing CDP browser and calls the policy model via the BASE_URL/API_KEY env
 # above (env-driven; no flags). A non-zero exit still yields a gradeable

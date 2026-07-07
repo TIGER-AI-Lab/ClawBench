@@ -96,6 +96,8 @@ def test_run_script_routes_policy_but_not_judge() -> None:
     assert 'API_KEY="${OPENAI_API_KEY}"' in text
     # the harness setup needs the browser CDP endpoint (entrypoint is bypassed)
     assert "CLAWBENCH_BROWSER_CDP_URL" in text
+    # personal info is staged at /app/my-info but harnesses read /my-info
+    assert "/my-info" in text
     # the judge endpoint is never derived from the gateway endpoint
     for line in text.splitlines():
         if "CLAWBENCH_JUDGE_BASE_URL" in line:
@@ -123,6 +125,30 @@ def test_dry_run_prints_valid_payload(one_case, capsys, tmp_path: Path) -> None:
     assert payload["task_id"] == task_dir.name
     assert payload["agent"]["harness"] == "shell"
     assert payload["evaluator"]["strategy"] == "harbor"
+    # defaults to the combined image (harness + Harbor runtime)
+    assert payload["runtime"]["image"] == "clawbench-prorl:latest"
+
+
+def test_purelymail_env_passthrough(one_case, capsys, tmp_path: Path) -> None:
+    task_dir, _ = one_case
+    rc = submit.main(
+        [
+            "--task",
+            task_dir.name,
+            "--dry-run",
+            "--staging-dir",
+            str(tmp_path / "s"),
+            "--purelymail-api-key",
+            "pm-key",
+            "--purelymail-domain",
+            "mail.example",
+        ]
+    )
+    assert rc == 0
+    payload = json.loads(capsys.readouterr().out)
+    env = payload["runtime"]["env"]
+    assert env["PURELY_MAIL_API_KEY"] == "pm-key"
+    assert env["PURELY_MAIL_DOMAIN"] == "mail.example"
 
 
 def test_poll_completed_returns(monkeypatch) -> None:

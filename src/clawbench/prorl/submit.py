@@ -81,6 +81,7 @@ def build_task_request(
     timeout_seconds: int,
     dataset_name: str,
     judge_env: dict[str, str] | None = None,
+    runtime_env: dict[str, str] | None = None,
 ) -> TaskRequest:
     """Build the Polar ``TaskRequest`` for a staged ClawBench task."""
     step_dir = staged / "steps" / STEP_NAME
@@ -88,11 +89,11 @@ def build_task_request(
     tests_dir = step_dir / "tests"
     instruction = (step_dir / "instruction.md").read_text()
 
-    # Seed the session: stage the task workdir + run script + instruction, upload
-    # the Harbor runtime scripts the staged setup.sh/verify.py reference (so a
-    # plain ClawBench harness image — base + harness + runtime-server — works
-    # without a bespoke combined image), then bring up the browser runtime via
-    # the task's own setup.sh.
+    # Seed the session: stage the task workdir + run script + instruction. The
+    # combined clawbench-prorl image already bakes the Harbor runtime scripts,
+    # but we also upload RUNTIME_ROOT/harbor -> /app/src/harbor as a fallback so
+    # the staged setup.sh/verify.py references resolve even if the image lags.
+    # Then bring up the browser runtime via the task's own setup.sh.
     prepare = [
         PrepareAction(type="upload_dir", source=str(workdir), target="/app"),
         PrepareAction(
@@ -111,7 +112,7 @@ def build_task_request(
         PrepareAction(type="exec", command="bash /app/setup.sh", cwd="/app"),
     ]
 
-    runtime = RuntimeSpec(image=image, prepare=prepare)
+    runtime = RuntimeSpec(image=image, prepare=prepare, env=runtime_env or None)
 
     # Shell harness: the browser episode, with the policy model routed through
     # the gateway-injected $OPENAI_BASE_URL (captured into the trajectory).
@@ -235,8 +236,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--image",
         default=None,
-        help="ClawBench runtime image (must bundle a harness + browser runtime); "
-        "default: clawbench-<harness>:latest",
+        help="Combined ClawBench image (harness + Harbor browser runtime); "
+        "default clawbench-prorl:latest — build with build-prorl-image.sh",
     )
     p.add_argument(
         "--model-name",
@@ -252,17 +253,22 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--judge-api-key", default=None, help="Stage-2 judge API key")
     p.add_argument("--judge-api-type", default=None, help="Stage-2 judge api_type")
     p.add_argument(
+        "--purelymail-api-key",
+        default=None,
+        help="PurelyMail API key (email-signup tasks)",
+    )
+    p.add_argument(
+        "--purelymail-domain",
+        default=None,
+        help="PurelyMail domain (email-signup tasks)",
+    )
+    p.add_argument(
         "--num-samples",
         type=int,
         default=8,
         help="Rollout sessions per task (GRPO group size)",
     )
     p.add_argument("--timeout", type=int, default=900, help="Per-session timeout (s)")
-    p.add_argument(
-        "--harness",
-        default="hermes",
-        help="ClawBench browser harness to drive the episode",
-    )
     p.add_argument("--org", default="clawbench", help="Package org prefix")
     p.add_argument(
         "--dataset-name", default="clawbench-v2", help="Dataset label in metadata"
@@ -294,12 +300,17 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     task_dir, task = cases[0]
 
-    image = args.image or f"clawbench-{args.harness}:latest"
+    image = args.image or "clawbench-prorl:latest"
     judge_env = {
         env_key: getattr(args, f"judge_{arg}")
         for arg, env_key in JUDGE_ENV_KEYS.items()
         if getattr(args, f"judge_{arg}")
     }
+    runtime_env: dict[str, str] = {}
+    if args.purelymail_api_key:
+        runtime_env["PURELY_MAIL_API_KEY"] = args.purelymail_api_key
+    if args.purelymail_domain:
+        runtime_env["PURELY_MAIL_DOMAIN"] = args.purelymail_domain
     if not args.dry_run and not judge_env:
         print(
             "WARNING: no --judge-* config given; the Stage-2 judge will be "
@@ -341,6 +352,7 @@ def main(argv: list[str] | None = None) -> int:
             timeout_seconds=args.timeout,
             dataset_name=args.dataset_name,
             judge_env=judge_env or None,
+            runtime_env=runtime_env or None,
         )
         payload = request.to_payload()
 

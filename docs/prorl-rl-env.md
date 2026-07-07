@@ -97,9 +97,14 @@ uv run --frozen pytest tests/test_prorl_*.py -q     # 13 passed
 A full RL *training* run needs GPUs + an inference server + a trainer. The
 adapter above makes ClawBench submittable; the remaining infra is standard Polar:
 
-1. **Build the runtime image** (`clawbench-harbor:latest`) with Chromium +
-   runtime-server + the browser harness (the existing `src/clawbench/runtime/harbor`
-   image). Reference it as `runtime.image` / `--image`.
+1. **Build the combined runtime image** `clawbench-prorl:latest`
+   (`build-prorl-image.sh` → `Dockerfile.prorl`). It is `FROM clawbench-harbor`
+   (Chromium + runtime-server + `fpdf2` + shared persona + `resume_template.json`
+   + the harbor scripts under `/app/src/harbor`) **plus** a browser harness
+   installed as `/run-harness.sh`. A plain harness image is *not* sufficient —
+   `prepare-task.py` needs the harbor runtime's files and deps, which is why the
+   image extends the Harbor runtime. (Build validated on a Docker box; not in
+   unit tests.) Reference it as `--image`.
 2. **Serve the policy** on vLLM or SGLang as an OpenAI-compatible server. The
    served model **must be a VLM** (ClawBench agents send screenshots):
    `vllm serve Qwen/Qwen3-VL-8B-Instruct --port 8000`.
