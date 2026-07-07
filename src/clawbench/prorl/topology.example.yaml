@@ -1,0 +1,31 @@
+# Polar (ProRL-Agent-Server) fleet topology for ClawBench RL rollouts.
+#
+# The topology defines the *fleet* (rollout server + gateway nodes + inference
+# servers). The *environment* (image / harness / evaluator) is defined per task
+# in the submission payload — see `clawbench-prorl-submit`.
+#
+# Bring up: `polar rollout --topology topology.yaml` (see ProRL-Agent-Server
+# docs). Each gateway node needs an OpenAI-compatible inference server
+# (SGLang or vLLM) serving the policy. Because ClawBench agents send screenshots,
+# `model_served` MUST be a vision-language model.
+
+rollout:
+  host: 127.0.0.1
+  port: 8080
+  public_url: http://127.0.0.1:8080
+  save_dir: ./clawbench_rollout_results
+
+gateway:
+  heartbeat_interval_seconds: 30
+  nodes:
+    - id: clawbench-node-01
+      host: 127.0.0.1
+      port: 8100
+      public_url: http://127.0.0.1:8100
+      max_init_workers: 4      # each session starts a fresh browser container
+      max_run_workers: 4
+      max_postrun_workers: 4
+      model_served: Qwen/Qwen3-VL-8B-Instruct   # <-- your VLM policy checkpoint
+      inference:
+        engine: vllm           # or: sglang
+        base_url: http://127.0.0.1:8000
