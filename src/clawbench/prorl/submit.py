@@ -33,8 +33,21 @@ from clawbench.prorl.models import (
     TaskRequest,
 )
 
-DEFAULT_IMAGE = "clawbench-harbor:latest"
 RUN_SCRIPT = Path(__file__).resolve().parent / "run-prorl.sh"
+
+# Terminal Polar task states. Only "completed" is success; the rest are failures.
+TERMINAL_OK = {"completed"}
+TERMINAL_ERROR = {"failed", "error", "timeout", "cancelled"}
+NONTERMINAL = {"running", "pending", "queued", "dispatched"}
+
+# Judge (Stage-2) env keys read by the verifier; carried in the evaluator env,
+# never derived from the gateway-injected OPENAI_* (would pollute the trajectory).
+JUDGE_ENV_KEYS = {
+    "model": "CLAWBENCH_JUDGE_MODEL",
+    "base_url": "CLAWBENCH_JUDGE_BASE_URL",
+    "api_key": "CLAWBENCH_JUDGE_API_KEY",
+    "api_type": "CLAWBENCH_JUDGE_API_TYPE",
+}
 
 
 def stage_task(
@@ -65,8 +78,8 @@ def build_task_request(
     model_name: str,
     num_samples: int,
     timeout_seconds: int,
-    harness: str,
     dataset_name: str,
+    judge_env: dict[str, str] | None = None,
 ) -> TaskRequest:
     """Build the Polar ``TaskRequest`` for a staged ClawBench task."""
     step_dir = staged / "steps" / STEP_NAME
@@ -99,13 +112,14 @@ def build_task_request(
         custom_shell={"command": "bash /app/run-prorl.sh", "cwd": "/app"},
         env={
             "POLAR_MODEL_NAME": model_name,
-            "CLAWBENCH_HARNESS": harness,
             "CLAWBENCH_INSTRUCTION_FILE": "/app/instruction.md",
         },
     )
 
     # Reward: Polar's built-in harbor evaluator runs our tests/test.sh, which
-    # runs the two-stage scorer and writes /logs/verifier/reward.json.
+    # runs the two-stage scorer and writes /logs/verifier/reward.json. The judge
+    # (Stage-2) config is carried in the evaluator env — independent of the
+    # policy's OPENAI_* endpoint — so judging actually runs during rollouts.
     evaluator = EvaluatorSpec(
         strategy="harbor",
         config={
@@ -116,6 +130,7 @@ def build_task_request(
             "verifier_timeout": 180,
         },
         refresh_runtime=False,
+        env=judge_env or None,
     )
 
     return TaskRequest(
@@ -168,10 +183,17 @@ def poll_task(
     waited = 0.0
     while True:
         status = _get_json(url)
-        if str(status.get("status", "")).lower() != "running":
+        state = str(status.get("status", "")).lower()
+        if state in TERMINAL_OK:
             return status
+        if state in TERMINAL_ERROR:
+            raise RuntimeError(
+                f"task {task_id} ended in state {state!r}: {status.get('error') or status}"
+            )
+        if state not in NONTERMINAL:
+            raise RuntimeError(f"task {task_id} returned unexpected status {state!r}")
         if waited >= max_wait:
-            raise TimeoutError(f"task {task_id} still running after {max_wait}s")
+            raise TimeoutError(f"task {task_id} still {state} after {max_wait}s")
         time.sleep(interval)
         waited += interval
 
@@ -201,12 +223,25 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--rollout-url", default="http://127.0.0.1:8080", help="Rollout Server URL"
     )
-    p.add_argument("--image", default=DEFAULT_IMAGE, help="ClawBench runtime image")
+    p.add_argument(
+        "--image",
+        default=None,
+        help="ClawBench runtime image (must bundle a harness + browser runtime); "
+        "default: clawbench-<harness>:latest",
+    )
     p.add_argument(
         "--model-name",
         default="clawbench-policy",
         help="Policy model name sent by the harness",
     )
+    p.add_argument("--judge-model", default=None, help="Stage-2 judge model name")
+    p.add_argument(
+        "--judge-base-url",
+        default=None,
+        help="Stage-2 judge base URL (NOT the policy endpoint)",
+    )
+    p.add_argument("--judge-api-key", default=None, help="Stage-2 judge API key")
+    p.add_argument("--judge-api-type", default=None, help="Stage-2 judge api_type")
     p.add_argument(
         "--num-samples",
         type=int,
@@ -250,61 +285,86 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     task_dir, task = cases[0]
 
-    import tempfile
-
-    staging_root = args.staging_dir or Path(tempfile.mkdtemp(prefix="clawbench-prorl-"))
-    staging_root.mkdir(parents=True, exist_ok=True)
-    output_name = sanitize_task_name(task_dir.name)
-    staged = stage_task(
-        task_dir,
-        task,
-        staging_root,
-        org=args.org,
-        dataset_name=args.dataset_name,
-        output_name=output_name,
-    )
-
-    request = build_task_request(
-        staged,
-        task_id=task_dir.name,
-        image=args.image,
-        model_name=args.model_name,
-        num_samples=args.num_samples,
-        timeout_seconds=args.timeout,
-        harness=args.harness,
-        dataset_name=args.dataset_name,
-    )
-    payload = request.to_payload()
-
-    if args.dry_run:
-        print(json.dumps(payload, indent=2, ensure_ascii=False))
-        return 0
-
-    try:
-        task_id = submit_task(args.rollout_url, payload)
+    image = args.image or f"clawbench-{args.harness}:latest"
+    judge_env = {
+        env_key: getattr(args, f"judge_{arg}")
+        for arg, env_key in JUDGE_ENV_KEYS.items()
+        if getattr(args, f"judge_{arg}")
+    }
+    if not args.dry_run and not judge_env:
         print(
-            f"submitted task {task_id}; polling {args.rollout_url} ...", file=sys.stderr
+            "WARNING: no --judge-* config given; the Stage-2 judge will be "
+            "unconfigured and rewards may fall to 0.0. Pass "
+            "--judge-model/--judge-base-url/--judge-api-key, or use a "
+            "Stage-1-only test.sh.",
+            file=sys.stderr,
         )
-        status = poll_task(args.rollout_url, task_id)
-    except (urllib.error.URLError, TimeoutError, RuntimeError) as e:
-        print(f"ERROR: rollout failed: {e}", file=sys.stderr)
-        return 1
 
-    rewards = extract_rewards(status)
-    mean = sum(rewards) / len(rewards) if rewards else 0.0
-    print(
-        json.dumps(
-            {
-                "task": task_dir.name,
-                "status": status.get("status"),
-                "num_sessions": len(rewards),
-                "rewards": rewards,
-                "mean_reward": mean,
-            },
-            indent=2,
+    import tempfile
+    from contextlib import ExitStack
+
+    with ExitStack() as stack:
+        if args.staging_dir:
+            staging_root = args.staging_dir
+            staging_root.mkdir(parents=True, exist_ok=True)
+        else:
+            staging_root = Path(
+                stack.enter_context(
+                    tempfile.TemporaryDirectory(prefix="clawbench-prorl-")
+                )
+            )
+        output_name = sanitize_task_name(task_dir.name)
+        staged = stage_task(
+            task_dir,
+            task,
+            staging_root,
+            org=args.org,
+            dataset_name=args.dataset_name,
+            output_name=output_name,
         )
-    )
-    return 0
+
+        request = build_task_request(
+            staged,
+            task_id=task_dir.name,
+            image=image,
+            model_name=args.model_name,
+            num_samples=args.num_samples,
+            timeout_seconds=args.timeout,
+            dataset_name=args.dataset_name,
+            judge_env=judge_env or None,
+        )
+        payload = request.to_payload()
+
+        if args.dry_run:
+            print(json.dumps(payload, indent=2, ensure_ascii=False))
+            return 0
+
+        try:
+            task_id = submit_task(args.rollout_url, payload)
+            print(
+                f"submitted task {task_id}; polling {args.rollout_url} ...",
+                file=sys.stderr,
+            )
+            status = poll_task(args.rollout_url, task_id)
+        except (urllib.error.URLError, TimeoutError, RuntimeError) as e:
+            print(f"ERROR: rollout failed: {e}", file=sys.stderr)
+            return 1
+
+        rewards = extract_rewards(status)
+        mean = sum(rewards) / len(rewards) if rewards else 0.0
+        print(
+            json.dumps(
+                {
+                    "task": task_dir.name,
+                    "status": status.get("status"),
+                    "num_sessions": len(rewards),
+                    "rewards": rewards,
+                    "mean_reward": mean,
+                },
+                indent=2,
+            )
+        )
+        return 0
 
 
 if __name__ == "__main__":

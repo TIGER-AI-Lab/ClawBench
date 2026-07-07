@@ -40,8 +40,17 @@ Two facts make the ClawBench integration almost entirely reuse:
 
 ```
 clawbench-prorl-submit --task v2-047-... --rollout-url http://host:8080 \
-    --image clawbench-harbor:latest --model-name clawbench-policy --num-samples 8
+    --harness hermes --model-name clawbench-policy --num-samples 8 \
+    --judge-model glm-5.1 --judge-base-url https://api.z.ai/api/paas/v4 --judge-api-key sk-...
 ```
+
+The concrete browser harness is **baked into the runtime image** (its Dockerfile
+layer installs the env-driven `/run-harness.sh`); pick it with `--image`
+(defaults to `clawbench-<harness>:latest`). `run-prorl.sh` exports the policy
+endpoint as `BASE_URL`/`API_KEY`/`API_TYPE`/`MODEL_NAME` + `INSTRUCTION` — the
+vars the harness runners read — then hands off. The `--judge-*` flags populate
+the evaluator env (`CLAWBENCH_JUDGE_*`) so Stage-2 judging runs during rollouts;
+they are **independent of** the policy endpoint (never `$OPENAI_BASE_URL`).
 
 1. `harbor_adapter.write_harbor_task` stages the task → `instruction.md`,
    `tests/test.sh` (two-stage verifier → `reward.json`), `workdir/{task.json,
