@@ -29,10 +29,10 @@ RUN pip install --no-cache-dir --break-system-packages \
     "hermes-agent @ git+https://github.com/NousResearch/hermes-agent.git@${HERMES_REF}"
 RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g agent-browser@0.26.0
 
-COPY harnesses/hermes/setup-hermes.sh /setup-hermes.sh
-COPY harnesses/hermes/run-hermes.sh /run-harness.sh
-COPY harnesses/hermes/hermes-capture.py /hermes-capture.py
-COPY harnesses/hermes/usage-emitter.py /usage-emitter.py
+COPY runtime/harnesses/hermes/setup-hermes.sh /setup-hermes.sh
+COPY runtime/harnesses/hermes/run-hermes.sh /run-harness.sh
+COPY runtime/harnesses/hermes/hermes-capture.py /hermes-capture.py
+COPY runtime/harnesses/hermes/usage-emitter.py /usage-emitter.py
 COPY prorl/run-prorl.sh /run-prorl.sh
 RUN chmod +x /setup-hermes.sh /run-harness.sh /hermes-capture.py \
     /usage-emitter.py /run-prorl.sh

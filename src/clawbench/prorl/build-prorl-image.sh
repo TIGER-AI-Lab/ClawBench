@@ -7,7 +7,9 @@ set -euo pipefail
 
 TAG="${1:-clawbench-prorl:latest}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-RUNTIME_ROOT="$(cd "${HERE}/.." && pwd)/runtime"
+# Context is src/clawbench so the build can COPY from both runtime/ and prorl/.
+CONTEXT="$(cd "${HERE}/.." && pwd)"
+RUNTIME_ROOT="${CONTEXT}/runtime"
 
 if ! docker image inspect clawbench-harbor >/dev/null 2>&1; then
   echo "ERROR: base image 'clawbench-harbor' not found." >&2
@@ -16,6 +18,6 @@ if ! docker image inspect clawbench-harbor >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Building ${TAG} (context: ${RUNTIME_ROOT})"
-docker build -t "${TAG}" -f "${HERE}/Dockerfile.prorl" "${RUNTIME_ROOT}"
+echo "Building ${TAG} (context: ${CONTEXT})"
+docker build -t "${TAG}" -f "${HERE}/Dockerfile.prorl" "${CONTEXT}"
 echo "Built ${TAG}"
