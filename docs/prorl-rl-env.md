@@ -118,6 +118,23 @@ Two requirements this surfaced (both handled): `prepare-task.py` needs
 persona resume from `resume_template.json` (now baked into `Dockerfile.prorl`
 and uploaded in `submit.py`).
 
+### Live-model rollout (glm-5.1 × openclaw)
+
+glm-5.1 is incompatible with hermes (#241, the agent crashes on startup), so an
+**openclaw** combined image (`Dockerfile.prorl-openclaw`) was built and run with
+glm-5.1 as the policy. Result: the harness **launches and drives the browser at
+scale** — one task (v2-1097) produced **233 actions / 1545 requests** in a single
+episode — with the interceptor armed and the verifier emitting a real
+`reward.json`. So the environment produces a genuine (trajectory, reward) unit
+from a *live acting model*, end-to-end in a real container.
+
+Rewards were `0.0` across the sampled tasks: glm-5.1 browses extensively but does
+not complete the target actions (the credential/auth-wall — the dominant failure
+mode ClawBench measures; even gemini scored only ~29%). This is a
+model-capability result, not a pipeline defect, and `0.0` is a valid negative RL
+signal. A *passing* reward needs a stronger policy (frontier keys) or a training
+loop — the runbook below.
+
 Not validated here (needs a live *acting* model + a GPU/vLLM/trainer fleet): a
 *task-completing* rollout (non-zero reward) and GRPO training. In the dev-box run
 the reward was `0.0` because the only live key (glm-5.1) is incompatible with the

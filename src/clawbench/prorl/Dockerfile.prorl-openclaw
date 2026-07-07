@@ -1,0 +1,22 @@
+# Combined ClawBench image for Polar RL rollouts, using the openclaw harness
+# (glm-5.1 is incompatible with hermes, #241, but works on other harnesses).
+# FROM the Harbor runtime image + an openclaw harness layer installed as
+# /run-harness.sh. Build context = src/clawbench.
+FROM node:24-slim AS node-runtime
+
+FROM clawbench-harbor-runtime
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g openclaw@2026.3.13
+RUN find /usr/local/lib/node_modules/openclaw/dist -name '*.js' -exec \
+    sed -i 's/"--autoConnect"/"--browserUrl",process.env.CLAWBENCH_BROWSER_CDP_URL/g' {} +
+
+COPY runtime/harnesses/openclaw/setup-openclaw.sh /setup-openclaw.sh
+COPY runtime/harnesses/openclaw/run-openclaw.sh /run-harness.sh
+COPY runtime/harnesses/openclaw/usage-emitter.py /usage-emitter.py
+COPY runner/run_support/resume_template.json /app/src/harbor/resume_template.json
+COPY prorl/run-prorl.sh /run-prorl.sh
+RUN chmod +x /setup-openclaw.sh /run-harness.sh /usage-emitter.py /run-prorl.sh
