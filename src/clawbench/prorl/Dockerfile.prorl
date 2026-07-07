@@ -1,0 +1,45 @@
+# Combined ClawBench image for ProRL-Agent-Server (Polar) RL rollouts.
+#
+# Built FROM the Harbor runtime image (clawbench-harbor), which already provides
+# everything the staged setup.sh/verify.py need: chromium + runtime-server venv
+# (with fpdf2), the shared persona, resume_template.json, and the harbor runtime
+# scripts under /app/src/harbor. This layer adds a browser *harness*
+# (/run-harness.sh) so a Polar shell session can drive an episode, plus the
+# run-prorl.sh entry.
+#
+# Build with build-prorl-image.sh (context = src/clawbench/runtime), then use it
+# as `clawbench-prorl-submit --image clawbench-prorl:latest`.
+#
+# NOTE: this image is validated on a Docker/GPU build box, not in unit tests —
+# the offline test suite verifies only the Polar submit -> reward contract.
+
+FROM node:24-slim AS node-runtime
+
+FROM clawbench-harbor
+
+# Node (agent-browser dependency for the hermes harness).
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+# Hermes browser harness (model-agnostic over an OpenAI-compatible endpoint).
+ARG HERMES_REF=bf196a3fc0fd1f79353369e8732051db275c6276
+RUN pip install --no-cache-dir --break-system-packages \
+    "hermes-agent @ git+https://github.com/NousResearch/hermes-agent.git@${HERMES_REF}"
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g agent-browser@0.26.0
+
+COPY runtime/harnesses/hermes/setup-hermes.sh /setup-hermes.sh
+COPY runtime/harnesses/hermes/run-hermes.sh /run-harness.sh
+COPY runtime/harnesses/hermes/hermes-capture.py /hermes-capture.py
+COPY runtime/harnesses/hermes/usage-emitter.py /usage-emitter.py
+# prepare-task.py reads /app/src/harbor/resume_template.json to render the
+# persona resume PDF. It lives in runner/run_support and is normally injected
+# into the task package by the harbor adapter's copy_environment, so the bare
+# runtime image lacks it — bake it in here (verified: without it, setup.sh's
+# prepare-task.py FileNotFounds and the runtime never boots).
+COPY runner/run_support/resume_template.json /app/src/harbor/resume_template.json
+
+COPY prorl/run-prorl.sh /run-prorl.sh
+RUN chmod +x /setup-hermes.sh /run-harness.sh /hermes-capture.py \
+    /usage-emitter.py /run-prorl.sh
