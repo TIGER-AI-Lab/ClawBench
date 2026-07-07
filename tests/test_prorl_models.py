@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from clawbench.prorl.models import (
@@ -13,8 +15,8 @@ from clawbench.prorl.models import (
 )
 
 
-def _minimal_request(**overrides) -> TaskRequest:
-    kwargs = dict(
+def _minimal_request(**overrides: Any) -> TaskRequest:
+    kwargs: dict[str, Any] = dict(
         task_id="v2-001",
         instruction="do the thing",
         runtime=RuntimeSpec(image="clawbench-harbor:latest"),
