@@ -1,10 +1,22 @@
-"""End-to-end contract test via the offline mock Polar rollout server."""
+"""End-to-end contract test via the offline mock Polar rollout server.
+
+These tests exercise the ``harbor`` evaluator path, which runs a POSIX
+``test.sh`` via ``bash`` (ClawBench's runtime is Linux containers). They are
+skipped on Windows, which has no ``bash``.
+"""
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
+import pytest
+
 from clawbench.prorl import mock_gateway, submit
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32", reason="harbor evaluator runs a POSIX test.sh via bash"
+)
 
 
 def _stub_tests_dir(tmp_path: Path, reward: float) -> Path:
