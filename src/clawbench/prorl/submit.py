@@ -24,6 +24,7 @@ from clawbench.eval.harbor_adapter import (
     sanitize_task_name,
     write_harbor_task,
 )
+from clawbench.runner.run_support.task import RESUME_TEMPLATE
 from clawbench.utils.paths import RUNTIME_ROOT
 from clawbench.prorl.models import (
     AgentSpec,
@@ -100,6 +101,14 @@ def build_task_request(
             type="upload_dir",
             source=str(RUNTIME_ROOT / "harbor"),
             target="/app/src/harbor",
+        ),
+        # prepare-task.py renders the persona resume from this template; it lives
+        # in run_support (not runtime/harbor), so upload it explicitly — without
+        # it setup.sh FileNotFounds and the runtime never boots.
+        PrepareAction(
+            type="upload_file",
+            source=str(RESUME_TEMPLATE),
+            target="/app/src/harbor/resume_template.json",
         ),
         PrepareAction(
             type="upload_file", source=str(RUN_SCRIPT), target="/app/run-prorl.sh"

@@ -104,12 +104,25 @@ rootless-podman host:
   `/app/src/harbor/{prepare-task,start-runtime,verify}.py`,
   `/app/src/shared/alex_green_personal_info.json`, `fpdf` import, `chromium`.
 - **Runtime boot** inside the container: `start-runtime.sh` brings up the
-  runtime-server (`:7878`) in ~2s and Chromium + CDP (`:9223`, Chrome/147) in
-  ~6s, with the recorder extension loaded.
+  runtime-server (`:7878`) and Chromium + CDP (`:9223`, Chrome/147) with the
+  recorder extension loaded.
+- **Full rollout pipeline** on a staged v2 task (v2-047): `setup.sh` prepares the
+  task (persona + resume PDF), boots the browser, and **arms the interceptor**
+  (`eval_interceptor_ready: true`); the shell harness launches the agent; the
+  recorder captures the session; and the `harbor`-style verifier emits a real
+  `/logs/verifier/reward.json`. i.e. the environment produces the (trajectory,
+  reward) unit a Polar trainer consumes, end-to-end in a real container.
 
-Not validated here (needs a GPU/vLLM/trainer fleet, out of scope for the dev
-box): a live Polar rollout end-to-end (policy inference + trajectory capture +
-GRPO training). That is the runbook above.
+Two requirements this surfaced (both handled): `prepare-task.py` needs
+`PURELY_MAIL_API_KEY`/`DOMAIN` (pass via `--purelymail-*`), and it renders the
+persona resume from `resume_template.json` (now baked into `Dockerfile.prorl`
+and uploaded in `submit.py`).
+
+Not validated here (needs a live *acting* model + a GPU/vLLM/trainer fleet): a
+*task-completing* rollout (non-zero reward) and GRPO training. In the dev-box run
+the reward was `0.0` because the only live key (glm-5.1) is incompatible with the
+hermes harness (#241) — a model issue, not a pipeline defect. That is the
+runbook above.
 
 ## Real training runbook (GPU box, e.g. `nick@ubuntu`)
 

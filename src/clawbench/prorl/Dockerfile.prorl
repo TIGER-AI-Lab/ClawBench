@@ -33,6 +33,13 @@ COPY runtime/harnesses/hermes/setup-hermes.sh /setup-hermes.sh
 COPY runtime/harnesses/hermes/run-hermes.sh /run-harness.sh
 COPY runtime/harnesses/hermes/hermes-capture.py /hermes-capture.py
 COPY runtime/harnesses/hermes/usage-emitter.py /usage-emitter.py
+# prepare-task.py reads /app/src/harbor/resume_template.json to render the
+# persona resume PDF. It lives in runner/run_support and is normally injected
+# into the task package by the harbor adapter's copy_environment, so the bare
+# runtime image lacks it — bake it in here (verified: without it, setup.sh's
+# prepare-task.py FileNotFounds and the runtime never boots).
+COPY runner/run_support/resume_template.json /app/src/harbor/resume_template.json
+
 COPY prorl/run-prorl.sh /run-prorl.sh
 RUN chmod +x /setup-hermes.sh /run-harness.sh /hermes-capture.py \
     /usage-emitter.py /run-prorl.sh
