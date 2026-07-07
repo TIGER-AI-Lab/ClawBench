@@ -92,6 +92,25 @@ browser.
 uv run --frozen pytest tests/test_prorl_*.py -q     # 13 passed
 ```
 
+## Validated on real hardware (podman, no GPU)
+
+Beyond the offline contract tests, the container was built and booted on a
+rootless-podman host:
+
+- `clawbench-prorl` **builds** (`build-prorl-image.sh`) FROM `clawbench-harbor`
+  (built from `runtime/harbor/Dockerfile`).
+- **Composition check** (the deps `prepare-task.py`/`verify.py` need): present in
+  the image — `/run-harness.sh`, `/run-prorl.sh`, `/setup-hermes.sh`,
+  `/app/src/harbor/{prepare-task,start-runtime,verify}.py`,
+  `/app/src/shared/alex_green_personal_info.json`, `fpdf` import, `chromium`.
+- **Runtime boot** inside the container: `start-runtime.sh` brings up the
+  runtime-server (`:7878`) in ~2s and Chromium + CDP (`:9223`, Chrome/147) in
+  ~6s, with the recorder extension loaded.
+
+Not validated here (needs a GPU/vLLM/trainer fleet, out of scope for the dev
+box): a live Polar rollout end-to-end (policy inference + trajectory capture +
+GRPO training). That is the runbook above.
+
 ## Real training runbook (GPU box, e.g. `nick@ubuntu`)
 
 A full RL *training* run needs GPUs + an inference server + a trainer. The
