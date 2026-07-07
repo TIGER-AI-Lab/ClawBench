@@ -30,6 +30,13 @@ export API_KEY="${OPENAI_API_KEY}"
 export API_TYPE="openai-completions"
 export MODEL_NAME="${POLAR_MODEL_NAME}"
 
+# The browser runtime (brought up by prepare/setup.sh -> start-runtime.sh)
+# exposes CDP on :9223. The harness setup reads CLAWBENCH_BROWSER_CDP_URL; the
+# base entrypoint that would normally default it is bypassed by this custom
+# shell, so set it here.
+export CLAWBENCH_BROWSER_CDP_URL="${CLAWBENCH_BROWSER_CDP_URL:-http://127.0.0.1:9223}"
+export CLAWBENCH_BROWSER_MODE="${CLAWBENCH_BROWSER_MODE:-local}"
+
 # The task instruction drives the episode (the base entrypoint/harness reads
 # $INSTRUCTION).
 INSTRUCTION_FILE="${CLAWBENCH_INSTRUCTION_FILE:-/app/instruction.md}"

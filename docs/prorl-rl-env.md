@@ -56,8 +56,14 @@ they are **independent of** the policy endpoint (never `$OPENAI_BASE_URL`).
    `tests/test.sh` (two-stage verifier → `reward.json`), `workdir/{task.json,
    eval-schema.json, setup.sh, extra_info}`.
 2. A `TaskRequest` is built:
-   - `runtime.prepare` uploads the workdir + `run-prorl.sh` + instruction, then
-     `exec bash /app/setup.sh` (brings up Chromium/CDP + runtime-server).
+   - `runtime.prepare` uploads the workdir + the **Harbor runtime scripts**
+     (`/app/src/harbor/{prepare-task,start-runtime,verify}.py`) + `run-prorl.sh`
+     + instruction, then `exec bash /app/setup.sh` (brings up Chromium/CDP on
+     `:9223` + runtime-server). Uploading the Harbor scripts means the image only
+     needs to be a **ClawBench harness image** (base + a harness `/run-harness.sh`
+     + runtime-server) — no bespoke combined image. `run-prorl.sh` also exports
+     `CLAWBENCH_BROWSER_CDP_URL` because the base entrypoint (which normally
+     defaults it) is bypassed by the shell harness.
    - `agent` = **shell** harness running `bash /app/run-prorl.sh`.
    - `evaluator` = **harbor** over the staged `tests/`.
    - `builder` = `prefix_merging` (recommended for multi-turn agents).

@@ -75,9 +75,15 @@ def test_build_task_request_shape(staged) -> None:
     assert ev["env"]["CLAWBENCH_JUDGE_MODEL"] == "glm-5.1"
     assert ev["env"]["CLAWBENCH_JUDGE_BASE_URL"] == "https://judge.example/v1"
 
-    # runtime prepares the browser env
-    types = [p["type"] for p in payload["runtime"]["prepare"]]
+    # runtime prepares the browser env + uploads the Harbor runtime scripts the
+    # staged setup.sh/verify.py reference
+    prepare = payload["runtime"]["prepare"]
+    types = [p["type"] for p in prepare]
     assert "upload_dir" in types and "exec" in types
+    assert any(p.get("target") == "/app/src/harbor" for p in prepare), (
+        "harbor runtime scripts must be uploaded so a harness image resolves "
+        "the staged setup.sh/verify.py"
+    )
     assert payload["num_samples"] == 4
 
 
@@ -88,6 +94,8 @@ def test_run_script_routes_policy_but_not_judge() -> None:
     # the ClawBench harness runners actually read.
     assert 'BASE_URL="${OPENAI_BASE_URL}"' in text
     assert 'API_KEY="${OPENAI_API_KEY}"' in text
+    # the harness setup needs the browser CDP endpoint (entrypoint is bypassed)
+    assert "CLAWBENCH_BROWSER_CDP_URL" in text
     # the judge endpoint is never derived from the gateway endpoint
     for line in text.splitlines():
         if "CLAWBENCH_JUDGE_BASE_URL" in line:

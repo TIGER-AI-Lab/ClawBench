@@ -24,6 +24,7 @@ from clawbench.eval.harbor_adapter import (
     sanitize_task_name,
     write_harbor_task,
 )
+from clawbench.utils.paths import RUNTIME_ROOT
 from clawbench.prorl.models import (
     AgentSpec,
     BuilderSpec,
@@ -87,10 +88,18 @@ def build_task_request(
     tests_dir = step_dir / "tests"
     instruction = (step_dir / "instruction.md").read_text()
 
-    # Seed the session: stage the task workdir + run script + instruction, then
-    # bring up the browser runtime via the task's own setup.sh.
+    # Seed the session: stage the task workdir + run script + instruction, upload
+    # the Harbor runtime scripts the staged setup.sh/verify.py reference (so a
+    # plain ClawBench harness image — base + harness + runtime-server — works
+    # without a bespoke combined image), then bring up the browser runtime via
+    # the task's own setup.sh.
     prepare = [
         PrepareAction(type="upload_dir", source=str(workdir), target="/app"),
+        PrepareAction(
+            type="upload_dir",
+            source=str(RUNTIME_ROOT / "harbor"),
+            target="/app/src/harbor",
+        ),
         PrepareAction(
             type="upload_file", source=str(RUN_SCRIPT), target="/app/run-prorl.sh"
         ),
