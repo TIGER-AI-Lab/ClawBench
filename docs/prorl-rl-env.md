@@ -128,7 +128,19 @@ episode — with the interceptor armed and the verifier emitting a real
 `reward.json`. So the environment produces a genuine (trajectory, reward) unit
 from a *live acting model*, end-to-end in a real container.
 
-Rewards were `0.0` across the sampled tasks: glm-5.1 browses extensively but does
+**A task-completing rollout scored `reward: 1.0`.** On v2-608 (Outschool kids
+course), glm-5.1 via openclaw drove 23 browser actions, **hit the target endpoint**
+(Stage-1 `intercepted: true`), and the **glm-5.1 judge confirmed** the intercepted
+request fulfills the instruction (Stage-2 `judge_match: true`) — judge reason:
+*"The GET request opens the detail page of a Minecraft coding class on Outschool,
+which would display its description, schedule, and teacher information as
+requested."* So the full pipeline runs end-to-end **with a meaningful passing
+score**, using glm-5.1 as both policy and judge (no frontier key required). Note
+verify.py reads the instruction from `/tests/task.json` (Polar's `harbor`
+evaluator uploads `tests_dir` there), and the Stage-2 judge must be configured
+via `CLAWBENCH_JUDGE_*` / `--judge-*` or it fail-closes to 0.0.
+
+Other sampled tasks scored `0.0`: glm-5.1 browses extensively but does
 not complete the target actions (the credential/auth-wall — the dominant failure
 mode ClawBench measures; even gemini scored only ~29%). This is a
 model-capability result, not a pipeline defect, and `0.0` is a valid negative RL
