@@ -26,6 +26,10 @@ from clawbench.runner.run_support.config import (
     load_runtime_env,
     resolve_task_file,
 )
+from clawbench.runner.run_support.api_preflight import (
+    ModelApiPreflightError,
+    preflight_model_api,
+)
 from clawbench.runner.run_support.browser_runtime import (
     BROWSER_RUNTIME_CHOICES,
     BrowserRuntimeError,
@@ -296,6 +300,40 @@ def main():
         write_run_meta(output_dir, meta)
         print(f"ERROR: task_data: {e}")
         sys.exit(2)
+
+    if model_cfg is not None:
+        step("Checking model API")
+        try:
+            preflight_model_api(model_cfg)
+        except ModelApiPreflightError as e:
+            duration = time.time() - start_time
+            classification = classify_run(
+                output_dir, False, "infra_failure", model_cfg=model_cfg
+            )
+            meta = make_run_meta(
+                task=task,
+                task_json_sha256=task_json_sha256,
+                case_name=case_name,
+                args=args,
+                model_cfg=model_cfg,
+                judge_cfg=judge_cfg,
+                task_dir=task_dir,
+                task_file=task_file,
+                output_dir=output_dir,
+                container=container,
+                run_dir_name=run_dir_name,
+                host_port=host_port,
+                email=None,
+                ts=ts,
+                duration=duration,
+                intercepted=False,
+                classification=classification,
+                browser_runtime=_browser_runtime_meta(),
+                failure_reason=f"model_api_preflight: {e}",
+            )
+            write_run_meta(output_dir, meta)
+            print(f"ERROR: model_api_preflight: {e}")
+            sys.exit(2)
 
     if not args.no_build:
         step("Building container image")

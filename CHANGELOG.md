@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 ### Added
 - Added support for remote browsers with CDP connection.
+- Added a preflight API call to check if the LLM API is valid before starting actual tasks.
 
 ## [0.7.0] - 2026-06-22
 ### Added
