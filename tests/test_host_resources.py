@@ -73,7 +73,10 @@ def test_validate_extra_info_path_accepts_valid_relative(tmp_path: Path) -> None
 
 
 def test_validate_extra_info_path_rejects_absolute(tmp_path: Path) -> None:
-    with pytest.raises(ValueError, match="absolute"):
+    # Must be rejected. On POSIX "/etc/passwd" trips the is_absolute() guard
+    # ("absolute"); on Windows it isn't absolute (no drive), so it's rejected by
+    # the containment check ("escapes") instead — either way it raises.
+    with pytest.raises(ValueError, match="absolute|escapes"):
         validate_extra_info_path(tmp_path, "/etc/passwd")
 
 
