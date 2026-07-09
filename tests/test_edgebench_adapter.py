@@ -102,7 +102,9 @@ def test_duplicate_ids_raise(one_case, tmp_path: Path) -> None:
 def test_extra_info_path_traversal_rejected(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="escapes"):
         ea._guard_extra_info({"extra_info": [{"path": "../../etc/passwd"}]}, tmp_path)
-    with pytest.raises(ValueError, match="relative"):
+    # "/etc/passwd" is absolute on POSIX ("relative" error) but not on Windows
+    # (no drive), where it's caught as an escape — either way it's rejected.
+    with pytest.raises(ValueError, match="relative|escapes"):
         ea._guard_extra_info({"extra_info": [{"path": "/etc/passwd"}]}, tmp_path)
 
 
