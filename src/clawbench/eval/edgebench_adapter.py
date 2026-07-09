@@ -109,6 +109,8 @@ def build_task_json(
                 "mkdir -p /app/evidence",
                 "cp /specs/task.json /app/task.json",
                 "cp /specs/eval-schema.json /app/eval-schema.json",
+                # the runtime-server reads /eval-schema.json to arm the interceptor
+                "cp /specs/eval-schema.json /eval-schema.json",
                 # stage the personal-info bundle the instruction references
                 "cp -r /specs/my-info /app/my-info",
             ],
@@ -172,6 +174,25 @@ def write_benchmark(
     return written
 
 
+def _guard_extra_info(task: dict[str, Any], task_dir: Path) -> None:
+    """Reject extra_info paths that are absolute or escape the task dir.
+
+    harbor_adapter.copy_extra_info joins ``task_dir / item['path']`` with no
+    containment check, so a crafted task could stage arbitrary host files into the
+    shareable benchmark. Fail loud on any such path.
+    """
+    for item in task.get("extra_info") or []:
+        if not isinstance(item, dict) or not item.get("path"):
+            continue
+        rel = str(item["path"])
+        if Path(rel).is_absolute():
+            raise ValueError(f"extra_info path must be relative: {rel!r}")
+        try:
+            (task_dir / rel).resolve().relative_to(task_dir.resolve())
+        except ValueError as e:
+            raise ValueError(f"extra_info path escapes the task dir: {rel!r}") from e
+
+
 def _stage_my_info(task: dict[str, Any], task_dir: Path, dest: Path) -> None:
     """Pre-generate the my-info bundle (persona + creds + resume) + extra_info.
 
@@ -179,6 +200,7 @@ def _stage_my_info(task: dict[str, Any], task_dir: Path, dest: Path) -> None:
     at adapt time (SForge setup_cmds run at build with no runtime keys). A fixed
     placeholder persona email is used; email-signup tasks are out of scope.
     """
+    _guard_extra_info(task, task_dir)
     tmp, _ = prepare_personal_info(
         SHARED_ROOT, _PERSONA_EMAIL, _PERSONA_PASSWORD, dest.parent
     )

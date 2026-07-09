@@ -125,6 +125,18 @@ def test_judge_error_verdict_sanitized(monkeypatch, tmp_path: Path) -> None:
     assert r["score"] == 0.0 and "SECRET" not in json.dumps(r)
 
 
+def test_judge_reason_not_echoed_to_output(monkeypatch, tmp_path: Path) -> None:
+    # the judge reason quotes the request body (may hold creds/PII) — must not leak
+    monkeypatch.setattr(
+        ej,
+        "judge_request",
+        lambda *a, **k: {"match": True, "reason": "body had password=SECRET123"},
+    )
+    ev = _evidence(tmp_path, {"intercepted": True, "request": {"url": "x"}})
+    r = ej.score_evidence(TASK, ev, judge_cfg=JUDGE_CFG, judge_model="j")
+    assert r["score"] == 1.0 and "SECRET123" not in json.dumps(r)
+
+
 def test_emit_structured_json_round_trips() -> None:
     r = {"valid": True, "score": 1.0, "summary": "s", "details": [], "metrics": {}}
     out = ej.emit_structured_json(r)

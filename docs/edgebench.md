@@ -64,11 +64,20 @@ image build/hashing.
 
 ## Not covered here (the two open ends)
 
-1. **A browser Agent for SForge.** SForge's built-in agents (`claude-code`,
-   `codex`) are code CLIs. Running a *browser* episode needs either a small
-   `Agent` subclass under `sforge/harness/agent/` (one file + one factory line —
-   an edit to the EdgeBench repo, or an upstream contribution) or a Work-image
-   entrypoint that drives the ClawBench harness and then calls `sforge-submit`.
+1. **A browser Agent for SForge that boots the runtime.** SForge's built-in
+   agents (`claude-code`, `codex`) are code CLIs, and `work.setup_cmds` run at
+   **image-build time** — so the browser runtime + interceptor cannot be started
+   there. Running a *browser* episode needs a small `Agent` subclass under
+   `sforge/harness/agent/` (one file + one factory line — an edit to the
+   EdgeBench repo or an upstream contribution) or a Work-image entrypoint that,
+   at container-run time and **before** the episode:
+   ```bash
+   /app/src/harbor/start-runtime.sh &                 # Chromium + CDP + runtime-server
+   until curl -sf http://127.0.0.1:7878/api/status \
+     | grep -q '"eval_interceptor_ready":true'; do sleep 1; done
+   ```
+   (the adapter already stages `/eval-schema.json`, which the runtime reads to arm
+   the interceptor). It then drives the ClawBench harness and calls `sforge-submit`.
 2. **Container build + a live `sforge run`.** The adapter emits contract-faithful
    task JSON (schema-tested) and the judge is unit-tested offline, but building
    the Work/Judge images and a live end-to-end `sforge run` require Docker + the

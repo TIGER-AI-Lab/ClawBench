@@ -135,13 +135,18 @@ def score_evidence(
         # fail closed with a category (not the raw error, which may carry secrets).
         return result(0.0, False, "judge call raised an exception", "PASSED", "ERROR")
     match = verdict.get("match")
-    reason = str(verdict.get("reason") or "")
     if verdict.get("error"):
         # judge_request returns a short error category; don't echo raw provider text.
         return result(0.0, False, "judge call failed", "PASSED", "ERROR")
+    # Use generic summaries — the judge's free-text reason quotes the intercepted
+    # request body, which can contain credentials/PII; never echo it to SForge output.
     if match is True:
-        return result(1.0, True, reason or "judge: match", "PASSED", "PASSED")
-    return result(0.0, True, reason or "judge: mismatch", "PASSED", "FAILED")
+        return result(
+            1.0, True, "intercepted request fulfils the task", "PASSED", "PASSED"
+        )
+    return result(
+        0.0, True, "intercepted request does not fulfil the task", "PASSED", "FAILED"
+    )
 
 
 def emit_structured_json(result: dict[str, Any]) -> str:

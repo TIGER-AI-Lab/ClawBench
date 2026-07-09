@@ -97,3 +97,17 @@ def test_duplicate_ids_raise(one_case, tmp_path: Path) -> None:
             base_image="img",
             eval_timeout=180,
         )
+
+
+def test_extra_info_path_traversal_rejected(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="escapes"):
+        ea._guard_extra_info({"extra_info": [{"path": "../../etc/passwd"}]}, tmp_path)
+    with pytest.raises(ValueError, match="relative"):
+        ea._guard_extra_info({"extra_info": [{"path": "/etc/passwd"}]}, tmp_path)
+
+
+def test_eval_schema_staged_for_runtime(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # the runtime-server reads /eval-schema.json to arm the interceptor
+    assert any("/eval-schema.json" in c for c in spec["work"]["setup_cmds"])
