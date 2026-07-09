@@ -119,7 +119,11 @@ def build_task_json(
         },
         "judge": {
             # The judge re-scores the submitted evidence with the ClawBench verifier.
+            # The judge image must provide the `clawbench-edgebench-judge` console
+            # script — install the package here (a base image that already bundles
+            # it can drop this line).
             "setup_cmds": [
+                "pip install --quiet --no-cache-dir clawbench-eval",
                 "cp /specs/task.json /judge/task.json",
             ],
             "specs_dir": "specs",

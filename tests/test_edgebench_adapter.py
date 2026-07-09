@@ -111,3 +111,19 @@ def test_eval_schema_staged_for_runtime(one_case) -> None:
     spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
     # the runtime-server reads /eval-schema.json to arm the interceptor
     assert any("/eval-schema.json" in c for c in spec["work"]["setup_cmds"])
+
+
+def test_judge_image_installs_clawbench(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # the eval_cmd needs the clawbench-edgebench-judge console script present
+    assert any("clawbench-eval" in c for c in spec["judge"]["setup_cmds"])
+
+
+def test_evidence_dir_consistent(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # submit_paths and the judge --evidence-dir must reference the same dir
+    submit = spec["submit_paths"][0].rstrip("/").split("/")[-1]
+    assert submit == "evidence"
+    assert f"--evidence-dir /app/{submit}" in spec["judge"]["eval_cmd"]

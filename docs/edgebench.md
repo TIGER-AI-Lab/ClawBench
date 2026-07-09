@@ -72,12 +72,16 @@ image build/hashing.
    EdgeBench repo or an upstream contribution) or a Work-image entrypoint that,
    at container-run time and **before** the episode:
    ```bash
+   # the interceptor writes to $CLAWBENCH_DATA_DIR (default /data); point it at
+   # the dir SForge submits + the judge reads (submit_paths: ["evidence/"]).
+   export CLAWBENCH_DATA_DIR=/app/evidence
    /app/src/harbor/start-runtime.sh &                 # Chromium + CDP + runtime-server
    until curl -sf http://127.0.0.1:7878/api/status \
      | grep -q '"eval_interceptor_ready":true'; do sleep 1; done
    ```
    (the adapter already stages `/eval-schema.json`, which the runtime reads to arm
-   the interceptor). It then drives the ClawBench harness and calls `sforge-submit`.
+   the interceptor). It then drives the ClawBench harness and, when done, calls
+   `sforge-submit` — which archives `evidence/interception.json` for the judge.
 2. **Container build + a live `sforge run`.** The adapter emits contract-faithful
    task JSON (schema-tested) and the judge is unit-tested offline, but building
    the Work/Judge images and a live end-to-end `sforge run` require Docker + the
