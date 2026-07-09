@@ -65,3 +65,35 @@ def test_write_benchmark_layout(one_case, tmp_path: Path) -> None:
     # per-task specs staged for both containers
     assert (tasks_dir / sid / "specs" / "task.json").is_file()
     assert (tasks_dir / sid / "specs" / "eval-schema.json").is_file()
+    # the my-info bundle the instruction promises is staged
+    myinfo = tasks_dir / sid / "specs" / "my-info"
+    assert (myinfo / "alex_green_personal_info.json").is_file()
+    assert (myinfo / "email_credentials.json").is_file()
+    # no judge/agent secret leaks into the emitted task JSON
+    assert "CLAWBENCH_JUDGE" not in written[0].read_text()
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("v2-608-Foo.Bar", "v2_608_foo_bar"),
+        ("A..B--C", "a_b_c"),
+        ("__weird__", "weird"),
+    ],
+)
+def test_sforge_task_id_sanitization(raw: str, expected: str) -> None:
+    sid = ea.sforge_task_id(raw)
+    assert sid == expected
+    assert __import__("re").fullmatch(r"[a-z0-9_]+", sid)
+
+
+def test_duplicate_ids_raise(one_case, tmp_path: Path) -> None:
+    task_dir, task = one_case
+    # two source dirs that sanitize to the same id → collision must raise
+    with pytest.raises(ValueError, match="collision"):
+        ea.write_benchmark(
+            [(task_dir, task), (task_dir, task)],
+            tmp_path,
+            base_image="img",
+            eval_timeout=180,
+        )

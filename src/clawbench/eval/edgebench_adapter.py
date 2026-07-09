@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -27,13 +29,25 @@ import yaml
 
 from clawbench.eval.harbor_adapter import (
     DEFAULT_CASES_DIR,
+    copy_extra_info,
     discover_cases,
-    sanitize_task_name,
 )
-from clawbench.runner.run_support.task import build_instruction
+from clawbench.runner.run_support.task import build_instruction, prepare_personal_info
+from clawbench.utils.paths import SHARED_ROOT
 
 # Default combined runtime image (browser + harness + harbor scripts + verifier).
 DEFAULT_BASE_IMAGE = "clawbench-prorl-openclaw:latest"
+
+# Fixed persona identity for the staged my-info bundle (static benchmark; no live
+# inbox — email-signup tasks are out of scope for the EdgeBench packaging).
+_PERSONA_EMAIL = "alex.green@example.com"
+_PERSONA_PASSWORD = "clawbench-edgebench"  # noqa: S105 (placeholder, not a secret)
+
+
+def sforge_task_id(task_id: str) -> str:
+    """SForge requires lowercase_underscore ids: map every other char to '_'."""
+    sid = re.sub(r"[^a-z0-9_]+", "_", task_id.lower()).strip("_")
+    return re.sub(r"_+", "_", sid) or "task"
 
 
 def benchmark_yaml(base_image: str) -> str:
@@ -74,7 +88,7 @@ def build_task_json(
     eval_timeout: int,
 ) -> dict[str, Any]:
     """Build the SForge task.json (Mapping A) for one ClawBench task."""
-    sforge_id = sanitize_task_name(task_id).replace("-", "_").lower()
+    sforge_id = sforge_task_id(task_id)
     raw_meta = task.get("metadata")
     metadata = raw_meta if isinstance(raw_meta, dict) else {}
     name = str(metadata.get("description") or task.get("instruction") or task_id)[:120]
@@ -95,6 +109,8 @@ def build_task_json(
                 "mkdir -p /app/evidence",
                 "cp /specs/task.json /app/task.json",
                 "cp /specs/eval-schema.json /app/eval-schema.json",
+                # stage the personal-info bundle the instruction references
+                "cp -r /specs/my-info /app/my-info",
             ],
             "specs_dir": "specs",
             "agent_query": edgebench_agent_query(task),
@@ -130,15 +146,18 @@ def write_benchmark(
     (tasks_dir / "BENCHMARK.yaml").write_text(benchmark_yaml(base_image))
 
     written: list[Path] = []
-    seen: set[str] = set()
+    seen: dict[str, str] = {}
     for task_dir, task in cases:
         spec = build_task_json(
             task_dir.name, task, base_image=base_image, eval_timeout=eval_timeout
         )
         sid = spec["task_id"]
         if sid in seen:
-            continue
-        seen.add(sid)
+            raise ValueError(
+                f"sforge task_id collision: {task_dir.name!r} and {seen[sid]!r} "
+                f"both sanitize to {sid!r}"
+            )
+        seen[sid] = task_dir.name
         # per-task specs (copied into both containers at build via specs_dir)
         specs = tasks_dir / sid / "specs"
         specs.mkdir(parents=True, exist_ok=True)
@@ -146,10 +165,27 @@ def write_benchmark(
         (specs / "eval-schema.json").write_text(
             json.dumps(task["eval_schema"], indent=2, ensure_ascii=False)
         )
+        _stage_my_info(task, task_dir, specs / "my-info")
         task_path = tasks_dir / f"{sid}.json"
         task_path.write_text(json.dumps(spec, indent=2, ensure_ascii=False))
         written.append(task_path)
     return written
+
+
+def _stage_my_info(task: dict[str, Any], task_dir: Path, dest: Path) -> None:
+    """Pre-generate the my-info bundle (persona + creds + resume) + extra_info.
+
+    build_instruction() promises ./my-info/ contains these files, so we stage them
+    at adapt time (SForge setup_cmds run at build with no runtime keys). A fixed
+    placeholder persona email is used; email-signup tasks are out of scope.
+    """
+    tmp, _ = prepare_personal_info(
+        SHARED_ROOT, _PERSONA_EMAIL, _PERSONA_PASSWORD, dest.parent
+    )
+    if dest.exists():
+        shutil.rmtree(dest)
+    tmp.rename(dest)
+    copy_extra_info(task, task_dir, dest)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -189,12 +225,16 @@ def main(argv: list[str] | None = None) -> int:
     if not cases:
         print("ERROR: no matching V2 tasks found", file=sys.stderr)
         return 1
-    written = write_benchmark(
-        cases,
-        args.output_dir,
-        base_image=args.base_image,
-        eval_timeout=args.eval_timeout,
-    )
+    try:
+        written = write_benchmark(
+            cases,
+            args.output_dir,
+            base_image=args.base_image,
+            eval_timeout=args.eval_timeout,
+        )
+    except (OSError, ValueError) as e:
+        print(f"ERROR: failed to write benchmark: {e}", file=sys.stderr)
+        return 1
     print(f"Wrote {len(written)} EdgeBench task(s) to {args.output_dir / 'tasks'}")
     return 0
 

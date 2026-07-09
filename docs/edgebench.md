@@ -51,7 +51,7 @@ sforge run --task <id> --agent <browser-agent> \
 The judge prints, and SForge parses:
 ```
 >>>>> Start Structured Result
-{"valid":true,"score":1.0,"summary":"…","details":[…],"metrics":{"intercepted":true}}
+{"valid":true,"score":1.0,"pass_rate":1.0,"summary":"…","details":[…],"metrics":{"intercepted":true}}
 >>>>> End Structured Result
 ```
 

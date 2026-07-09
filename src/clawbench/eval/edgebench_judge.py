@@ -43,14 +43,18 @@ def _judge_cfg_from_env() -> dict[str, str] | None:
     }
 
 
-def _load_interception(evidence_dir: Path) -> dict[str, Any] | None:
+_MISSING = object()
+
+
+def _load_interception(evidence_dir: Path) -> Any:
+    """Return the parsed interception (any JSON type), None if absent, or _MISSING if unreadable."""
     path = evidence_dir / "interception.json"
     if not path.is_file():
         return None
     try:
         return json.loads(path.read_text())
     except (OSError, json.JSONDecodeError):
-        return None
+        return _MISSING
 
 
 def score_evidence(
@@ -65,6 +69,7 @@ def score_evidence(
     instruction = str(task.get("instruction") or "")
     judge_context = task.get("judge_context")
     intercept = _load_interception(evidence_dir)
+    is_intercept = isinstance(intercept, dict) and intercept.get("intercepted") is True
 
     def result(
         score: float, valid: bool, summary: str, stage1: str, stage2: str
@@ -78,19 +83,29 @@ def score_evidence(
                 {"name": "stage1-interception", "status": stage1},
                 {"name": "stage2-judge", "status": stage2},
             ],
-            "metrics": {
-                "intercepted": intercept is not None
-                and bool(intercept.get("intercepted"))
-            },
+            "metrics": {"intercepted": is_intercept},
         }
 
-    # Stage 1 — was the target request intercepted?
+    # Stage 1 — validate the captured evidence, then check the target was intercepted.
+    if intercept is _MISSING:
+        return result(
+            0.0, False, "malformed evidence/interception.json", "ERROR", "SKIPPED"
+        )
     if intercept is None:
         return result(
             0.0, True, "no evidence/interception.json found", "FAILED", "SKIPPED"
         )
-    if not intercept.get("intercepted"):
+    if not isinstance(intercept, dict):
+        return result(
+            0.0, False, "interception.json is not an object", "ERROR", "SKIPPED"
+        )
+    # require an explicit boolean True (a truthy string like "false" must NOT pass)
+    if intercept.get("intercepted") is not True:
         return result(0.0, True, "target request not intercepted", "FAILED", "SKIPPED")
+    if not isinstance(intercept.get("request"), dict):
+        return result(
+            0.0, False, "intercepted but no request object", "ERROR", "SKIPPED"
+        )
 
     if no_judge:
         return result(
@@ -111,13 +126,19 @@ def score_evidence(
             "PASSED",
             "ERROR",
         )
-    verdict = judge_request(
-        judge_cfg, judge_model, instruction, intercept, judge_context=judge_context
-    )
+    try:
+        verdict = judge_request(
+            judge_cfg, judge_model, instruction, intercept, judge_context=judge_context
+        )
+    except Exception:
+        # Never let a judge/transport exception suppress the structured_json block;
+        # fail closed with a category (not the raw error, which may carry secrets).
+        return result(0.0, False, "judge call raised an exception", "PASSED", "ERROR")
     match = verdict.get("match")
     reason = str(verdict.get("reason") or "")
     if verdict.get("error"):
-        return result(0.0, False, f"judge error: {verdict['error']}", "PASSED", "ERROR")
+        # judge_request returns a short error category; don't echo raw provider text.
+        return result(0.0, False, "judge call failed", "PASSED", "ERROR")
     if match is True:
         return result(1.0, True, reason or "judge: match", "PASSED", "PASSED")
     return result(0.0, True, reason or "judge: mismatch", "PASSED", "FAILED")

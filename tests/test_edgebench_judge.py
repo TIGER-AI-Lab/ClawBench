@@ -74,6 +74,57 @@ def test_judge_required_but_unconfigured_fails_closed(tmp_path: Path) -> None:
     assert r["score"] == 0.0 and r["valid"] is False  # never silently pass
 
 
+def test_malformed_evidence_is_invalid(tmp_path: Path) -> None:
+    d = tmp_path / "evidence"
+    d.mkdir()
+    (d / "interception.json").write_text("not json {{{")
+    r = ej.score_evidence(TASK, d, judge_cfg=JUDGE_CFG, judge_model="j")
+    assert r["score"] == 0.0 and r["valid"] is False
+
+
+def test_non_object_evidence_is_invalid(tmp_path: Path) -> None:
+    r = ej.score_evidence(
+        TASK, _evidence(tmp_path, ["a", "b"]), judge_cfg=JUDGE_CFG, judge_model="j"
+    )
+    assert r["score"] == 0.0 and r["valid"] is False
+
+
+def test_string_false_does_not_pass_stage1(tmp_path: Path) -> None:
+    # "intercepted": "false" (truthy string) must NOT count as intercepted
+    ev = _evidence(tmp_path, {"intercepted": "false", "request": {"url": "x"}})
+    r = ej.score_evidence(TASK, ev, judge_cfg=JUDGE_CFG, judge_model="j", no_judge=True)
+    assert r["score"] == 0.0
+    assert r["metrics"]["intercepted"] is False
+
+
+def test_intercepted_without_request_is_invalid(tmp_path: Path) -> None:
+    ev = _evidence(tmp_path, {"intercepted": True})
+    r = ej.score_evidence(TASK, ev, judge_cfg=JUDGE_CFG, judge_model="j")
+    assert r["score"] == 0.0 and r["valid"] is False
+
+
+def test_judge_exception_fails_closed_and_hides_error(
+    monkeypatch, tmp_path: Path
+) -> None:
+    def boom(*a, **k):
+        raise RuntimeError("secret-key-abc123 leaked in exception")
+
+    monkeypatch.setattr(ej, "judge_request", boom)
+    ev = _evidence(tmp_path, {"intercepted": True, "request": {"url": "x"}})
+    r = ej.score_evidence(TASK, ev, judge_cfg=JUDGE_CFG, judge_model="j")
+    assert r["score"] == 0.0 and r["valid"] is False
+    assert "secret-key-abc123" not in json.dumps(r)  # raw error not echoed
+
+
+def test_judge_error_verdict_sanitized(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(
+        ej, "judge_request", lambda *a, **k: {"error": "http://provider/key=SECRET"}
+    )
+    ev = _evidence(tmp_path, {"intercepted": True, "request": {"url": "x"}})
+    r = ej.score_evidence(TASK, ev, judge_cfg=JUDGE_CFG, judge_model="j")
+    assert r["score"] == 0.0 and "SECRET" not in json.dumps(r)
+
+
 def test_emit_structured_json_round_trips() -> None:
     r = {"valid": True, "score": 1.0, "summary": "s", "details": [], "metrics": {}}
     out = ej.emit_structured_json(r)
