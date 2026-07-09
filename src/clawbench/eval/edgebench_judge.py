@@ -6,9 +6,11 @@ Judge container: its ``eval_cmd`` reads the evidence, prints a
 
 ClawBench's two-stage reward maps onto this cleanly: the Work-side interceptor
 captures the target request into ``evidence/interception.json``; this module
-(the Judge ``eval_cmd``) re-scores that captured evidence — Stage-1 (was the
-target intercepted) ∧ Stage-2 (LLM judge confirms intent) — and emits the
-structured_json block SForge expects.
+(the Judge ``eval_cmd``) re-scores that captured evidence — Stage-1 ∧ Stage-2 —
+and emits the structured_json block SForge expects. Because the agent controls
+the submitted evidence, Stage-1 is **recomputed** against ``task["eval_schema"]``
+(url_pattern + method + const body/params) rather than trusting the agent's
+``intercepted`` flag; Stage-2 is the LLM judge over the verified request.
 
 Judge config comes from ``CLAWBENCH_JUDGE_*`` env (injected into the Judge
 container via ``SFORGE_JUDGE_EXTRA_ENV``); ``--no-judge`` scores Stage-1 only.
@@ -19,11 +21,56 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 from clawbench.runner.judge import judge_request
+
+
+def _const_fields_match(expected: Any, actual: Any) -> bool:
+    """All key/values in ``expected`` present in ``actual`` (mirrors runtime-server)."""
+    if not expected:
+        return True
+    if not actual:
+        return False
+    if isinstance(actual, list):
+        return any(_const_fields_match(expected, item) for item in actual)
+    if not isinstance(actual, dict):
+        return False
+    return all(actual.get(k) == v for k, v in expected.items())
+
+
+def _stage1_match(request: dict[str, Any], eval_schema: Any) -> bool:
+    """Recompute Stage-1 against the task schema — do NOT trust the agent's flag.
+
+    The agent controls the submitted evidence archive, so re-verify that the
+    submitted request actually hits the task's target (url_pattern regex + method
+    + const body/params), exactly as the runtime interceptor would.
+    """
+    if not isinstance(eval_schema, dict):
+        return False
+    url_pattern = eval_schema.get("url_pattern") or ""
+    if not url_pattern:
+        return False  # no target to verify against → cannot confirm interception
+    url = str(request.get("url") or "")
+    try:
+        if not re.search(url_pattern, url):
+            return False
+    except re.error:
+        return False
+    method = eval_schema.get("method")
+    if method and request.get("method") != method:
+        return False
+    if not _const_fields_match(eval_schema.get("body"), request.get("body")):
+        return False
+    params = request.get("params")
+    if params is None and eval_schema.get("params"):
+        params = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+    return _const_fields_match(eval_schema.get("params"), params)
+
 
 # SForge structured_json markers (grading._grade_structured looks for these).
 START_MARKER = ">>>>> Start Structured Result"
@@ -68,8 +115,9 @@ def score_evidence(
     """Score captured evidence; return an EdgeBench structured_json result dict."""
     instruction = str(task.get("instruction") or "")
     judge_context = task.get("judge_context")
+    eval_schema = task.get("eval_schema")
     intercept = _load_interception(evidence_dir)
-    is_intercept = isinstance(intercept, dict) and intercept.get("intercepted") is True
+    matched = False  # set once we recompute Stage-1 against the schema
 
     def result(
         score: float, valid: bool, summary: str, stage1: str, stage2: str
@@ -83,10 +131,12 @@ def score_evidence(
                 {"name": "stage1-interception", "status": stage1},
                 {"name": "stage2-judge", "status": stage2},
             ],
-            "metrics": {"intercepted": is_intercept},
+            "metrics": {"intercepted": matched},
         }
 
-    # Stage 1 — validate the captured evidence, then check the target was intercepted.
+    # Stage 1 — validate the captured evidence, then RE-VERIFY the target was hit
+    # against task["eval_schema"]. The agent controls the submitted archive, so its
+    # "intercepted" flag is NOT trusted — the request must actually match the target.
     if intercept is _MISSING:
         return result(
             0.0, False, "malformed evidence/interception.json", "ERROR", "SKIPPED"
@@ -99,12 +149,24 @@ def score_evidence(
         return result(
             0.0, False, "interception.json is not an object", "ERROR", "SKIPPED"
         )
-    # require an explicit boolean True (a truthy string like "false" must NOT pass)
-    if intercept.get("intercepted") is not True:
-        return result(0.0, True, "target request not intercepted", "FAILED", "SKIPPED")
-    if not isinstance(intercept.get("request"), dict):
+    request = intercept.get("request")
+    if not isinstance(request, dict):
         return result(
-            0.0, False, "intercepted but no request object", "ERROR", "SKIPPED"
+            0.0, True, "no intercepted request in evidence", "FAILED", "SKIPPED"
+        )
+    if not isinstance(eval_schema, dict) or not eval_schema.get("url_pattern"):
+        # cannot independently verify the target → fail closed
+        return result(
+            0.0, False, "task eval_schema missing url_pattern", "ERROR", "SKIPPED"
+        )
+    matched = _stage1_match(request, eval_schema)
+    if not matched:
+        return result(
+            0.0,
+            True,
+            "submitted request does not match the task target",
+            "FAILED",
+            "SKIPPED",
         )
 
     if no_judge:
