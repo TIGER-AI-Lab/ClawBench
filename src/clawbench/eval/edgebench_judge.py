@@ -19,6 +19,8 @@ container via ``SFORGE_JUDGE_EXTRA_ENV``); ``--no-judge`` scores Stage-1 only.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import hmac
 import json
 import os
 import re
@@ -28,6 +30,26 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from clawbench.runner.judge import judge_request
+
+
+def _verify_signature(intercept: dict[str, Any], secret: str) -> bool:
+    """Verify a runtime-produced HMAC over the intercepted request.
+
+    EdgeBench submits an agent-controlled archive, so Stage-1 evidence is only
+    tamper-proof if the *trusted* runtime/entrypoint signs it with a secret the
+    agent never sees (shared with the judge via ``SFORGE_JUDGE_EXTRA_ENV``). When
+    ``CLAWBENCH_EVIDENCE_SECRET`` is set, the judge requires a valid
+    ``signature = HMAC-SHA256(secret, canonical-json(request))`` and rejects
+    forged/unsigned evidence.
+    """
+    sig = intercept.get("signature")
+    if not isinstance(sig, str):
+        return False
+    payload = json.dumps(
+        intercept.get("request"), sort_keys=True, separators=(",", ":")
+    ).encode()
+    expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(sig, expected)
 
 
 def _const_fields_match(expected: Any, actual: Any) -> bool:
@@ -66,9 +88,9 @@ def _stage1_match(request: dict[str, Any], eval_schema: Any) -> bool:
         return False
     if not _const_fields_match(eval_schema.get("body"), request.get("body")):
         return False
-    params = request.get("params")
-    if params is None and eval_schema.get("params"):
-        params = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+    # Always derive query params from the URL (like the runtime interceptor) — do
+    # not trust a submitted request["params"] field, which could be forged.
+    params = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
     return _const_fields_match(eval_schema.get("params"), params)
 
 
@@ -153,6 +175,13 @@ def score_evidence(
     if not isinstance(request, dict):
         return result(
             0.0, True, "no intercepted request in evidence", "FAILED", "SKIPPED"
+        )
+    # Tamper-resistance: if a shared runtime/judge secret is configured, only
+    # accept evidence the trusted runtime signed (the agent cannot forge it).
+    secret = os.environ.get("CLAWBENCH_EVIDENCE_SECRET", "").strip()
+    if secret and not _verify_signature(intercept, secret):
+        return result(
+            0.0, False, "evidence signature missing or invalid", "ERROR", "SKIPPED"
         )
     if not isinstance(eval_schema, dict) or not eval_schema.get("url_pattern"):
         # cannot independently verify the target → fail closed

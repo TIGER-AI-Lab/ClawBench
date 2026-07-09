@@ -55,6 +55,23 @@ The judge prints, and SForge parses:
 >>>>> End Structured Result
 ```
 
+## Evidence trust model
+
+EdgeBench submits an **agent-controlled** archive, so the judge does not trust
+`interception.json`'s `intercepted` flag — it **recomputes Stage-1** by matching
+the submitted request against the task's `eval_schema` (url_pattern + method +
+const body/params, query params derived from the URL), exactly as the runtime
+interceptor does. This rejects the obvious forgeries (wrong URL/method).
+
+For full tamper-resistance (an agent fabricating a *matching* request it never
+made), set `CLAWBENCH_EVIDENCE_SECRET` (shared by the trusted runtime/entrypoint
+and the Judge via `SFORGE_JUDGE_EXTRA_ENV`, **never** given to the agent). The
+runtime/entrypoint then signs each intercepted request —
+`signature = HMAC-SHA256(secret, canonical-json(request))` — and the judge
+rejects unsigned/forged evidence. Without the secret the judge runs in
+attestable mode (recomputed Stage-1 only); with it, only runtime-signed evidence
+passes.
+
 ## What ClawBench supplies vs SForge
 
 ClawBench supplies only the **Judge `eval_cmd`** (`clawbench-edgebench-judge`,

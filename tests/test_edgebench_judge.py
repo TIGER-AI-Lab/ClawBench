@@ -2,10 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 from pathlib import Path
 
 from clawbench.eval import edgebench_judge as ej
+
+
+def _sign(request, secret: str) -> str:
+    payload = json.dumps(request, sort_keys=True, separators=(",", ":")).encode()
+    return hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+
 
 TASK = {
     "instruction": "Save the recipe",
@@ -25,7 +33,7 @@ BAD_REQ = {"url": "https://other.example/nope", "method": "GET"}
 
 def _evidence(tmp_path: Path, payload) -> Path:
     d = tmp_path / "evidence"
-    d.mkdir()
+    d.mkdir(parents=True, exist_ok=True)
     if payload is not None:
         (d / "interception.json").write_text(json.dumps(payload))
     return d
@@ -156,6 +164,53 @@ def test_judge_reason_not_echoed_to_output(monkeypatch, tmp_path: Path) -> None:
     )
     r = _score(tmp_path, {"intercepted": True, "request": GOOD_REQ})
     assert r["score"] == 1.0 and "SECRET123" not in json.dumps(r)
+
+
+def test_signature_enforced_when_secret_set(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("CLAWBENCH_EVIDENCE_SECRET", "s3cr3t")
+    # unsigned evidence is rejected when a secret is configured
+    unsig = ej.score_evidence(
+        TASK,
+        _evidence(tmp_path / "u", {"intercepted": True, "request": GOOD_REQ}),
+        judge_cfg=JUDGE_CFG,
+        judge_model="j",
+        no_judge=True,
+    )
+    assert unsig["score"] == 0.0 and unsig["valid"] is False
+    # correctly runtime-signed evidence passes
+    payload = {
+        "intercepted": True,
+        "request": GOOD_REQ,
+        "signature": _sign(GOOD_REQ, "s3cr3t"),
+    }
+    signed = ej.score_evidence(
+        TASK,
+        _evidence(tmp_path / "s", payload),
+        judge_cfg=JUDGE_CFG,
+        judge_model="j",
+        no_judge=True,
+    )
+    assert signed["score"] == 1.0
+
+
+def test_no_signature_required_without_secret(tmp_path: Path) -> None:
+    # backward-compat: without the secret, evidence is accepted (attestable mode)
+    r = _score(tmp_path, {"intercepted": True, "request": GOOD_REQ}, no_judge=True)
+    assert r["score"] == 1.0
+
+
+def test_params_derived_from_url_not_field() -> None:
+    schema = {"url_pattern": r"t\.ex/hit", "params": {"id": "5"}}
+    # forged params field says id=5, but the URL query says id=6 → must FAIL
+    assert (
+        ej._stage1_match(
+            {"url": "https://t.ex/hit?id=6", "method": "GET", "params": {"id": "5"}},
+            schema,
+        )
+        is False
+    )
+    # URL query genuinely id=5 → passes
+    assert ej._stage1_match({"url": "https://t.ex/hit?id=5"}, schema) is True
 
 
 def test_const_fields_match_body() -> None:
