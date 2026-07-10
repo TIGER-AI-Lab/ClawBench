@@ -112,3 +112,14 @@ harnesses:
         path: /data/agent-messages.jsonl
       - type: file
         path: /data/agent-messages.raw.jsonl
+  # Null baseline — takes no action; establishes the benchmark floor (~0 score,
+  # and the interceptor must not fire without genuine agent activity).
+  - name: "null"
+    image: clawbench-null
+    dockerfile: "null/Dockerfile.null"
+    setup_script: "null/setup-null.sh"
+    run_script: "null/run-null.sh"
+    usage_emitter: "null/usage-emitter.py"
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl

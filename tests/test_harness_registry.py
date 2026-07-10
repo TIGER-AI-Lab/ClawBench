@@ -27,6 +27,7 @@ EXPECTED_HARNESSES = (
     "claw-code",
     "hermes",
     "pi",
+    "null",
 )
 
 EXPECTED_SCRIPTS = {
@@ -82,6 +83,7 @@ EXPECTED_AGENT_MESSAGE_SOURCES = {
         ("file", "/data/agent-messages.raw.jsonl"),
     ),
     "harbor": (("file", "/data/agent-messages.jsonl"),),
+    "null": (("file", "/data/agent-messages.jsonl"),),
 }
 
 
