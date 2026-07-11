@@ -187,20 +187,15 @@ def _parse_verdict(text: str) -> tuple[bool | None, str]:
         return None, text[:200] or "unparseable"
 
 
-def judge_request(
+def _run_judge(
     model_cfg: dict,
     judge_model_name: str,
-    instruction: str,
-    intercept: dict[str, Any],
-    *,
-    judge_context: dict[str, Any] | None = None,
-    retries: int = 2,
+    system: str,
+    user: str,
+    retries: int,
 ) -> dict[str, Any]:
-    """Run a single judge call. Returns dict with keys match/reason/judge_model/raw/error."""
-    system = JUDGE_SYSTEM
-    user = _build_user_msg(instruction, intercept, judge_context)
+    """Dispatch a judge call by api_type, parse the verdict; shared by both judges."""
     api_type = model_cfg.get("api_type", "openai-completions")
-
     last_err: Exception | None = None
     for attempt in range(retries + 1):
         try:
@@ -239,3 +234,77 @@ def judge_request(
         "raw": None,
         "error": str(last_err),
     }
+
+
+def judge_request(
+    model_cfg: dict,
+    judge_model_name: str,
+    instruction: str,
+    intercept: dict[str, Any],
+    *,
+    judge_context: dict[str, Any] | None = None,
+    retries: int = 2,
+) -> dict[str, Any]:
+    """Judge an intercepted HTTP request (Stage-2 for interception-mode tasks).
+
+    Returns dict with keys match/reason/judge_model/raw/error.
+    """
+    user = _build_user_msg(instruction, intercept, judge_context)
+    return _run_judge(model_cfg, judge_model_name, JUDGE_SYSTEM, user, retries)
+
+
+# Answer/rubric judge — for tasks whose success is a free-text answer or
+# rubric-scored outcome (no single interceptable request). Enables importing
+# rubric-based benchmarks (claw-eval, AssistantBench, WebVoyager) alongside the
+# interception path.
+ANSWER_JUDGE_SYSTEM = """You are a strict evaluator for a web-agent benchmark.
+
+A user gave a natural-language INSTRUCTION to an autonomous browser agent. The
+agent acted on real websites and produced a final ANSWER (and/or observable
+outcome). Decide whether the agent fulfilled the instruction.
+
+If a RUBRIC is provided, judge strictly against it. Otherwise judge whether the
+ANSWER correctly and completely satisfies the instruction.
+
+Rules:
+- Match = the answer/outcome does what the user asked (right result, complete,
+  correct). Cosmetic differences are OK.
+- Mismatch = wrong, incomplete, hallucinated, or unsupported by evidence.
+- If ambiguous or only partially correct, mark as mismatch.
+
+Reply with ONLY a single-line JSON object, no markdown fences, no extra prose:
+{"match": true|false, "reason": "<one short sentence>"}
+"""
+
+
+def _build_answer_msg(
+    instruction: str, answer: str, judge_context: dict[str, Any] | None
+) -> str:
+    rubric = ""
+    if isinstance(judge_context, dict):
+        pieces = []
+        for key in ("rubric", "reference_solution", "gold_answer", "source_task_yaml"):
+            value = judge_context.get(key)
+            if isinstance(value, str) and value.strip():
+                pieces.append(f"{key}:\n{value.strip()[:6000]}")
+        if pieces:
+            rubric = "\n\nRUBRIC:\n" + "\n\n".join(pieces)
+    answer_text = (answer or "").strip()[:8000] or "(the agent produced no answer)"
+    return f"INSTRUCTION:\n{instruction}\n\nAGENT ANSWER:\n{answer_text}\n{rubric}\n"
+
+
+def judge_answer(
+    model_cfg: dict,
+    judge_model_name: str,
+    instruction: str,
+    answer: str,
+    *,
+    judge_context: dict[str, Any] | None = None,
+    retries: int = 2,
+) -> dict[str, Any]:
+    """Judge a free-text agent answer/outcome against the instruction (+ rubric).
+
+    Returns the same dict shape as judge_request (match/reason/judge_model/raw/error).
+    """
+    user = _build_answer_msg(instruction, answer, judge_context)
+    return _run_judge(model_cfg, judge_model_name, ANSWER_JUDGE_SYSTEM, user, retries)
