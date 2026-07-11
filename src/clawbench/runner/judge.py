@@ -96,6 +96,18 @@ def _post_json(
         return json.loads(resp.read())
 
 
+def _gemini_openai_cfg(model_cfg: dict) -> dict:
+    """Route a Gemini (google-generative-ai) judge through its OpenAI-compat API.
+
+    Gemini's native root 404s on /chat/completions; the OpenAI-compatible surface
+    lives at .../v1beta/openai. Normalize the base so a native root still works.
+    """
+    base = model_cfg["base_url"].rstrip("/")
+    if "/openai" not in base:
+        base = base + "/v1beta/openai"
+    return {**model_cfg, "base_url": base}
+
+
 def _call_openai_chat(model_cfg: dict, model_name: str, system: str, user: str) -> str:
     base = model_cfg["base_url"].rstrip("/")
     url = f"{base}/chat/completions"
@@ -201,6 +213,11 @@ def _run_judge(
         try:
             if api_type == "openai-completions":
                 raw = _call_openai_chat(model_cfg, judge_model_name, system, user)
+            elif api_type == "google-generative-ai":
+                # Gemini via its OpenAI-compatible endpoint (/v1beta/openai)
+                raw = _call_openai_chat(
+                    _gemini_openai_cfg(model_cfg), judge_model_name, system, user
+                )
             elif api_type == "openai-responses":
                 raw = _call_openai_responses(model_cfg, judge_model_name, system, user)
             elif api_type == "anthropic-messages":
