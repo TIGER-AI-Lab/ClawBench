@@ -327,15 +327,21 @@ Once the container starts, the script prints a **noVNC URL** (e.g. `http://local
 
 Results land in `./test-output/<model>/<harness>-<case>-<model>-<timestamp>/` with the full five-layer recording. The default harness is `openclaw`; pass `--harness opencode` to use [opencode](https://opencode.ai), `--harness claude-code` to use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), `--harness claude-code-chrome-extension` to use Claude Code + the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension (Microsoft Edge + local bridge, bypass stack so any LiteLLM-routed provider works), `--harness codex` to use [OpenAI Codex CLI](https://github.com/openai/codex), `--harness claw-code` to use [claw-code](https://github.com/ultraworkers/claw-code), `--harness browser-use` to use [browser-use](https://github.com/browser-use/browser-use) (Python framework, routed via LiteLLM), `--harness hermes` to use [Hermes Agent](https://github.com/NousResearch/hermes-agent) with native browser tools attached to ClawBench Chrome via CDP, or `--harness pi` to use [Pi](https://pi.dev/) with pinned [pi-browser-harness](https://pi.dev/packages/pi-browser-harness) browser tools attached to the same ClawBench Chrome CDP endpoint.
 
-**(c) Drive the browser yourself via noVNC** — produces a human reference run:
+**(c) Evaluate a model across a whole corpus** — one command runs every task in a suite:
+```bash
+clawbench-batch --models your-model --cases-suite v2 --all-cases
+```
+`your-model` is a key you configured in step 1; `--cases-suite v2` runs the full V2 corpus (swap in `v1-lite` for the 20-task subset). Add `--max-concurrent N` to run tasks in parallel (default 2) and `--harness <name>` to pick an agent (default `openclaw`). Each task is intercepted and scored by the `deepseek-v4-pro` judge you set up in step 1 — pass `--no-judge` to skip scoring. A `batch-summary.json` plus per-run recordings land under `./test-output/`. From a source checkout, prefix the command with `uv run`. See [Reproduce the leaderboard](#-reproduce-the-leaderboard) for the end-to-end scoring workflow.
+
+**(d) Drive the browser yourself via noVNC** — produces a human reference run:
 ```bash
 uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats --human
 ```
 Open the noVNC URL the script prints, complete the task by hand, then close the tab. Port is auto-assigned if 6080 is busy.
 
-**(d) Pair with an external browser agent** — run in Human mode, open the noVNC URL, and let an external browser agent control that browser session while ClawBench records and intercepts it.
+**(e) Pair with an external browser agent** — run in Human mode, open the noVNC URL, and let an external browser agent control that browser session while ClawBench records and intercepts it.
 
-**(e) Run V2 through Harbor Framework** — convert the V2 cases into a local Harbor dataset, then let Harbor start the ClawBench browser runtime and connect its agent over CDP.
+**(f) Run V2 through Harbor Framework** — convert the V2 cases into a local Harbor dataset, then let Harbor start the ClawBench browser runtime and connect its agent over CDP.
 
 Harbor runs use Harbor's Docker provider, so make sure Docker is available even if you normally use Podman for native ClawBench runs.
 
