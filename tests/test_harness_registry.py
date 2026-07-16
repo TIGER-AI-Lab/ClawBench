@@ -27,6 +27,8 @@ EXPECTED_HARNESSES = (
     "claw-code",
     "hermes",
     "pi",
+    "null",
+    "random-click",
 )
 
 EXPECTED_SCRIPTS = {
@@ -49,6 +51,7 @@ EXPECTED_EXTRA_FILES = {
     "hermes": ("hermes/hermes-capture.py",),
     "pi": ("pi/pi-usage-logger.py",),
     "harbor": ("harbor/harbor_driver.py",),
+    "random-click": ("random-click/random_clicker.py",),
 }
 
 EXPECTED_USAGE_EMITTERS = {
@@ -82,6 +85,8 @@ EXPECTED_AGENT_MESSAGE_SOURCES = {
         ("file", "/data/agent-messages.raw.jsonl"),
     ),
     "harbor": (("file", "/data/agent-messages.jsonl"),),
+    "null": (("file", "/data/agent-messages.jsonl"),),
+    "random-click": (("file", "/data/agent-messages.jsonl"),),
 }
 
 

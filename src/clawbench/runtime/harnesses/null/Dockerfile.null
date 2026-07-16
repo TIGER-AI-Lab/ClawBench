@@ -1,0 +1,9 @@
+FROM clawbench-base
+
+# The null baseline agent installs nothing and takes no action — it establishes
+# the benchmark floor (a do-nothing agent must score ~0, and the interceptor
+# must not fire without genuine agent activity).
+COPY harnesses/null/setup-null.sh /setup-null.sh
+COPY harnesses/null/run-null.sh /run-harness.sh
+COPY harnesses/null/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-null.sh /run-harness.sh /usage-emitter.py

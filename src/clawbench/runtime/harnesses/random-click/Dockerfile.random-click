@@ -1,0 +1,10 @@
+FROM clawbench-base
+
+# Random-click baseline: dispatches random CDP mouse clicks (acts without intent).
+RUN pip install --no-cache-dir --break-system-packages websocket-client || \
+    pip install --no-cache-dir websocket-client
+COPY harnesses/random-click/setup-random-click.sh /setup-random-click.sh
+COPY harnesses/random-click/run-random-click.sh /run-harness.sh
+COPY harnesses/random-click/random_clicker.py /random_clicker.py
+COPY harnesses/random-click/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-random-click.sh /run-harness.sh /random_clicker.py /usage-emitter.py
