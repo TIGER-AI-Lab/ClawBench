@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Added support for remote browsers with CDP connection.
 - Added a preflight API call to check if the LLM API is valid before starting actual tasks.
+- Added support for using Gemini API as a judge.
 
 ## [0.7.0] - 2026-06-22
 ### Added
