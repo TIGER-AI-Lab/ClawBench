@@ -1,0 +1,131 @@
+"""Tests for the EdgeBench/SForge benchmark exporter."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+import yaml
+
+from clawbench.eval import edgebench_adapter as ea
+from clawbench.eval.harbor_adapter import DEFAULT_CASES_DIR, discover_cases
+
+
+@pytest.fixture(scope="module")
+def one_case():
+    cases = discover_cases(DEFAULT_CASES_DIR)
+    if not cases:
+        pytest.skip("no bundled V2 cases")
+    return cases[0]
+
+
+def test_benchmark_yaml_valid() -> None:
+    doc = yaml.safe_load(ea.benchmark_yaml("clawbench-prorl-openclaw:latest"))
+    assert doc["name"] == "clawbench"
+    assert (
+        doc["base_images"]["browser"]["official_image"]
+        == "clawbench-prorl-openclaw:latest"
+    )
+
+
+def test_task_json_schema(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # SForge contract fields
+    assert spec["base_image"] == "browser"
+    assert spec["cwd"] == "/app"
+    assert spec["submit_paths"] == ["evidence/"]
+    assert spec["game_mode"] is False
+    # task_id is lowercase_underscore
+    assert spec["task_id"] == spec["task_id"].lower()
+    assert "-" not in spec["task_id"]
+    # judge -> structured_json, maximize, score_first, calls our judge
+    j = spec["judge"]
+    assert j["parser"] == "structured_json"
+    assert j["score_direction"] == "maximize"
+    assert j["selection"] == "score_first"
+    assert "clawbench-edgebench-judge" in j["eval_cmd"]
+    assert "/app/evidence" in j["eval_cmd"]
+    # work prompt tells the agent to submit evidence once
+    assert "sforge-submit" in spec["work"]["agent_query"]
+    assert "evidence/interception.json" in spec["work"]["agent_query"]
+
+
+def test_write_benchmark_layout(one_case, tmp_path: Path) -> None:
+    task_dir, task = one_case
+    written = ea.write_benchmark(
+        [(task_dir, task)], tmp_path, base_image="img", eval_timeout=180
+    )
+    tasks_dir = tmp_path / "tasks"
+    assert (tasks_dir / "BENCHMARK.yaml").is_file()
+    assert len(written) == 1
+    spec = json.loads(written[0].read_text())
+    sid = spec["task_id"]
+    # per-task specs staged for both containers
+    assert (tasks_dir / sid / "specs" / "task.json").is_file()
+    assert (tasks_dir / sid / "specs" / "eval-schema.json").is_file()
+    # the my-info bundle the instruction promises is staged
+    myinfo = tasks_dir / sid / "specs" / "my-info"
+    assert (myinfo / "alex_green_personal_info.json").is_file()
+    assert (myinfo / "email_credentials.json").is_file()
+    # no judge/agent secret leaks into the emitted task JSON
+    assert "CLAWBENCH_JUDGE" not in written[0].read_text()
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("v2-608-Foo.Bar", "v2_608_foo_bar"),
+        ("A..B--C", "a_b_c"),
+        ("__weird__", "weird"),
+    ],
+)
+def test_sforge_task_id_sanitization(raw: str, expected: str) -> None:
+    sid = ea.sforge_task_id(raw)
+    assert sid == expected
+    assert __import__("re").fullmatch(r"[a-z0-9_]+", sid)
+
+
+def test_duplicate_ids_raise(one_case, tmp_path: Path) -> None:
+    task_dir, task = one_case
+    # two source dirs that sanitize to the same id → collision must raise
+    with pytest.raises(ValueError, match="collision"):
+        ea.write_benchmark(
+            [(task_dir, task), (task_dir, task)],
+            tmp_path,
+            base_image="img",
+            eval_timeout=180,
+        )
+
+
+def test_extra_info_path_traversal_rejected(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="escapes"):
+        ea._guard_extra_info({"extra_info": [{"path": "../../etc/passwd"}]}, tmp_path)
+    # "/etc/passwd" is absolute on POSIX ("relative" error) but not on Windows
+    # (no drive), where it's caught as an escape — either way it's rejected.
+    with pytest.raises(ValueError, match="relative|escapes"):
+        ea._guard_extra_info({"extra_info": [{"path": "/etc/passwd"}]}, tmp_path)
+
+
+def test_eval_schema_staged_for_runtime(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # the runtime-server reads /eval-schema.json to arm the interceptor
+    assert any("/eval-schema.json" in c for c in spec["work"]["setup_cmds"])
+
+
+def test_judge_image_installs_clawbench(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # the eval_cmd needs the clawbench-edgebench-judge console script present
+    assert any("clawbench-eval" in c for c in spec["judge"]["setup_cmds"])
+
+
+def test_evidence_dir_consistent(one_case) -> None:
+    task_dir, task = one_case
+    spec = ea.build_task_json(task_dir.name, task, base_image="img", eval_timeout=180)
+    # submit_paths and the judge --evidence-dir must reference the same dir
+    submit = spec["submit_paths"][0].rstrip("/").split("/")[-1]
+    assert submit == "evidence"
+    assert f"--evidence-dir /app/{submit}" in spec["judge"]["eval_cmd"]
