@@ -4,7 +4,7 @@ title: "ClawBench: Can AI Agents Complete Everyday Online Tasks?"
 type: software
 license: Apache-2.0
 url: "https://claw-bench.com"
-repository-code: "https://github.com/reacher-z/ClawBench"
+repository-code: "https://github.com/TIGER-AI-Lab/ClawBench"
 date-released: "2026-04-16"
 authors:
   - family-names: Zhang

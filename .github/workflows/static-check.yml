@@ -10,6 +10,10 @@ on:
       - "models/models.example.yaml"
       - "models/model.schema.json"
       - "pyproject.toml"
+      - "CITATION.cff"
+      - "README.md"
+      - "docs/README.zh-CN.md"
+      - "CONTRIBUTING.md"
       - "test-cases/**"
       - "uv.lock"
   push:
@@ -21,6 +25,10 @@ on:
       - "models/models.example.yaml"
       - "models/model.schema.json"
       - "pyproject.toml"
+      - "CITATION.cff"
+      - "README.md"
+      - "docs/README.zh-CN.md"
+      - "CONTRIBUTING.md"
       - "test-cases/**"
       - "uv.lock"
   workflow_dispatch:
@@ -48,6 +56,9 @@ jobs:
 
       - name: Pyright check
         run: uv run --frozen pyright src/clawbench tests
+
+      - name: Verify repository identity
+        run: uv run --frozen python scripts/verify_repository_identity.py
 
       - name: Build package
         env:

@@ -11,7 +11,7 @@
 | Add a new model config (in `models/models.yaml`) | ~1 hour | Get your model on the leaderboard |
 | Fix a flaky task (find a broken task, propose a fix) | ~20 min | Keeps the leaderboard fair |
 | Translate docs into a new language | ~1 hour | Chinese / Japanese / Korean / Spanish welcomed |
-| Report a bug via [issue template](https://github.com/reacher-z/ClawBench/issues/new/choose) | ~5 min | Helps us prioritize |
+| Report a bug via [issue template](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) | ~5 min | Helps us prioritize |
 
 ## Recognition for contributors
 
@@ -22,7 +22,7 @@
 
 ## Good first issues
 
-The issue tracker has a [`good first issue`](https://github.com/reacher-z/ClawBench/labels/good%20first%20issue) label for contributions sized at "30 minutes, no container experience required." Typical entries:
+The issue tracker has a [`good first issue`](https://github.com/TIGER-AI-Lab/ClawBench/labels/good%20first%20issue) label for contributions sized at "30 minutes, no container experience required." Typical entries:
 
 - Add a new test case for a site we don't yet cover (list in the issue description)
 - Verify a flagged-flaky task still works
@@ -119,7 +119,7 @@ For changes to the framework itself (test driver, runtime server, Chrome extensi
 
 ## Reporting issues
 
-Please use the [issue templates](https://github.com/reacher-z/ClawBench/issues/new/choose) to report bugs or propose new test cases.
+Please use the [issue templates](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) to report bugs or propose new test cases.
 
 ## Community
 
@@ -127,7 +127,7 @@ Questions, task ideas, model submissions, or just want to chat about browser age
 
 - **Discord:** [discord.gg/clawbench](https://discord.gg/clawbench) — English, agent-builder-friendly, `#contributors` channel
 - **微信群:** use the [QR code](./assets/community/wechat_grp_422.jpg)
-- **GitHub Discussions:** [github.com/reacher-z/ClawBench/discussions](https://github.com/reacher-z/ClawBench/discussions) — asynchronous, searchable
+- **GitHub Discussions:** [github.com/TIGER-AI-Lab/ClawBench/discussions](https://github.com/TIGER-AI-Lab/ClawBench/discussions) — asynchronous, searchable
 - **Email:** open an issue; we respond there first
 
 ## Code of conduct
