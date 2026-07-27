@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 70 |
+| New PRs submitted | 71 |
 | Merged | 8 |
-| Open | 61 |
+| Open | 62 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 71 | `x-tahosin/awesome-llm-benchmarks` | [#4 — Add StructEval benchmark](https://github.com/x-tahosin/awesome-llm-benchmarks/pull/4) | Active 1-star 2026 LLM-benchmark catalog with explicit scope for public benchmarks, evaluation frameworks, leaderboards, and benchmark-quality papers; CONTRIBUTING.md requires official links, one-line descriptions, and no duplicates; adds StructEval in the native Multimodal section as a TMLR 2025 structured-output benchmark covering syntax, structural-fidelity, and visual-fidelity checks across 18 text and renderable formats | Open |
 | 70 | `danielrosehill/Awesome-AI-Evaluations-Tools` | [#19 — Add StructEval benchmark](https://github.com/danielrosehill/Awesome-AI-Evaluations-Tools/pull/19) | Active AI-evaluation catalog updated 2026-07-27 with explicit scope for open-source benchmarks, multimodal evaluation, browser/web-agent evaluation, and agent/tool-use evaluation; adds StructEval to the native Benchmarks table as a TMLR 2025 structured-output benchmark covering syntax, structural fidelity, and visual fidelity across 18 text and renderable formats | Open |
 | 69 | `leobeeson/llm_benchmarks` | [#3 — Add StructEval structured output benchmark](https://github.com/leobeeson/llm_benchmarks/pull/3) | Active 575-star benchmark collection updated 2026-07-22 with broad benchmark and dataset coverage; adds a dedicated Structured Output and Multimodal Evaluation section in the repository's native multi-field format, linking the StructEval paper, official implementation, and project page and describing syntax, structural, and visual-fidelity checks across 18 text and renderable formats | Open |
 | 68 | `Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks` | [#8 — Add StructEval to code-generation benchmarks](https://github.com/Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks/pull/8) | Active 76-star MLLM reasoning survey with explicit Chart Reasoning and Code Generation sections; adds one native StructEval entry linking the TMLR 2025 paper and official implementation, covering structured-output generation with renderable outputs and visual checks | Open |
