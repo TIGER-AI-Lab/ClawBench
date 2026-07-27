@@ -292,7 +292,7 @@ Each repository below was verified on its current default branch to still contai
 | `OpenHands/open-operator` | [Merged PR #15](https://github.com/OpenHands/open-operator/pull/15) |
 | `SAILResearch/awesome-ai-leaderboard` | [Merged PR #72](https://github.com/SAILResearch/awesome-ai-leaderboard/pull/72) |
 | `SafeRL-Lab/agentic-web` | [Merged PR #1](https://github.com/SafeRL-Lab/agentic-web/pull/1) |
-| `VoltAgent/awesome-ai-agent-papers` | [Merged PR #12](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/12) |
+| `VoltAgent/awesome-ai-agent-papers` | [Merged PR #12](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/12); [V2 update merged in PR #19](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/19) |
 | `Yangyi-Chen/Multimodal-AND-Large-Language-Models` | [Merged PR #8](https://github.com/Yangyi-Chen/Multimodal-AND-Large-Language-Models/pull/8) |
 | `ZJU-REAL/Awesome-GUI-Agents` | [Merged PR #9](https://github.com/ZJU-REAL/Awesome-GUI-Agents/pull/9) |
 | `brandonhimpfen/awesome-ai-benchmarks-evaluation` | [Merged PR #23](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation/pull/23) |
