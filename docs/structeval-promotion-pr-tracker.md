@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 65 |
+| New PRs submitted | 66 |
 | Merged | 8 |
-| Open | 56 |
+| Open | 57 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 66 | `sourcemeta/awesome-jsonschema` | [#53 — Add StructEval structured-output benchmark paper](https://github.com/sourcemeta/awesome-jsonschema/pull/53) | Active 168-star JSON Schema resource list with explicit contribution instructions requiring updates to both data.yaml and the generated README.md; adds StructEval to Papers as a 2025 benchmark for structured-output generation and conversion across 18 non-renderable and renderable formats with syntax, structural-fidelity, and visual-fidelity checks, linking the official paper and implementation | Open |
 | 65 | `CSHaitao/Awesome-LLMs-as-Judges` | [#5 — Add StructEval benchmark](https://github.com/CSHaitao/Awesome-LLMs-as-Judges/pull/5) | 600-star LLM-as-a-Judge survey with a dedicated Meta-Evaluation > Benchmarks > Comprehensive Data section, explicit PR-welcome contribution guidance, and no existing StructEval entry; adds a native paper row linking the official TMLR 2025 paper and implementation for structured-output generation and cross-format conversion across 18 text and renderable formats | Open |
 | 64 | `abhijeetgupta02/awesome-vlm-evaluation` | [#1 — Add StructEval benchmark](https://github.com/abhijeetgupta02/awesome-vlm-evaluation/pull/1) | New VLM/MLLM evaluation list with an explicit Benchmarks section and contribution guidance requesting notable research links with concise descriptions; adds StructEval in the native benchmark format with official implementation link, TMLR 2025 status, and syntax, structural, and visual-fidelity evaluation across 18 text and renderable formats | Open |
 | 63 | `Applied-Machine-Learning-Lab/Awesome-Function-Callings` | [#4 — Add StructEval structured-output benchmark](https://github.com/Applied-Machine-Learning-Lab/Awesome-Function-Callings/pull/4) | Active 72-star function-calling survey with an explicit Evaluation section, dedicated Benchmarks tables, and a repository-level invitation to submit missing work; adds one native benchmark row linking the official StructEval paper and TIGER-AI-Lab implementation, covering 18 text and renderable formats with syntax, structural, and visual-fidelity checks | Open |
