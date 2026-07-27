@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 62 |
+| New PRs submitted | 63 |
 | Merged | 8 |
-| Open | 53 |
+| Open | 54 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 63 | `Applied-Machine-Learning-Lab/Awesome-Function-Callings` | [#4 — Add StructEval structured-output benchmark](https://github.com/Applied-Machine-Learning-Lab/Awesome-Function-Callings/pull/4) | Active 72-star function-calling survey with an explicit Evaluation section, dedicated Benchmarks tables, and a repository-level invitation to submit missing work; adds one native benchmark row linking the official StructEval paper and TIGER-AI-Lab implementation, covering 18 text and renderable formats with syntax, structural, and visual-fidelity checks | Open |
 | 62 | `OlehDatsyk/awesome-function-calling` | [#1 — Add StructEval structured-output benchmark](https://github.com/OlehDatsyk/awesome-function-calling/pull/1) | Active structured-output and function-calling reference with dedicated JSON Schema and validation guidance; adds one concise StructEval benchmark entry with the official implementation, TMLR 2025 status, 18 supported formats, and syntax, structural, and rendered-output checks | Open |
 | 61 | `brandonhimpfen/awesome-ai-benchmarks-evaluation` | [#24 — Add StructEval to evaluation frameworks](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation/pull/24) | Active AI-benchmark and evaluation catalog with explicit contribution standards and a dedicated Evaluation Frameworks section; adds StructEval in the native one-line format with its official repository, covering structured-output generation and cross-format conversion with syntax, structural, and visual checks | Open |
 | 60 | `VoltAgent/awesome-ai-agent-papers` | [#28 — Add paper: StructEval](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/28) | 1,621-star weekly AI-agent paper list with explicit Eval & Observability category, arXiv-only requirement, one-category rule, and plain-English description guidelines; adds the StructEval TMLR 2025 benchmark in the native table format with its verified arXiv PDF and abstract links | Open |
