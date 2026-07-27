@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 75 |
+| New PRs submitted | 76 |
 | Merged | 8 |
-| Open | 66 |
+| Open | 67 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 76 | `chongyangtao/LLMs-for-NLG-Evaluation` | [#1 — Add StructEval benchmark](https://github.com/chongyangtao/LLMs-for-NLG-Evaluation/pull/1) | Active 26-star NLG evaluation paper catalog with an explicit PR-welcome badge and a General Generation meta-evaluation benchmark section; adds a native paper-plus-GitHub entry for StructEval, a TMLR 2025 benchmark evaluating structured-output generation and cross-format conversion across 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 74 | `VyetGokyra/awaresome_LLM_eval_benchmark` | [#6 — Add StructEval structured-output benchmark](https://github.com/VyetGokyra/awaresome_LLM_eval_benchmark/pull/6) | Active 8-star catalog of 250+ LLM benchmarks and evaluation datasets with native multi-field benchmark entries and existing external PR activity; adds StructEval to Instruction-following with official paper, code, dataset, 2,035 examples, 18 text and renderable formats, and syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 75 | `yuanyehome/Awesome-Multimodal-Evaluation-Papers` | [#2 — Add StructEval multimodal evaluation benchmark](https://github.com/yuanyehome/Awesome-Multimodal-Evaluation-Papers/pull/2) | Active multimodal foundation-model evaluation paper list updated July 2026; explicit contribution guidance requests paper title, venue or preprint status, year, link, and taxonomy category; adds StructEval to Cross-Modality Alignment with its TMLR 2025 paper and canonical arXiv link | Open |
 | 73 | `BenchGecko/awesome-llm-benchmarks` | [#9 — Add StructEval structured-output benchmark](https://github.com/BenchGecko/awesome-llm-benchmarks/pull/9) | Active 2-star LLM benchmark catalog with explicit contribution guidelines requiring peer-reviewed or widely adopted benchmarks, at least 3 major-LLM evaluations, a concise description, and canonical links; adds StructEval to Multimodal with its TMLR 2025 paper, official code and project links, 2,035 examples across 18 text and renderable formats, and syntax, structural-fidelity, and visual-fidelity checks | Open |
