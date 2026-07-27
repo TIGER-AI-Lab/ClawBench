@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 247 |
+| New PRs submitted in this campaign | 248 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 227 |
+| Current campaign: open | 228 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -270,6 +270,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 245 | `hparreao/Awesome-AI-Evaluation-Guide` | [#15 — Add ClawBench to agent benchmarks](https://github.com/hparreao/Awesome-AI-Evaluation-Guide/pull/15) | AI evaluation guide with an explicit Agent & Tool Use benchmark section and detailed contribution guide; adds ClawBench with paper, project, code, live-web task scale, request-level safety interception, and multi-layer execution-trace links | Open |
 | 246 | `Anionix/Awesome-AI-benchmark-2026` | [#3 — Add ClawBench to web and PC benchmarks](https://github.com/Anionix/Awesome-AI-benchmark-2026/pull/3) | Trilingual 2026 benchmark catalog with explicit Web and PC operation scope and contribution schema; adds synchronized CSV plus English, Simplified Chinese, and Japanese entries with primary project URL and neutral task description | Open |
 | 247 | `lukahhcm/Awesome_Environment_Scaling` | [#2 — Add ClawBench to realistic agent environments](https://github.com/lukahhcm/Awesome_Environment_Scaling/pull/2) | Environment-scaling survey list with explicit community contribution guidance and a Stage 2 Realism Scaling section; adds ClawBench as a live-web benchmark with paper, code, safety-interception, and multi-layer trace details | Open |
+| 248 | `Horatio-Li/awesome-cowork` | [#2 — Add ClawBench computer-use benchmark](https://github.com/Horatio-Li/awesome-cowork/pull/2) | Computer Use resource list with explicit contribution guidelines; adds ClawBench under Tools & Environment as an open benchmark covering 153 everyday tasks across 144 live websites with request-level checks and execution traces | Open |
 
 ## Verified Merged Features
 
