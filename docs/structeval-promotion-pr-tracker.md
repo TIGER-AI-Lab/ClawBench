@@ -9,13 +9,14 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 66 |
+| New PRs submitted | 67 |
 | Merged | 8 |
-| Open | 57 |
+| Open | 58 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
+| 67 | `Vvkmnn/awesome-ai-eval` | [#25 — Add StructEval benchmark](https://github.com/Vvkmnn/awesome-ai-eval/pull/25) | Active 99-star AI-evaluation catalog with explicit scope for evaluation frameworks, datasets, platforms, research papers, and a dedicated General benchmarks section; adds a native StructEval entry with the official implementation link and coverage of 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 |---:|---|---|---|---|
 | 66 | `sourcemeta/awesome-jsonschema` | [#53 — Add StructEval structured-output benchmark paper](https://github.com/sourcemeta/awesome-jsonschema/pull/53) | Active 168-star JSON Schema resource list with explicit contribution instructions requiring updates to both data.yaml and the generated README.md; adds StructEval to Papers as a 2025 benchmark for structured-output generation and conversion across 18 non-renderable and renderable formats with syntax, structural-fidelity, and visual-fidelity checks, linking the official paper and implementation | Open |
 | 65 | `CSHaitao/Awesome-LLMs-as-Judges` | [#5 — Add StructEval benchmark](https://github.com/CSHaitao/Awesome-LLMs-as-Judges/pull/5) | 600-star LLM-as-a-Judge survey with a dedicated Meta-Evaluation > Benchmarks > Comprehensive Data section, explicit PR-welcome contribution guidance, and no existing StructEval entry; adds a native paper row linking the official TMLR 2025 paper and implementation for structured-output generation and cross-format conversion across 18 text and renderable formats | Open |
