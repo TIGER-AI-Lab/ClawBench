@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 232 |
+| New PRs submitted in this campaign | 233 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 212 |
+| Current campaign: open | 213 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -255,6 +255,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 230 | `yichao-liang/awesome-agent-benchmarks-old` | [#1 — Add ClawBench to computer-use benchmarks](https://github.com/yichao-liang/awesome-agent-benchmarks-old/pull/1) | Focused agent-benchmark list covering computer-use software interactions; contribution rules accept benchmark PRs and require reverse-chronological Name/Year/Description rows; adds ClawBench with its paper link and live-web scope | Open |
 | 231 | `shwetatyagi22/awesome-agent-testing` | [#1 — Add ClawBench benchmark](https://github.com/shwetatyagi22/awesome-agent-testing/pull/1) | Agent-testing list with explicit Benchmarks & Datasets section and one-item PR guidelines; adds ClawBench with its live-web task scale and layered execution traces in the native one-line format | Open |
 | 232 | `angrykoala/awesome-browser-automation` | [#133 — Add ClawBench to browser automation resources](https://github.com/angrykoala/awesome-browser-automation/pull/133) | 629-star browser-automation resource list with explicit contribution guidelines; adds ClawBench alphabetically under Resources as a live-production browser-agent benchmark with safe submission interception | Open |
+| 233 | `jin-s13/awesome-gui-agent-hub` | [#1 — Add ClawBench benchmark to GUI agent hub](https://github.com/jin-s13/awesome-gui-agent-hub/pull/1) | GUI-agent research hub with a structured benchmark paper table and public bilingual website; adds ClawBench with arXiv, code, project, live-web task scale, safe request interception, and execution-trace details | Open |
 
 ## Verified Merged Features
 
