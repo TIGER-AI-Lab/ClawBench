@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 253 |
+| New PRs submitted in this campaign | 254 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 231 |
+| Current campaign: open | 232 |
 | Current campaign: closed without merge | 5 |
 
 ## New Campaign Submissions
@@ -276,6 +276,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 251 | `NotoriousH2/Awesome_LLM_Benchmark_for_me` | [#2 — Add ClawBench to agent and tool-use benchmarks](https://github.com/NotoriousH2/Awesome_LLM_Benchmark_for_me/pull/2) | Korean/English LLM benchmark catalog with explicit PR template and an Agent & Tool Use section; adds ClawBench using the required name, release, task count, evaluation method, GitHub/paper links, and representative task format | Open |
 | 252 | `cemde/Awesome-LLM-Agent-Benchmarks-List` | [#2 — Add ClawBench web-agent benchmark](https://github.com/cemde/Awesome-LLM-Agent-Benchmarks-List/pull/2) | LLM-agent benchmark list explicitly invites contributions; adds ClawBench under Benchmarks with maintained code, paper, task scale, request-level checks, and reproducible execution traces | Open |
 | 253 | `rolandfarkasCOM/awesome-agentic-web` | [#1 — Add ClawBench browser-agent benchmark](https://github.com/rolandfarkasCOM/awesome-agentic-web/pull/1) | Agentic-web list explicitly welcomes open-source projects directly relevant to agentic web; adds ClawBench under Web & browser agents using the repository's required one-line format | Open |
+| 254 | `luo-junyu/Awesome-Agent-Papers` | [#53 — Add ClawBench to Datasets & Benchmarks](https://github.com/luo-junyu/Awesome-Agent-Papers/pull/53) | Active 2.8k-star LLM-agent paper taxonomy with a Datasets & Benchmarks section and explicit PR/issue/form submission guidance; adds the arXiv paper in the native title, year, venue, and one-line description format | Open |
 
 ## Verified Merged Features
 
