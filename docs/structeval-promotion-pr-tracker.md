@@ -9,15 +9,16 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 74 |
+| New PRs submitted | 75 |
 | Merged | 8 |
-| Open | 65 |
+| Open | 66 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
 | 74 | `VyetGokyra/awaresome_LLM_eval_benchmark` | [#6 — Add StructEval structured-output benchmark](https://github.com/VyetGokyra/awaresome_LLM_eval_benchmark/pull/6) | Active 8-star catalog of 250+ LLM benchmarks and evaluation datasets with native multi-field benchmark entries and existing external PR activity; adds StructEval to Instruction-following with official paper, code, dataset, 2,035 examples, 18 text and renderable formats, and syntax, structural-fidelity, and visual-fidelity checks | Open |
+| 75 | `yuanyehome/Awesome-Multimodal-Evaluation-Papers` | [#2 — Add StructEval multimodal evaluation benchmark](https://github.com/yuanyehome/Awesome-Multimodal-Evaluation-Papers/pull/2) | Active multimodal foundation-model evaluation paper list updated July 2026; explicit contribution guidance requests paper title, venue or preprint status, year, link, and taxonomy category; adds StructEval to Cross-Modality Alignment with its TMLR 2025 paper and canonical arXiv link | Open |
 | 73 | `BenchGecko/awesome-llm-benchmarks` | [#9 — Add StructEval structured-output benchmark](https://github.com/BenchGecko/awesome-llm-benchmarks/pull/9) | Active 2-star LLM benchmark catalog with explicit contribution guidelines requiring peer-reviewed or widely adopted benchmarks, at least 3 major-LLM evaluations, a concise description, and canonical links; adds StructEval to Multimodal with its TMLR 2025 paper, official code and project links, 2,035 examples across 18 text and renderable formats, and syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 72 | `chaosync-org/awesome-ai-agent-testing` | [#18 — Add StructEval benchmark](https://github.com/chaosync-org/awesome-ai-agent-testing/pull/18) | Active 44-star AI-agent testing catalog with explicit Benchmarks and Evaluation sections plus CONTRIBUTING.md guidance requiring checked links, descriptions, and duplicate review; adds StructEval to General Purpose datasets in the native list format as a structured-output and cross-format conversion benchmark covering 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 71 | `x-tahosin/awesome-llm-benchmarks` | [#4 — Add StructEval benchmark](https://github.com/x-tahosin/awesome-llm-benchmarks/pull/4) | Active 1-star 2026 LLM-benchmark catalog with explicit scope for public benchmarks, evaluation frameworks, leaderboards, and benchmark-quality papers; CONTRIBUTING.md requires official links, one-line descriptions, and no duplicates; adds StructEval in the native Multimodal section as a TMLR 2025 structured-output benchmark covering syntax, structural-fidelity, and visual-fidelity checks across 18 text and renderable formats | Open |
