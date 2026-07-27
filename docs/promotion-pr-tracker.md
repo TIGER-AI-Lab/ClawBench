@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 244 |
+| New PRs submitted in this campaign | 245 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 224 |
+| Current campaign: open | 225 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -267,6 +267,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 242 | `LLMSecurity/awesome-agent-skills-security` | [#41 — Add ClawBench to security benchmarks](https://github.com/LLMSecurity/awesome-agent-skills-security/pull/41) | 53-star agent-security list with explicit benchmark contribution rules; adds ClawBench to Benchmarks & Datasets as a safe real-world web-agent evaluation with request interception and 153 tasks across 144 production websites | Open |
 | 243 | `Autonomous-Agent-Team/Awesome-GUI-Agent-Safety` | [#2 — Add ClawBench GUI-agent benchmark](https://github.com/Autonomous-Agent-Team/Awesome-GUI-Agent-Safety/pull/2) | GUI-agent safety list with explicit benchmarks/evaluation scope; adds ClawBench with its live-web task scale, request-level safety checks, and multi-layer execution traces | Open |
 | 244 | `mahonzhan/awesome-agent-harness` | [#20 — Add ClawBench to agent evaluation resources](https://github.com/mahonzhan/awesome-agent-harness/pull/20) | 229-star agent-harness map with explicit PR contributions and an AgentOps / Observability evaluation section; adds ClawBench using the native platform table schema with browser-agent benchmark, request checks, and session/trace replay details | Open |
+| 245 | `hparreao/Awesome-AI-Evaluation-Guide` | [#15 — Add ClawBench to agent benchmarks](https://github.com/hparreao/Awesome-AI-Evaluation-Guide/pull/15) | AI evaluation guide with an explicit Agent & Tool Use benchmark section and detailed contribution guide; adds ClawBench with paper, project, code, live-web task scale, request-level safety interception, and multi-layer execution-trace links | Open |
 
 ## Verified Merged Features
 
