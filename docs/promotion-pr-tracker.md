@@ -16,8 +16,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Closed without merge | 4 |
 | New PRs submitted in this campaign | 253 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 232 |
-| Current campaign: closed without merge | 4 |
+| Current campaign: open | 231 |
+| Current campaign: closed without merge | 5 |
 
 ## New Campaign Submissions
 
@@ -241,7 +241,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 216 | `yenanjing/awesome-harness-engineering` | [#3 — Add ClawBench to LLM evaluation harnesses](https://github.com/yenanjing/awesome-harness-engineering/pull/3) | Harness-engineering list with a dedicated LLM Evaluation Harnesses section and explicit contribution guide; adds ClawBench in the repository's native table format as a complementary browser-agent benchmark | Open |
 | 217 | `jiji262/awesome-harness-engineering` | [#7 — Add ClawBench to evals and verification](https://github.com/jiji262/awesome-harness-engineering/pull/7) | Harness-engineering list with an Evals & Verification section covering agent benchmarks and explicit open-source resources; adds ClawBench as a complementary browser-agent benchmark in native bullet format | Open |
 | 218 | `Jiaaqiliu/Awesome-Harness-Engineering` | [#7 — Add ClawBench to harness benchmarks](https://github.com/Jiaaqiliu/Awesome-Harness-Engineering/pull/7) | Harness-engineering list with a dedicated Benchmarks table and explicit quality bar/contribution guide; adds ClawBench as a complementary web benchmark in native table format | Open |
-| 219 | `12britz/awesome-computer-use` | [#2 — Add ClawBench to agent testing and evaluation](https://github.com/12britz/awesome-computer-use/pull/2) | Computer-use list with an Agent Testing and Evaluation section and explicit contribution rules; adds ClawBench as an open-source browser-agent benchmark in native bullet format | Open |
+| 219 | `12britz/awesome-computer-use` | [#2 — Add ClawBench to agent testing and evaluation](https://github.com/12britz/awesome-computer-use/pull/2) | Duplicate of the earlier canonical ClawBench submission to this repository (#1); closed to leave one proposal for maintainer review | Closed without merge |
 | 220 | `pauldebdeep9/awesome-agentic-evaluation` | [#3 — Add ClawBench to generalist agent benchmarks](https://github.com/pauldebdeep9/awesome-agentic-evaluation/pull/3) | Agentic-evaluation list with a Generalist and Real-World Work Benchmarks section and a detailed contribution checklist; adds ClawBench as a primary-source browser-agent benchmark in native bullet format | Open |
 | 221 | `ZJU-REAL/Awesome-GUI-Agents` | [#11 — Add ClawBench to GUI navigation benchmarks](https://github.com/ZJU-REAL/Awesome-GUI-Agents/pull/11) | GUI-agent research list with an explicit GUI Navigation Benchmark section and PR invitation; adds the live-web benchmark in the list's native plain-title format | Open |
 | 222 | `philschmid/ai-agent-benchmark-compendium` | [#8 — Add ClawBench to computer interaction benchmarks](https://github.com/philschmid/ai-agent-benchmark-compendium/pull/8) | 177-star benchmark compendium with an explicit Computer Interaction section and README invitation to open PRs or issues; adds a neutral ClawBench entry in the native Paper/GitHub/Project link format | Open |
