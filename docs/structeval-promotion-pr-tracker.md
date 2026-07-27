@@ -1,6 +1,6 @@
 # StructEval Promotion PR Tracker
 
-Last audited: 2026-07-27
+Last audited: 2026-07-28
 
 This tracker records repository-specific outreach for [StructEval](https://github.com/TIGER-AI-Lab/StructEval). Candidate discovery does not count as a submission.
 
@@ -9,15 +9,16 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 67 |
+| New PRs submitted | 68 |
 | Merged | 8 |
-| Open | 58 |
+| Open | 59 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
-| 67 | `Vvkmnn/awesome-ai-eval` | [#25 — Add StructEval benchmark](https://github.com/Vvkmnn/awesome-ai-eval/pull/25) | Active 99-star AI-evaluation catalog with explicit scope for evaluation frameworks, datasets, platforms, research papers, and a dedicated General benchmarks section; adds a native StructEval entry with the official implementation link and coverage of 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 |---:|---|---|---|---|
+| 68 | `Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks` | [#8 — Add StructEval to code-generation benchmarks](https://github.com/Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks/pull/8) | Active 76-star MLLM reasoning survey with explicit Chart Reasoning and Code Generation sections; adds one native StructEval entry linking the TMLR 2025 paper and official implementation, covering structured-output generation with renderable outputs and visual checks | Open |
+| 67 | `Vvkmnn/awesome-ai-eval` | [#25 — Add StructEval benchmark](https://github.com/Vvkmnn/awesome-ai-eval/pull/25) | Active 99-star AI-evaluation catalog with explicit scope for evaluation frameworks, datasets, platforms, research papers, and a dedicated General benchmarks section; adds a native StructEval entry with the official implementation link and coverage of 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 66 | `sourcemeta/awesome-jsonschema` | [#53 — Add StructEval structured-output benchmark paper](https://github.com/sourcemeta/awesome-jsonschema/pull/53) | Active 168-star JSON Schema resource list with explicit contribution instructions requiring updates to both data.yaml and the generated README.md; adds StructEval to Papers as a 2025 benchmark for structured-output generation and conversion across 18 non-renderable and renderable formats with syntax, structural-fidelity, and visual-fidelity checks, linking the official paper and implementation | Open |
 | 65 | `CSHaitao/Awesome-LLMs-as-Judges` | [#5 — Add StructEval benchmark](https://github.com/CSHaitao/Awesome-LLMs-as-Judges/pull/5) | 600-star LLM-as-a-Judge survey with a dedicated Meta-Evaluation > Benchmarks > Comprehensive Data section, explicit PR-welcome contribution guidance, and no existing StructEval entry; adds a native paper row linking the official TMLR 2025 paper and implementation for structured-output generation and cross-format conversion across 18 text and renderable formats | Open |
 | 64 | `abhijeetgupta02/awesome-vlm-evaluation` | [#1 — Add StructEval benchmark](https://github.com/abhijeetgupta02/awesome-vlm-evaluation/pull/1) | New VLM/MLLM evaluation list with an explicit Benchmarks section and contribution guidance requesting notable research links with concise descriptions; adds StructEval in the native benchmark format with official implementation link, TMLR 2025 status, and syntax, structural, and visual-fidelity evaluation across 18 text and renderable formats | Open |
