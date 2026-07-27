@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 69 |
+| New PRs submitted | 70 |
 | Merged | 8 |
-| Open | 60 |
+| Open | 61 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 70 | `danielrosehill/Awesome-AI-Evaluations-Tools` | [#19 — Add StructEval benchmark](https://github.com/danielrosehill/Awesome-AI-Evaluations-Tools/pull/19) | Active AI-evaluation catalog updated 2026-07-27 with explicit scope for open-source benchmarks, multimodal evaluation, browser/web-agent evaluation, and agent/tool-use evaluation; adds StructEval to the native Benchmarks table as a TMLR 2025 structured-output benchmark covering syntax, structural fidelity, and visual fidelity across 18 text and renderable formats | Open |
 | 69 | `leobeeson/llm_benchmarks` | [#3 — Add StructEval structured output benchmark](https://github.com/leobeeson/llm_benchmarks/pull/3) | Active 575-star benchmark collection updated 2026-07-22 with broad benchmark and dataset coverage; adds a dedicated Structured Output and Multimodal Evaluation section in the repository's native multi-field format, linking the StructEval paper, official implementation, and project page and describing syntax, structural, and visual-fidelity checks across 18 text and renderable formats | Open |
 | 68 | `Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks` | [#8 — Add StructEval to code-generation benchmarks](https://github.com/Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks/pull/8) | Active 76-star MLLM reasoning survey with explicit Chart Reasoning and Code Generation sections; adds one native StructEval entry linking the TMLR 2025 paper and official implementation, covering structured-output generation with renderable outputs and visual checks | Open |
 | 67 | `Vvkmnn/awesome-ai-eval` | [#25 — Add StructEval benchmark](https://github.com/Vvkmnn/awesome-ai-eval/pull/25) | Active 99-star AI-evaluation catalog with explicit scope for evaluation frameworks, datasets, platforms, research papers, and a dedicated General benchmarks section; adds a native StructEval entry with the official implementation link and coverage of 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
