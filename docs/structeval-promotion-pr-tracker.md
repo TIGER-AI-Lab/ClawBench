@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 68 |
+| New PRs submitted | 69 |
 | Merged | 8 |
-| Open | 59 |
+| Open | 60 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 69 | `leobeeson/llm_benchmarks` | [#3 — Add StructEval structured output benchmark](https://github.com/leobeeson/llm_benchmarks/pull/3) | Active 575-star benchmark collection updated 2026-07-22 with broad benchmark and dataset coverage; adds a dedicated Structured Output and Multimodal Evaluation section in the repository's native multi-field format, linking the StructEval paper, official implementation, and project page and describing syntax, structural, and visual-fidelity checks across 18 text and renderable formats | Open |
 | 68 | `Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks` | [#8 — Add StructEval to code-generation benchmarks](https://github.com/Wild-Cooperation-Hub/Awesome-MLLM-Reasoning-Benchmarks/pull/8) | Active 76-star MLLM reasoning survey with explicit Chart Reasoning and Code Generation sections; adds one native StructEval entry linking the TMLR 2025 paper and official implementation, covering structured-output generation with renderable outputs and visual checks | Open |
 | 67 | `Vvkmnn/awesome-ai-eval` | [#25 — Add StructEval benchmark](https://github.com/Vvkmnn/awesome-ai-eval/pull/25) | Active 99-star AI-evaluation catalog with explicit scope for evaluation frameworks, datasets, platforms, research papers, and a dedicated General benchmarks section; adds a native StructEval entry with the official implementation link and coverage of 18 text and renderable formats with syntax, structural-fidelity, and visual-fidelity checks | Open |
 | 66 | `sourcemeta/awesome-jsonschema` | [#53 — Add StructEval structured-output benchmark paper](https://github.com/sourcemeta/awesome-jsonschema/pull/53) | Active 168-star JSON Schema resource list with explicit contribution instructions requiring updates to both data.yaml and the generated README.md; adds StructEval to Papers as a 2025 benchmark for structured-output generation and conversion across 18 non-renderable and renderable formats with syntax, structural-fidelity, and visual-fidelity checks, linking the official paper and implementation | Open |
