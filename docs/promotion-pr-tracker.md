@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 231 |
+| New PRs submitted in this campaign | 232 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 211 |
+| Current campaign: open | 212 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -254,6 +254,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 229 | `ZackZikaiXiao/Awesome-Agent-Environments` | [#3 — Add ClawBench to web benchmarks](https://github.com/ZackZikaiXiao/Awesome-Agent-Environments/pull/3) | Agent-environment catalog with explicit Web and Agent Environments and Benchmarks sections; adds ClawBench as a live-web, multi-step benchmark in native paper, repository, and project-link format | Open |
 | 230 | `yichao-liang/awesome-agent-benchmarks-old` | [#1 — Add ClawBench to computer-use benchmarks](https://github.com/yichao-liang/awesome-agent-benchmarks-old/pull/1) | Focused agent-benchmark list covering computer-use software interactions; contribution rules accept benchmark PRs and require reverse-chronological Name/Year/Description rows; adds ClawBench with its paper link and live-web scope | Open |
 | 231 | `shwetatyagi22/awesome-agent-testing` | [#1 — Add ClawBench benchmark](https://github.com/shwetatyagi22/awesome-agent-testing/pull/1) | Agent-testing list with explicit Benchmarks & Datasets section and one-item PR guidelines; adds ClawBench with its live-web task scale and layered execution traces in the native one-line format | Open |
+| 232 | `angrykoala/awesome-browser-automation` | [#133 — Add ClawBench to browser automation resources](https://github.com/angrykoala/awesome-browser-automation/pull/133) | 629-star browser-automation resource list with explicit contribution guidelines; adds ClawBench alphabetically under Resources as a live-production browser-agent benchmark with safe submission interception | Open |
 
 ## Verified Merged Features
 
