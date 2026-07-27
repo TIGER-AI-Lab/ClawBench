@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 249 |
+| New PRs submitted in this campaign | 251 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 229 |
+| Current campaign: open | 231 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -272,6 +272,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 247 | `lukahhcm/Awesome_Environment_Scaling` | [#2 — Add ClawBench to realistic agent environments](https://github.com/lukahhcm/Awesome_Environment_Scaling/pull/2) | Environment-scaling survey list with explicit community contribution guidance and a Stage 2 Realism Scaling section; adds ClawBench as a live-web benchmark with paper, code, safety-interception, and multi-layer trace details | Open |
 | 248 | `Horatio-Li/awesome-cowork` | [#2 — Add ClawBench computer-use benchmark](https://github.com/Horatio-Li/awesome-cowork/pull/2) | Computer Use resource list with explicit contribution guidelines; adds ClawBench under Tools & Environment as an open benchmark covering 153 everyday tasks across 144 live websites with request-level checks and execution traces | Open |
 | 249 | `serenakeyitan/awesome-ai-agent-benchmarks` | [#2 — Add ClawBench browser-agent benchmark](https://github.com/serenakeyitan/awesome-ai-agent-benchmarks/pull/2) | Dimension-organized AI-agent benchmark index with explicit contribution rules; adds ClawBench under Web Browsing & Navigation with verified paper, code, project, leaderboard, task scale, and setup details | Open |
+| 250 | `agential-ai/awesome-language-agent-benchmarks` | [#14 — Add ClawBench web benchmark](https://github.com/agential-ai/awesome-language-agent-benchmarks/pull/14) | Language-agent benchmark catalog with explicit PR welcome guidance and a dedicated Computer Use / Web section; adds ClawBench in the native paper, project, and code-link format | Open |
+| 251 | `NotoriousH2/Awesome_LLM_Benchmark_for_me` | [#2 — Add ClawBench to agent and tool-use benchmarks](https://github.com/NotoriousH2/Awesome_LLM_Benchmark_for_me/pull/2) | Korean/English LLM benchmark catalog with explicit PR template and an Agent & Tool Use section; adds ClawBench using the required name, release, task count, evaluation method, GitHub/paper links, and representative task format | Open |
 
 ## Verified Merged Features
 
