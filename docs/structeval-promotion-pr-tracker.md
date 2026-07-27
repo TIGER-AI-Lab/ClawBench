@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 60 |
+| New PRs submitted | 61 |
 | Merged | 8 |
-| Open | 51 |
+| Open | 52 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 61 | `brandonhimpfen/awesome-ai-benchmarks-evaluation` | [#24 — Add StructEval to evaluation frameworks](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation/pull/24) | Active AI-benchmark and evaluation catalog with explicit contribution standards and a dedicated Evaluation Frameworks section; adds StructEval in the native one-line format with its official repository, covering structured-output generation and cross-format conversion with syntax, structural, and visual checks | Open |
 | 60 | `VoltAgent/awesome-ai-agent-papers` | [#28 — Add paper: StructEval](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/28) | 1,621-star weekly AI-agent paper list with explicit Eval & Observability category, arXiv-only requirement, one-category rule, and plain-English description guidelines; adds the StructEval TMLR 2025 benchmark in the native table format with its verified arXiv PDF and abstract links | Open |
 | 59 | `benchflow-ai/awesome-evals` | [#57 — Add StructEval benchmark](https://github.com/benchflow-ai/awesome-evals/pull/57) | 759-star, actively maintained agent-evaluation resource with explicit contribution bar, one-line rationale, canonical URL verification, and a benchmark-focused section; adds StructEval in the native paper/repo format with the official arXiv paper and code repository covering structured-output generation and cross-format conversion across 18 text and renderable formats with syntax, structural, and visual checks | Open |
 | 58 | `tjunlp-lab/Awesome-LLMs-Evaluation-Papers` | [#46 — Add StructEval benchmark](https://github.com/tjunlp-lab/Awesome-LLMs-Evaluation-Papers/pull/46) | 804-star LLM-evaluation paper list with explicit issue/PR contributions and a dedicated Evaluating LLMs as Agents section; adds StructEval in the native numbered format with official TMLR paper, repository, and project links for structured-output generation evaluation | Open |
