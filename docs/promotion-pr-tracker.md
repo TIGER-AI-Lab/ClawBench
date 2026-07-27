@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 236 |
+| New PRs submitted in this campaign | 237 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 216 |
+| Current campaign: open | 217 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -259,6 +259,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 234 | `bestpredicts/Awesome-WebAgent` | [#1 — Add ClawBench to complementary web-agent benchmarks](https://github.com/bestpredicts/Awesome-WebAgent/pull/1) | Deep-research web-agent collection with an explicit PR contribution policy and benchmark section; adds ClawBench as a complementary live-web interaction benchmark with paper, project, and code links | Open |
 | 235 | `yichao-liang/awesome-agent-benchmarks` | [#4 — Add ClawBench to computer-use benchmarks](https://github.com/yichao-liang/awesome-agent-benchmarks/pull/4) | Agent benchmark list scoped to games, robotics, and computer use; contribution rules welcome PRs, require a paper link and one or two sentence description, and preserve reverse chronological order; adds ClawBench to Computer Use | Open |
 | 236 | `XavierZXY/Awesome-GUI-Agents` | [#1 — Add ClawBench to GUI agent benchmarks](https://github.com/XavierZXY/Awesome-GUI-Agents/pull/1) | GUI-agent resource list with a dedicated Benchmarks & Evaluation table; adds ClawBench in the native table format with its production-web task scope, request interception, and execution traces | Open |
+| 237 | `maxi-w/awesome-ai-for-gui-agents` | [#2 — Add ClawBench browser-agent benchmark](https://github.com/maxi-w/awesome-ai-for-gui-agents/pull/2) | GUI-agent resource list with a Datasets section; adds ClawBench with its 153 real-world browser tasks across 144 live websites, paper, repository, project page, and multi-layer traces | Open |
 
 ## Verified Merged Features
 
