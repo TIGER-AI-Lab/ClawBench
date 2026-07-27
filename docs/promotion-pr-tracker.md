@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 234 |
+| New PRs submitted in this campaign | 235 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 214 |
+| Current campaign: open | 215 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -257,6 +257,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 232 | `angrykoala/awesome-browser-automation` | [#133 — Add ClawBench to browser automation resources](https://github.com/angrykoala/awesome-browser-automation/pull/133) | 629-star browser-automation resource list with explicit contribution guidelines; adds ClawBench alphabetically under Resources as a live-production browser-agent benchmark with safe submission interception | Open |
 | 233 | `jin-s13/awesome-gui-agent-hub` | [#1 — Add ClawBench benchmark to GUI agent hub](https://github.com/jin-s13/awesome-gui-agent-hub/pull/1) | GUI-agent research hub with a structured benchmark paper table and public bilingual website; adds ClawBench with arXiv, code, project, live-web task scale, safe request interception, and execution-trace details | Open |
 | 234 | `bestpredicts/Awesome-WebAgent` | [#1 — Add ClawBench to complementary web-agent benchmarks](https://github.com/bestpredicts/Awesome-WebAgent/pull/1) | Deep-research web-agent collection with an explicit PR contribution policy and benchmark section; adds ClawBench as a complementary live-web interaction benchmark with paper, project, and code links | Open |
+| 235 | `yichao-liang/awesome-agent-benchmarks` | [#4 — Add ClawBench to computer-use benchmarks](https://github.com/yichao-liang/awesome-agent-benchmarks/pull/4) | Agent benchmark list scoped to games, robotics, and computer use; contribution rules welcome PRs, require a paper link and one or two sentence description, and preserve reverse chronological order; adds ClawBench to Computer Use | Open |
 
 ## Verified Merged Features
 
