@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 59 |
+| New PRs submitted | 60 |
 | Merged | 8 |
-| Open | 50 |
+| Open | 51 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 60 | `VoltAgent/awesome-ai-agent-papers` | [#28 — Add paper: StructEval](https://github.com/VoltAgent/awesome-ai-agent-papers/pull/28) | 1,621-star weekly AI-agent paper list with explicit Eval & Observability category, arXiv-only requirement, one-category rule, and plain-English description guidelines; adds the StructEval TMLR 2025 benchmark in the native table format with its verified arXiv PDF and abstract links | Open |
 | 59 | `benchflow-ai/awesome-evals` | [#57 — Add StructEval benchmark](https://github.com/benchflow-ai/awesome-evals/pull/57) | 759-star, actively maintained agent-evaluation resource with explicit contribution bar, one-line rationale, canonical URL verification, and a benchmark-focused section; adds StructEval in the native paper/repo format with the official arXiv paper and code repository covering structured-output generation and cross-format conversion across 18 text and renderable formats with syntax, structural, and visual checks | Open |
 | 58 | `tjunlp-lab/Awesome-LLMs-Evaluation-Papers` | [#46 — Add StructEval benchmark](https://github.com/tjunlp-lab/Awesome-LLMs-Evaluation-Papers/pull/46) | 804-star LLM-evaluation paper list with explicit issue/PR contributions and a dedicated Evaluating LLMs as Agents section; adds StructEval in the native numbered format with official TMLR paper, repository, and project links for structured-output generation evaluation | Open |
 | 57 | `rAIn0x7/awesome-llm-evals` | [#3 — Add StructEval benchmark](https://github.com/rAIn0x7/awesome-llm-evals/pull/3) | Evals-specific LLM evaluation catalog with a dedicated Benchmarks & leaderboards section and explicit PR requirements for a one-line “Pick it when…” description, OSS/SaaS tag, and status; adds one concise StructEval entry with official repository and arXiv links covering structured-output generation and cross-format conversion across text and renderable formats | Open |
