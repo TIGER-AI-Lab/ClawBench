@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 238 |
+| New PRs submitted in this campaign | 240 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 218 |
+| Current campaign: open | 220 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -261,6 +261,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 236 | `XavierZXY/Awesome-GUI-Agents` | [#1 — Add ClawBench to GUI agent benchmarks](https://github.com/XavierZXY/Awesome-GUI-Agents/pull/1) | GUI-agent resource list with a dedicated Benchmarks & Evaluation table; adds ClawBench in the native table format with its production-web task scope, request interception, and execution traces | Open |
 | 237 | `maxi-w/awesome-ai-for-gui-agents` | [#2 — Add ClawBench browser-agent benchmark](https://github.com/maxi-w/awesome-ai-for-gui-agents/pull/2) | GUI-agent resource list with a Datasets section; adds ClawBench with its 153 real-world browser tasks across 144 live websites, paper, repository, project page, and multi-layer traces | Open |
 | 238 | `c1505/Awesome-LLM-Evaluations` | [#6 — Add ClawBench web-agent benchmark](https://github.com/c1505/Awesome-LLM-Evaluations/pull/6) | Evaluation catalog explicitly labeled PRs welcome; adds ClawBench to its CSV with paper, repository, 153 V1 tasks across 144 live websites, request-level checks, and multi-layer traces | Open |
+| 239 | `aialt/awesome-mobile-agents` | [#5 — Add ClawBench to agent benchmarks](https://github.com/aialt/awesome-mobile-agents/pull/5) | 159-star mobile and PC GUI-agent list with a dedicated Dataset and Benchmark section; adds ClawBench as a 2026 live-web benchmark with 153 everyday tasks, project page, and code links in the repository's native format | Open |
+| 240 | `PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents` | [#5 — Add ClawBench to GUI-agent benchmarks](https://github.com/PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents/pull/5) | 175-star phone GUI-agent paper list with explicit PR welcome guidance and a Benchmarks table; adds ClawBench in the native 2026 format with arXiv and code links | Open |
 
 ## Verified Merged Features
 
