@@ -14,9 +14,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 240 |
+| New PRs submitted in this campaign | 241 |
 | Current campaign: merged | 17 |
-| Current campaign: open | 220 |
+| Current campaign: open | 221 |
 | Current campaign: closed without merge | 3 |
 
 ## New Campaign Submissions
@@ -263,6 +263,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 238 | `c1505/Awesome-LLM-Evaluations` | [#6 — Add ClawBench web-agent benchmark](https://github.com/c1505/Awesome-LLM-Evaluations/pull/6) | Evaluation catalog explicitly labeled PRs welcome; adds ClawBench to its CSV with paper, repository, 153 V1 tasks across 144 live websites, request-level checks, and multi-layer traces | Open |
 | 239 | `aialt/awesome-mobile-agents` | [#5 — Add ClawBench to agent benchmarks](https://github.com/aialt/awesome-mobile-agents/pull/5) | 159-star mobile and PC GUI-agent list with a dedicated Dataset and Benchmark section; adds ClawBench as a 2026 live-web benchmark with 153 everyday tasks, project page, and code links in the repository's native format | Open |
 | 240 | `PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents` | [#5 — Add ClawBench to GUI-agent benchmarks](https://github.com/PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents/pull/5) | 175-star phone GUI-agent paper list with explicit PR welcome guidance and a Benchmarks table; adds ClawBench in the native 2026 format with arXiv and code links | Open |
+| 241 | `Djanghao/awesome-gui-agents` | [#1 — Add ClawBench to GUI-agent benchmarks](https://github.com/Djanghao/awesome-gui-agents/pull/1) | GUI-agent resource list with explicit Benchmarks and Contributions sections; adds ClawBench in the native benchmark format with paper, repository, live-web scope, and execution-trace details | Open |
+| 241 | `Djanghao/awesome-gui-agents` | [#1 — Add ClawBench to GUI benchmarks](https://github.com/Djanghao/awesome-gui-agents/pull/1) | GUI-agent benchmark/results list with explicit pull-request contribution guidance; adds ClawBench with paper, project, code, live-website task scope, request-level checks, and execution traces | Open |
 
 ## Verified Merged Features
 
