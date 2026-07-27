@@ -9,14 +9,15 @@ This tracker records repository-specific outreach for [StructEval](https://githu
 | Scope | Count |
 |---|---:|
 | Target | 210 |
-| New PRs submitted | 63 |
+| New PRs submitted | 64 |
 | Merged | 8 |
-| Open | 54 |
+| Open | 55 |
 
 ## New Submissions
 
 | # | Repository | Pull request | Fit and rule check | Status |
 |---:|---|---|---|---|
+| 64 | `abhijeetgupta02/awesome-vlm-evaluation` | [#1 — Add StructEval benchmark](https://github.com/abhijeetgupta02/awesome-vlm-evaluation/pull/1) | New VLM/MLLM evaluation list with an explicit Benchmarks section and contribution guidance requesting notable research links with concise descriptions; adds StructEval in the native benchmark format with official implementation link, TMLR 2025 status, and syntax, structural, and visual-fidelity evaluation across 18 text and renderable formats | Open |
 | 63 | `Applied-Machine-Learning-Lab/Awesome-Function-Callings` | [#4 — Add StructEval structured-output benchmark](https://github.com/Applied-Machine-Learning-Lab/Awesome-Function-Callings/pull/4) | Active 72-star function-calling survey with an explicit Evaluation section, dedicated Benchmarks tables, and a repository-level invitation to submit missing work; adds one native benchmark row linking the official StructEval paper and TIGER-AI-Lab implementation, covering 18 text and renderable formats with syntax, structural, and visual-fidelity checks | Open |
 | 62 | `OlehDatsyk/awesome-function-calling` | [#1 — Add StructEval structured-output benchmark](https://github.com/OlehDatsyk/awesome-function-calling/pull/1) | Active structured-output and function-calling reference with dedicated JSON Schema and validation guidance; adds one concise StructEval benchmark entry with the official implementation, TMLR 2025 status, 18 supported formats, and syntax, structural, and rendered-output checks | Open |
 | 61 | `brandonhimpfen/awesome-ai-benchmarks-evaluation` | [#24 — Add StructEval to evaluation frameworks](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation/pull/24) | Active AI-benchmark and evaluation catalog with explicit contribution standards and a dedicated Evaluation Frameworks section; adds StructEval in the native one-line format with its official repository, covering structured-output generation and cross-format conversion with syntax, structural, and visual checks | Open |
