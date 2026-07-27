@@ -6,6 +6,15 @@ license: Apache-2.0
 url: "https://claw-bench.com"
 repository-code: "https://github.com/reacher-z/ClawBench"
 date-released: "2026-04-16"
+keywords:
+  - AI agents
+  - browser agents
+  - computer-use agents
+  - web automation
+  - agent evaluation
+  - real-world benchmark
+  - online tasks
+  - benchmark dataset
 authors:
   - family-names: Zhang
     given-names: Yuxuan
