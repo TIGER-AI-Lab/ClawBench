@@ -1,0 +1,27 @@
+# ClawBench
+
+> ClawBench is an open-source benchmark for evaluating browser and computer-use agents on everyday tasks performed on live websites.
+
+ClawBench measures end-to-end task success while preserving replayable evidence from browser actions, screenshots, network requests, agent messages, and session recordings. The benchmark blocks only the final side-effecting submission request so tasks can run on real websites without completing purchases, bookings, or applications.
+
+## Canonical resources
+
+- [Project page](https://claw-bench.com): overview, task explorer, leaderboard, and evaluation details.
+- [GitHub repository](https://github.com/reacher-z/ClawBench): source code, task definitions, harnesses, and documentation.
+- [Research paper](https://arxiv.org/abs/2604.08523): *ClawBench: Can AI Agents Complete Everyday Online Tasks?*
+- [Citation metadata](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff): machine-readable citation record.
+- [Task and leaderboard Space](https://huggingface.co/spaces/TIGER-Lab/ClawBench): live evaluation results and task explorer.
+- [Task dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench): V1/V2 task definitions and evaluation metadata.
+- [V1 execution traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace): replayable run artifacts.
+- [V2 execution traces](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace): rolling V2 run artifacts.
+
+## Quick facts
+
+- V1: 153 tasks across 144 live websites and 15 life categories.
+- V2: 130 tasks with six first-class agent harnesses.
+- Evidence layers: session replay, screenshots, HTTP traffic, browser actions, and agent messages.
+- Supported harnesses include OpenClaw, OpenCode, Claude Code, Codex, Browser-Use, Hermes, Pi, and other compatible browser agents.
+
+## Citation
+
+If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
