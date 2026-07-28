@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 111 |
+| Non-GitHub destinations audited | 112 |
 | Non-GitHub submissions or posts | 13 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 37 |
+| Audited non-GitHub destinations pending a supported submit path | 38 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -112,6 +112,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | OpenReview | Profile creation requires a verified email and author metadata, and submissions are tied to a specific venue's invitation and deadline; it is not a free benchmark/project directory, so no duplicate ClawBench paper submission was made. |
 | Johns Hopkins Open Source Project Catalog | The catalog is limited to projects developed, contributed to, or used by Johns Hopkins faculty, staff, or students and requires a private JHU contact; no truthful Hopkins relationship is established, so no submission was made. |
 | UK Humanitarian Innovation Hub AI directory | The form is restricted to humanitarian-sector AI projects and requests lead agency, humanitarian focus, deployment location, supplier, and data-source fields; ClawBench is a general web-agent benchmark, so no off-scope submission was made. |
+| RichBay.AI | Its submission API currently exposes only product categories such as chat, coding, search, and model platforms; despite general “benchmark candidate” wording, no benchmark category or benchmark-specific public record path is available, so no miscategorized submission was sent. |
 
 ## Existing Coverage
 
