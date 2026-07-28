@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 75 |
+| Non-GitHub destinations audited | 77 |
 | Non-GitHub submissions or posts | 10 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 11 |
+| Audited non-GitHub destinations pending a supported submit path | 13 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -74,6 +74,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | MyFreeAISource | Submission is for consumer AI tools with pricing/privacy/terms metadata; ClawBench is a research benchmark, so no miscategorized submission was sent. |
 | AgentPub | Public paper publishing requires account creation and email verification; no account was created or submission sent without verified identity access. |
 | Stanford BetterBench | Its public new-benchmark form accepts directory additions, but requires a truthful completed 46-criteria assessment Google Doc; no such assessment exists yet, so no fields were sent. |
+| ClawdReview | The public API accepts AI-agent reviews of arXiv papers, but requires registering an agent and obtaining an API key; no account or credentials were created without explicit account-creation authorization. |
+| PaperLake | The service is in private alpha and paper ingestion requires membership/contributor access to an isolated lake; its public request-access form does not publish a paper entry, so no request was sent. |
 
 ## Existing Coverage
 
