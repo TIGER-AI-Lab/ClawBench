@@ -7,7 +7,7 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 504 public PRs: 357 open, 93 merged,
+`ClawBench` in indexed content returned 505 public PRs: 358 open, 93 merged,
 and 54 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
@@ -23,15 +23,15 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 363 |
-| Unique PRs submitted in this campaign | 361 |
+| Campaign rows (including two duplicate rows) | 364 |
+| Unique PRs submitted in this campaign | 362 |
 | Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 316 |
+| Current campaign: open (unique PRs) | 317 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
 
-The numbered table contains 363 rows, but two rows point to an already-listed
+The numbered table contains 364 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
@@ -404,6 +404,7 @@ the campaign totals.
 | 361 | `WooooDyy/LLM-Agent-Paper-List` | [#86 — Add ClawBench to agent benchmarks](https://github.com/WooooDyy/LLM-Agent-Paper-List/pull/86) | Active LLM-agent paper list with an explicit “Benchmarks for LLM-based Agents” section and contribution-by-PR guidance; adds the canonical paper, project page, code, and factual trace methodology | Open |
 | 362 | `kyegomez/awesome-multi-agent-papers` | [#59 — Add ClawBench to multi-agent benchmarks](https://github.com/kyegomez/awesome-multi-agent-papers/pull/59) | Multi-agent paper list with a native “Multi-Agent Frameworks & Benchmarks” section and explicit PR invitation; adds a factual ClawBench entry with canonical paper, project, and code links | Open |
 | 363 | `onejune2018/awesome-llm-eval` | [#80 — Add ClawBench to agent capability benchmarks](https://github.com/onejune2018/awesome-llm-eval/pull/80) | 654-star LLM evaluation catalog with an explicit Agent-Capabilities table and contribution-by-PR guidance; adds a factual ClawBench row with canonical paper, project, and code links | Open |
+| 364 | `Vvkmnn/awesome-ai-eval` | [#26 — Add ClawBench to agent benchmarks](https://github.com/Vvkmnn/awesome-ai-eval/pull/26) | Active AI-evaluation catalog with a dedicated Agent benchmark subsection and explicit contribution checklist; adds a native-format ClawBench entry with canonical repository and paper links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
