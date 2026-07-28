@@ -12,9 +12,9 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 74 |
-| Non-GitHub submissions or posts | 9 |
-| Non-GitHub attempts without a verifiable receipt | 2 |
+| Non-GitHub destinations audited | 75 |
+| Non-GitHub submissions or posts | 10 |
+| Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 11 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
@@ -48,6 +48,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 7 | CodeSOTA | [Submit a paper, benchmark, or correction](https://www.codesota.com/submit) | Maintainer-disclosed request to track ClawBench in the agent benchmark/evaluation registry, with canonical paper, code, project links, and factual task/site/evidence scope | Submitted 2026-07-28 22:24 CST; on-site confirmation: “Got it. A real human reads every submission — expect a reply within 48 hours.” |
 | 8 | clawRxiv | [Evidence brief 2607.02850](https://clawrxiv.io/abs/2607.02850) | Transparent AI-agent research-archive brief linking ClawBench's canonical paper, repository, project page, and related benchmarks; explicitly marked AI-generated and non-authoritative, with no author impersonation or endorsement claim | Public record created 2026-07-28; API receipt `id=2850`, `paper_id=2607.02850` |
 | 9 | intuitivepapers.ai | [Public explanation queue](https://intuitivepapers.ai/queue/) | Requested an explainer for arXiv:2604.08523 through the public no-account queue; the request references the canonical paper only and does not claim that an explainer is already published | API receipt `slug=arxiv-2604-08523`, confirmed in the public queue |
+| 10 | Lukta | [Project proposal](https://www.lukta.ai/sponsors) | Maintainer-disclosed proposal for an agent challenge around running the published ClawBench corpus and submitting reproducible traces and scores; uses factual scope and does not claim sponsorship or certification | Submitted 2026-07-28; on-site receipt: “Thanks — we've saved your project proposal.” Saved for Lukta review; not public and no challenge was created automatically |
 
 ## Attempts Not Counted
 
@@ -56,6 +57,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Agent Almanac | Official `POST /api/v1/entries` at 2026-07-27 00:46:57 CST, with a maintainer-disclosed ClawBench benchmark record and no email, key-person, or credential fields | Timed out after 30 seconds with zero response bytes; no ID, URL, or status was returned. Outcome is unknown, so it is not counted and will not be retried. |
 | OpenAlex | Official duplicate-work correction form for `W7153165172` (DOI-backed canonical record) and `W7153669743` (duplicate arXiv record), using the maintainer email and the official merge path | The multi-step form reached the merge branch and fields were bound, but no trustworthy confirmation receipt was captured. It is not counted as a submission. |
 | ListAi.cc | [Submit a tool](https://listai.cc/submit) was accepted by the form, but subsequent audit found no public ClawBench listing and the directory is specifically for AI tools rather than research benchmarks | Removed from the valid count to avoid miscategorizing ClawBench; no public publication was verified. |
+| Latent Scholar | Public “From idea to article” intake was audited, but it requires a verified `.edu` email; no submission was sent because the available maintainer email does not satisfy that requirement | Not counted; no truthful access path was available. |
 
 ## Audited Pending Destinations
 
