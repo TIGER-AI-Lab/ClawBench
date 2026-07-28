@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 91 |
+| Non-GitHub destinations audited | 93 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 25 |
+| Audited non-GitHub destinations pending a supported submit path | 27 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -90,6 +90,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Eclipse Foundation | Its project-proposal process is for moving a project into Foundation governance, including community review and IP/provenance review; this is materially broader than a directory listing, so no proposal was submitted without explicit governance authorization. |
 | Researka | Its public intake is for agent builders submitting research-agent benchmark artifacts or manuscripts; ClawBench is the benchmark framework, not an evaluated research agent, so no mismatched artifact was submitted. |
 | Snorkel AI Open Benchmarks Grant | The program is a grant application with selection and collaboration commitments, not a directory listing; no funding proposal was submitted without explicit authorization for grant commitments. |
+| Codabench | Codabench supports organizing full benchmark competitions, but its public path requires creating and operating a competition with datasets, scoring code, and an account; it is not a lightweight project-listing submission, so no competition was created. |
+| BenchHub | BenchHub publishes user-created datasets and leaderboards, but its workflow requires an authenticated workspace and uploading benchmark assets/results; no account or leaderboard was created without explicit hosting authorization. |
 
 ## Existing Coverage
 
