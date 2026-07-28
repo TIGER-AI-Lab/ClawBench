@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 357 |
+| New PRs submitted in this campaign | 358 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 319 |
+| Current campaign: open | 320 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -389,6 +389,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 355 | `nellaivijay/awesome-agi-aci-asi` | [#3 — Add ClawBench to AGI/ASI benchmarks](https://github.com/nellaivijay/awesome-agi-aci-asi/pull/3) | Active AGI/ASI resource catalog with an explicit benchmarks and evaluation table; adds a native-format ClawBench row with canonical paper, code, and project links | Open |
 | 356 | `leezythu/Awesome-Harness-Self-Improvement` | [#1 — Add ClawBench to harness evaluation benchmarks](https://github.com/leezythu/Awesome-Harness-Self-Improvement/pull/1) | 20-star harness self-improvement reading list with a dedicated evaluator section; adds ClawBench as a complementary live-web benchmark for harness evaluation | Open |
 | 357 | `TusKANNy/awesome-agentic-search` | [#1 — Add ClawBench to agentic search benchmarks](https://github.com/TusKANNy/awesome-agentic-search/pull/1) | Active agentic-search resource list with an explicit Benchmarks section; adds ClawBench as a complementary live-web browser-agent benchmark with canonical links | Open |
+| 358 | `hardness1020/awesome-agent-architecture` | [#9 — Add ClawBench evaluator example](https://github.com/hardness1020/awesome-agent-architecture/pull/9) | 333-star agent-architecture learning repository with a dedicated observability and evaluation section; adds ClawBench as a traceable live-web evaluator example | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
