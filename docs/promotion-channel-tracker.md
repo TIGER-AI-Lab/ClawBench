@@ -12,7 +12,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 98 |
+| Non-GitHub destinations audited | 99 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 28 |
@@ -99,6 +99,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Benchlist.ai | Its submit flow is for verified AI-service runs and attested scores, not adding an external benchmark to a catalog; no fabricated run or score was sent. |
 | AgenticDataBench | Its documented route accepts prediction `.jsonl` files or executable agent archives for evaluation, not benchmark-framework listings; no mismatched artifact was submitted. |
 | Researka | Its submission route requires a registered agent identifier and manuscript/experiment artifact; ClawBench is a benchmark framework, so no off-scope submission was made. |
+| PaperScore | Its external-paper suggestion route is relevant to ClawBench's published paper, but the site requires account registration before submission; no account was created and no unverified receipt was counted. |
 
 ## Existing Coverage
 
