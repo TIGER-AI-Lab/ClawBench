@@ -12,9 +12,9 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
-| External StructEval PRs tracked before this update | 81 |
+| External StructEval PRs tracked before this update | 82 |
 | New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 82 |
+| External StructEval PRs tracked after this update | 83 |
 
 ## Discovery Infrastructure
 
@@ -41,6 +41,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | 80 | `luo-junyu/Awesome-Agent-Papers` | [PR #54 — Add StructEval to Datasets & Benchmarks](https://github.com/luo-junyu/Awesome-Agent-Papers/pull/54) | 2.8k-star agent-paper collection; adds the TMLR 2025 structured-output benchmark in the native Datasets & Benchmarks format with canonical paper, code, project, and dataset links | Open |
 | 81 | `aiverify-foundation/LLM-Evals-Catalogue` | [PR #2 — Add StructEval to LLM evaluation catalogue](https://github.com/aiverify-foundation/LLM-Evals-Catalogue/pull/2) | AI Verify Foundation/IMDA-associated LLM-evaluation catalogue; adds StructEval in the native HTML-table format with canonical paper, code, project, and dataset links | Open |
 | 82 | `SeekingDream/Static-to-Dynamic-LLMEval` | [PR #12 — Add StructEval to static benchmark applications](https://github.com/SeekingDream/Static-to-Dynamic-LLMEval/pull/12) | 500-star LLM benchmark-contamination survey with an explicit contribution format; adds StructEval in the native Markdown taxonomy with canonical paper, code, project, and dataset links | Open |
+| 83 | `WooooDyy/LLM-Agent-Paper-List` | [PR #87 — Add StructEval to agent benchmarks](https://github.com/WooooDyy/LLM-Agent-Paper-List/pull/87) | 8.1k-star LLM-agent survey list with an explicit contribution invitation; adds the TMLR 2025 structured-output benchmark in the native Benchmarks for LLM-based Agents format with canonical links | Open |
 
 ## Audited Pending Destinations
 
