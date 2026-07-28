@@ -12,8 +12,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 115 |
-| Non-GitHub submissions or posts | 13 |
+| Non-GitHub destinations audited | 116 |
+| Non-GitHub submissions or posts | 14 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 41 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
@@ -52,6 +52,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 11 | Open Source Startups | [ClawBench project listing](https://www.opensourcestartups.com/project/clawbench) | Maintainer-disclosed open-source project submission in the directory's AI & ML category, using the canonical GitHub repository and project page; description identifies ClawBench as a benchmark framework rather than a hosted product | API receipt `id=cms4s5j1w002bwavd4ttwic44`, status `pending`; public project URL resolves HTTP 200 |
 | 12 | ForgeIndex | [ForgeIndex submission form](https://docs.google.com/forms/d/e/1FAIpQLSeB39gVawXep0o0WRjck8ESaJ96ZLloUIgqspMfjEYOcd-IDg/viewform) | Factual project submission to the open-source AI index's “LLM Safety & Evaluations” / local AI research audience, with canonical GitHub, Hugging Face, and project links | Submitted 2026-07-28; Google Forms receipt: “Your response has been recorded.” No public listing claimed yet |
 | 13 | LLMS Central | [Public directory record for claw-bench.com](https://llmscentral.com/domain/claw-bench.com) | Anonymous directory submission of the canonical `llms.txt`, making the ClawBench paper, code, dataset, PyPI package, project site, and benchmark routes discoverable through an AI-oriented public repository | API receipt `domainId=sSYIcndobE09PkaOYTef`; response `isValid=true`; public record resolves HTTP 200 |
+| 14 | Zearches | [General Websites directory](https://zearches.com/directory.php?slug=general) | Maintainer-disclosed submission of the public ClawBench project site to a general project discovery directory; the listing links directly to `claw-bench.com` and uses a factual benchmark description | Public directory shows “ClawBench Benchmark” with `https://claw-bench.com/`; confirmation page reports “Website submitted” |
 
 ## Attempts Not Counted
 
