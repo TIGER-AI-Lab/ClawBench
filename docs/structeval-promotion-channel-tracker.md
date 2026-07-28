@@ -1,6 +1,6 @@
 # StructEval Outreach Submission Tracker
 
-Last audited: 2026-07-27
+Last audited: 2026-07-29
 
 This file tracks verified StructEval outreach outside direct pull requests. Existing coverage and unsubmitted candidates do not count.
 

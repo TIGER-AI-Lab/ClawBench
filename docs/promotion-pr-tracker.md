@@ -1,6 +1,6 @@
 # ClawBench Promotion PR Tracker
 
-Last audited: 2026-07-28
+Last audited: 2026-07-29
 
 This tracker records repository-specific outreach for ClawBench. Candidate discovery does not count as a submission. A pull request is submitted only when the target repository is relevant, its contribution rules permit the entry, and no duplicate ClawBench submission exists.
 
