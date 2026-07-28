@@ -56,6 +56,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | Exgentic benchmark intake | The public “Add a Benchmark” and contribution links resolve to GitHub workflows, so they are not counted as non-GitHub submissions. |
 | OpenEval | The contribution queue requires item-level evaluation JSON containing responses, scores, and model metadata; no such StructEval run artifact was available, so no metadata-only submission was made. |
 | Benchmark Registry | Its feedback form requires an existing Benchmark Record Identifier for a correction; no StructEval record was found, so no invalid correction was submitted. |
+| `imaurer/awesome-llm-json` | 2.2k-star structured-output resource list with a strong topical match; upstream currently has `has_issues=false` and both REST/GraphQL PR creation return 404. A prepared entry is preserved on the maintainer fork for a future re-opened contribution path, but no PR is counted. |
 
 ## Submission Rules
 
