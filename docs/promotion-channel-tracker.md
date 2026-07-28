@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 105 |
+| Non-GitHub destinations audited | 106 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 33 |
+| Audited non-GitHub destinations pending a supported submit path | 34 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -106,6 +106,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Benchmark Registry | Its public feedback route is limited to correcting an existing record and requires a stable Benchmark Record Identifier and primary source; ClawBench has no existing record, so no invalid correction was submitted. |
 | SSRN | The official submission route requires a registered account, complete author profile, all-author emails, and a full English PDF; it has no anonymous public intake or verifiable immediate receipt, so no unauthorized account or batch submission was created. |
 | PaperBench.net / BenchHub | PaperBench.net requires account registration and MCP setup, with contributions private by default; BenchHub requires GitHub/Google/email verification before creating a public leaderboard. Neither offers an account-free public receipt, so no submission was counted. |
+| Lukta.ai | Its benchmark directory requires a verified creator account and keeps proof private during review; it accepts external evaluation results rather than new benchmark registrations, so no account-based or mismatched submission was made. |
 
 ## Existing Coverage
 
