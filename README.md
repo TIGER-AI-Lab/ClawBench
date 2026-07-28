@@ -24,7 +24,7 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
 
-<p align="center"><sub><i>Featured in 40 curated lists</i></sub></p>
+<p align="center"><sub><i>Featured in 50 curated lists</i></sub></p>
 <p align="center">
   <a href="https://github.com/walkinglabs/awesome-harness-engineering"><img alt="awesome-harness-engineering" src="https://img.shields.io/badge/Featured-awesome--harness--engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Picrew/awesome-agent-harness"><img alt="awesome-agent-harness" src="https://img.shields.io/badge/Featured-awesome--agent--harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
@@ -66,6 +66,16 @@
   <a href="https://github.com/SihyeongPark/Awesome-LLM-Benchmark"><img alt="Awesome-LLM-Benchmark" src="https://img.shields.io/badge/Featured-LLM--Benchmark-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Steve2457/Awesome-RL-GUI-Agents"><img alt="Awesome-RL-GUI-Agents" src="https://img.shields.io/badge/Featured-RL--GUI--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/XMUDeepLIT/Awesome-Self-Evolving-Agents"><img alt="Awesome-Self-Evolving-Agents" src="https://img.shields.io/badge/Featured-Self--Evolving--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/Xnhyacinth/Awesome-LLM-Long-Context-Modeling"><img alt="Awesome-LLM-Long-Context-Modeling" src="https://img.shields.io/badge/Featured-LLM--Long--Context--Modeling-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/YintongHuo/awesome-agent-trajectory"><img alt="awesome-agent-trajectory" src="https://img.shields.io/badge/Featured-agent--trajectory-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/aloth/awesome-ai-agents"><img alt="aloth awesome-ai-agents" src="https://img.shields.io/badge/Featured-awesome--ai--agents--aloth-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/anhermon/awesome-agent-observability"><img alt="awesome-agent-observability" src="https://img.shields.io/badge/Featured-agent--observability-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation"><img alt="awesome-ai-benchmarks-evaluation" src="https://img.shields.io/badge/Featured-AI--Benchmarks--Evaluation-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/dyronrh/awesome-agentops-landscape"><img alt="awesome-agentops-landscape" src="https://img.shields.io/badge/Featured-agentops--landscape-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/h9-tec/llm-systems-engineering-roadmap"><img alt="LLM systems engineering roadmap" src="https://img.shields.io/badge/Featured-LLM--systems--roadmap-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/leezythu/Awesome-Harness-Self-Improvement"><img alt="Awesome-Harness-Self-Improvement" src="https://img.shields.io/badge/Featured-Harness--Self--Improvement-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/natnew/Awesome-Agentic-Engineering"><img alt="Awesome-Agentic-Engineering" src="https://img.shields.io/badge/Featured-Agentic--Engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/natnew/awesome-rl-for-agents"><img alt="natnew awesome-rl-for-agents" src="https://img.shields.io/badge/Featured-RL--for--Agents--natnew-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
 </p>
 
 <p align="center">
