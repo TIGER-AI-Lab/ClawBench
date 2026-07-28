@@ -15,7 +15,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Non-GitHub destinations audited | 122 |
 | Non-GitHub submissions or posts | 16 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 45 |
+| Audited non-GitHub destinations pending a supported submit path | 46 |
 | Existing non-GitHub coverage pages, not counted as new | 19 |
 
 ## GitHub Issue-First Proposals
@@ -123,6 +123,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | MIT Media Lab AI Impact Bench | The MIT Media Lab, USC, and UC Berkeley open benchmark invitation has an anonymous Google Form, but it requires a construct-specific human-impact benchmark proposal with scenarios, positive/negative examples, and an LLM-judge prompt; ClawBench is a general web-agent benchmark and no tailored impact construct or examples were prepared, so no off-scope submission was sent. |
 | UC Berkeley RDI AgentBeats | Public Web/Computer-Use benchmark hub with open activity and leaderboard records, but registration requires a GitHub-authenticated Green Agent and a Docker/A2A implementation; no agentification was prepared, so this remains a qualified account-required candidate rather than a submission. |
 | Hugging Face `agent-evals/leaderboard` benchmark library | Its public submission guide asks for a standard task format, exact task instructions, and a reproducible container environment; ClawBench has a related HF presence but no METR-compatible package or maintainer-approved benchmark registration was prepared, so this remains pending rather than a counted submission. |
+| HVTracker | Public AI-agent/MCP trust registry with a no-login `/submit/` form, but the form is specifically for agent or MCP-server repositories. ClawBench is an evaluation benchmark rather than an agent runtime, so no semantically mismatched listing was sent; the public registry and GitHub issue route remain a possible future benchmark-category request. |
 
 ## Existing Coverage
 
