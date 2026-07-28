@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 103 |
+| Non-GitHub destinations audited | 104 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 31 |
+| Audited non-GitHub destinations pending a supported submit path | 32 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -104,6 +104,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | PeerGraph.ai | Its public “Get Listed” page routes paper/project submissions to a GitHub issue template requiring GitHub login; it is not a non-GitHub intake and no duplicate submission was made. |
 | OpenCodePapers | GitLab benchmark catalog accepts merge requests, but its contribution rules require at least three papers with verifiable model/metric results; the currently verified ClawBench references do not establish those results, so no speculative benchmark JSON was submitted. |
 | Benchmark Registry | Its public feedback route is limited to correcting an existing record and requires a stable Benchmark Record Identifier and primary source; ClawBench has no existing record, so no invalid correction was submitted. |
+| SSRN | The official submission route requires a registered account, complete author profile, all-author emails, and a full English PDF; it has no anonymous public intake or verifiable immediate receipt, so no unauthorized account or batch submission was created. |
 
 ## Existing Coverage
 
