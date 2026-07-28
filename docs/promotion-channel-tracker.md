@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 83 |
+| Non-GitHub destinations audited | 84 |
 | Non-GitHub submissions or posts | 10 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 19 |
+| Audited non-GitHub destinations pending a supported submit path | 20 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -82,6 +82,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Exgentic Open Agent Leaderboard | The public site advertises benchmark integration through its unified protocol, but the available contribution route requires the platform/GitHub workflow; no standalone public ClawBench submission form was found. |
 | Semantic Scholar | The ClawBench arXiv record is automatically indexed; adding or correcting author-page metadata requires a logged-in author claim, so no account action was taken. |
 | Archivara | Its research-archive submission is relevant but requires an account and automatically names that account as first author; no account was created and no authorship was misrepresented. |
+| Public Interest AI Project Map | The HIIG survey publishes submitted project metadata under CC BY 4.0 and requires detailed location, team, gender-ratio, funding, and project-use answers; no submission was sent because those fields cannot be completed truthfully from the authorized project facts. |
 
 ## Existing Coverage
 
