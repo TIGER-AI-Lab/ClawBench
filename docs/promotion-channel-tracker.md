@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 121 |
+| Non-GitHub destinations audited | 122 |
 | Non-GitHub submissions or posts | 16 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 44 |
+| Audited non-GitHub destinations pending a supported submit path | 45 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -122,6 +122,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | OpenSourceFest | Its AI & Machine Learning open-source directory is semantically relevant and asks for a public repository, license, project description, and email, but the submission form currently posts to a placeholder `formsubmit.co/your-email@opensourcefest.org` endpoint and also requires a “genuine alternative” criterion; no reliable receipt was obtained and no submission was sent. |
 | MIT Media Lab AI Impact Bench | The MIT Media Lab, USC, and UC Berkeley open benchmark invitation has an anonymous Google Form, but it requires a construct-specific human-impact benchmark proposal with scenarios, positive/negative examples, and an LLM-judge prompt; ClawBench is a general web-agent benchmark and no tailored impact construct or examples were prepared, so no off-scope submission was sent. |
 | UC Berkeley RDI AgentBeats | Public Web/Computer-Use benchmark hub with open activity and leaderboard records, but registration requires a GitHub-authenticated Green Agent and a Docker/A2A implementation; no agentification was prepared, so this remains a qualified account-required candidate rather than a submission. |
+| Hugging Face `agent-evals/leaderboard` benchmark library | Its public submission guide asks for a standard task format, exact task instructions, and a reproducible container environment; ClawBench has a related HF presence but no METR-compatible package or maintainer-approved benchmark registration was prepared, so this remains pending rather than a counted submission. |
 
 ## Existing Coverage
 
