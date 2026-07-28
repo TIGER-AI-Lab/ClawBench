@@ -7,7 +7,7 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 466 public PRs: 336 open, 87 merged,
+`ClawBench` in indexed content returned 468 public PRs: 338 open, 87 merged,
 and 43 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 337 |
+| New PRs submitted in this campaign | 339 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 299 |
+| Current campaign: open | 301 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -369,6 +369,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 335 | `YsTvT/Awesome-Agentic-RL-Papers` | [#1 — Add ClawBench to agent evaluation benchmarks](https://github.com/YsTvT/Awesome-Agentic-RL-Papers/pull/1) | Agentic-RL paper list with an explicit Agent Evaluation & Benchmark table; adds canonical ClawBench paper, code, and project links | Open |
 | 336 | `The-Gen-Academy/awesome-agentic-ai-resources` | [#1 — Add ClawBench to agent evaluation resources](https://github.com/The-Gen-Academy/awesome-agentic-ai-resources/pull/1) | Curated 60-star agentic-AI curriculum with an AI Evals resource section; adds a factual ClawBench entry with canonical paper, code, and project links | Open |
 | 337 | `yyyujintang/Awesome-Agent-Memory-Papers` | [#2 — Add ClawBench web-agent benchmark](https://github.com/yyyujintang/Awesome-Agent-Memory-Papers/pull/2) | Maintained 223-star agent-memory paper list with a Web Navigation benchmark section; adds factual ClawBench arXiv, code, project, and date metadata | Open |
+| 338 | `zjlrock777/Awesome-LLM-Agents-Scientific-Discovery` | [#11 — Add ClawBench to general agent benchmarks](https://github.com/zjlrock777/Awesome-LLM-Agents-Scientific-Discovery/pull/11) | 76-star scientific-discovery agent paper list with an explicit Evaluation & Benchmarking → General Benchmarks section; adds canonical ClawBench paper, code, project, and V1/V2 scope | Open |
+| 339 | `FareedKhan-dev/ai-agents-eval-techniques` | [#1 — Add ClawBench related benchmark](https://github.com/FareedKhan-dev/ai-agents-eval-techniques/pull/1) | Practical 46-star agent-evaluation guide with explicit contribution guidance; adds a factual Related Agent Benchmarks section with canonical ClawBench links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
