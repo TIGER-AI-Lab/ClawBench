@@ -26,8 +26,8 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Campaign rows (including two duplicate rows) | 376 |
 | Unique PRs submitted in this campaign | 374 |
 | Current campaign: merged (unique PRs) | 39 |
-| Current campaign: open (unique PRs) | 323 |
-| Current campaign: closed without merge (unique PRs) | 12 |
+| Current campaign: open (unique PRs) | 322 |
+| Current campaign: closed without merge (unique PRs) | 13 |
 
 ## New Campaign Submissions
 
@@ -119,7 +119,7 @@ the campaign totals.
 | 76 | `hugomrvt/awesome-openclaw-ecosystem` | [#2 — Add ClawBench to Benchmarks & Research](https://github.com/hugomrvt/awesome-openclaw-ecosystem/pull/2) | OpenClaw ecosystem catalog with a four-column Benchmarks & Research table; supplied project, language, stars, and a factual description | Open |
 | 77 | `to-real/awesome-agent-harness` | [#3 — Add ClawBench to harness-eval resources](https://github.com/to-real/awesome-agent-harness/pull/3) | Agent-harness catalog with a Harness ↔ Eval Interaction resource type; matched its annotated date format and synchronized English and Chinese entries | Open |
 | 78 | `Anandesh-Sharma/awesome-agent-harnesses` | [#2 — Add ClawBench to web-agent benchmarks](https://github.com/Anandesh-Sharma/awesome-agent-harnesses/pull/2) | Agent-harness collection with a web and computer-use benchmark table; preserved its four-column runtime-design format and passed CodeRabbit | Open |
-| 79 | `aishwaryanr/awesome-generative-ai-guide` | [#184 — Add official project and code links to ClawBench entry](https://github.com/aishwaryanr/awesome-generative-ai-guide/pull/184) | 52k-star generative-AI guide whose April 2026 paper list already contained ClawBench; enriches the existing row with canonical project and code links instead of adding a duplicate | Open |
+| 79 | `aishwaryanr/awesome-generative-ai-guide` | [#184 — Add official project and code links to ClawBench entry](https://github.com/aishwaryanr/awesome-generative-ai-guide/pull/184) | 52k-star generative-AI guide whose April 2026 paper list already contained ClawBench; enriches the existing row with canonical project and code links instead of adding a duplicate | Closed without merge |
 | 80 | `yzfly/Awesome-AGI-Agents` | [#4 — Add ClawBench to the agent papers table](https://github.com/yzfly/Awesome-AGI-Agents/pull/4) | AGI-agent paper catalog with a three-column papers table; added a neutral summary plus primary paper, project, and code links | Open |
 | 81 | `h9-tec/llm-systems-engineering-roadmap` | [#1 — Add ClawBench to the evaluation source map](https://github.com/h9-tec/llm-systems-engineering-roadmap/pull/1) | LLM-systems roadmap with a Recommended Source Map for RAG and evaluation; matched its source bullet style and passed CodeRabbit and Cubic review | Merged |
 | 82 | `NeuraLiying/Awesome-Agent-Harnesses` | [#1 — Add ClawBench to benchmarks and evaluation](https://github.com/NeuraLiying/Awesome-Agent-Harnesses/pull/1) | Agent-harness paper catalog whose contribution guide explicitly accepts benchmarks that evaluate harness design; preserved the six-column schema and updated the section count | Open |
