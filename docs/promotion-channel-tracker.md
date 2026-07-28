@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 87 |
+| Non-GitHub destinations audited | 89 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 21 |
+| Audited non-GitHub destinations pending a supported submit path | 23 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -86,6 +86,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Archivara | Its research-archive submission is relevant but requires an account and automatically names that account as first author; no account was created and no authorship was misrepresented. |
 | Public Interest AI Project Map | The HIIG survey publishes submitted project metadata under CC BY 4.0 and requires detailed location, team, gender-ratio, funding, and project-use answers; no submission was sent because those fields cannot be completed truthfully from the authorized project facts. |
 | OSS AI Hub | Its public form explicitly accepts open-source AI tools, frameworks, agents, and evals, making ClawBench semantically relevant; however, the form's Supabase submission endpoint did not resolve during audit, so no data was sent and no receipt was counted. |
+| PyTorch Foundation | The Foundation explicitly welcomes open-source AI projects, but its “Host Your Project” submission route is a GitHub contribution workflow and would imply a substantial hosted-project relationship; no non-GitHub submission was sent. |
+| Eclipse Foundation | Its project-proposal process is for moving a project into Foundation governance, including community review and IP/provenance review; this is materially broader than a directory listing, so no proposal was submitted without explicit governance authorization. |
 
 ## Existing Coverage
 
