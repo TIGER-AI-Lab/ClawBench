@@ -12,9 +12,9 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
-| External StructEval PRs tracked before this update | 88 |
+| External StructEval PRs tracked before this update | 89 |
 | New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 89 |
+| External StructEval PRs tracked after this update | 90 |
 
 ## Discovery Infrastructure
 
@@ -48,6 +48,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | 87 | `llm-as-a-judge/Awesome-LLM-as-a-judge` | [PR #17 — Add StructEval to LLM-as-a-judge resources](https://github.com/llm-as-a-judge/Awesome-LLM-as-a-judge/pull/17) | 568-star evaluation survey dedicated to LLM-as-a-judge methods with a dedicated Evaluation section and recent accepted community PRs; adds StructEval in the native paper/resource format with canonical paper, code, project, and dataset links | Open |
 | 88 | `benchflow-ai/awesome-evals` | [PR #57 — Add StructEval benchmark](https://github.com/benchflow-ai/awesome-evals/pull/57) | 761-star active evaluation catalog with a benchmark-resources section and explicit community contributions; adds StructEval with canonical paper, code, project, and dataset links | Open; checks currently blocked |
 | 89 | `haizelabs/Awesome-LLM-Judges` | [PR #5 — Add StructEval benchmark](https://github.com/haizelabs/Awesome-LLM-Judges/pull/5) | 202-star LLM-as-a-judge research catalog with a Meta-Evaluation section and explicit PR/issue contribution guidance; adds StructEval in the native paper-list format with the canonical arXiv link | Open |
+| 90 | `tugkanboz/awesome-ai-testing` | [PR #76 — Add: StructEval](https://github.com/tugkanboz/awesome-ai-testing/pull/76) | 41-star active AI-testing catalog with explicit contribution guidelines and a Benchmarks and Datasets section; adds StructEval in the native resource format with canonical repository and structured-output evaluation scope | Open; checks unstable |
 
 ## Audited Pending Destinations
 
