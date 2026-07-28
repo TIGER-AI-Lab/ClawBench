@@ -12,9 +12,9 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
-| External StructEval PRs tracked before this update | 80 |
+| External StructEval PRs tracked before this update | 81 |
 | New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 81 |
+| External StructEval PRs tracked after this update | 82 |
 
 ## Discovery Infrastructure
 
@@ -40,6 +40,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | 79 | `Vvkmnn/awesome-ai-eval` | [PR #27 — Add StructEval to general evaluation benchmarks](https://github.com/Vvkmnn/awesome-ai-eval/pull/27) | Active AI-evaluation catalog with an explicit General benchmark section and contribution checklist; adds StructEval with canonical repository, paper, project, and dataset links | Open |
 | 80 | `luo-junyu/Awesome-Agent-Papers` | [PR #54 — Add StructEval to Datasets & Benchmarks](https://github.com/luo-junyu/Awesome-Agent-Papers/pull/54) | 2.8k-star agent-paper collection; adds the TMLR 2025 structured-output benchmark in the native Datasets & Benchmarks format with canonical paper, code, project, and dataset links | Open |
 | 81 | `aiverify-foundation/LLM-Evals-Catalogue` | [PR #2 — Add StructEval to LLM evaluation catalogue](https://github.com/aiverify-foundation/LLM-Evals-Catalogue/pull/2) | AI Verify Foundation/IMDA-associated LLM-evaluation catalogue; adds StructEval in the native HTML-table format with canonical paper, code, project, and dataset links | Open |
+| 82 | `SeekingDream/Static-to-Dynamic-LLMEval` | [PR #12 — Add StructEval to static benchmark applications](https://github.com/SeekingDream/Static-to-Dynamic-LLMEval/pull/12) | 500-star LLM benchmark-contamination survey with an explicit contribution format; adds StructEval in the native Markdown taxonomy with canonical paper, code, project, and dataset links | Open |
 
 ## Audited Pending Destinations
 
