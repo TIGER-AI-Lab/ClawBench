@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 359 |
+| New PRs submitted in this campaign | 360 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 321 |
+| Current campaign: open | 322 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -391,6 +391,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 357 | `TusKANNy/awesome-agentic-search` | [#1 — Add ClawBench to agentic search benchmarks](https://github.com/TusKANNy/awesome-agentic-search/pull/1) | Active agentic-search resource list with an explicit Benchmarks section; adds ClawBench as a complementary live-web browser-agent benchmark with canonical links | Open |
 | 358 | `hardness1020/awesome-agent-architecture` | [#9 — Add ClawBench evaluator example](https://github.com/hardness1020/awesome-agent-architecture/pull/9) | 333-star agent-architecture learning repository with a dedicated observability and evaluation section; adds ClawBench as a traceable live-web evaluator example | Open |
 | 359 | `skillmatic-ai/awesome-agent-skills` | [#142 — Add ClawBench to benchmark resources](https://github.com/skillmatic-ai/awesome-agent-skills/pull/142) | 643-star active agent-skills catalog with a dedicated Benchmarks and Evaluation section; adds a concise factual ClawBench entry with canonical links | Open |
+| 360 | `nexu-io/harness-engineering-guide` | [#69 — Add ClawBench to evaluation further reading](https://github.com/nexu-io/harness-engineering-guide/pull/69) | 581-star active harness-engineering guide with an evaluation-infrastructure further-reading section; adds ClawBench as a directly relevant live-web evaluation reference | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
