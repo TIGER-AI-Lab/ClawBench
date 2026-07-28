@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 351 |
+| New PRs submitted in this campaign | 352 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 313 |
+| Current campaign: open | 314 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -383,6 +383,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 349 | `machinae/awesome-claws` | [#39 — Add ClawBench to research resources](https://github.com/machinae/awesome-claws/pull/39) | 483-star OpenClaw ecosystem research list with a Research section; adds a factual OpenClaw-compatible browser-agent benchmark entry with canonical links | Open |
 | 350 | `git-disl/awesome-LLM-game-agent-papers` | [#20 — Add ClawBench web-agent benchmark](https://github.com/git-disl/awesome-LLM-game-agent-papers/pull/20) | Actively maintained game-agent paper list with a benchmark section and native paper formatting; adds canonical ClawBench arXiv, code, and project links | Open |
 | 351 | `js-lee-AI/awesome-llm-agent-papers` | [#4 — Add ClawBench benchmark](https://github.com/js-lee-AI/awesome-llm-agent-papers/pull/4) | Active curated LLM-agent paper and evaluation list; adds canonical ClawBench arXiv, repository, and project links with factual scope details | Open |
+| 352 | `OSU-NLP-Group/GUI-Agents-Paper-List` | [#126 — Add ClawBench benchmark](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List/pull/126) | 865-star GUI-agent paper list with a structured papers.yaml source and generated benchmark statistics; adds the canonical ClawBench paper, code, and project links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
