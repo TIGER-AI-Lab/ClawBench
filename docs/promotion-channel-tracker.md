@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 93 |
+| Non-GitHub destinations audited | 94 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 27 |
+| Audited non-GitHub destinations pending a supported submit path | 28 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -94,6 +94,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Frontier AI Cybersecurity Observatory | The public benchmark form targets a narrowly scoped cybersecurity-capability leaderboard and requests cybersecurity benchmark results/metadata; ClawBench is a general real-world web-agent benchmark, so no off-topic entry was submitted. |
 | Codabench | Codabench supports organizing full benchmark competitions, but its public path requires creating and operating a competition with datasets, scoring code, and an account; it is not a lightweight project-listing submission, so no competition was created. |
 | BenchHub | BenchHub publishes user-created datasets and leaderboards, but its workflow requires an authenticated workspace and uploading benchmark assets/results; no account or leaderboard was created without explicit hosting authorization. |
+| OECD.AI Catalogue of Tools & Metrics | The OECD.AI catalogue has a semantically relevant public submission form for AI tools and metrics, but it requires reCAPTCHA, email, and agreement to submission terms; no browser-verifiable receipt was obtained, so no submission was counted. |
 
 ## Existing Coverage
 
