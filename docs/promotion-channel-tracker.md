@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 109 |
+| Non-GitHub destinations audited | 111 |
 | Non-GitHub submissions or posts | 13 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 35 |
+| Audited non-GitHub destinations pending a supported submit path | 37 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -110,6 +110,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Lukta.ai | Its benchmark directory requires a verified creator account and keeps proof private during review; it accepts external evaluation results rather than new benchmark registrations, so no account-based or mismatched submission was made. |
 | Semantic Scholar | Its Add Papers and correction flows require a signed-in claimed author page; the ClawBench paper is already indexed, and no anonymous benchmark/project submission or public receipt exists. |
 | OpenReview | Profile creation requires a verified email and author metadata, and submissions are tied to a specific venue's invitation and deadline; it is not a free benchmark/project directory, so no duplicate ClawBench paper submission was made. |
+| Johns Hopkins Open Source Project Catalog | The catalog is limited to projects developed, contributed to, or used by Johns Hopkins faculty, staff, or students and requires a private JHU contact; no truthful Hopkins relationship is established, so no submission was made. |
+| UK Humanitarian Innovation Hub AI directory | The form is restricted to humanitarian-sector AI projects and requests lead agency, humanitarian focus, deployment location, supplier, and data-source fields; ClawBench is a general web-agent benchmark, so no off-scope submission was made. |
 
 ## Existing Coverage
 
