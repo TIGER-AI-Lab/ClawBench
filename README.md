@@ -24,7 +24,7 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
 
-<p align="center"><sub><i>Featured in 30 curated lists</i></sub></p>
+<p align="center"><sub><i>Featured in 40 curated lists</i></sub></p>
 <p align="center">
   <a href="https://github.com/walkinglabs/awesome-harness-engineering"><img alt="awesome-harness-engineering" src="https://img.shields.io/badge/Featured-awesome--harness--engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Picrew/awesome-agent-harness"><img alt="awesome-agent-harness" src="https://img.shields.io/badge/Featured-awesome--agent--harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
@@ -56,6 +56,16 @@
   <a href="https://github.com/PhoneLLM/Awesome-LLM-Powered-Phone-GUI-Agents"><img alt="PhoneLLM GUI agent papers" src="https://img.shields.io/badge/Featured-PhoneLLM--GUI--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/VILA-Lab/Dive-into-Claude-Code"><img alt="VILA-Lab Dive into Claude Code" src="https://img.shields.io/badge/Featured-VILA--Lab--Claude--Code-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/systempromptio/awesome-ai-agent-governance"><img alt="AI agent governance resources" src="https://img.shields.io/badge/Featured-agent--governance-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026"><img alt="awesome-ai-agents-2026" src="https://img.shields.io/badge/Featured-awesome--ai--agents--2026-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/CuiZHIQ/Awesome-LLM-Agent-Orchestration"><img alt="Awesome-LLM-Agent-Orchestration" src="https://img.shields.io/badge/Featured-LLM--Agent--Orchestration-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/FrontisAI/Awesome-Self-Improving-Agents"><img alt="Awesome-Self-Improving-Agents" src="https://img.shields.io/badge/Featured-Self--Improving--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/Gloriaameng/Awesome-Agent-Harness"><img alt="Awesome-Agent-Harness" src="https://img.shields.io/badge/Featured-Agent--Harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/IcyFeather233/Awesome-LLM-Agent-Trajectory-Analysis"><img alt="Awesome-LLM-Agent-Trajectory-Analysis" src="https://img.shields.io/badge/Featured-Agent--Trajectory--Analysis-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/M1n9X/llm_agents_devtools"><img alt="llm_agents_devtools" src="https://img.shields.io/badge/Featured-llm--agents--devtools-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/Necolizer/awesome-rl-for-agents"><img alt="awesome-rl-for-agents" src="https://img.shields.io/badge/Featured-RL--for--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/SihyeongPark/Awesome-LLM-Benchmark"><img alt="Awesome-LLM-Benchmark" src="https://img.shields.io/badge/Featured-LLM--Benchmark-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/Steve2457/Awesome-RL-GUI-Agents"><img alt="Awesome-RL-GUI-Agents" src="https://img.shields.io/badge/Featured-RL--GUI--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/XMUDeepLIT/Awesome-Self-Evolving-Agents"><img alt="Awesome-Self-Evolving-Agents" src="https://img.shields.io/badge/Featured-Self--Evolving--Agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
 </p>
 
 <p align="center">
