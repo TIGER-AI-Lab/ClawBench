@@ -16,7 +16,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Non-GitHub submissions or posts | 16 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 45 |
-| Existing non-GitHub coverage pages, not counted as new | 17 |
+| Existing non-GitHub coverage pages, not counted as new | 19 |
 
 ## GitHub Issue-First Proposals
 
@@ -147,6 +147,8 @@ These placements predate this outreach counter and are recorded as evidence, not
 | OSU-NLP-Group GUI-Agents-Paper-List | [Generated GUI-agent paper list](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List#browse-by-keyword) — includes the ClawBench paper with Web, benchmark, and realistic-website tags; pre-existing coverage, not a new submission. |
 | Jenqyang Awesome-AI-Agents | [Benchmark/Evaluator section](https://github.com/Jenqyang/Awesome-AI-Agents#benchmarkevaluator) — includes ClawBench as a browser-agent benchmark; pre-existing coverage, not a new submission. |
 | Arnon-hs open-source index | [AI/ML project record](https://github.com/Arnon-hs/open-source/blob/main/aiml/reacher-z-clawbench.md) — indexes the canonical repository with scope, topics, and benchmark summary; pre-existing coverage, not a new submission. |
+| Hugging Face ClawBench collection | [TIGER-Lab collection](https://huggingface.co/collections/TIGER-Lab/clawbench) — groups the benchmark dataset, leaderboard Space, and execution traces; pre-existing coverage, not a new submission. |
+| Reddit r/MachineLearning | [Public paper discussion](https://www.reddit.com/r/MachineLearning/comments/1slf7pg/clawbench_can_ai_agents_complete_everyday_online/) — independent public discussion linking the paper, project, and dataset; pre-existing coverage, not a new submission. |
 
 ## Submission Rules
 
