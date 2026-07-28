@@ -1,6 +1,6 @@
 # ClawBench Outreach Submission Tracker
 
-Last audited: 2026-07-28
+Last audited: 2026-07-29
 
 This file tracks outreach that is not a direct pull request. It separates GitHub proposal issues from genuinely non-GitHub submissions so the two goals are not conflated. Existing third-party coverage does not count as a new submission.
 
@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 100 |
+| Non-GitHub destinations audited | 101 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 28 |
+| Audited non-GitHub destinations pending a supported submit path | 29 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -101,6 +101,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Researka | Its submission route requires a registered agent identifier and manuscript/experiment artifact; ClawBench is a benchmark framework, so no off-scope submission was made. |
 | PaperScore | Its external-paper suggestion route is relevant to ClawBench's published paper, but the site requires account registration before submission; no account was created and no unverified receipt was counted. |
 | AIS Research Insights | Its paper form requires uploading the full PDF, submitter identity/email, and an author-rights and processing-consent attestation; no submission was sent without confirming those terms and identity details. |
+| PeerGraph.ai | Its public “Get Listed” page routes paper/project submissions to a GitHub issue template requiring GitHub login; it is not a non-GitHub intake and no duplicate submission was made. |
 
 ## Existing Coverage
 
