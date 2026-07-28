@@ -7,8 +7,8 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 479 public PRs: 345 open, 88 merged,
-and 46 closed. This is an all-time index, not the campaign counter below; it
+`ClawBench` in indexed content returned 484 public PRs: 347 open, 88 merged,
+and 49 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
 the campaign count rather than being used to inflate it.
@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 346 |
+| New PRs submitted in this campaign | 349 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 308 |
+| Current campaign: open | 311 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -378,6 +378,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 344 | `gyunggyung/AGI-Papers` | [#6 — Add ClawBench web-agent benchmark to evaluation resources](https://github.com/gyunggyung/AGI-Papers/pull/6) | Actively maintained 418-star AGI/agent paper archive with an Evaluation section; adds a factual ClawBench entry with official paper, code, and project links | Open |
 | 345 | `ByteDance-Seed/WideSearch` | [#14 — Add related ClawBench web-agent benchmark](https://github.com/ByteDance-Seed/WideSearch/pull/14) | 149-star agentic information-seeking benchmark; adds a factual Related Web-Agent Benchmark note contrasting broad search with ClawBench live-browser evaluation and links official paper, code, and project page | Open |
 | 346 | `yuanzhang7/awesome-auto-research-landscape` | [#2 — Add ClawBench to the benchmark map](https://github.com/yuanzhang7/awesome-auto-research-landscape/pull/2) | Small but structured auto-research landscape with an explicit benchmark map and contribution path; adds a factual ClawBench row with canonical paper, code, and project links | Open |
+| 347 | `llm-as-a-verifier/llm-as-a-verifier` | [#2 — Link related ClawBench web benchmark](https://github.com/llm-as-a-verifier/llm-as-a-verifier/pull/2) | 606-star verifier research repository; adds a clearly labeled external Related Web-Agent Benchmark section linking ClawBench without claiming integration or placing it in the result table | Open |
+| 348 | `Kaiwen0418/agent-benchmark` | [#206 — Link complementary live-web benchmark](https://github.com/Kaiwen0418/agent-benchmark/pull/206) | Active 101-star hosted-web benchmark; adds ClawBench as a complementary live-web benchmark and explicitly states no shared scores or compatibility claim | Open |
+| 349 | `machinae/awesome-claws` | [#39 — Add ClawBench to research resources](https://github.com/machinae/awesome-claws/pull/39) | 483-star OpenClaw ecosystem research list with a Research section; adds a factual OpenClaw-compatible browser-agent benchmark entry with canonical links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
@@ -390,6 +393,10 @@ The duplicate `yichao-liang/awesome-agent-benchmarks#5` was closed on 2026-07-28
 The low-signal `softwareengineer-imerjr/awesome-ai-agents-guide#2` and duplicate `Asaf-Yehudai/LLM-Agent-Evaluation-Survey#9` were closed on 2026-07-28 and are not counted as campaign submissions.
 
 The duplicate `HKUST-KnowComp/Awesome-Agent-Harness#6` was closed on 2026-07-28 in favor of existing PR #5 and is not counted as a campaign submission.
+
+The duplicates `ai-boost/awesome-harness-engineering#149` and `jiji262/awesome-harness-engineering#8` were closed on 2026-07-28 in favor of existing canonical PRs and are not counted as campaign submissions.
+
+The off-scope `e2b-dev/awesome-ai-agents#1318` was closed on 2026-07-28 because that directory accepts agent products/projects rather than external benchmark resources; it is not counted.
 
 ## Verified Merged Features
 
