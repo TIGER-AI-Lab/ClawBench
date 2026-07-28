@@ -8,7 +8,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 
 | Scope | Submitted |
 |---|---:|
-| StructEval discovery-infrastructure issues | 1 |
+| StructEval discovery-infrastructure issues | 2 |
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
@@ -22,6 +22,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 |---:|---|---|---|---|
 | 1 | `TIGER-AI-Lab/StructEval` | [PR #5 — Add machine-readable citation metadata](https://github.com/TIGER-AI-Lab/StructEval/pull/5) | Adds schema-valid CFF metadata for the TMLR 2025 citation, canonical code and project links, package version, license, arXiv DOI, and Software Heritage snapshot | Open |
 | 2 | `TIGER-AI-Lab/StructEval` | [Issue #6 — Expand repository topics](https://github.com/TIGER-AI-Lab/StructEval/issues/6) | Proposes a focused topic set for structured-output, LLM, code-generation, visual-evaluation, dataset, and core-format discovery after direct settings access was unavailable | Open |
+| 3 | `Dan-Cleary/benchdirectory` | [Issue #11 — Bench submission: StructEval](https://github.com/Dan-Cleary/benchdirectory/issues/11) | Uses the benchmark directory's documented source-URL intake to propose StructEval with canonical code, paper, project, dataset, 18-format scope, and public results context | Open |
 
 ## Non-GitHub Submissions
 
