@@ -16,7 +16,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 28 |
-| Existing non-GitHub coverage pages, not counted as new | 11 |
+| Existing non-GitHub coverage pages, not counted as new | 12 |
 
 ## GitHub Issue-First Proposals
 
@@ -113,6 +113,7 @@ These placements predate this outreach counter and are recorded as evidence, not
 | DBLP | [CoRR record](https://dblp.org/rec/journals/corr/abs-2604-08523) |
 | ResearchGate | [Publication record](https://www.researchgate.net/publication/403683295_ClawBench_Can_AI_Agents_Complete_Everyday_Online_Tasks) |
 | UniPat AI | [Benchmark page](https://unipat.ai/benchmarks/ClawBench) |
+| EthicalML agentic engineering resources | [Benchmarks & Leaderboards section](https://github.com/EthicalML/awesome-agentic-engineering-resources#benchmarks) — current README contains two ClawBench entries; this is pre-existing coverage and is not counted as a new submission. |
 
 ## Submission Rules
 
