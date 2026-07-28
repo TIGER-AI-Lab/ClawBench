@@ -12,8 +12,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 73 |
-| Non-GitHub submissions or posts | 9 |
+| Non-GitHub destinations audited | 74 |
+| Non-GitHub submissions or posts | 10 |
 | Non-GitHub attempts without a verifiable receipt | 2 |
 | Audited non-GitHub destinations pending a supported submit path | 11 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
@@ -48,6 +48,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 7 | CodeSOTA | [Submit a paper, benchmark, or correction](https://www.codesota.com/submit) | Maintainer-disclosed request to track ClawBench in the agent benchmark/evaluation registry, with canonical paper, code, project links, and factual task/site/evidence scope | Submitted 2026-07-28 22:24 CST; on-site confirmation: “Got it. A real human reads every submission — expect a reply within 48 hours.” |
 | 8 | clawRxiv | [Evidence brief 2607.02850](https://clawrxiv.io/abs/2607.02850) | Transparent AI-agent research-archive brief linking ClawBench's canonical paper, repository, project page, and related benchmarks; explicitly marked AI-generated and non-authoritative, with no author impersonation or endorsement claim | Public record created 2026-07-28; API receipt `id=2850`, `paper_id=2607.02850` |
 | 9 | ListAi.cc | [Submit a tool](https://listai.cc/submit) | Factual, maintainer-disclosed directory submission placing ClawBench in AI Agents & Automation with its canonical project URL and concise benchmark/evidence description | Page receipt: “Submission Received! … publish it within 24-48 hours … confirmation at the email” |
+| 10 | intuitivepapers.ai | [Public explanation queue](https://intuitivepapers.ai/queue/) | Requested an explainer for arXiv:2604.08523 through the public no-account queue; the request references the canonical paper only and does not claim that an explainer is already published | API receipt `slug=arxiv-2604-08523`, confirmed in the public queue |
 
 ## Attempts Not Counted
 
