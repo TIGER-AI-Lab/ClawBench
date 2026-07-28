@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 119 |
+| Non-GitHub destinations audited | 120 |
 | Non-GitHub submissions or posts | 16 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 42 |
+| Audited non-GitHub destinations pending a supported submit path | 43 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -120,6 +120,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | A2M AI App Marketplace | Its CLI accepts AI projects and publishes searchable listings, but the official submission flow requires one-time GitHub or Google login and stores an API key; no account or credential was created. |
 | AgentGauntlet | The no-login public flow runs agents against an existing benchmark and accepts run results, but it has no intake for registering an external benchmark/project; no mismatched result submission was made. |
 | OpenSourceFest | Its AI & Machine Learning open-source directory is semantically relevant and asks for a public repository, license, project description, and email, but the submission form currently posts to a placeholder `formsubmit.co/your-email@opensourcefest.org` endpoint and also requires a “genuine alternative” criterion; no reliable receipt was obtained and no submission was sent. |
+| MIT Media Lab AI Impact Bench | The MIT Media Lab, USC, and UC Berkeley open benchmark invitation has an anonymous Google Form, but it requires a construct-specific human-impact benchmark proposal with scenarios, positive/negative examples, and an LLM-judge prompt; ClawBench is a general web-agent benchmark and no tailored impact construct or examples were prepared, so no off-scope submission was sent. |
 
 ## Existing Coverage
 
