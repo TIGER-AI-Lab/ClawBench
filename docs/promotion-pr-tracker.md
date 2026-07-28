@@ -23,15 +23,15 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 365 |
-| Unique PRs submitted in this campaign | 363 |
+| Campaign rows (including two duplicate rows) | 366 |
+| Unique PRs submitted in this campaign | 364 |
 | Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 318 |
+| Current campaign: open (unique PRs) | 319 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
 
-The numbered table contains 365 rows, but two rows point to an already-listed
+The numbered table contains 366 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
@@ -406,6 +406,7 @@ the campaign totals.
 | 363 | `onejune2018/awesome-llm-eval` | [#80 — Add ClawBench to agent capability benchmarks](https://github.com/onejune2018/awesome-llm-eval/pull/80) | 654-star LLM evaluation catalog with an explicit Agent-Capabilities table and contribution-by-PR guidance; adds a factual ClawBench row with canonical paper, project, and code links | Open |
 | 364 | `Vvkmnn/awesome-ai-eval` | [#26 — Add ClawBench to agent benchmarks](https://github.com/Vvkmnn/awesome-ai-eval/pull/26) | Active AI-evaluation catalog with a dedicated Agent benchmark subsection and explicit contribution checklist; adds a native-format ClawBench entry with canonical repository and paper links | Open |
 | 365 | `ConardLi/easy-learn-ai` | [#8 — Add ClawBench to AI benchmark catalog](https://github.com/ConardLi/easy-learn-ai/pull/8) | 1.3k-star Chinese AI learning resource with a structured benchmark catalog; adds a factual ClawBench record with canonical paper, code, dataset, scope, and license metadata | Open |
+| 366 | `ysymyth/awesome-language-agents` | [#30 — Add ClawBench web-agent benchmark](https://github.com/ysymyth/awesome-language-agents/pull/30) | 1.2k-star language-agent paper list associated with CoALA/Princeton research; adds ClawBench in the native environment/benchmark format with canonical paper, code, and project links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 

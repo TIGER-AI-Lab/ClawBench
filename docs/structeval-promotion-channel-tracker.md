@@ -12,9 +12,9 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
-| External StructEval PRs tracked before this update | 79 |
+| External StructEval PRs tracked before this update | 80 |
 | New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 80 |
+| External StructEval PRs tracked after this update | 81 |
 
 ## Discovery Infrastructure
 
@@ -39,6 +39,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | 78 | `tjunlp-lab/Awesome-LLMs-Evaluation-Papers` | [PR #48 — Add StructEval benchmark to LLM evaluation papers](https://github.com/tjunlp-lab/Awesome-LLMs-Evaluation-Papers/pull/48) | 804-star evaluation-paper catalog maintained by a Tianjin University NLP group; adds the TMLR 2025 StructEval benchmark under Holistic Evaluation with canonical paper, code, project, and dataset links | Open |
 | 79 | `Vvkmnn/awesome-ai-eval` | [PR #27 — Add StructEval to general evaluation benchmarks](https://github.com/Vvkmnn/awesome-ai-eval/pull/27) | Active AI-evaluation catalog with an explicit General benchmark section and contribution checklist; adds StructEval with canonical repository, paper, project, and dataset links | Open |
 | 80 | `luo-junyu/Awesome-Agent-Papers` | [PR #54 — Add StructEval to Datasets & Benchmarks](https://github.com/luo-junyu/Awesome-Agent-Papers/pull/54) | 2.8k-star agent-paper collection; adds the TMLR 2025 structured-output benchmark in the native Datasets & Benchmarks format with canonical paper, code, project, and dataset links | Open |
+| 81 | `aiverify-foundation/LLM-Evals-Catalogue` | [PR #2 — Add StructEval to LLM evaluation catalogue](https://github.com/aiverify-foundation/LLM-Evals-Catalogue/pull/2) | AI Verify Foundation/IMDA-associated LLM-evaluation catalogue; adds StructEval in the native HTML-table format with canonical paper, code, project, and dataset links | Open |
 
 ## Audited Pending Destinations
 
