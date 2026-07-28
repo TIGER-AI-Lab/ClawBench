@@ -24,7 +24,7 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
 
-<p align="center"><sub><i>Featured in 50 curated lists</i></sub></p>
+<p align="center"><sub><i>Featured in 55 curated lists</i></sub></p>
 <p align="center">
   <a href="https://github.com/walkinglabs/awesome-harness-engineering"><img alt="awesome-harness-engineering" src="https://img.shields.io/badge/Featured-awesome--harness--engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Picrew/awesome-agent-harness"><img alt="awesome-agent-harness" src="https://img.shields.io/badge/Featured-awesome--agent--harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
@@ -76,6 +76,11 @@
   <a href="https://github.com/leezythu/Awesome-Harness-Self-Improvement"><img alt="Awesome-Harness-Self-Improvement" src="https://img.shields.io/badge/Featured-Harness--Self--Improvement-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/natnew/Awesome-Agentic-Engineering"><img alt="Awesome-Agentic-Engineering" src="https://img.shields.io/badge/Featured-Agentic--Engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/natnew/awesome-rl-for-agents"><img alt="natnew awesome-rl-for-agents" src="https://img.shields.io/badge/Featured-RL--for--Agents--natnew-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/panilya/awesome-ai-benchmarks"><img alt="awesome-ai-benchmarks" src="https://img.shields.io/badge/Featured-AI--Benchmarks-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/rolandfarkasCOM/awesome-agentic-web"><img alt="awesome-agentic-web" src="https://img.shields.io/badge/Featured-agentic--web--research-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/selfimproving-agent/Awesome-Self-Improving-Agents"><img alt="Awesome-Self-Improving-Agents (selfimproving-agent)" src="https://img.shields.io/badge/Featured-Self--Improving--Agents--Research-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/zjlrock777/Awesome-LLM-Agents-Scientific-Discovery"><img alt="Awesome-LLM-Agents-Scientific-Discovery" src="https://img.shields.io/badge/Featured-LLM--Agents--Scientific--Discovery-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/zjunlp/LLMAgentPapers"><img alt="LLMAgentPapers" src="https://img.shields.io/badge/Featured-LLM--Agent--Papers--ZJU--NLP-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
 </p>
 
 <p align="center">
