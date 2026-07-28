@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 66 |
+| Non-GitHub destinations audited | 68 |
 | Non-GitHub submissions or posts | 7 |
 | Non-GitHub attempts without a verifiable receipt | 2 |
-| Audited non-GitHub destinations pending a supported submit path | 5 |
+| Audited non-GitHub destinations pending a supported submit path | 7 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -60,7 +60,9 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Benchmark Registry | Its public missing-record form was audited and accepts an optional-email submission, but the supported browser-control entrypoint is unavailable in this session. No fields were sent. |
 | SupraBench | The benchmark and 33.3% Claude Sonnet 4.6 result are format-compatible, but submission requires Google sign-in. No fields were sent. |
 | MarkTechPost | Its research-summary form fits ClawBench and a maintainer-disclosed payload is prepared, but the submission surface is a Google Form and browser control is unavailable. |
-| The Rundown | Its free Recommend a Tool form fits the project and a maintainer-disclosed payload is prepared, but browser control is unavailable. |
+| The Rundown | Its free Recommend a Tool form fits the project, but submission requires a resource-thumbnail upload; the browser upload flow did not expose a usable file chooser, so no form was counted. |
+| AI Tool Lab | The public form is currently paused; the page directs submitters to email for urgent requests. No email was sent and no submission was counted. |
+| toollist.ai | The directory requires account creation and a paid plan (starting at $29); no purchase or account creation was authorized, so no submission was counted. |
 | Stanford BetterBench | Its public new-benchmark form accepts directory additions, but requires a truthful completed 46-criteria assessment Google Doc; no such assessment exists yet, so no fields were sent. |
 
 ## Existing Coverage
