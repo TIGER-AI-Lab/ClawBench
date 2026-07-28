@@ -12,8 +12,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 118 |
-| Non-GitHub submissions or posts | 15 |
+| Non-GitHub destinations audited | 119 |
+| Non-GitHub submissions or posts | 16 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 42 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
@@ -54,6 +54,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 13 | LLMS Central | [Public directory record for claw-bench.com](https://llmscentral.com/domain/claw-bench.com) | Anonymous directory submission of the canonical `llms.txt`, making the ClawBench paper, code, dataset, PyPI package, project site, and benchmark routes discoverable through an AI-oriented public repository | API receipt `domainId=sSYIcndobE09PkaOYTef`; response `isValid=true`; public record resolves HTTP 200 |
 | 14 | Zearches | [General Websites directory](https://zearches.com/directory.php?slug=general) | Maintainer-disclosed submission of the public ClawBench project site to a general project discovery directory; the listing links directly to `claw-bench.com` and uses a factual benchmark description | Public directory shows “ClawBench Benchmark” with `https://claw-bench.com/`; confirmation page reports “Website submitted” |
 | 15 | FreeStartupListing.org | [ClawBench project listing](https://freestartuplisting.org/) | Maintainer-disclosed listing of the public ClawBench benchmark project in an open startup/project directory; the entry uses the canonical project URL and factual benchmark description | API receipt `id=65`; public `/api/fsl/startups` record resolves with name, description, and `https://claw-bench.com/` |
+| 16 | BenchmarkList | [Suggest a benchmark](https://benchmarklist.com/suggest/) | Maintainer-disclosed suggestion to the AI benchmark/eval directory, using the canonical ClawBench paper as the primary source and factual scope/code/project links in the note | API receipt `{"ok":true,"status":"success"}` from `/api/suggest-benchmark` on 2026-07-29; public review queue, not a claim of publication |
 
 ## Attempts Not Counted
 
