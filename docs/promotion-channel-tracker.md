@@ -12,7 +12,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 94 |
+| Non-GitHub destinations audited | 98 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 28 |
@@ -95,6 +95,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Codabench | Codabench supports organizing full benchmark competitions, but its public path requires creating and operating a competition with datasets, scoring code, and an account; it is not a lightweight project-listing submission, so no competition was created. |
 | BenchHub | BenchHub publishes user-created datasets and leaderboards, but its workflow requires an authenticated workspace and uploading benchmark assets/results; no account or leaderboard was created without explicit hosting authorization. |
 | OECD.AI Catalogue of Tools & Metrics | The OECD.AI catalogue has a semantically relevant public submission form for AI tools and metrics, but it requires reCAPTCHA, email, and agreement to submission terms; no browser-verifiable receipt was obtained, so no submission was counted. |
+| AgentBench.app | Its public submit flow accepts an AgentBench `results.json` leaderboard result plus an agent repository URL, not a benchmark/project listing; no ClawBench result was submitted. |
+| Benchlist.ai | Its submit flow is for verified AI-service runs and attested scores, not adding an external benchmark to a catalog; no fabricated run or score was sent. |
+| AgenticDataBench | Its documented route accepts prediction `.jsonl` files or executable agent archives for evaluation, not benchmark-framework listings; no mismatched artifact was submitted. |
+| Researka | Its submission route requires a registered agent identifier and manuscript/experiment artifact; ClawBench is a benchmark framework, so no off-scope submission was made. |
 
 ## Existing Coverage
 
