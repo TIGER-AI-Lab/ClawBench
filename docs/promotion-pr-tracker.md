@@ -23,15 +23,15 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 367 |
-| Unique PRs submitted in this campaign | 365 |
+| Campaign rows (including two duplicate rows) | 368 |
+| Unique PRs submitted in this campaign | 366 |
 | Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 320 |
+| Current campaign: open (unique PRs) | 321 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
 
-The numbered table contains 367 rows, but two rows point to an already-listed
+The numbered table contains 368 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
@@ -408,6 +408,7 @@ the campaign totals.
 | 365 | `ConardLi/easy-learn-ai` | [#8 — Add ClawBench to AI benchmark catalog](https://github.com/ConardLi/easy-learn-ai/pull/8) | 1.3k-star Chinese AI learning resource with a structured benchmark catalog; adds a factual ClawBench record with canonical paper, code, dataset, scope, and license metadata | Open |
 | 366 | `ysymyth/awesome-language-agents` | [#30 — Add ClawBench web-agent benchmark](https://github.com/ysymyth/awesome-language-agents/pull/30) | 1.2k-star language-agent paper list associated with CoALA/Princeton research; adds ClawBench in the native environment/benchmark format with canonical paper, code, and project links | Open |
 | 367 | `trycua/acu` | [#31 — Add ClawBench web benchmark](https://github.com/trycua/acu/pull/31) | 1.7k-star computer-use resource directory with a dedicated Benchmark section and explicit fork/PR workflow; adds ClawBench with canonical paper, code, project, task-scale, and trace-protocol links | Open |
+| 368 | `lafmdp/Awesome-Papers-Autonomous-Agent` | [#14 — Add ClawBench to Benchmark & Dataset](https://github.com/lafmdp/Awesome-Papers-Autonomous-Agent/pull/14) | 750-star autonomous-agent paper collection with a dedicated Benchmark & Dataset section; adds ClawBench in the native table format with canonical paper, code, project, and scope links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
