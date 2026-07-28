@@ -7,8 +7,8 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 473 public PRs: 340 open, 88 merged,
-and 45 closed. This is an all-time index, not the campaign counter below; it
+`ClawBench` in indexed content returned 475 public PRs: 341 open, 88 merged,
+and 46 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
 the campaign count rather than being used to inflate it.
@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 343 |
+| New PRs submitted in this campaign | 344 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 305 |
+| Current campaign: open | 306 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -375,6 +375,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 341 | `shizhl/Multi-Agent-Papers` | [#4 — Add ClawBench web-agent benchmark](https://github.com/shizhl/Multi-Agent-Papers/pull/4) | 71-star multi-agent paper list with explicit Datasets and Evaluation sections and contribution guidance; adds a factual ClawBench row with current scope, paper, code, and project links | Open |
 | 342 | `AgentMemoryWorld/Awesome-Agent-Memory` | [#4 — Add ClawBench browser-agent benchmark](https://github.com/AgentMemoryWorld/Awesome-Agent-Memory/pull/4) | Active 173-star agent-memory paper list with evaluation/benchmark coverage; adds a factual browser-agent benchmark entry with canonical paper and code links | Open |
 | 343 | `ventr1c/Awesome-RL-based-Agentic-Search-Papers` | [#10 — Add ClawBench to agentic search benchmarks](https://github.com/ventr1c/Awesome-RL-based-Agentic-Search-Papers/pull/10) | 280-star maintained agentic-search survey companion with an evaluation benchmark table; adds canonical ClawBench paper, code, and project links | Open |
+| 344 | `gyunggyung/AGI-Papers` | [#6 — Add ClawBench web-agent benchmark to evaluation resources](https://github.com/gyunggyung/AGI-Papers/pull/6) | Actively maintained 418-star AGI/agent paper archive with an Evaluation section; adds a factual ClawBench entry with official paper, code, and project links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
@@ -385,6 +386,8 @@ The duplicate `dataanswer/awesome-agent-benchmarks#7` was closed on 2026-07-28 i
 The duplicate `yichao-liang/awesome-agent-benchmarks#5` was closed on 2026-07-28 in favor of the existing canonical PR #3; it is not counted as a campaign submission.
 
 The low-signal `softwareengineer-imerjr/awesome-ai-agents-guide#2` and duplicate `Asaf-Yehudai/LLM-Agent-Evaluation-Survey#9` were closed on 2026-07-28 and are not counted as campaign submissions.
+
+The duplicate `HKUST-KnowComp/Awesome-Agent-Harness#6` was closed on 2026-07-28 in favor of existing PR #5 and is not counted as a campaign submission.
 
 ## Verified Merged Features
 
