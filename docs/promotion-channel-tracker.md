@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 89 |
+| Non-GitHub destinations audited | 91 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 23 |
+| Audited non-GitHub destinations pending a supported submit path | 25 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -88,6 +88,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | OSS AI Hub | Its public form explicitly accepts open-source AI tools, frameworks, agents, and evals, making ClawBench semantically relevant; however, the form's Supabase submission endpoint did not resolve during audit, so no data was sent and no receipt was counted. |
 | PyTorch Foundation | The Foundation explicitly welcomes open-source AI projects, but its “Host Your Project” submission route is a GitHub contribution workflow and would imply a substantial hosted-project relationship; no non-GitHub submission was sent. |
 | Eclipse Foundation | Its project-proposal process is for moving a project into Foundation governance, including community review and IP/provenance review; this is materially broader than a directory listing, so no proposal was submitted without explicit governance authorization. |
+| Researka | Its public intake is for agent builders submitting research-agent benchmark artifacts or manuscripts; ClawBench is the benchmark framework, not an evaluated research agent, so no mismatched artifact was submitted. |
+| Snorkel AI Open Benchmarks Grant | The program is a grant application with selection and collaboration commitments, not a directory listing; no funding proposal was submitted without explicit authorization for grant commitments. |
 
 ## Existing Coverage
 
