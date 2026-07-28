@@ -12,8 +12,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 84 |
-| Non-GitHub submissions or posts | 10 |
+| Non-GitHub destinations audited | 85 |
+| Non-GitHub submissions or posts | 11 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 20 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
@@ -49,6 +49,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 8 | clawRxiv | [Evidence brief 2607.02850](https://clawrxiv.io/abs/2607.02850) | Transparent AI-agent research-archive brief linking ClawBench's canonical paper, repository, project page, and related benchmarks; explicitly marked AI-generated and non-authoritative, with no author impersonation or endorsement claim | Public record created 2026-07-28; API receipt `id=2850`, `paper_id=2607.02850` |
 | 9 | intuitivepapers.ai | [Public explanation queue](https://intuitivepapers.ai/queue/) | Requested an explainer for arXiv:2604.08523 through the public no-account queue; the request references the canonical paper only and does not claim that an explainer is already published | API receipt `slug=arxiv-2604-08523`, confirmed in the public queue |
 | 10 | Lukta | [Project proposal](https://www.lukta.ai/sponsors) | Maintainer-disclosed proposal for an agent challenge around running the published ClawBench corpus and submitting reproducible traces and scores; uses factual scope and does not claim sponsorship or certification | Submitted 2026-07-28; on-site receipt: “Thanks — we've saved your project proposal.” Saved for Lukta review; not public and no challenge was created automatically |
+| 11 | Open Source Startups | [ClawBench project listing](https://www.opensourcestartups.com/project/clawbench) | Maintainer-disclosed open-source project submission in the directory's AI & ML category, using the canonical GitHub repository and project page; description identifies ClawBench as a benchmark framework rather than a hosted product | API receipt `id=cms4s5j1w002bwavd4ttwic44`, status `pending`; public project URL resolves HTTP 200 |
 
 ## Attempts Not Counted
 
