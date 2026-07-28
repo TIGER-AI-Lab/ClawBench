@@ -23,15 +23,15 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 360 |
-| Unique PRs submitted in this campaign | 358 |
+| Campaign rows (including two duplicate rows) | 362 |
+| Unique PRs submitted in this campaign | 360 |
 | Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 313 |
+| Current campaign: open (unique PRs) | 315 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
 
-The numbered table contains 360 rows, but two rows point to an already-listed
+The numbered table contains 362 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
@@ -401,6 +401,8 @@ the campaign totals.
 | 358 | `hardness1020/awesome-agent-architecture` | [#9 — Add ClawBench evaluator example](https://github.com/hardness1020/awesome-agent-architecture/pull/9) | 333-star agent-architecture learning repository with a dedicated observability and evaluation section; adds ClawBench as a traceable live-web evaluator example | Open |
 | 359 | `skillmatic-ai/awesome-agent-skills` | [#142 — Add ClawBench to benchmark resources](https://github.com/skillmatic-ai/awesome-agent-skills/pull/142) | 643-star active agent-skills catalog with a dedicated Benchmarks and Evaluation section; adds a concise factual ClawBench entry with canonical links | Open |
 | 360 | `nexu-io/harness-engineering-guide` | [#69 — Add ClawBench to evaluation further reading](https://github.com/nexu-io/harness-engineering-guide/pull/69) | 581-star active harness-engineering guide with an evaluation-infrastructure further-reading section; adds ClawBench as a directly relevant live-web evaluation reference | Open |
+| 361 | `WooooDyy/LLM-Agent-Paper-List` | [#86 — Add ClawBench to agent benchmarks](https://github.com/WooooDyy/LLM-Agent-Paper-List/pull/86) | Active LLM-agent paper list with an explicit “Benchmarks for LLM-based Agents” section and contribution-by-PR guidance; adds the canonical paper, project page, code, and factual trace methodology | Open |
+| 362 | `kyegomez/awesome-multi-agent-papers` | [#59 — Add ClawBench to multi-agent benchmarks](https://github.com/kyegomez/awesome-multi-agent-papers/pull/59) | Multi-agent paper list with a native “Multi-Agent Frameworks & Benchmarks” section and explicit PR invitation; adds a factual ClawBench entry with canonical paper, project, and code links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
