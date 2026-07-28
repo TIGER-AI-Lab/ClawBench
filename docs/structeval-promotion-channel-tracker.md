@@ -13,8 +13,8 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | Non-GitHub destinations audited | 3 |
 | Non-GitHub submissions or posts | 2 |
 | External StructEval PRs tracked before this update | 77 |
-| New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 78 |
+| New external StructEval PRs in this update | 2 |
+| External StructEval PRs tracked after this update | 79 |
 
 ## Discovery Infrastructure
 
@@ -36,6 +36,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 |---:|---|---|---|---|
 | 77 | `THU-KEG/EvaluationPapers4ChatGPT` | [PR #22 — Add StructEval to evaluation papers](https://github.com/THU-KEG/EvaluationPapers4ChatGPT/pull/22) | 456-star evaluation-paper catalog maintained by a Tianjin University NLP group; adds the TMLR 2025 StructEval paper in the repository's native Multimodal evaluation format with arXiv and official code links | Open |
 | 78 | `tjunlp-lab/Awesome-LLMs-Evaluation-Papers` | [PR #48 — Add StructEval benchmark to LLM evaluation papers](https://github.com/tjunlp-lab/Awesome-LLMs-Evaluation-Papers/pull/48) | 804-star evaluation-paper catalog maintained by a Tianjin University NLP group; adds the TMLR 2025 StructEval benchmark under Holistic Evaluation with canonical paper, code, project, and dataset links | Open |
+| 79 | `Vvkmnn/awesome-ai-eval` | [PR #27 — Add StructEval to general evaluation benchmarks](https://github.com/Vvkmnn/awesome-ai-eval/pull/27) | Active AI-evaluation catalog with an explicit General benchmark section and contribution checklist; adds StructEval with canonical repository, paper, project, and dataset links | Open |
 
 ## Audited Pending Destinations
 
