@@ -7,7 +7,7 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 468 public PRs: 338 open, 87 merged,
+`ClawBench` in indexed content returned 469 public PRs: 339 open, 87 merged,
 and 43 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 339 |
+| New PRs submitted in this campaign | 340 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 301 |
+| Current campaign: open | 302 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -371,6 +371,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 337 | `yyyujintang/Awesome-Agent-Memory-Papers` | [#2 — Add ClawBench web-agent benchmark](https://github.com/yyyujintang/Awesome-Agent-Memory-Papers/pull/2) | Maintained 223-star agent-memory paper list with a Web Navigation benchmark section; adds factual ClawBench arXiv, code, project, and date metadata | Open |
 | 338 | `zjlrock777/Awesome-LLM-Agents-Scientific-Discovery` | [#11 — Add ClawBench to general agent benchmarks](https://github.com/zjlrock777/Awesome-LLM-Agents-Scientific-Discovery/pull/11) | 76-star scientific-discovery agent paper list with an explicit Evaluation & Benchmarking → General Benchmarks section; adds canonical ClawBench paper, code, project, and V1/V2 scope | Open |
 | 339 | `FareedKhan-dev/ai-agents-eval-techniques` | [#1 — Add ClawBench related benchmark](https://github.com/FareedKhan-dev/ai-agents-eval-techniques/pull/1) | Practical 46-star agent-evaluation guide with explicit contribution guidance; adds a factual Related Agent Benchmarks section with canonical ClawBench links | Open |
+| 340 | `selfimproving-agent/Awesome-Self-Improving-Agents` | [#7 — Add ClawBench to evaluation benchmarks](https://github.com/selfimproving-agent/Awesome-Self-Improving-Agents/pull/7) | Maintained 238-star self-improving-agent paper list with an explicit Evaluation & Benchmarking matrix and contributions welcome; adds a factual ClawBench row with canonical paper, code, and project links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
