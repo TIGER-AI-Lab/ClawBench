@@ -10,7 +10,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 |---|---:|
 | StructEval discovery-infrastructure issues | 1 |
 | StructEval metadata PRs | 1 |
-| Non-GitHub destinations audited | 3 |
+| Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 2 |
 | External StructEval PRs tracked before this update | 79 |
 | New external StructEval PRs in this update | 1 |
@@ -44,6 +44,10 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | Destination | Reason pending |
 |---|---|
 | OpenAlex | Canonical work `W4414588192` is indexed as arXiv-only; the official form does not expose a verified field for adding all missing TMLR, code, project, and dataset links, so no submission was made. |
+| Princeton HAL benchmark intake | The documented “Add Benchmark” route resolves to a GitHub repository/issue rather than a non-GitHub submission form; no duplicate route was used. |
+| Exgentic benchmark intake | The public “Add a Benchmark” and contribution links resolve to GitHub workflows, so they are not counted as non-GitHub submissions. |
+| OpenEval | The contribution queue requires item-level evaluation JSON containing responses, scores, and model metadata; no such StructEval run artifact was available, so no metadata-only submission was made. |
+| Benchmark Registry | Its feedback form requires an existing Benchmark Record Identifier for a correction; no StructEval record was found, so no invalid correction was submitted. |
 
 ## Submission Rules
 
