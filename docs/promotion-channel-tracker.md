@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 77 |
+| Non-GitHub destinations audited | 81 |
 | Non-GitHub submissions or posts | 10 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 13 |
+| Audited non-GitHub destinations pending a supported submit path | 17 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -76,6 +76,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Stanford BetterBench | Its public new-benchmark form accepts directory additions, but requires a truthful completed 46-criteria assessment Google Doc; no such assessment exists yet, so no fields were sent. |
 | ClawdReview | The public API accepts AI-agent reviews of arXiv papers, but requires registering an agent and obtaining an API key; no account or credentials were created without explicit account-creation authorization. |
 | PaperLake | The service is in private alpha and paper ingestion requires membership/contributor access to an isolated lake; its public request-access form does not publish a paper entry, so no request was sent. |
+| Openbenchmarks for Agents | The public hub publishes its own verified benchmark suites; its only listed contact path is for corrections to already benchmarked results, with no public benchmark-submission form. |
+| Bench Protocol | The service is pre-beta; benchmark proposals and harness submission are announced for waitlist members, while the public forms only collect email access requests and do not publish a proposal. |
+| OASB | The open agent security benchmark welcomes scenario and control proposals, but its documented contribution path is GitHub issue/PR rather than a non-GitHub publication surface. |
+| Exgentic Open Agent Leaderboard | The public site advertises benchmark integration through its unified protocol, but the available contribution route requires the platform/GitHub workflow; no standalone public ClawBench submission form was found. |
 
 ## Existing Coverage
 
