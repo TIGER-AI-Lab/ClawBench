@@ -24,6 +24,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 |---:|---|---|---|---|
 | 1 | `vnageshwaran-de/Awesome-LLM-Agent-Evaluation` | [Issue #2 — New Benchmark: ClawBench](https://github.com/vnageshwaran-de/Awesome-LLM-Agent-Evaluation/issues/2) | Supplies eligibility evidence, taxonomy codes, metrics, limitations, primary sources, and honest preprint status before the required CSV PR | Open |
 | 2 | `wgwang/awesome-LLM-benchmarks` | [Issue #7 — Add ClawBench benchmark metadata](https://github.com/wgwang/awesome-LLM-benchmarks/issues/7) | 167-star benchmark list explicitly requests new benchmark leads through Issues; provides canonical code, project, paper, current 283-task/163-site scope, categories, and evidence layers | Open |
+| 3 | `Dan-Cleary/benchdirectory` | [Issue #10 — Bench submission](https://github.com/Dan-Cleary/benchdirectory/issues/10) | Public benchmark-directory intake; maintainer-disclosed submission supplies canonical code, paper, project, task/site scope, and evidence-layer description | Open |
 
 ## Discovery Infrastructure
 
