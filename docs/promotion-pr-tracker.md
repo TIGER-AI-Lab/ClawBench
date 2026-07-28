@@ -7,8 +7,8 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 487 public PRs: 349 open, 88 merged,
-and 50 closed. This is an all-time index, not the campaign counter below; it
+`ClawBench` in indexed content returned 490 public PRs: 348 open, 89 merged,
+and 53 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
 the campaign count rather than being used to inflate it.
@@ -23,9 +23,9 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| New PRs submitted in this campaign | 349 |
+| New PRs submitted in this campaign | 350 |
 | Current campaign: merged | 28 |
-| Current campaign: open | 311 |
+| Current campaign: open | 312 |
 | Current campaign: closed without merge | 10 |
 
 ## New Campaign Submissions
@@ -381,6 +381,7 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | 347 | `llm-as-a-verifier/llm-as-a-verifier` | [#2 — Link related ClawBench web benchmark](https://github.com/llm-as-a-verifier/llm-as-a-verifier/pull/2) | 606-star verifier research repository; adds a clearly labeled external Related Web-Agent Benchmark section linking ClawBench without claiming integration or placing it in the result table | Open |
 | 348 | `Kaiwen0418/agent-benchmark` | [#206 — Link complementary live-web benchmark](https://github.com/Kaiwen0418/agent-benchmark/pull/206) | Active 101-star hosted-web benchmark; adds ClawBench as a complementary live-web benchmark and explicitly states no shared scores or compatibility claim | Open |
 | 349 | `machinae/awesome-claws` | [#39 — Add ClawBench to research resources](https://github.com/machinae/awesome-claws/pull/39) | 483-star OpenClaw ecosystem research list with a Research section; adds a factual OpenClaw-compatible browser-agent benchmark entry with canonical links | Open |
+| 350 | `git-disl/awesome-LLM-game-agent-papers` | [#20 — Add ClawBench web-agent benchmark](https://github.com/git-disl/awesome-LLM-game-agent-papers/pull/20) | Actively maintained game-agent paper list with a benchmark section and native paper formatting; adds canonical ClawBench arXiv, code, and project links | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
@@ -399,6 +400,8 @@ The duplicates `ai-boost/awesome-harness-engineering#149` and `jiji262/awesome-h
 The off-scope `e2b-dev/awesome-ai-agents#1318` was closed on 2026-07-28 because that directory accepts agent products/projects rather than external benchmark resources; it is not counted.
 
 The duplicate `benchflow-ai/awesome-evals#60` was closed on 2026-07-28 in favor of existing canonical PR #54 and is not counted as a campaign submission.
+
+The duplicates `LLMSecurity/awesome-agent-skills-security#42` and `chaosync-org/awesome-ai-agent-testing#19` were closed on 2026-07-28 in favor of existing canonical PRs and are not counted.
 
 ## Verified Merged Features
 
