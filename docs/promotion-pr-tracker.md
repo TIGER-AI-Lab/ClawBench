@@ -23,15 +23,15 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 373 |
-| Unique PRs submitted in this campaign | 371 |
-| Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 326 |
+| Campaign rows (including two duplicate rows) | 376 |
+| Unique PRs submitted in this campaign | 374 |
+| Current campaign: merged (unique PRs) | 39 |
+| Current campaign: open (unique PRs) | 323 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
 
-The numbered table contains 369 rows, but two rows point to an already-listed
+The numbered table contains 372 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
@@ -293,7 +293,7 @@ the campaign totals.
 | 250 | `agential-ai/awesome-language-agent-benchmarks` | [#14 — Add ClawBench web benchmark](https://github.com/agential-ai/awesome-language-agent-benchmarks/pull/14) | Duplicate of PR #13 targeting the same Web benchmark subsection; closed publicly in favor of the earlier canonical submission | Closed without merge |
 | 251 | `NotoriousH2/Awesome_LLM_Benchmark_for_me` | [#2 — Add ClawBench to agent and tool-use benchmarks](https://github.com/NotoriousH2/Awesome_LLM_Benchmark_for_me/pull/2) | Korean/English LLM benchmark catalog with explicit PR template and an Agent & Tool Use section; adds ClawBench using the required name, release, task count, evaluation method, GitHub/paper links, and representative task format | Open |
 | 252 | `cemde/Awesome-LLM-Agent-Benchmarks-List` | [#2 — Add ClawBench web-agent benchmark](https://github.com/cemde/Awesome-LLM-Agent-Benchmarks-List/pull/2) | LLM-agent benchmark list explicitly invites contributions; description refreshed to current 283-task, 163-site scope with interception, traces, judge evaluation, and canonical links | Open |
-| 253 | `rolandfarkasCOM/awesome-agentic-web` | [#1 — Add ClawBench browser-agent benchmark](https://github.com/rolandfarkasCOM/awesome-agentic-web/pull/1) | Agentic-web list explicitly welcomes open-source projects directly relevant to agentic web; adds ClawBench under Web & browser agents using the repository's required one-line format | Open |
+| 253 | `rolandfarkasCOM/awesome-agentic-web` | [#1 — Add ClawBench browser-agent benchmark](https://github.com/rolandfarkasCOM/awesome-agentic-web/pull/1) | Agentic-web list explicitly welcomes open-source projects directly relevant to agentic web; adds ClawBench under Web & browser agents using the repository's required one-line format | Merged |
 | 254 | `luo-junyu/Awesome-Agent-Papers` | [#53 — Add ClawBench to Datasets & Benchmarks](https://github.com/luo-junyu/Awesome-Agent-Papers/pull/53) | Duplicate of the earlier ClawBench PR #52; closed with a public note after transferring the V2 metadata update to #52 | Closed without merge |
 | 255 | `js-lee-AI/awesome-agent-loop-papers` | [#2 — Add ClawBench to agent evaluation papers](https://github.com/js-lee-AI/awesome-agent-loop-papers/pull/2) | 492-paper agent-loop reading list; contribution guide requires a relevant, verifiable arXiv/DOI paper and has an explicit Evaluation section; adds ClawBench in the native one-line format | Open |
 | 256 | `metame-ai/awesome-agent-plaza` | [#1 — Add ClawBench to GUI agent evaluation papers](https://github.com/metame-ai/awesome-agent-plaza/pull/1) | Daily-updated agent paper/resource index with a dedicated GUI Agent Evaluation section; adds the verified arXiv paper, code, project page, and authors in the native paper format | Open |
@@ -308,7 +308,7 @@ the campaign totals.
 | 265 | `Quester-one/Awesome-LLM-Planning` | [#2 — Add ClawBench to web navigation benchmarks](https://github.com/Quester-one/Awesome-LLM-Planning/pull/2) | LLM-agent planning survey with a dedicated Web Navigation dataset section; adds ClawBench in the repository's native paper, arXiv, code, and project-link format | Open |
 | 266 | `Shiyao-Huang/awesome-agent-evolution` | [#20 — Update ClawBench report with current protocol and metadata](https://github.com/Shiyao-Huang/awesome-agent-evolution/pull/20) | Self-evolving-agent evidence map with explicit benchmark contribution rules; substantively corrects the existing ClawBench model card, documenting current corpus scope, harness-agnostic protocol, evidence layers, and primary sources | Open |
 | 267 | `samkhur006/awesome-llm-planning-reasoning` | [#7 — Add ClawBench to agent planning benchmarks](https://github.com/samkhur006/awesome-llm-planning-reasoning/pull/7) | 321-star planning/reasoning resource with a dedicated Benchmarks table and explicit contribution section; adds a native paper, code, date, and project-link row | Open |
-| 268 | `ARUNAGIRINATHAN-K/awesome-ai-agents-2026` | [#186 — Update ClawBench benchmark coverage](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026/pull/186) | 273-star AI-agent list with explicit update-existing-entry rules and a dedicated Agent Evaluation and Benchmarks section; updates the existing entry to current V1+V2 coverage and trace-based scoring | Open |
+| 268 | `ARUNAGIRINATHAN-K/awesome-ai-agents-2026` | [#186 — Update ClawBench benchmark coverage](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026/pull/186) | 273-star AI-agent list with explicit update-existing-entry rules and a dedicated Agent Evaluation and Benchmarks section; updates the existing entry to current V1+V2 coverage and trace-based scoring | Merged |
 | 269 | `huggingface/screensuite` | [#63 — Add ClawBench to online GUI agent benchmarks](https://github.com/huggingface/screensuite/pull/63) | Hugging Face GUI benchmark suite with a native Multi-step - Online Agent Benchmarks table; adds ClawBench with current V1+V2 scope, interception-plus-judge evaluation, and canonical repository/project links | Open |
 | 270 | `Halluminate/WebBench` | [#4 — Document ClawBench as a related browser-agent benchmark](https://github.com/Halluminate/WebBench/pull/4) | Browser-agent benchmark with explicit contribution welcome; adds a concise Related browser-agent benchmarks section linking ClawBench’s current V1+V2 scope and evidence collection without changing WebBench evaluation code | Open |
 | 271 | `jim-schwoebel/awesome_ai_agents` | [#414 — Add ClawBench to Benchmarks](https://github.com/jim-schwoebel/awesome_ai_agents/pull/414) | Duplicate of row 32; retained for auditability | Duplicate row (excluded) |
@@ -380,7 +380,7 @@ the campaign totals.
 | 337 | `yyyujintang/Awesome-Agent-Memory-Papers` | [#2 — Add ClawBench web-agent benchmark](https://github.com/yyyujintang/Awesome-Agent-Memory-Papers/pull/2) | Maintained 223-star agent-memory paper list with a Web Navigation benchmark section; adds factual ClawBench arXiv, code, project, and date metadata | Open |
 | 338 | `zjlrock777/Awesome-LLM-Agents-Scientific-Discovery` | [#11 — Add ClawBench to general agent benchmarks](https://github.com/zjlrock777/Awesome-LLM-Agents-Scientific-Discovery/pull/11) | 76-star scientific-discovery agent paper list with an explicit Evaluation & Benchmarking → General Benchmarks section; adds canonical ClawBench paper, code, project, and V1/V2 scope | Merged |
 | 339 | `FareedKhan-dev/ai-agents-eval-techniques` | [#1 — Add ClawBench related benchmark](https://github.com/FareedKhan-dev/ai-agents-eval-techniques/pull/1) | Practical 46-star agent-evaluation guide with explicit contribution guidance; adds a factual Related Agent Benchmarks section with canonical ClawBench links | Open |
-| 340 | `selfimproving-agent/Awesome-Self-Improving-Agents` | [#7 — Add ClawBench to evaluation benchmarks](https://github.com/selfimproving-agent/Awesome-Self-Improving-Agents/pull/7) | Maintained 238-star self-improving-agent paper list with an explicit Evaluation & Benchmarking matrix and contributions welcome; adds a factual ClawBench row with canonical paper, code, and project links | Open |
+| 340 | `selfimproving-agent/Awesome-Self-Improving-Agents` | [#7 — Add ClawBench to evaluation benchmarks](https://github.com/selfimproving-agent/Awesome-Self-Improving-Agents/pull/7) | Maintained 238-star self-improving-agent paper list with an explicit Evaluation & Benchmarking matrix and contributions welcome; adds a factual ClawBench row with canonical paper, code, and project links | Merged |
 | 341 | `shizhl/Multi-Agent-Papers` | [#4 — Add ClawBench web-agent benchmark](https://github.com/shizhl/Multi-Agent-Papers/pull/4) | 71-star multi-agent paper list with explicit Datasets and Evaluation sections and contribution guidance; adds a factual ClawBench row with current scope, paper, code, and project links | Open |
 | 342 | `AgentMemoryWorld/Awesome-Agent-Memory` | [#4 — Add ClawBench browser-agent benchmark](https://github.com/AgentMemoryWorld/Awesome-Agent-Memory/pull/4) | Active 173-star agent-memory paper list with evaluation/benchmark coverage; adds a factual browser-agent benchmark entry with canonical paper and code links | Open |
 | 343 | `ventr1c/Awesome-RL-based-Agentic-Search-Papers` | [#10 — Add ClawBench to agentic search benchmarks](https://github.com/ventr1c/Awesome-RL-based-Agentic-Search-Papers/pull/10) | 280-star maintained agentic-search survey companion with an evaluation benchmark table; adds canonical ClawBench paper, code, and project links | Open |
@@ -414,6 +414,9 @@ the campaign totals.
 | 371 | `AshleyLuo001/InternetofAgents-PaperList` | [#2 — Add ClawBench to agent benchmarks](https://github.com/AshleyLuo001/InternetofAgents-PaperList/pull/2) | Active Internet-of-Agents paper collection with a dedicated Evaluation/Benchmarks section and prior PR-based contributions; adds ClawBench in the native bullet format with primary paper, code, project, and real-world web-agent scope | Open |
 | 372 | `hardness1020/awesome-agent-architecture` | [#10 — Add ClawBench as an evaluation source](https://github.com/hardness1020/awesome-agent-architecture/pull/10) | 336-star agent-architecture guide with a dedicated Observability & evaluation section and source-based contribution guidance; adds ClawBench as a primary-source example of trace-rich live-web agent evaluation | Open |
 | 373 | `diggerhq/awesome-sandbox-benchmarks` | [#1 — Add ClawBench as a sandboxed agent benchmark](https://github.com/diggerhq/awesome-sandbox-benchmarks/pull/1) | Sandbox benchmark/resource list with explicit PR-or-issue contribution guidance; adds ClawBench as a complementary containerized live-web benchmark, limited to its auditable browser, network, screenshot, replay, and agent-message traces | Open |
+| 374 | `cdxeve/awesome-computer-use-agents` | [#4 — Fix ClawBench repository link](https://github.com/cdxeve/awesome-computer-use-agents/pull/4) | Follow-up correction to the previously merged computer-use benchmark entry; restores the canonical ClawBench repository link | Merged |
+| 375 | `EthicalML/awesome-agentic-engineering-resources` | [#17 — Add ClawBench to autonomous agent benchmarks](https://github.com/EthicalML/awesome-agentic-engineering-resources/pull/17) | Follow-up benchmark entry in an agentic-engineering resource list with a dedicated benchmarks section and primary-source links | Merged |
+| 376 | `steel-dev/awesome-web-agents` | [#60 — Update ClawBench entry](https://github.com/steel-dev/awesome-web-agents/pull/60) | Follow-up update to the merged ClawBench web-agent entry in a maintained web-agent catalog | Merged |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
@@ -453,22 +456,24 @@ Each repository below was verified on its current default branch to still contai
 | `Yangyi-Chen/Multimodal-AND-Large-Language-Models` | [Merged PR #8](https://github.com/Yangyi-Chen/Multimodal-AND-Large-Language-Models/pull/8) |
 | `ZJU-REAL/Awesome-GUI-Agents` | [Merged PR #9](https://github.com/ZJU-REAL/Awesome-GUI-Agents/pull/9) |
 | `brandonhimpfen/awesome-ai-benchmarks-evaluation` | [Merged PR #23](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation/pull/23) |
-| `cdxeve/awesome-computer-use-agents` | [Merged PR #3](https://github.com/cdxeve/awesome-computer-use-agents/pull/3) |
-| `EthicalML/awesome-agentic-engineering-resources` | [Merged PR #15](https://github.com/EthicalML/awesome-agentic-engineering-resources/pull/15) |
+| `cdxeve/awesome-computer-use-agents` | [Merged PR #3](https://github.com/cdxeve/awesome-computer-use-agents/pull/3); [link fix #4](https://github.com/cdxeve/awesome-computer-use-agents/pull/4) |
+| `EthicalML/awesome-agentic-engineering-resources` | [Merged PR #15](https://github.com/EthicalML/awesome-agentic-engineering-resources/pull/15); [benchmark update #17](https://github.com/EthicalML/awesome-agentic-engineering-resources/pull/17) |
 | `ishandutta2007/Awesome-AI-Benchmarking` | [Merged PR #1](https://github.com/ishandutta2007/Awesome-AI-Benchmarking/pull/1) |
 | `js-lee-AI/awesome-llm-agent-papers` | [Merged PR #3](https://github.com/js-lee-AI/awesome-llm-agent-papers/pull/3) |
 | `pauldebdeep9/awesome-agentic-evaluation` | [Merged PR #1](https://github.com/pauldebdeep9/awesome-agentic-evaluation/pull/1) |
 | `Picrew/awesome-agent-harness` | [Default-branch commit `85d6410`](https://github.com/Picrew/awesome-agent-harness/commit/85d6410079854334e50b2de8e8961b4ac09de1e7) |
 | `RUC-NLPIR/Awesome-Long-Horizon-Agents` | [Default-branch commit `c13f216`](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents/commit/c13f2164407d5538157dc8874a265113ad9f6f63) |
 | `philfung/awesome-computer-use` | [Merged PR #5](https://github.com/philfung/awesome-computer-use/pull/5) |
+| `rolandfarkasCOM/awesome-agentic-web` | [Merged PR #1](https://github.com/rolandfarkasCOM/awesome-agentic-web/pull/1) |
 | `ranpox/awesome-computer-use` | [Merged PR #23](https://github.com/ranpox/awesome-computer-use/pull/23) |
 | `skyming/awesome-ai-agent` | [Merged PR #4](https://github.com/skyming/awesome-ai-agent/pull/4) |
-| `steel-dev/awesome-web-agents` | [Merged PR #44](https://github.com/steel-dev/awesome-web-agents/pull/44) |
+| `steel-dev/awesome-web-agents` | [Merged PR #44](https://github.com/steel-dev/awesome-web-agents/pull/44); [update #60](https://github.com/steel-dev/awesome-web-agents/pull/60) |
+| `selfimproving-agent/Awesome-Self-Improving-Agents` | [Merged PR #7](https://github.com/selfimproving-agent/Awesome-Self-Improving-Agents/pull/7) |
 | `walkinglabs/awesome-harness-engineering` | [Merged PR #8](https://github.com/walkinglabs/awesome-harness-engineering/pull/8) |
 | `zhangxjohn/LLM-Agent-Benchmark-List` | [Merged PR #15](https://github.com/zhangxjohn/LLM-Agent-Benchmark-List/pull/15) |
 | `Xnhyacinth/Awesome-LLM-Long-Context-Modeling` | [Merged PR #43](https://github.com/Xnhyacinth/Awesome-LLM-Long-Context-Modeling/pull/43) |
 | `YintongHuo/awesome-agent-trajectory` | [Merged PR #2](https://github.com/YintongHuo/awesome-agent-trajectory/pull/2) |
-| `ARUNAGIRINATHAN-K/awesome-ai-agents-2026` | [Merged PR #185](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026/pull/185) |
+| `ARUNAGIRINATHAN-K/awesome-ai-agents-2026` | [Merged PR #185](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026/pull/185); [coverage update #186](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026/pull/186) |
 | `Steve2457/Awesome-RL-GUI-Agents` | [Merged PR #2](https://github.com/Steve2457/Awesome-RL-GUI-Agents/pull/2) |
 | `aloth/awesome-ai-agents` | [Merged PR #21](https://github.com/aloth/awesome-ai-agents/pull/21) |
 | `FrontisAI/Awesome-Self-Improving-Agents` | [Merged PR #4](https://github.com/FrontisAI/Awesome-Self-Improving-Agents/pull/4) |
