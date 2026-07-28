@@ -16,7 +16,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 28 |
-| Existing non-GitHub coverage pages, not counted as new | 16 |
+| Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
 
@@ -118,6 +118,7 @@ These placements predate this outreach counter and are recorded as evidence, not
 | shuolucs Awesome OpenClaw Research | [Research table](https://github.com/shuolucs/Awesome-OpenClaw-Research#papers) — lists “ClawBench: Can AI Agents Complete Everyday Online Tasks?” with the arXiv link; pre-existing coverage, not a new submission. |
 | OSU-NLP-Group GUI-Agents-Paper-List | [Generated GUI-agent paper list](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List#browse-by-keyword) — includes the ClawBench paper with Web, benchmark, and realistic-website tags; pre-existing coverage, not a new submission. |
 | Jenqyang Awesome-AI-Agents | [Benchmark/Evaluator section](https://github.com/Jenqyang/Awesome-AI-Agents#benchmarkevaluator) — includes ClawBench as a browser-agent benchmark; pre-existing coverage, not a new submission. |
+| Arnon-hs open-source index | [AI/ML project record](https://github.com/Arnon-hs/open-source/blob/main/aiml/reacher-z-clawbench.md) — indexes the canonical repository with scope, topics, and benchmark summary; pre-existing coverage, not a new submission. |
 
 ## Submission Rules
 
