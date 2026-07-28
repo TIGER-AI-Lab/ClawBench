@@ -23,10 +23,10 @@ GitHub search for pull requests authored by `reacher-z` with `ClawBench` in the 
 | Merged | 19 PRs across 17 repositories |
 | Open | 36 |
 | Closed without merge | 4 |
-| Campaign rows (including two duplicate rows) | 371 |
-| Unique PRs submitted in this campaign | 369 |
+| Campaign rows (including two duplicate rows) | 372 |
+| Unique PRs submitted in this campaign | 370 |
 | Current campaign: merged (unique PRs) | 33 |
-| Current campaign: open (unique PRs) | 324 |
+| Current campaign: open (unique PRs) | 325 |
 | Current campaign: closed without merge (unique PRs) | 12 |
 
 ## New Campaign Submissions
@@ -412,6 +412,7 @@ the campaign totals.
 | 369 | `chaosync-org/awesome-ai-agent-testing` | [#20 — Add ClawBench web agent benchmark](https://github.com/chaosync-org/awesome-ai-agent-testing/pull/20) | Active AI-agent testing catalog with Benchmarks and Evaluation plus Web Navigation sections; adds ClawBench beside WebArena and τ-bench using the repository's native tools format | Open |
 | 370 | `leotavares26/awesome-ai-agents` | [#4 — Add ClawBench to evaluation and testing](https://github.com/leotavares26/awesome-ai-agents/pull/4) | Active AI-agent ecosystem map with an Evaluation & testing table and explicit quality-first PR guidance; adds ClawBench with canonical paper, project, and code links plus its realistic live-site web-agent scope | Open |
 | 371 | `AshleyLuo001/InternetofAgents-PaperList` | [#2 — Add ClawBench to agent benchmarks](https://github.com/AshleyLuo001/InternetofAgents-PaperList/pull/2) | Active Internet-of-Agents paper collection with a dedicated Evaluation/Benchmarks section and prior PR-based contributions; adds ClawBench in the native bullet format with primary paper, code, project, and real-world web-agent scope | Open |
+| 372 | `hardness1020/awesome-agent-architecture` | [#10 — Add ClawBench as an evaluation source](https://github.com/hardness1020/awesome-agent-architecture/pull/10) | 336-star agent-architecture guide with a dedicated Observability & evaluation section and source-based contribution guidance; adds ClawBench as a primary-source example of trace-rich live-web agent evaluation | Open |
 
 The two earlier duplicate submissions to `showlab/Awesome-GUI-Agent` (#57 and #60) were closed on 2026-07-28 in favor of the newer canonical PR [#64](https://github.com/showlab/Awesome-GUI-Agent/pull/64). They remain counted as closed without merge above; no additional submission is counted.
 
