@@ -12,9 +12,9 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
 | Non-GitHub submissions or posts | 3 |
-| External StructEval PRs tracked before this update | 85 |
+| External StructEval PRs tracked before this update | 86 |
 | New external StructEval PRs in this update | 1 |
-| External StructEval PRs tracked after this update | 86 |
+| External StructEval PRs tracked after this update | 87 |
 
 ## Discovery Infrastructure
 
@@ -45,6 +45,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | 84 | `Hannibal046/Awesome-LLM` | [PR #762 — Add StructEval to LLM evaluation resources](https://github.com/Hannibal046/Awesome-LLM/pull/762) | 27k-star LLM resource list with an explicit LLM Evaluation section and contribution guidance; adds StructEval in the native one-line format with canonical paper, code, project, and dataset links | Open |
 | 85 | `Meirtz/Awesome-Context-Engineering` | [PR #102 — Add StructEval to evaluation resources](https://github.com/Meirtz/Awesome-Context-Engineering/pull/102) | 3.2k-star context-engineering survey with a dedicated Multimodal and Specialized Evaluation section and explicit PR guidance; adds StructEval in the native HTML format with canonical paper and code links | Open |
 | 86 | `WangRongsheng/awesome-LLM-resources` | [PR #178 — Add StructEval to LLM evaluation resources](https://github.com/WangRongsheng/awesome-LLM-resources/pull/178) | 8.7k-star active LLM resource directory with a dedicated Evaluation section and recent accepted resource PRs; adds StructEval in the native numbered format with canonical paper, code, project, and dataset links | Open |
+| 87 | `llm-as-a-judge/Awesome-LLM-as-a-judge` | [PR #17 — Add StructEval to LLM-as-a-judge resources](https://github.com/llm-as-a-judge/Awesome-LLM-as-a-judge/pull/17) | 568-star evaluation survey dedicated to LLM-as-a-judge methods with a dedicated Evaluation section and recent accepted community PRs; adds StructEval in the native paper/resource format with canonical paper, code, project, and dataset links | Open |
 
 ## Audited Pending Destinations
 
