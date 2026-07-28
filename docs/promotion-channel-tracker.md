@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 81 |
+| Non-GitHub destinations audited | 83 |
 | Non-GitHub submissions or posts | 10 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 17 |
+| Audited non-GitHub destinations pending a supported submit path | 19 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -80,6 +80,8 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Bench Protocol | The service is pre-beta; benchmark proposals and harness submission are announced for waitlist members, while the public forms only collect email access requests and do not publish a proposal. |
 | OASB | The open agent security benchmark welcomes scenario and control proposals, but its documented contribution path is GitHub issue/PR rather than a non-GitHub publication surface. |
 | Exgentic Open Agent Leaderboard | The public site advertises benchmark integration through its unified protocol, but the available contribution route requires the platform/GitHub workflow; no standalone public ClawBench submission form was found. |
+| Semantic Scholar | The ClawBench arXiv record is automatically indexed; adding or correcting author-page metadata requires a logged-in author claim, so no account action was taken. |
+| Archivara | Its research-archive submission is relevant but requires an account and automatically names that account as first author; no account was created and no authorship was misrepresented. |
 
 ## Existing Coverage
 
