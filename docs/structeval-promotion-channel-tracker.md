@@ -11,7 +11,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 | StructEval discovery-infrastructure issues | 1 |
 | StructEval metadata PRs | 1 |
 | Non-GitHub destinations audited | 7 |
-| Non-GitHub submissions or posts | 2 |
+| Non-GitHub submissions or posts | 3 |
 | External StructEval PRs tracked before this update | 79 |
 | New external StructEval PRs in this update | 1 |
 | External StructEval PRs tracked after this update | 80 |
@@ -29,6 +29,7 @@ This file tracks verified StructEval outreach outside direct pull requests. Exis
 |---:|---|---|---|---|
 | 1 | Software Heritage | [Save Code Now request #2400188](https://archive.softwareheritage.org/api/1/origin/save/2400188/) | Requests preservation and machine-indexing of the canonical StructEval Git repository in the universal software source archive | Succeeded; full snapshot `swh:1:snp:dae6681462669c7447cc92210da2e2bb1d738cd8` |
 | 2 | Software Heritage | [Save Code Now request #2400197](https://archive.softwareheritage.org/api/1/origin/save/2400197/) | Requests a separate long-term snapshot of the public `TIGER-Lab/StructEval` Hugging Face dataset Git repository and its benchmark metadata | Succeeded; full snapshot `swh:1:snp:c8f3414377b73a617bdb2411d16eb5e43fd48570` |
+| 3 | CodeSOTA | [Submit a paper, benchmark, or correction](https://www.codesota.com/submit) | Maintainer-disclosed request to track StructEval as a structured-output and visual-evaluation benchmark, with canonical paper, code, project, and dataset links | Submitted 2026-07-28; on-site confirmation: “Got it. A real human reads every submission — expect a reply within 48 hours.” |
 
 ## External GitHub PRs
 
