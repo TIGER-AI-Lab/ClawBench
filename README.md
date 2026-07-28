@@ -24,7 +24,7 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
 
-<p align="center"><sub><i>Featured in 23 curated lists</i></sub></p>
+<p align="center"><sub><i>Featured in 27 curated lists</i></sub></p>
 <p align="center">
   <a href="https://github.com/walkinglabs/awesome-harness-engineering"><img alt="awesome-harness-engineering" src="https://img.shields.io/badge/Featured-awesome--harness--engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Picrew/awesome-agent-harness"><img alt="awesome-agent-harness" src="https://img.shields.io/badge/Featured-awesome--agent--harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
@@ -49,6 +49,10 @@
   <a href="https://github.com/pauldebdeep9/awesome-agentic-evaluation"><img alt="awesome-agentic-evaluation" src="https://img.shields.io/badge/Featured-agentic--evaluation-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/skyming/awesome-ai-agent"><img alt="awesome-ai-agent" src="https://img.shields.io/badge/Featured-awesome--AI--agent-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/steel-dev/awesome-web-agents"><img alt="awesome-web-agents" src="https://img.shields.io/badge/Featured-web--agents-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/EthicalML/awesome-agentic-engineering-resources"><img alt="agentic-engineering-resources" src="https://img.shields.io/badge/Featured-agentic--engineering--resources-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/REAL-Lab-NU/Awesome-OpenClaw-Papers"><img alt="Awesome-OpenClaw-Papers" src="https://img.shields.io/badge/Featured-OpenClaw--Papers-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/shuolucs/Awesome-OpenClaw-Research"><img alt="Awesome-OpenClaw-Research" src="https://img.shields.io/badge/Featured-OpenClaw--Research-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
+  <a href="https://github.com/Arnon-hs/open-source"><img alt="Arnon-hs open-source index" src="https://img.shields.io/badge/Featured-open--source--index-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
 </p>
 
 <p align="center">
