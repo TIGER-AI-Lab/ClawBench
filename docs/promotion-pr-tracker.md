@@ -7,8 +7,8 @@ This tracker records repository-specific outreach for ClawBench. Candidate disco
 ## Current indexed audit
 
 On 2026-07-28, GitHub search for pull requests authored by `reacher-z` with
-`ClawBench` in indexed content returned 484 public PRs: 347 open, 88 merged,
-and 49 closed. This is an all-time index, not the campaign counter below; it
+`ClawBench` in indexed content returned 487 public PRs: 349 open, 88 merged,
+and 50 closed. This is an all-time index, not the campaign counter below; it
 can include baseline outreach, repository-internal PRs, and cross-project
 references (including StructEval work). Those categories remain separate from
 the campaign count rather than being used to inflate it.
@@ -397,6 +397,8 @@ The duplicate `HKUST-KnowComp/Awesome-Agent-Harness#6` was closed on 2026-07-28 
 The duplicates `ai-boost/awesome-harness-engineering#149` and `jiji262/awesome-harness-engineering#8` were closed on 2026-07-28 in favor of existing canonical PRs and are not counted as campaign submissions.
 
 The off-scope `e2b-dev/awesome-ai-agents#1318` was closed on 2026-07-28 because that directory accepts agent products/projects rather than external benchmark resources; it is not counted.
+
+The duplicate `benchflow-ai/awesome-evals#60` was closed on 2026-07-28 in favor of existing canonical PR #54 and is not counted as a campaign submission.
 
 ## Verified Merged Features
 
