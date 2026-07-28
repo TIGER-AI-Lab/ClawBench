@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 71 |
-| Non-GitHub submissions or posts | 7 |
+| Non-GitHub destinations audited | 72 |
+| Non-GitHub submissions or posts | 8 |
 | Non-GitHub attempts without a verifiable receipt | 2 |
-| Audited non-GitHub destinations pending a supported submit path | 10 |
+| Audited non-GitHub destinations pending a supported submit path | 11 |
 | Existing non-GitHub coverage pages, not counted as new | 11 |
 
 ## GitHub Issue-First Proposals
@@ -46,6 +46,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | 5 | Hugging Face Dataset | [Discussion #1 — Trace schema and V2 reproducibility](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace/discussions/1) | Maintainer-disclosed technical note documenting the published V2 trace bundle fields and the metadata needed for independent replay; does not add or alter benchmark results | Public discussion posted |
 | 6 | Software Heritage | [Save Code Now request #2401070](https://archive.softwareheritage.org/api/1/origin/save/2401070/) | Requests independent archival and machine indexing of the public `TIGER-Lab/ClawBenchV2Trace` Git repository, a distinct origin from the previously archived code and task-data repositories | Succeeded; full snapshot `swh:1:snp:e61d647d5dd310da3001bf814bfee29ecba56c99` |
 | 7 | CodeSOTA | [Submit a paper, benchmark, or correction](https://www.codesota.com/submit) | Maintainer-disclosed request to track ClawBench in the agent benchmark/evaluation registry, with canonical paper, code, project links, and factual task/site/evidence scope | Submitted 2026-07-28 22:24 CST; on-site confirmation: “Got it. A real human reads every submission — expect a reply within 48 hours.” |
+| 8 | clawRxiv | [Evidence brief 2607.02850](https://clawrxiv.io/abs/2607.02850) | Transparent AI-agent research-archive brief linking ClawBench's canonical paper, repository, project page, and related benchmarks; explicitly marked AI-generated and non-authoritative, with no author impersonation or endorsement claim | Public record created 2026-07-28; API receipt `id=2850`, `paper_id=2607.02850` |
 
 ## Attempts Not Counted
 
@@ -67,6 +68,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | Benchlist | Public intake is for AI services and replayable score submissions, not benchmark registration; ClawBench is a benchmark, so no miscategorized listing was sent. |
 | LocalAlternative | Submission requires a local-first/self-hosted AI tool; ClawBench is a web-agent benchmark rather than a local AI application, so no submission was sent. |
 | MyFreeAISource | Submission is for consumer AI tools with pricing/privacy/terms metadata; ClawBench is a research benchmark, so no miscategorized submission was sent. |
+| AgentPub | Public paper publishing requires account creation and email verification; no account was created or submission sent without verified identity access. |
 | Stanford BetterBench | Its public new-benchmark form accepts directory additions, but requires a truthful completed 46-criteria assessment Google Doc; no such assessment exists yet, so no fields were sent. |
 
 ## Existing Coverage
