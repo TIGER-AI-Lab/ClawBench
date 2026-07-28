@@ -12,10 +12,10 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 117 |
+| Non-GitHub destinations audited | 118 |
 | Non-GitHub submissions or posts | 15 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
-| Audited non-GitHub destinations pending a supported submit path | 41 |
+| Audited non-GitHub destinations pending a supported submit path | 42 |
 | Existing non-GitHub coverage pages, not counted as new | 17 |
 
 ## GitHub Issue-First Proposals
@@ -118,6 +118,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | YourAIProject | Its AI-project directory accepts live project URLs and publishes builder profiles, but the publishing guide requires GitHub sign-in before the form is available; no account-based submission was made. |
 | A2M AI App Marketplace | Its CLI accepts AI projects and publishes searchable listings, but the official submission flow requires one-time GitHub or Google login and stores an API key; no account or credential was created. |
 | AgentGauntlet | The no-login public flow runs agents against an existing benchmark and accepts run results, but it has no intake for registering an external benchmark/project; no mismatched result submission was made. |
+| OpenSourceFest | Its AI & Machine Learning open-source directory is semantically relevant and asks for a public repository, license, project description, and email, but the submission form currently posts to a placeholder `formsubmit.co/your-email@opensourcefest.org` endpoint and also requires a “genuine alternative” criterion; no reliable receipt was obtained and no submission was sent. |
 
 ## Existing Coverage
 
