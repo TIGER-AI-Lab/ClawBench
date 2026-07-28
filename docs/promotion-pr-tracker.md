@@ -35,7 +35,7 @@ The numbered table contains 372 rows, but two rows point to an already-listed
 PR. The unique-submission count above excludes those duplicates. The duplicate
 rows are retained for auditability and marked below.
 
-The summary counts were refreshed against the GitHub API on 2026-07-28. Some
+The summary counts were refreshed against the GitHub API on 2026-07-29. Some
 older row labels below may lag the live state; the summary is authoritative for
 the campaign totals.
 
