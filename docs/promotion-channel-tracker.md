@@ -12,7 +12,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | ClawBench discovery-infrastructure issues | 2 |
 | Official benchmark-registration PRs | 1 |
 | ClawBench metadata PRs | 1 |
-| Non-GitHub destinations audited | 107 |
+| Non-GitHub destinations audited | 108 |
 | Non-GitHub submissions or posts | 12 |
 | Non-GitHub attempts without a verifiable receipt | 3 |
 | Audited non-GitHub destinations pending a supported submit path | 35 |
@@ -108,6 +108,7 @@ This file tracks outreach that is not a direct pull request. It separates GitHub
 | PaperBench.net / BenchHub | PaperBench.net requires account registration and MCP setup, with contributions private by default; BenchHub requires GitHub/Google/email verification before creating a public leaderboard. Neither offers an account-free public receipt, so no submission was counted. |
 | Lukta.ai | Its benchmark directory requires a verified creator account and keeps proof private during review; it accepts external evaluation results rather than new benchmark registrations, so no account-based or mismatched submission was made. |
 | Semantic Scholar | Its Add Papers and correction flows require a signed-in claimed author page; the ClawBench paper is already indexed, and no anonymous benchmark/project submission or public receipt exists. |
+| OpenReview | Profile creation requires a verified email and author metadata, and submissions are tied to a specific venue's invitation and deadline; it is not a free benchmark/project directory, so no duplicate ClawBench paper submission was made. |
 
 ## Existing Coverage
 
