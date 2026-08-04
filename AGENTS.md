@@ -4,7 +4,7 @@ This file is for coding agents (Claude Code, Cursor, Copilot, etc.) to understan
 
 ## What This Is
 
-ClawBench is a benchmarking framework for evaluating AI web agents on real-world online tasks. V1 lives in `test-cases/v1/` with 153 tasks spanning 144 live websites and 15 life categories; V2 lives in `test-cases/v2/` with 130 tasks; Lite lives in `test-cases/v1-lite/` with 20 link-backed V1 tasks. Each task runs in an isolated Docker container with  a browser, a recording Chrome extension, and an AI agent harness (`openclaw`, `opencode`, `claude-code`, `claude-code-chrome-extension`, `codex`, `browser-use`, `claw-code`, `hermes`, or `pi`, selectable via `--harness`). The framework captures five layers of data: session replay (MP4), action screenshots, HTTP traffic, browser actions, and agent messages.
+ClawBench is a benchmarking framework for evaluating AI web agents on real-world online tasks. V1 lives in `test-cases/v1/` with 153 tasks spanning 144 live websites and 15 life categories; V2 lives in `test-cases/v2/` with 130 tasks; Lite lives in `test-cases/v1-lite/` with 20 link-backed V1 tasks. Each task runs in an isolated Docker container with  a browser, a recording Chrome extension, and an AI agent harness (`openclaw`, `opencode`, `claude-code`, `claude-code-chrome-extension`, `codex`, `browser-use`, `claw-code`, `hermes`, `pi`, or `webbrain`, selectable via `--harness`). The framework captures five layers of data: session replay (MP4), action screenshots, HTTP traffic, browser actions, and agent messages.
 
 ## Project Structure
 

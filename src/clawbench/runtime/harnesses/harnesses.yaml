@@ -112,6 +112,17 @@ harnesses:
         path: /data/agent-messages.jsonl
       - type: file
         path: /data/agent-messages.raw.jsonl
+  - name: webbrain
+    image: clawbench-webbrain
+    dockerfile: webbrain/Dockerfile.webbrain
+    setup_script: webbrain/setup-webbrain.sh
+    run_script: webbrain/run-webbrain.sh
+    usage_emitter: webbrain/usage-emitter.py
+    extra_files:
+      - webbrain/run-webbrain-agent.py
+    agent_message_sources:
+      - type: file
+        path: /data/agent-messages.jsonl
   # Null baseline — takes no action; establishes the benchmark floor (~0 score,
   # and the interceptor must not fire without genuine agent activity).
   - name: "null"

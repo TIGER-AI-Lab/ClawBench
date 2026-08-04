@@ -1,0 +1,20 @@
+FROM clawbench-base
+
+# Pin the extension source so benchmark images remain reproducible even when
+# WebBrain's default branch moves. The source is loaded unpacked; none of its
+# repository scripts or dependencies are executed during the image build.
+ARG WEBBRAIN_COMMIT=7b2357502da03d931117404bb89a60006bc3fa97
+RUN git init /app/webbrain \
+    && git -C /app/webbrain remote add origin https://github.com/webbrain-one/webbrain.git \
+    && git -c http.version=HTTP/1.1 -C /app/webbrain fetch --depth 1 origin "$WEBBRAIN_COMMIT" \
+    && git -C /app/webbrain checkout --detach FETCH_HEAD \
+    && test "$(git -C /app/webbrain rev-parse HEAD)" = "$WEBBRAIN_COMMIT" \
+    && rm -rf /app/webbrain/.git
+
+ENV EXTRA_LOAD_EXTENSIONS=/app/webbrain/src/chrome
+
+COPY harnesses/webbrain/setup-webbrain.sh /setup-webbrain.sh
+COPY harnesses/webbrain/run-webbrain.sh /run-harness.sh
+COPY harnesses/webbrain/run-webbrain-agent.py /run-webbrain-agent.py
+COPY harnesses/webbrain/usage-emitter.py /usage-emitter.py
+RUN chmod +x /setup-webbrain.sh /run-harness.sh /run-webbrain-agent.py /usage-emitter.py
