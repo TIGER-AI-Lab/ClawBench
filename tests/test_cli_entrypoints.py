@@ -18,6 +18,7 @@ HELP_MODULES = (
     "clawbench.runner.run",
     "clawbench.runner.batch",
     "clawbench.eval.harbor_adapter",
+    "clawbench.utils.update_llms",
 )
 
 
