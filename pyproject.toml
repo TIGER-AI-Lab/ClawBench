@@ -33,6 +33,7 @@ clawbench-edgebench-adapt = "clawbench.eval.edgebench_adapter:main"
 clawbench-edgebench-judge = "clawbench.eval.edgebench_judge:main"
 clawbench-prorl-submit = "clawbench.prorl.submit:main"
 clawbench-prorl-mock = "clawbench.prorl.mock_gateway:main"
+clawbench-update-llms = "clawbench.utils.update_llms:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clawbench"]

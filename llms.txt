@@ -15,6 +15,40 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 - [V1 execution traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace): replayable run artifacts.
 - [V2 execution traces](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace): rolling V2 run artifacts.
 
+## Leaderboard
+
+### V1 Hermes (Top 5)
+
+| Rank | Model | Pass Rate | Pass / Total |
+| :---: | :--- | :---: | :---: |
+| 1 | claude-opus-4-6 | 61.4% | 94 / 153 |
+| 2 | claude-sonnet-4-6 | 56.9% | 87 / 153 |
+| 3 | claude-haiku-4-5-20251001 | 30.1% | 46 / 153 |
+| 4 | gpt-5.4-2026-03-05 | 25.5% | 39 / 153 |
+| 5 | gpt-5.4-mini-2026-03-17 | 24.8% | 38 / 153 |
+
+### V2 Hermes (Top 5)
+
+| Rank | Model | Intercepted | Reward (Lenient) | Pass / Total |
+| :---: | :--- | :---: | :---: | :---: |
+| 1 | claude-opus-4-7 | 54.6% | 44.6% | 58 / 130 |
+| 2 | gpt-5.5 | 45.4% | 35.4% | 46 / 130 |
+| 3 | glm-5.1 | 48.5% | 34.6% | 45 / 130 |
+| 4 | deepseek-v4-pro | 43.9% | 33.9% | 44 / 130 |
+| 5 | deepseek-v4-flash:free | 3.1% | 2.3% | 3 / 130 |
+
+## Interactive pages
+
+- [Project Home](https://claw-bench.com/)
+- [Leaderboard](https://claw-bench.com/leaderboard)
+- [Task Detail](https://claw-bench.com/tasks)
+- [Traces](https://claw-bench.com/traces)
+- [Compare](https://claw-bench.com/compare)
+- [Difficulty](https://claw-bench.com/difficulty)
+- [Categories](https://claw-bench.com/categories)
+- [Gallery](https://claw-bench.com/gallery)
+- [Contribute](https://claw-bench.com/contribute)
+
 ## Quick facts
 
 - V1: 153 tasks across 144 live websites and 15 life categories.
@@ -22,6 +56,12 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 - Evidence layers: session replay, screenshots, HTTP traffic, browser actions, and agent messages.
 - Supported harnesses include OpenClaw, OpenCode, Claude Code, Codex, Browser-Use, Hermes, Pi, and other compatible browser agents.
 
-## Citation
-
-If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
+## Citations
+```bibtex
+@article{zhang2026clawbench,
+  title={ClawBench: Can AI Agents Complete Everyday Online Tasks?},
+  author={Zhang, Yuxuan and Wang, Yubo and Zhu, Yipeng and Du, Penghui and Miao, Junwen and Lu, Xuan and Xu, Wendong and Hao, Yunzhuo and Cai, Songcheng and Wang, Xiaochen and Zhang, Huaisong and Wu, Xian and Lu, Yi and Lei, Minyi and Zou, Kai and Yin, Huifeng and Nie, Ping and Chen, Liang and Jiang, Dongfu and Chen, Wenhu and Allen, Kelsey R.},
+  journal={arXiv preprint arXiv:2604.08523},
+  year={2026}
+}
+```
