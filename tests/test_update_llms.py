@@ -1,6 +1,5 @@
 """Tests for clawbench.utils.update_llms documentation generator script."""
 
-import io
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 import pytest
@@ -11,8 +10,6 @@ from clawbench.utils.update_llms import (
     fetch_sitemap_urls,
     generate_llms_txt_content,
     get_canonical_resources_section,
-    get_citations_section,
-    get_header_section,
     get_interactive_pages_section,
     get_leaderboard_section,
     get_quick_facts_section,
