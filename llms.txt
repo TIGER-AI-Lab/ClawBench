@@ -15,6 +15,18 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 - [V1 execution traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace): replayable run artifacts.
 - [V2 execution traces](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace): rolling V2 run artifacts.
 
+## Interactive pages
+
+- [Project Home](https://claw-bench.com/)
+- [Leaderboard](https://claw-bench.com/leaderboard)
+- [Task Detail](https://claw-bench.com/tasks)
+- [Traces](https://claw-bench.com/traces)
+- [Compare](https://claw-bench.com/compare)
+- [Difficulty](https://claw-bench.com/difficulty)
+- [Categories](https://claw-bench.com/categories)
+- [Gallery](https://claw-bench.com/gallery)
+- [Contribute](https://claw-bench.com/contribute)
+
 ## Quick facts
 
 - V1: 153 tasks across 144 live websites and 15 life categories.
@@ -22,12 +34,6 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 - Evidence layers: session replay, screenshots, HTTP traffic, browser actions, and agent messages.
 - Supported harnesses include OpenClaw, OpenCode, Claude Code, Codex, Browser-Use, Hermes, Pi, and other compatible browser agents.
 
-## Citations 
-```bibtex
-@article{zhang2026clawbench,
-  title={ClawBench: Can AI Agents Complete Everyday Online Tasks?},
-  author={Zhang, Yuxuan and Wang, Yubo and Zhu, Yipeng and Du, Penghui and Miao, Junwen and Lu, Xuan and Xu, Wendong and Hao, Yunzhuo and Cai, Songcheng and Wang, Xiaochen and Zhang, Huaisong and Wu, Xian and Lu, Yi and Lei, Minyi and Zou, Kai and Yin, Huifeng and Nie, Ping and Chen, Liang and Jiang, Dongfu and Chen, Wenhu and Allen, Kelsey R.},
-  journal={arXiv preprint arXiv:2604.08523},
-  year={2026}
-}
-```
+## Citation
+
+If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
