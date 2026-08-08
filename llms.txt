@@ -56,6 +56,12 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 - Evidence layers: session replay, screenshots, HTTP traffic, browser actions, and agent messages.
 - Supported harnesses include OpenClaw, OpenCode, Claude Code, Codex, Browser-Use, Hermes, Pi, and other compatible browser agents.
 
-## Citation
-
-If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
+## Citations
+```bibtex
+@article{zhang2026clawbench,
+  title={ClawBench: Can AI Agents Complete Everyday Online Tasks?},
+  author={Zhang, Yuxuan and Wang, Yubo and Zhu, Yipeng and Du, Penghui and Miao, Junwen and Lu, Xuan and Xu, Wendong and Hao, Yunzhuo and Cai, Songcheng and Wang, Xiaochen and Zhang, Huaisong and Wu, Xian and Lu, Yi and Lei, Minyi and Zou, Kai and Yin, Huifeng and Nie, Ping and Chen, Liang and Jiang, Dongfu and Chen, Wenhu and Allen, Kelsey R.},
+  journal={arXiv preprint arXiv:2604.08523},
+  year={2026}
+}
+```
