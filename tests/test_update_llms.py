@@ -133,11 +133,19 @@ def test_get_leaderboard_section_formatting() -> None:
             {"model": "model-b", "reward": 0.7, "matched": 107, "n": 153},
         ],
         "rows_v2_hermes": [
-            {"model": "model-x", "reward": 0.5, "int_rate": 0.6, "matched": 65, "n": 130},
+            {
+                "model": "model-x",
+                "reward": 0.5,
+                "int_rate": 0.6,
+                "matched": 65,
+                "n": 130,
+            },
         ],
     }
 
-    with patch("clawbench.utils.update_llms.fetch_leaderboard_data", return_value=mock_data):
+    with patch(
+        "clawbench.utils.update_llms.fetch_leaderboard_data", return_value=mock_data
+    ):
         section = get_leaderboard_section()
 
     assert "## Leaderboard" in section
@@ -149,7 +157,10 @@ def test_get_leaderboard_section_formatting() -> None:
 
 def test_get_interactive_pages_section() -> None:
     """Verify interactive pages list is generated from sitemap URLs."""
-    with patch("clawbench.utils.update_llms.fetch_sitemap_urls", return_value=["https://claw-bench.com/leaderboard"]):
+    with patch(
+        "clawbench.utils.update_llms.fetch_sitemap_urls",
+        return_value=["https://claw-bench.com/leaderboard"],
+    ):
         section = get_interactive_pages_section()
     assert "## Interactive pages" in section
     assert "- [Leaderboard](https://claw-bench.com/leaderboard)" in section

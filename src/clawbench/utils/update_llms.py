@@ -15,6 +15,7 @@ from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT
 # Helper Functions & Data Fetchers
 # ===========================================================================
 
+
 # ---------------------------------------------------------------------------
 # Citation BibTeX Parser
 # ---------------------------------------------------------------------------
@@ -57,7 +58,9 @@ def parse_citation_bibtex(cff_path: Path | None = None) -> str:
 # ---------------------------------------------------------------------------
 # Sitemap XML Fetcher
 # ---------------------------------------------------------------------------
-def fetch_sitemap_urls(sitemap_url: str = "https://claw-bench.com/sitemap.xml") -> list[str]:
+def fetch_sitemap_urls(
+    sitemap_url: str = "https://claw-bench.com/sitemap.xml",
+) -> list[str]:
     """Fetch and parse URLs from sitemap.xml with fallback default URLs."""
     fallback_urls = [
         "https://claw-bench.com/",
@@ -75,7 +78,11 @@ def fetch_sitemap_urls(sitemap_url: str = "https://claw-bench.com/sitemap.xml") 
         with urllib.request.urlopen(req, timeout=5) as resp:
             content = resp.read().decode("utf-8")
         tree = ET.fromstring(content)
-        urls = [elem.text.strip() for elem in tree.iter() if elem.tag.endswith("loc") and elem.text]
+        urls = [
+            elem.text.strip()
+            for elem in tree.iter()
+            if elem.tag.endswith("loc") and elem.text
+        ]
         return urls if urls else fallback_urls
     except Exception:
         return fallback_urls
@@ -84,10 +91,14 @@ def fetch_sitemap_urls(sitemap_url: str = "https://claw-bench.com/sitemap.xml") 
 # ---------------------------------------------------------------------------
 # Leaderboard Data Fetcher
 # ---------------------------------------------------------------------------
-def fetch_leaderboard_data(leaderboard_url: str = "https://claw-bench.com/api/leaderboard.json") -> dict:
+def fetch_leaderboard_data(
+    leaderboard_url: str = "https://claw-bench.com/api/leaderboard.json",
+) -> dict:
     """Fetch leaderboard data from API with fallback structure."""
     try:
-        req = urllib.request.Request(leaderboard_url, headers={"User-Agent": "Mozilla/5.0"})
+        req = urllib.request.Request(
+            leaderboard_url, headers={"User-Agent": "Mozilla/5.0"}
+        )
         with urllib.request.urlopen(req, timeout=5) as resp:
             return json.loads(resp.read().decode("utf-8"))
     except Exception:
@@ -109,6 +120,7 @@ def url_to_title(url: str) -> str:
 # ===========================================================================
 # Section Generators
 # ===========================================================================
+
 
 # ---------------------------------------------------------------------------
 # Header Section Generator
@@ -152,20 +164,60 @@ def get_leaderboard_section() -> str:
         v1_top5 = [
             {"model": "claude-opus-4-6", "reward": 0.6144, "matched": 94, "n": 153},
             {"model": "claude-sonnet-4-6", "reward": 0.5686, "matched": 87, "n": 153},
-            {"model": "claude-haiku-4-5-20251001", "reward": 0.3007, "matched": 46, "n": 153},
+            {
+                "model": "claude-haiku-4-5-20251001",
+                "reward": 0.3007,
+                "matched": 46,
+                "n": 153,
+            },
             {"model": "gpt-5.4-2026-03-05", "reward": 0.2549, "matched": 39, "n": 153},
-            {"model": "gpt-5.4-mini-2026-03-17", "reward": 0.2484, "matched": 38, "n": 153},
+            {
+                "model": "gpt-5.4-mini-2026-03-17",
+                "reward": 0.2484,
+                "matched": 38,
+                "n": 153,
+            },
         ]
 
     if v2_rows:
         v2_top5 = sorted(v2_rows, key=lambda x: x.get("reward", 0), reverse=True)[:5]
     else:
         v2_top5 = [
-            {"model": "claude-opus-4-7", "reward": 0.4462, "int_rate": 0.5462, "matched": 58, "n": 130},
-            {"model": "gpt-5.5", "reward": 0.3538, "int_rate": 0.4538, "matched": 46, "n": 130},
-            {"model": "glm-5.1", "reward": 0.3462, "int_rate": 0.4846, "matched": 45, "n": 130},
-            {"model": "deepseek-v4-pro", "reward": 0.3385, "int_rate": 0.4385, "matched": 44, "n": 130},
-            {"model": "deepseek-v4-flash:free", "reward": 0.0233, "int_rate": 0.0310, "matched": 3, "n": 130},
+            {
+                "model": "claude-opus-4-7",
+                "reward": 0.4462,
+                "int_rate": 0.5462,
+                "matched": 58,
+                "n": 130,
+            },
+            {
+                "model": "gpt-5.5",
+                "reward": 0.3538,
+                "int_rate": 0.4538,
+                "matched": 46,
+                "n": 130,
+            },
+            {
+                "model": "glm-5.1",
+                "reward": 0.3462,
+                "int_rate": 0.4846,
+                "matched": 45,
+                "n": 130,
+            },
+            {
+                "model": "deepseek-v4-pro",
+                "reward": 0.3385,
+                "int_rate": 0.4385,
+                "matched": 44,
+                "n": 130,
+            },
+            {
+                "model": "deepseek-v4-flash:free",
+                "reward": 0.0233,
+                "int_rate": 0.0310,
+                "matched": 3,
+                "n": 130,
+            },
         ]
 
     lines = [
@@ -183,20 +235,24 @@ def get_leaderboard_section() -> str:
         n = r.get("n", 153)
         lines.append(f"| {i} | {model} | {reward:.1f}% | {matched} / {n} |")
 
-    lines.extend([
-        "",
-        "### V2 Hermes (Top 5)",
-        "",
-        "| Rank | Model | Intercepted | Reward (Lenient) | Pass / Total |",
-        "| :---: | :--- | :---: | :---: | :---: |",
-    ])
+    lines.extend(
+        [
+            "",
+            "### V2 Hermes (Top 5)",
+            "",
+            "| Rank | Model | Intercepted | Reward (Lenient) | Pass / Total |",
+            "| :---: | :--- | :---: | :---: | :---: |",
+        ]
+    )
     for i, r in enumerate(v2_top5, 1):
         model = r.get("model", "")
         int_rate = r.get("int_rate", 0) * 100
         reward = r.get("reward", 0) * 100
         matched = r.get("matched", 0)
         n = r.get("n", 130)
-        lines.append(f"| {i} | {model} | {int_rate:.1f}% | {reward:.1f}% | {matched} / {n} |")
+        lines.append(
+            f"| {i} | {model} | {int_rate:.1f}% | {reward:.1f}% | {matched} / {n} |"
+        )
 
     return "\n".join(lines)
 
@@ -263,10 +319,15 @@ def generate_llms_txt_content() -> str:
 # CLI Main Entry Point
 # ===========================================================================
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update llms.txt dynamically.")
-    parser.add_argument("--output", "-o", type=Path, default=WORKSPACE_ROOT / "llms.txt")
-    parser.add_argument("--dry-run", action="store_true", help="Print content to stdout.")
+    parser.add_argument(
+        "--output", "-o", type=Path, default=WORKSPACE_ROOT / "llms.txt"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print content to stdout."
+    )
     args = parser.parse_args()
 
     content = generate_llms_txt_content()
