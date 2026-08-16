@@ -13,26 +13,27 @@
 [![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
 [![HF Trace Dataset](https://img.shields.io/badge/Trace_Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 [![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
-[![GitHub stars](https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/reacher-z/ClawBench)
-[![Discord](https://img.shields.io/badge/Discord-%E5%8A%A0%E5%85%A5-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
-[![Codespaces](https://img.shields.io/badge/Codespaces-%E4%B8%80%E9%94%AE%E6%89%93%E5%BC%80-181717?style=flat-square&logo=github&logoColor=white)](https://codespaces.new/reacher-z/ClawBench?quickstart=1)
-
-[![PyPI downloads](https://img.shields.io/pypi/dm/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads)](https://pypi.org/project/clawbench-eval/)
 [![PyPI version](https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbench-eval/)
-[![Last commit](https://img.shields.io/github/last-commit/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/commits/main)
-[![Contributors](https://img.shields.io/github/contributors/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/contributors)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white)](https://github.com/reacher-z/ClawBench/graphs/commit-activity)
+[![Discord](https://img.shields.io/badge/Discord-%E5%8A%A0%E5%85%A5-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/clawbench)
 [![License](https://img.shields.io/github/license/reacher-z/ClawBench?style=flat-square&color=A42E2B)](https://github.com/reacher-z/ClawBench/blob/main/LICENSE)
 
 <p align="center">
   <a href="https://huggingface.co/papers/2604.08523"><img src="https://img.shields.io/badge/%233_Paper_of_the_Day-FFD21E?style=for-the-badge&logo=huggingface&logoColor=000" alt="#3 Paper of the Day"></a>
 </p>
 
+<details>
+<summary><sub><i>更多徽章 &nbsp;·&nbsp; 已被 37 个精选列表收录</i></sub></summary>
+
 <p align="center">
+  <a href="https://github.com/reacher-z/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/reacher-z/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300"></a>
+  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI downloads" src="https://img.shields.io/pypi/dm/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white&label=PyPI%20downloads"></a>
+  <a href="https://github.com/reacher-z/ClawBench/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white"></a>
+  <a href="https://github.com/reacher-z/ClawBench/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white"></a>
+  <a href="https://github.com/reacher-z/ClawBench/graphs/commit-activity"><img alt="Commit activity" src="https://img.shields.io/github/commit-activity/m/reacher-z/ClawBench?style=flat-square&logo=github&logoColor=white"></a>
+  <a href="https://codespaces.new/reacher-z/ClawBench?quickstart=1"><img alt="Codespaces" src="https://img.shields.io/badge/Codespaces-%E4%B8%80%E9%94%AE%E6%89%93%E5%BC%80-181717?style=flat-square&logo=github&logoColor=white"></a>
   <a href="https://deepwiki.com/reacher-z/ClawBench"><img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" /></a>
 </p>
-<details>
-<summary><sub><i>已被 37 个精选列表收录</i></sub></summary>
+
 <p align="center">
   <a href="https://github.com/walkinglabs/awesome-harness-engineering"><img alt="awesome-harness-engineering" src="https://img.shields.io/badge/Featured-awesome--harness--engineering-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
   <a href="https://github.com/Picrew/awesome-agent-harness"><img alt="awesome-agent-harness" src="https://img.shields.io/badge/Featured-awesome--agent--harness-7C3AED?style=flat-square&logo=awesomelists&logoColor=white"></a>
@@ -78,11 +79,6 @@
 
 <div align="center">
 
-<p align="center">
-  <b>新项目：</b> 欢迎关注我们的姊妹项目 <a href="https://github.com/reacher-z/HarnessBench"><b>HarnessBench</b></a> &mdash;
-  固定基础模型，比较不同 Harness。同一套评测流水线，正交维度。
-</p>
-
 <a href="#-手动快速开始"><img src="https://img.shields.io/badge/%E4%B8%80%E9%94%AE%E5%90%AF%E5%8A%A8-4F46E5?style=for-the-badge&labelColor=4F46E5&logoColor=white&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMjYzLjQtMjdMMjc4LjIgOS44IDMxNSAyNC42YzMgMS4yIDUgNC4yIDUgNy40cy0yIDYuMi01IDcuNEwyNzguMiA1NC4yIDI2My40IDkxYy0xLjIgMy00LjIgNS03LjQgNXMtNi4yLTItNy40LTVMMjMzLjggNTQuMiAxOTcgMzkuNGMtMy0xLjItNS00LjItNS03LjRzMi02LjIgNS03LjRMMjMzLjggOS44IDI0OC42LTI3YzEuMi0zIDQuMi01IDcuNC01czYuMiAyIDcuNCA1ek0xMTAuNyA0MS43bDIxLjUgNTAuMSA1MC4xIDIxLjVjNS45IDIuNSA5LjcgOC4zIDkuNyAxNC43cy0zLjggMTIuMi05LjcgMTQuN2wtNTAuMSAyMS41LTIxLjUgNTAuMWMtMi41IDUuOS04LjMgOS43LTE0LjcgOS43cy0xMi4yLTMuOC0xNC43LTkuN0w1OS44IDE2NC4yIDkuNyAxNDIuN0MzLjggMTQwLjIgMCAxMzQuNCAwIDEyOHMzLjgtMTIuMiA5LjctMTQuN0w1OS44IDkxLjggODEuMyA0MS43QzgzLjggMzUuOCA4OS42IDMyIDk2IDMyczEyLjIgMy44IDE0LjcgOS43ek00NjQgMzA0YzYuNCAwIDEyLjIgMy44IDE0LjcgOS43bDIxLjUgNTAuMSA1MC4xIDIxLjVjNS45IDIuNSA5LjcgOC4zIDkuNyAxNC43cy0zLjggMTIuMi05LjcgMTQuN2wtNTAuMSAyMS41LTIxLjUgNTAuMWMtMi41IDUuOS04LjMgOS43LTE0LjcgOS43cy0xMi4yLTMuOC0xNC43LTkuN2wtMjEuNS01MC4xLTUwLjEtMjEuNWMtNS45LTIuNS05LjctOC4zLTkuNy0xNC43czMuOC0xMi4yIDkuNy0xNC43bDUwLjEtMjEuNSAyMS41LTUwLjFjMi41LTUuOSA4LjMtOS43IDE0LjctOS43ek00NjAgMGMxMSAwIDIxLjYgNC40IDI5LjUgMTIuMmw0Mi4zIDQyLjNDNTM5LjYgNjIuNCA1NDQgNzMgNTQ0IDg0cy00LjQgMjEuNi0xMi4yIDI5LjVsLTg4LjIgODguMi0xMDEuMy0xMDEuMyA4OC4yLTg4LjJDNDM4LjQgNC40IDQ0OSAwIDQ2MCAwek00NC4yIDM5OC41TDMwOC40IDEzNC4zIDQwOS43IDIzNS42IDE0NS41IDQ5OS44QzEzNy42IDUwNy42IDEyNyA1MTIgMTE2IDUxMnMtMjEuNi00LjQtMjkuNS0xMi4yTDQ0LjIgNDU3LjVDMzYuNCA0NDkuNiAzMiA0MzkgMzIgNDI4czQuNC0yMS42IDEyLjItMjkuNXoiLz48L3N2Zz4=" alt="一键启动"></a>
 
 ```bash
@@ -95,11 +91,16 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 
 **ClawBench 是一个开源基准，用于评测 AI browser agent 在日常在线任务上的表现 —— 订酒店、点外卖、投简历、管理邮件 —— 覆盖真实网站。V1 位于 `test-cases/v1/`，包含 153 个任务、覆盖 144 个网站；V2 位于 `test-cases/v2/`，包含 130 个任务。它通过 5 层录制管线和对照人工参考轨迹的 agentic evaluator 衡量端到端任务完成率。目前最高分：33.3%。**
 
-<img src="../assets/clawbench_logo.png" alt="ClawBench logo" width="320">
-
-我们让前沿 AI 智能体去做人们每天都在做的事 --<br/>
+<table>
+<tr>
+<td width="220" align="center"><img src="../assets/clawbench_logo.png" alt="ClawBench logo" width="200"></td>
+<td align="left" valign="middle">
+我们让前沿 AI 智能体去做人们每天都在做的事 ——<br/>
 点外卖、订酒店、投简历、写评价、管理项目。<br/>
-**即使最强的模型，也只能完成其中约三分之一。**
+<b>即使最强的模型，也只能完成其中约三分之一。</b>
+</td>
+</tr>
+</table>
 
 <sub><i>由 NAIL Group 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
 
@@ -185,6 +186,9 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 - **[2026.05.09]** <img src="../assets/icons/layer-group.svg" width="14" height="14"> &nbsp;发布 **[ClawBenchV1Trace](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)** —— V1 全部已评测模型运行的完整执行 trace：屏幕录制（`recording.mp4`）、网络请求（`requests.jsonl`）、浏览器操作（`actions.jsonl`）、智能体推理（`agent-messages.jsonl`）、被拦截的最终请求（`interception.json`）。任何人都可基于此复现、重新评分或事后分析我们的结果。与既有的 [任务定义数据集](https://huggingface.co/datasets/NAIL-Group/ClawBench) 配套使用。
 - **[2026.05.09]** <img src="../assets/icons/robot.svg" width="14" height="14"> &nbsp;新增 **inline LLM judge** 作为第二阶段评分。Pass = (1) 智能体最终 HTTP 请求被拦截并匹配任务的 URL/method schema，且 (2) LLM judge 确认请求 body 实际满足自然语言指令。默认 judge：`deepseek-v4-pro`。可用 `--no-judge` 关闭。这意味着**运行现在会自动产出最终 pass/fail 分数**，不再需要单独检查轨迹。
 - **[2026.05.09]** <img src="../assets/icons/rocket.svg" width="14" height="14"> &nbsp;我们更新了发布流水线，并将包以 [**clawbench-eval**](https://pypi.org/project/clawbench-eval/) 的名称发布到 PyPI，便于安装和使用。
+<details>
+<summary><i>更早动态</i></summary>
+
 - **[2026.05.04]** <img src="../assets/icons/screwdriver-wrench.svg" width="14" height="14"> &nbsp;重构了代码库，以优化项目结构、提升 CI/CD 流水线效率、增强对更多测试套件的扩展能力，并为 **V1**、**V1-Lite** 和 **V2** 提供更稳定的构建行为；同时根据用户反馈更新了常见问题部分。
 - **[2026.05.01]** <img src="../assets/icons/rocket.svg" width="14" height="14"> &nbsp;加入完整 **V2** 130-task 语料和一行 Hermes 启动命令：
   `uv run clawbench-batch --models deepseek/deepseek-v4-flash --cases-suite v2 --all-cases --harness hermes --max-concurrent 3 --no-upload`
@@ -200,6 +204,14 @@ git clone https://github.com/reacher-z/ClawBench.git && cd ClawBench && ./run.sh
 - **[2026.04.14]** 项目被 [**DeepWiki**](https://deepwiki.com/reacher-z/ClawBench) 收录 — 可用自然语言提问 ClawBench 相关问题。
 - **[2026.04.11]** 荣获 [**HuggingFace 当日论文 #3**](https://huggingface.co/papers/2604.08523)!
 - **[2026.04.11]** 论文发布于 [arXiv (2604.08523)](https://arxiv.org/abs/2604.08523)。数据集上线 [HuggingFace](https://huggingface.co/datasets/NAIL-Group/ClawBench)。
+
+</details>
+
+## <a id="awesome-works-using-clawbench"></a>✨ 使用 ClawBench 的研究工作
+
+**社区作者来自 Google DeepMind、Stanford、UC Berkeley、Google、Microsoft Research、Harvard、ETH Zürich、Oxford、Northwestern、Princeton、Carnegie Mellon、字节跳动 Seed、HKUST 等机构。**
+
+很高兴看到 ClawBench 被研究社区广泛使用。如果我们遗漏了你的工作，欢迎[提 issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) 或直接提交 PR。完整条目列表见[英文版 README](../README.md#awesome-works-using-clawbench)。
 
 <br/>
 
@@ -624,6 +636,14 @@ ClawBench 定位:**真实消费级网站、日常任务、端到端录制**。�
 # 单次运行:
 uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats claude-sonnet-4-6
 
+# 批量运行 test-cases/v2/ 中的全部 V2 任务:
+uv run clawbench-batch --models claude-sonnet-4-6 --cases-suite v2 --all-cases --max-concurrent 3
+```
+
+<details>
+<summary><b>全部命令</b> &nbsp;—— Browserbase、人工模式、批量变体、Harbor</summary>
+
+```bash
 # 使用 Browserbase 云浏览器进行单次运行（密钥读取自 .env.local）:
 uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats claude-sonnet-4-6 --browser-runtime browserbase
 
@@ -635,9 +655,6 @@ uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
 
 # 批量运行 test-cases/v1/ 中的全部 V1 任务:
 uv run clawbench-batch --models claude-sonnet-4-6 --all-cases --max-concurrent 3
-
-# 批量运行 test-cases/v2/ 中的全部 V2 任务:
-uv run clawbench-batch --models claude-sonnet-4-6 --cases-suite v2 --all-cases --max-concurrent 3
 
 # 批量运行自定义 case 目录:
 uv run clawbench-batch --models claude-sonnet-4-6 --cases-dir custom-cases --all-cases
@@ -654,6 +671,8 @@ uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a "<agen
 #   Hermes 通过 OpenRouter:
 #     -a hermes -m deepseek/deepseek-v4-flash
 ```
+
+</details>
 
 使用 Browserbase 前，请把密钥放在不会提交到 Git 的 `.env.local` 中：
 
@@ -690,7 +709,42 @@ V1 任务位于 [`test-cases/v1/`](../test-cases/v1/)（153 个任务）。V2 �
 
 <br/>
 
-# <img src="../assets/icons/circle-question.svg" width="28" height="28"> FAQ
+# <a id="常见问题"></a><img src="../assets/icons/circle-question.svg" width="28" height="28"> FAQ
+
+<details>
+<summary><b>ClawBench 是什么?</b></summary>
+
+ClawBench 是一个开源的 AI browser agent 基准 —— 即那些驱动真实浏览器去完成用户任务的系统(基于 GPT、Claude,或开源模型)。V1 衡量 agent 是否真的完成了 153 项日常在线任务,涵盖 144 个真实网站;V2 在 `test-cases/v2/` 中新增 130 项任务。它衡量的是端到端完成情况,而不是 agent 产生的文本看起来是否对。
+
+</details>
+
+<details>
+<summary><b>ClawBench 覆盖哪些任务?</b></summary>
+
+15 个生活类别:外卖、订票、投简历、购物、租房、邮件与日历管理、学术研究、软件开发、学习平台等等。每一项都是一个普通人在普通的一周里、在真实网站上可能做的事。
+
+</details>
+
+<details>
+<summary><b>153 个任务够评测吗?</b></summary>
+
+够作为 V1 的 benchmark 信号:这 153 项任务覆盖 144 个真实网站和 15 个生活类别,而且完整跑一遍成本很高,因为每次运行都要启动隔离容器、访问真实网站、记录五层数据,并在运行后对照人工参考轨迹评判。V2 在 `test-cases/v2/` 里又补充了 130 项任务。想低成本试跑时,可以先用 20 题精选子集 [`test-cases/v1-lite/`](../test-cases/v1-lite/)。
+
+</details>
+
+<details>
+<summary><b>任务成功如何判定?</b></summary>
+
+每个任务运行在隔离的浏览器容器中,并进行五层录制:视频、截图、网络请求、浏览器动作和 agent 消息。原始 V1 结果由评测器将 agent 轨迹与人工参考运行对照,并基于录制证据给出 PASS / FAIL。V2 和较新的 leaderboard 行采用两阶段评分:首先由请求拦截器判断最终被拦截的 HTTP 请求是否匹配任务的 URL / method schema;然后由 LLM judge 判断该请求 payload 是否真正满足自然语言任务要求。
+
+</details>
+
+<details>
+<summary><b>目前最高分是多少?</b></summary>
+
+33.3% —— 大约三分之一的任务完成率 —— 来自我们评测过的最强前沿模型。大多数任务仍能击败我们测试过的每一个模型;提升空间真实存在,基准尚未饱和。
+
+</details>
 
 <details>
 <summary><b>每次运行会产生什么数据?</b></summary>
@@ -748,9 +802,79 @@ Pi 的 `agent.log`、`proxy.log` 等 harness 诊断日志不会复制到最终�
 </details>
 
 <details>
-<summary><b>如何添加新的测试用例?</b></summary>
+<summary><b>如何添加新的测试用例或 harness?</b></summary>
 
-参见 [CONTRIBUTING.md](../CONTRIBUTING.md)。简言之: 在目标语料目录下创建目录 (`test-cases/v1/` 用于 V1,`test-cases/v2/` 用于 V2),编写符合 `test-cases/task.schema.json` 的 `task.json`,定义评测 schema,用人工模式测试,然后提交 PR。
+参见 [CONTRIBUTING.md](../CONTRIBUTING.md)。简言之: 在目标语料目录下创建目录 (`test-cases/v1/` 用于 V1,`test-cases/v2/` 用于 V2,Lite 任务放在 `test-cases/v1-lite/`),编写符合 `test-cases/task.schema.json` 的 `task.json`,定义评测 schema,用人工模式测试,然后提交 PR。Harness 定义位于 `src/clawbench/runtime/harnesses/harnesses.yaml`。
+
+</details>
+
+<details>
+<summary><b>账号登录、注册和初始任务环境如何处理?</b></summary>
+
+每次运行都会获得一套合成用户档案和一个新的一次性 PurelyMail 邮箱。如果任务需要注册,agent 通常从头开始注册,并使用提供的身份信息和邮箱。如果任务依赖初始文件或工作区上下文,这些文件会放在该任务的 `extra_info/` 目录中,并在运行时挂载给 agent。
+
+</details>
+
+<details>
+<summary><b>真实网站发生变化怎么办?</b></summary>
+
+真实网站变化本身就是 ClawBench 想要评测的一部分:我们关心的是 agent 能否处理生产网站,而不是冻结的静态页面。因此,网站改版、可用性变化、风控系统或不同流程都可能影响运行结果。可复现性来自公开的任务定义、eval schema、run metadata 和五层 trace;如果要研究网站漂移,也可以跨时间重复运行同一批任务。
+
+</details>
+
+<details>
+<summary><b>CAPTCHA / 人机校验造成的失败如何处理?</b></summary>
+
+如果 agent 遇到 CAPTCHA,它必须尝试解决。我们观察到一些前沿模型可以解决部分 CAPTCHA。CAPTCHA 失败可能来自模型行为、浏览器控制栈限制,也可能来自网站自己的风控。trace 数据集可以让这些失败被检查。
+
+</details>
+
+<details>
+<summary><b>公开模型结果是基于哪个 harness 跑的?</b></summary>
+
+仓库默认 harness 是 `openclaw`,但 leaderboard 每一行都会显式记录 harness。V1 结果使用 OpenClaw;较新的运行可能使用 Hermes 或其他支持的 harness。比较模型时请同时查看 `harness` 列,因为模型和 harness 是两个独立实验维度。
+
+</details>
+
+<details>
+<summary><b>ClawBench 和 OpenClaw 深耦合吗?</b></summary>
+
+不深耦合。OpenClaw 是默认 harness,但 ClawBench 支持 `src/clawbench/runtime/harnesses/harnesses.yaml` 中列出的可替换 harness。
+
+</details>
+
+<details>
+<summary><b>支持 CLI agent 吗?</b></summary>
+
+支持。ClawBench 评测的是浏览器任务完成情况,但 CLI / coding-agent harness 可以用原生工具或 MCP 驱动同一个被录制和拦截的 Chromium 会话。
+
+</details>
+
+<details>
+<summary><b>如何复现已发表的分数?</b></summary>
+
+在源码 checkout 中配置好 `models/models.yaml` 后运行 `uv run clawbench`。TUI 会构建容器镜像，并在你选择的模型上运行本地任务。批量运行 V1 用 `--all-cases`；运行 V2 用 `--cases-suite v2 --all-cases`；低成本试跑 Lite 用 `--cases-suite v1-lite --all-cases`。
+
+</details>
+
+<details>
+<summary><b>会更新新模型结果吗?</b></summary>
+
+会。新模型可以通过贡献流程和 issue 提交 / 请求测试。公开结果会在完整运行完成后加入;如果是未跑完整个语料的结果,应明确标注为 partial。
+
+</details>
+
+<details>
+<summary><b>在真实网站上运行 ClawBench 安全吗?</b></summary>
+
+runner 使用加固的容器,内置请求拦截器,默认阻止下单付款、注册账号、发送邮件等不可逆动作。需要*模拟*这些动作的任务(比如"加入购物车并结账")会在最后一个可逆步骤终止。若你的研究确实需要,可以按任务放宽拦截器。
+
+</details>
+
+<details>
+<summary><b>ClawBench 和 HarnessBench 是什么关系?</b></summary>
+
+同一套评分管线,正交维度。ClawBench 固定 harness、比较不同模型;[HarnessBench](https://github.com/reacher-z/HarnessBench) 固定模型、比较不同 harness。两者共享 153 项任务集、五层录制和 agentic evaluator —— 分数可直接相互比较。
 
 </details>
 
@@ -800,56 +924,6 @@ Pi 的 `agent.log`、`proxy.log` 等 harness 诊断日志不会复制到最终�
 </table>
 
 Discord 和 GitHub Discussions 可用于持续交流；微信群请使用上方二维码链接。
-
-## 常见问题
-
-**ClawBench 是什么?**
-ClawBench 是一个开源的 AI browser agent 基准 —— 即那些驱动真实浏览器去完成用户任务的系统(基于 GPT、Claude,或开源模型)。V1 衡量 agent 是否真的完成了 153 项日常在线任务,涵盖 144 个真实网站;V2 在 `test-cases/v2/` 中新增 130 项任务。它衡量的是端到端完成情况,而不是 agent 产生的文本看起来是否对。
-
-**ClawBench 覆盖哪些任务?**
-15 个生活类别:外卖、订票、投简历、购物、租房、邮件与日历管理、学术研究、软件开发、学习平台等等。每一项都是一个普通人在普通的一周里、在真实网站上可能做的事。
-
-**153 个任务够评测吗?**
-够作为 V1 的 benchmark 信号:这 153 项任务覆盖 144 个真实网站和 15 个生活类别,而且完整跑一遍成本很高,因为每次运行都要启动隔离容器、访问真实网站、记录五层数据,并在运行后对照人工参考轨迹评判。V2 在 `test-cases/v2/` 里又补充了 130 项任务。想低成本试跑时,可以先用 20 题精选子集 [`test-cases/v1-lite/`](../test-cases/v1-lite/)。
-
-**任务成功如何判定?**
-每个任务运行在隔离的浏览器容器中,并进行五层录制:视频、截图、网络请求、浏览器动作和 agent 消息。原始 V1 结果由评测器将 agent 轨迹与人工参考运行对照,并基于录制证据给出 PASS / FAIL。V2 和较新的 leaderboard 行采用两阶段评分:首先由请求拦截器判断最终被拦截的 HTTP 请求是否匹配任务的 URL / method schema;然后由 LLM judge 判断该请求 payload 是否真正满足自然语言任务要求。
-
-**账号登录、注册和初始任务环境如何处理?**
-每次运行都会获得一套合成用户档案和一个新的一次性 PurelyMail 邮箱。如果任务需要注册,agent 通常从头开始注册,并使用提供的身份信息和邮箱。如果任务依赖初始文件或工作区上下文,这些文件会放在该任务的 `extra_info/` 目录中,并在运行时挂载给 agent。
-
-**真实网站发生变化怎么办?**
-真实网站变化本身就是 ClawBench 想要评测的一部分:我们关心的是 agent 能否处理生产网站,而不是冻结的静态页面。因此,网站改版、可用性变化、风控系统或不同流程都可能影响运行结果。可复现性来自公开的任务定义、eval schema、run metadata 和五层 trace;如果要研究网站漂移,也可以跨时间重复运行同一批任务。
-
-**CAPTCHA / 人机校验造成的失败如何处理?**
-如果 agent 遇到 CAPTCHA,它必须尝试解决。我们观察到一些前沿模型可以解决部分 CAPTCHA。CAPTCHA 失败可能来自模型行为、浏览器控制栈限制,也可能来自网站自己的风控。trace 数据集可以让这些失败被检查。
-
-**目前最高分是多少?**
-33.3% —— 大约三分之一的任务完成率 —— 来自我们评测过的最强前沿模型。大多数任务仍能击败我们测试过的每一个模型;提升空间真实存在,基准尚未饱和。
-
-**公开模型结果是基于哪个 harness 跑的?**
-仓库默认 harness 是 `openclaw`,但 leaderboard 每一行都会显式记录 harness。V1 结果使用 OpenClaw;较新的运行可能使用 Hermes 或其他支持的 harness。比较模型时请同时查看 `harness` 列,因为模型和 harness 是两个独立实验维度。
-
-**ClawBench 和 OpenClaw 深耦合吗?**
-不深耦合。OpenClaw 是默认 harness,但 ClawBench 支持 `src/clawbench/runtime/harnesses/` 中列出的可替换 harness。
-
-**支持 CLI agent 吗?**
-支持。ClawBench 评测的是浏览器任务完成情况,但 CLI / coding-agent harness 可以用原生工具或 MCP 驱动同一个被录制和拦截的 Chromium 会话。
-
-**如何复现已发表的分数?**
-在源码 checkout 中配置好 `models/models.yaml` 后运行 `uv run clawbench`。TUI 会构建容器镜像，并在你选择的模型上运行本地任务。批量运行 V1 用 `--all-cases`；运行 V2 用 `--cases-suite v2 --all-cases`；低成本试跑 Lite 用 `--cases-suite v1-lite --all-cases`。
-
-**会更新新模型结果吗?**
-会。新模型可以通过贡献流程和 issue 提交 / 请求测试。公开结果会在完整运行完成后加入;如果是未跑完整个语料的结果,应明确标注为 partial。
-
-**在真实网站上运行 ClawBench 安全吗?**
-runner 使用加固的容器,内置请求拦截器,默认阻止下单付款、注册账号、发送邮件等不可逆动作。需要*模拟*这些动作的任务(比如"加入购物车并结账")会在最后一个可逆步骤终止。若你的研究确实需要,可以按任务放宽拦截器。
-
-**可以贡献新任务或新 harness 吗?**
-可以。V1 任务放在 `test-cases/v1/`;V2 任务放在 `test-cases/v2/`;Lite 任务放在 `test-cases/v1-lite/`。测试用例 schema 和验证流程详见 `CONTRIBUTING.md`。
-
-**ClawBench 和 HarnessBench 是什么关系?**
-同一套评分管线,正交维度。ClawBench 固定 harness、比较不同模型;HarnessBench 固定模型、比较不同 harness。两者共享 153 项任务集、五层录制和 agentic evaluator —— 分数可直接相互比较。
 
 ## 引用
 

@@ -1,0 +1,48 @@
+name: awesome-works-scan
+
+on:
+  schedule:
+    - cron: "0 6 * * 0" # every Sunday 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Collect previously reported candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue list --repo "$GITHUB_REPOSITORY" --label awesome-works --state all \
+            --limit 200 --json body --jq '.[].body' > seen.txt || true
+
+      - name: Scan Semantic Scholar for new citing papers
+        env:
+          S2_API_KEY: ${{ secrets.S2_API_KEY }}
+        run: |
+          python scripts/update_awesome_works.py \
+            --readme README.md --out candidates.md --seen-file seen.txt \
+            ${S2_API_KEY:+--api-key "$S2_API_KEY"}
+
+      - name: Open review issue
+        if: ${{ hashFiles('candidates.md') != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create awesome-works --repo "$GITHUB_REPOSITORY" \
+            --description "Weekly citing-paper scan for the Awesome Works section" \
+            --color 7C3AED || true
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "[awesome-works] New citing papers — $(date -u +%Y-%m-%d)" \
+            --label awesome-works \
+            --body-file candidates.md
