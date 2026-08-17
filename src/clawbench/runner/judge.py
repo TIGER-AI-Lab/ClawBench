@@ -172,6 +172,40 @@ def _call_anthropic_messages(
     return resp["content"][0]["text"]
 
 
+def _call_litellm(model_cfg: dict, model_name: str, system: str, user: str) -> str:
+    """Route the judge through LiteLLM, reaching any of 100+ providers with one
+    call. ``model_name`` is a LiteLLM model string (e.g. ``gpt-4o-mini``,
+    ``anthropic/claude-sonnet-4-6``, ``gemini/gemini-2.5-flash``); set
+    ``base_url`` to point at a LiteLLM proxy."""
+    try:
+        import litellm  # type: ignore
+    except ImportError as e:
+        raise ImportError(
+            "The 'litellm' package is required for api_type 'litellm'. "
+            "Install it with 'pip install clawbench[litellm]' or 'pip install litellm'."
+        ) from e
+
+    kwargs: dict[str, Any] = {}
+    if model_cfg.get("base_url"):
+        kwargs["api_base"] = model_cfg["base_url"]
+    if model_cfg.get("api_key"):
+        kwargs["api_key"] = model_cfg["api_key"]
+    resp = litellm.completion(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        max_tokens=4096,
+        temperature=0,
+        # Silently drop kwargs a given provider doesn't accept so one call works
+        # across OpenAI, Anthropic, Gemini, Bedrock, etc.
+        drop_params=True,
+        **kwargs,
+    )
+    return resp["choices"][0]["message"].get("content") or ""
+
+
 def _parse_verdict(text: str) -> tuple[bool | None, str]:
     """Best-effort parse of the judge's reply into (match, reason)."""
     text = (text or "").strip()
@@ -224,6 +258,8 @@ def _run_judge(
                 raw = _call_anthropic_messages(
                     model_cfg, judge_model_name, system, user
                 )
+            elif api_type == "litellm":
+                raw = _call_litellm(model_cfg, judge_model_name, system, user)
             else:
                 return {
                     "match": None,

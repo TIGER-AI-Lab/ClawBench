@@ -137,6 +137,7 @@ API_TYPES = [
     "openai-responses",
     "anthropic-messages",
     "google-generative-ai",
+    "litellm",
 ]
 THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "adaptive"]
 
@@ -145,6 +146,20 @@ THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh", "adaptive
 # example model names so the user doesn't have to remember the exact
 # string for each vendor.
 PROVIDER_PRESETS: dict[str, dict] = {
+    "litellm": {
+        "label": "LiteLLM    (proxy to 100+ providers)",
+        "base_url": "http://localhost:4000/v1",
+        "api_type": "litellm",
+        # With base_url pointing at a LiteLLM proxy, prefix the proxy's model
+        # name with "litellm_proxy/" so the SDK routes through the proxy.
+        # (For direct provider access instead, leave base_url blank and use a
+        # native model string like "anthropic/claude-sonnet-4-6".)
+        "examples": [
+            "litellm_proxy/gpt-4o-mini",
+            "litellm_proxy/claude-sonnet-4-6",
+            "anthropic/claude-sonnet-4-6",
+        ],
+    },
     "anthropic": {
         "label": "Anthropic  (Claude)",
         "base_url": "https://api.anthropic.com",

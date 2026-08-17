@@ -16,6 +16,11 @@ dependencies = [
     "rich>=13.0",
 ]
 
+[project.optional-dependencies]
+# Optional: judge api_type "litellm" routes to 100+ providers via one call.
+# Lazy-imported, so the base install stays dependency-light.
+litellm = ["litellm>=1.85.0,<2.0"]
+
 [project.urls]
 Homepage = "https://claw-bench.com"
 Repository = "https://github.com/reacher-z/ClawBench"

@@ -192,5 +192,26 @@ def preflight_model_api(model_cfg: dict[str, Any], timeout: int = 20) -> None:
             isinstance(resp.get("candidates"), list) and bool(resp["candidates"]),
             "model API returned no Gemini candidates",
         )
+    elif api_type == "litellm":
+        try:
+            import litellm  # type: ignore
+        except ImportError as e:
+            raise ModelApiPreflightError(
+                "api_type 'litellm' requires the 'litellm' package "
+                "(pip install clawbench[litellm])"
+            ) from e
+        resp = litellm.completion(
+            model=model,
+            messages=[{"role": "user", "content": test_content}],
+            max_tokens=4,
+            temperature=0,
+            drop_params=True,
+            api_base=base_url,
+            api_key=key,
+        )
+        _expect_field(
+            bool(getattr(resp, "choices", None)),
+            "model API returned no chat choices",
+        )
     else:
         raise ModelApiPreflightError(f"unsupported api_type {api_type!r}")
