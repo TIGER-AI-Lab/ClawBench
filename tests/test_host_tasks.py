@@ -65,3 +65,38 @@ def test_v1_lite_linked_files_are_readable_from_python() -> None:
     for path in linked_files:
         assert path.is_file(), f"{path} should resolve to a readable file"
         assert path.read_bytes(), f"{path} should not be empty"
+
+
+# Pinned corpus sizes. These are the numbers every published denominator, the
+# README, the HF dataset card, and the leaderboard must agree with. Changing a
+# corpus is fine — changing it *silently* is not, so update this table in the
+# same commit that adds or removes tasks (see issue #244).
+EXPECTED_SUITE_SIZES = {
+    "v1": 152,
+    "v2": 129,
+    "v1-lite": 20,
+    "claw-eval": 19,
+}
+
+
+@pytest.mark.parametrize("suite", sorted(EXPECTED_SUITE_SIZES))
+def test_case_suite_sizes_are_pinned(suite: str) -> None:
+    discovered = batch.discover_cases(
+        patterns=None,
+        all_cases=True,
+        cases_dir=batch.CASE_SUITES[suite],
+    )
+
+    assert len(discovered) == EXPECTED_SUITE_SIZES[suite], (
+        f"{suite} has {len(discovered)} cases but EXPECTED_SUITE_SIZES pins "
+        f"{EXPECTED_SUITE_SIZES[suite]}. If this change is intentional, update "
+        "EXPECTED_SUITE_SIZES and every published count (README, HF dataset "
+        "card, leaderboard denominators) in the same commit."
+    )
+
+
+def test_expected_sizes_cover_every_builtin_suite() -> None:
+    assert set(EXPECTED_SUITE_SIZES) == set(batch.CASE_SUITES), (
+        "a new built-in suite was added without pinning its size in "
+        "EXPECTED_SUITE_SIZES"
+    )
