@@ -18,6 +18,7 @@ from clawbench.runner.run_support.config import (
 )
 from clawbench.runner.run_support.docker import container_engine_version, image_id
 from clawbench.runner.run_support.task import normalize_extra_info
+from clawbench.utils.jsonio import write_json_atomic
 
 SECRET_CONFIG_RE = re.compile(
     r"(api[_-]?keys?|token|secret|password|credential)", re.IGNORECASE
@@ -285,4 +286,4 @@ def make_run_meta(
 
 def write_run_meta(output_dir: Path, meta: dict[str, Any]) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    (output_dir / "run-meta.json").write_text(json.dumps(meta, indent=2))
+    write_json_atomic(output_dir / "run-meta.json", meta)
