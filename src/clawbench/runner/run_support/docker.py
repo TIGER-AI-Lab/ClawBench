@@ -29,6 +29,7 @@ from clawbench.runner.run_support.usage import (
     format_usage_status,
     summarize_usage_text,
 )
+from clawbench.utils.timeouts import HOST_TIMEOUT_GRACE_S  # noqa: F401
 from clawbench.utils.paths import DOCKER_CONTEXT_ROOT
 
 console = Console()
@@ -523,13 +524,22 @@ def docker_wait(
     name: str,
     model_cfg: dict | None = None,
     harness: str | None = None,
-) -> None:
-    """Block until the container exits, showing a live status line."""
+    timeout_s: float | None = None,
+) -> bool:
+    """Block until the container exits, showing a live status line.
+
+    Returns True if the host deadline expired and the container had to be
+    killed. The only time limit otherwise lives inside the container
+    (entrypoint.sh's MAX_WAIT); if that watchdog never fires — entrypoint
+    crash, wedged Chromium, zombie container — the host would wait forever,
+    and in batch mode the job would hold a concurrency slot indefinitely.
+    """
     start = time.time()
     proc = subprocess.Popen(
         [ENGINE, "wait", name], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     last_actions = 0
+    timed_out = False
     usage_summary: dict | None = None
     pricing_models: dict[str, dict] | None = None
     if model_cfg and "openrouter.ai" in str(model_cfg.get("base_url", "")):
@@ -569,6 +579,19 @@ def docker_wait(
                 f"[dim]{mins:02d}:{secs:02d}  •  {last_actions} actions  •  "
                 f"{usage_part}[/]"
             )
+            if timeout_s is not None and time.time() - start > timeout_s:
+                timed_out = True
+                console.print(
+                    f"  [yellow]Host timeout after {int(time.time() - start)}s "
+                    f"(limit {int(timeout_s)}s) — killing container[/]"
+                )
+                subprocess.run([ENGINE, "kill", name], capture_output=True, timeout=60)
+                proc.terminate()
+                try:
+                    proc.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                break
             try:
                 proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
@@ -580,9 +603,11 @@ def docker_wait(
         if usage_summary is not None and usage_summary.get("total_tokens")
         else ""
     )
+    verb = "killed after host timeout" if timed_out else "exited"
     console.print(
-        f"  Container exited ({mins}m{secs:02d}s, {last_actions} actions{usage_part})"
+        f"  Container {verb} ({mins}m{secs:02d}s, {last_actions} actions{usage_part})"
     )
+    return timed_out
 
 
 def docker_copy(name: str, output_dir: Path) -> None:
