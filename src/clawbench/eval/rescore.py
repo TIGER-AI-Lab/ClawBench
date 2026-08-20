@@ -36,7 +36,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-import yaml
+from clawbench.utils.model_config import (
+    MODELS_YAML,
+    ModelConfigError,
+    load_model_config,
+)
+from clawbench.utils.paths import WORKSPACE_ROOT
 
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}
 
@@ -196,14 +201,16 @@ def write_eval_results(
     print(f"  eval_results written to {out_dir}/")
 
 
-def main() -> int:
+def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     p.add_argument(
         "--sweep-root",
         type=Path,
-        default=Path.home() / "work/ClawBench/claw-output/sweep",
+        default=WORKSPACE_ROOT / "test-output",
+        help="Directory tree to scan for completed runs "
+        "(default ./test-output, where the runner writes them).",
     )
     p.add_argument(
         "--judge-model",
@@ -214,7 +221,8 @@ def main() -> int:
     p.add_argument(
         "--models-yaml",
         type=Path,
-        default=Path.home() / "work/ClawBench/models/models.yaml",
+        default=MODELS_YAML,
+        help=f"Model definitions to resolve --judge-model against (default {MODELS_YAML}).",
     )
     p.add_argument(
         "--rubric",
@@ -242,19 +250,23 @@ def main() -> int:
     )
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--only-batch", type=Path, default=None)
-    args = p.parse_args()
+    return p
 
-    cfg_all = yaml.safe_load(args.models_yaml.read_text())
-    if args.judge_model not in cfg_all:
-        print(
-            f"ERROR: judge model {args.judge_model!r} not in {args.models_yaml}",
-            file=sys.stderr,
-        )
-        return 2
-    judge_cfg = dict(cfg_all[args.judge_model])
-    if not judge_cfg.get("api_key"):
-        print(f"ERROR: judge {args.judge_model!r} has no api_key", file=sys.stderr)
-        return 2
+
+def main() -> int:
+    args = build_parser().parse_args()
+
+    # Shared loader: validates the model exists, checks required fields, and
+    # normalizes the api_key/api_keys pair. Re-parsing the YAML here used to
+    # reject the api_keys list form that every other entry point accepts.
+    try:
+        judge_cfg = load_model_config(args.judge_model, args.models_yaml)
+    except ModelConfigError as e:
+        # A bad --judge-model is a typo on the command line, caught before any
+        # scoring work starts. Report it like run.py does rather than letting
+        # the traceback out.
+        print(f"ERROR: {e}")
+        return 1
 
     rubrics = [args.rubric] if args.rubric != "both" else ["lenient", "strict"]
     judge_funcs = {}
@@ -267,11 +279,25 @@ def main() -> int:
 
         judge_funcs["lenient"] = judge_lenient
 
-    run_dirs = (
-        find_run_dirs(args.only_batch)
-        if args.only_batch
-        else find_run_dirs(args.sweep_root)
-    )
+    scan_root = args.only_batch or args.sweep_root
+    if not scan_root.is_dir():
+        flag = "--only-batch" if args.only_batch else "--sweep-root"
+        print(f"ERROR: {flag} {scan_root} is not a directory.", file=sys.stderr)
+        print(
+            "       Point it at a tree containing completed runs "
+            "(the runner writes them under ./test-output by default).",
+            file=sys.stderr,
+        )
+        return 2
+
+    run_dirs = find_run_dirs(scan_root)
+    if not run_dirs:
+        print(
+            f"ERROR: no runs found under {scan_root} "
+            "(looked for run-meta.json at any depth).",
+            file=sys.stderr,
+        )
+        return 2
 
     pending = []
     for rd in run_dirs:

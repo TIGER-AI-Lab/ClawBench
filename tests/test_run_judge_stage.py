@@ -275,7 +275,13 @@ def test_missing_models_yaml_is_also_catchable(
     a SystemExit would escape the judge stage exactly as before."""
     config = _import_run_module(monkeypatch)
     cfg_mod = sys.modules["clawbench.runner.run_support.config"]
-    monkeypatch.setattr(cfg_mod, "MODELS_YAML", tmp_path / "absent.yaml")
+    # The loaders read MODELS_YAML from the module that defines them, so the
+    # patch has to land there; run_support.config only re-exports the name.
+    monkeypatch.setattr(
+        sys.modules["clawbench.utils.model_config"],
+        "MODELS_YAML",
+        tmp_path / "absent.yaml",
+    )
 
     with pytest.raises(config.ModelConfigError) as excinfo:
         cfg_mod.load_models_yaml()
