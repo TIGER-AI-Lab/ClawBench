@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import sys
 from pathlib import Path
 
@@ -44,11 +45,18 @@ def test_defaults_are_workspace_relative() -> None:
 
 
 def test_defaults_do_not_ship_a_maintainers_home_layout() -> None:
-    """Regression guard against re-introducing ~/work/ClawBench/... defaults."""
-    args = rescore.build_parser().parse_args([])
+    """Regression guard against re-introducing ~/work/ClawBench/... defaults.
 
-    for value in (args.sweep_root, args.models_yaml):
-        assert "work/ClawBench" not in value.as_posix()
+    Asserted against the source rather than the resolved paths: a checkout can
+    legitimately sit anywhere, including under a directory literally named
+    ``work/ClawBench`` (GitHub Actions checks this repo out to
+    ``/home/runner/work/ClawBench/ClawBench``), so only the absence of a
+    home-anchored default is meaningful.
+    """
+    src = inspect.getsource(rescore.build_parser)
+
+    assert "Path.home()" not in src
+    assert "expanduser" not in src
 
 
 # --- loud failure instead of a silent no-op (ask 3) --------------------------
@@ -204,8 +212,6 @@ def test_rescore_reports_a_bad_judge_model_instead_of_a_traceback(
 
 def test_load_models_yaml_falls_back_to_the_workspace_default() -> None:
     """Passing no path must keep resolving to MODELS_YAML for the runner."""
-    import inspect
-
     from clawbench.utils import model_config
 
     sig = inspect.signature(model_config.load_models_yaml)
