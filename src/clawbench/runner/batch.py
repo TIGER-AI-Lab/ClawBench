@@ -4,7 +4,6 @@ import argparse
 import asyncio
 import fnmatch
 import itertools
-import json
 import os
 import re
 import shutil
@@ -17,6 +16,7 @@ from pathlib import Path
 
 import yaml
 
+from clawbench.utils.jsonio import read_json_or_none, write_json_atomic
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
 
 
@@ -450,8 +450,15 @@ def print_run_stats(base_output: Path) -> None:
 
             # Parse case and model from run-meta.json or dir name
             meta_file = run_dir / "run-meta.json"
-            if meta_file.exists():
-                meta = json.loads(meta_file.read_text())
+            meta = read_json_or_none(meta_file) if meta_file.exists() else None
+            if meta is not None and not isinstance(meta, dict):
+                meta = None
+            if meta is None and meta_file.exists():
+                print(
+                    f"  WARNING: unreadable {meta_file}; "
+                    "falling back to directory name for this run"
+                )
+            if meta is not None:
                 case = meta.get("test_case", "?")
                 model = meta.get("model", model_dir.name)
                 intercepted = meta.get("intercepted", False)
@@ -579,7 +586,7 @@ def write_summary_json(
             for s in ("passed", "failed", "error", "skipped")
         },
     }
-    (base_output / "batch-summary.json").write_text(json.dumps(data, indent=2))
+    write_json_atomic(base_output / "batch-summary.json", data)
 
 
 # ---------------------------------------------------------------------------
