@@ -23,13 +23,37 @@ import hashlib
 import hmac
 import json
 import os
-import re
 import sys
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, urlparse
 
 from clawbench.runner.judge import judge_request
+from clawbench.utils.paths import RUNTIME_ROOT
+
+
+def _load_runtime_matching():
+    """Load the Stage-1 predicate from the runtime-server directory.
+
+    It lives beside the interceptor that runs it, because runtime-server/ is
+    what gets COPYed into every task image. That directory name is not a valid
+    module path, so it is loaded by file. Sharing the one copy is the point: a
+    re-implementation here is what drifted from the live interceptor and made
+    offline verdicts disagree with real runs.
+    """
+    import importlib.util
+
+    path = RUNTIME_ROOT / "runtime-server" / "matching.py"
+    spec = importlib.util.spec_from_file_location(
+        "clawbench_runtime_matching", str(path)
+    )
+    if spec is None or spec.loader is None:  # pragma: no cover - packaging error
+        raise ImportError(f"cannot load the Stage-1 matcher from {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_matching = _load_runtime_matching()
 
 
 def _verify_signature(intercept: dict[str, Any], secret: str) -> bool:
@@ -52,46 +76,15 @@ def _verify_signature(intercept: dict[str, Any], secret: str) -> bool:
     return hmac.compare_digest(sig, expected)
 
 
-def _const_fields_match(expected: Any, actual: Any) -> bool:
-    """All key/values in ``expected`` present in ``actual`` (mirrors runtime-server)."""
-    if not expected:
-        return True
-    if not actual:
-        return False
-    if isinstance(actual, list):
-        return any(_const_fields_match(expected, item) for item in actual)
-    if not isinstance(actual, dict):
-        return False
-    return all(actual.get(k) == v for k, v in expected.items())
-
-
 def _stage1_match(request: dict[str, Any], eval_schema: Any) -> bool:
     """Recompute Stage-1 against the task schema — do NOT trust the agent's flag.
 
     The agent controls the submitted evidence archive, so re-verify that the
-    submitted request actually hits the task's target (url_pattern regex + method
-    + const body/params), exactly as the runtime interceptor would.
+    submitted request actually hits the task's target, using the very predicate
+    the in-container interceptor ran. This was a hand-maintained mirror of
+    runtime-server until the two drifted; see ``_matching`` above.
     """
-    if not isinstance(eval_schema, dict):
-        return False
-    url_pattern = eval_schema.get("url_pattern") or ""
-    if not url_pattern:
-        return False  # no target to verify against → cannot confirm interception
-    url = str(request.get("url") or "")
-    try:
-        if not re.search(url_pattern, url):
-            return False
-    except re.error:
-        return False
-    method = eval_schema.get("method")
-    if method and request.get("method") != method:
-        return False
-    if not _const_fields_match(eval_schema.get("body"), request.get("body")):
-        return False
-    # Always derive query params from the URL (like the runtime interceptor) — do
-    # not trust a submitted request["params"] field, which could be forged.
-    params = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
-    return _const_fields_match(eval_schema.get("params"), params)
+    return _matching.stage1_match(request, eval_schema)
 
 
 # SForge structured_json markers (grading._grade_structured looks for these).
