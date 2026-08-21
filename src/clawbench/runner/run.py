@@ -21,6 +21,7 @@ from clawbench.runner.run_support.config import (
     HARNESSES,
     IMAGE,
     WORKSPACE_ROOT,
+    ModelConfigError,
     harness_image,
     load_model_config,
     load_runtime_env,
@@ -213,9 +214,27 @@ def main():
         safe_model = "human"
         harness_tag = "human"
     else:
-        model_cfg = load_model_config(args.model)
+        try:
+            model_cfg = load_model_config(args.model)
+        except ModelConfigError as e:
+            # No output_dir exists yet at this point, so there is nothing
+            # for a run-meta.json to record — exit immediately like other
+            # pre-flight validation above (e.g. missing PURELY_MAIL_* env).
+            print(f"ERROR: {e}")
+            sys.exit(1)
         safe_model = re.sub(r"[/:]+", "--", args.model)
         harness_tag = args.harness
+
+    # Resolve the judge model now rather than after the agent run. A bad
+    # --judge is a typo in the command line, and finding out about it 30
+    # minutes later — once the agent has already finished — helps nobody.
+    startup_judge_cfg: dict | None = None
+    if not args.human and args.judge and not args.no_judge:
+        try:
+            startup_judge_cfg = load_model_config(args.judge)
+        except ModelConfigError as e:
+            print(f"ERROR: --judge {args.judge!r}: {e}")
+            sys.exit(1)
 
     container = f"clawbench-{harness_tag}-{case_name}-{safe_model}-{int(time.time())}"
     run_dir_name = f"{harness_tag}-{case_name}-{safe_model}-{ts}"
@@ -232,7 +251,7 @@ def main():
     extra_info_warnings: list[str] = []
     intercepted = False
     host_port: int | None = None
-    judge_cfg: dict | None = None
+    judge_cfg: dict | None = startup_judge_cfg
     personal_info_metadata: dict[str, Any] | None = None
     browser_session: BrowserSession | None = None
     browser_runtime_finalized = False
@@ -601,7 +620,9 @@ def main():
             try:
                 from clawbench.runner.judge import judge_request
 
-                judge_cfg = load_model_config(args.judge)
+                # Validated at startup; reload only if that was skipped.
+                if judge_cfg is None:
+                    judge_cfg = load_model_config(args.judge)
                 instruction_text = (
                     task.get("instruction") if isinstance(task, dict) else ""
                 ) or ""

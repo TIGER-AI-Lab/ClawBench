@@ -32,6 +32,7 @@ __all__ = [
     "MODELS_YAML",
     "WORKSPACE_ROOT",
     "HarnessRegistry",
+    "ModelConfigError",
     "harness_image",
     "load_dotenv",
     "load_harness_registry",
@@ -42,6 +43,16 @@ __all__ = [
     "resolve_test_case_dir",
     "resolve_test_case_path",
 ]
+
+
+class ModelConfigError(Exception):
+    """Raised when a model config in models/models.yaml is missing or invalid.
+
+    A plain Exception (not SystemExit) so callers that load a model mid-run
+    (e.g. the judge stage, after the agent has already produced results) can
+    catch it and continue instead of the process dying before run-meta.json
+    is written.
+    """
 
 
 HARNESSES = HARNESS_REGISTRY.harnesses
@@ -107,12 +118,16 @@ def load_dotenv(path: Path) -> dict[str, str]:
 
 
 def load_models_yaml() -> dict:
-    """Load all model definitions from models/models.yaml."""
+    """Load all model definitions from models/models.yaml.
+
+    Raises ModelConfigError rather than exiting, for the same reason
+    load_model_config does: this runs inside the judge stage too, where a
+    SystemExit would escape the handlers and lose the run's metadata.
+    """
     if not MODELS_YAML.exists():
-        print(
-            f"ERROR: {MODELS_YAML} not found (copy models.example.yaml and fill in your keys)"
+        raise ModelConfigError(
+            f"{MODELS_YAML} not found (copy models.example.yaml and fill in your keys)"
         )
-        sys.exit(1)
     return yaml.safe_load(MODELS_YAML.read_text()) or {}
 
 
@@ -161,9 +176,10 @@ def load_model_config(model: str) -> dict:
     """
     all_models = load_models_yaml()
     if model not in all_models:
-        print(f"ERROR: model '{model}' not found in {MODELS_YAML}")
-        print(f"Available models: {', '.join(sorted(all_models))}")
-        sys.exit(1)
+        raise ModelConfigError(
+            f"model '{model}' not found in {MODELS_YAML}. "
+            f"Available models: {', '.join(sorted(all_models))}"
+        )
 
     # Validate model name characters. Note: '/' and ':' are valid in
     # vendor-prefixed ids like 'anthropic/claude-sonnet-4-6' or
@@ -173,11 +189,10 @@ def load_model_config(model: str) -> dict:
     # that sanitization.
     bad = [c for c in ' \\*?"<>|' if c in model]
     if bad:
-        print(
-            f"ERROR: model name '{model}' contains illegal character(s): "
+        raise ModelConfigError(
+            f"model name '{model}' contains illegal character(s): "
             f"{' '.join(repr(c) for c in bad)}"
         )
-        sys.exit(1)
 
     config = dict(all_models[model])
     config["model"] = model  # the YAML key IS the model name
@@ -185,9 +200,9 @@ def load_model_config(model: str) -> dict:
     required = ["base_url", "api_type"]
     missing = [k for k in required if not config.get(k)]
     if missing:
-        for k in missing:
-            print(f"ERROR: Required field '{k}' missing for model '{model}'")
-        sys.exit(1)
+        raise ModelConfigError(
+            f"required field(s) missing for model '{model}': {', '.join(missing)}"
+        )
 
     # Normalize API keys: api_keys list wins, else wrap api_key into list.
     if config.get("api_keys"):
@@ -196,7 +211,6 @@ def load_model_config(model: str) -> dict:
         config["api_keys"] = [config["api_key"]]
 
     if not config.get("api_keys"):
-        print(f"ERROR: no api_key or api_keys for model '{model}'")
-        sys.exit(1)
+        raise ModelConfigError(f"no api_key or api_keys for model '{model}'")
 
     return config
