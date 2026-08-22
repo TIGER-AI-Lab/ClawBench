@@ -109,7 +109,7 @@ def test_write_harbor_task_emits_expected_tree_and_extra_info(tmp_path: Path) ->
     assert (
         config["task"]["name"] == "clawbench/v2-047-daily-life-personal-care-taskrabbit"
     )
-    assert config["environment"]["workdir"] == "/app"
+    assert config["environment"]["workdir"] == "/"
     assert config["environment"]["network_mode"] == "public"
     assert config["environment"]["env"]["BROWSER_CDP_URL"] == "http://127.0.0.1:9223"
     assert config["environment"]["env"]["PLAYWRIGHT_CDP_URL"] == "http://127.0.0.1:9223"

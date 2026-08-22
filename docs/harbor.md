@@ -108,6 +108,25 @@ uvx --from harbor==0.15.0 harbor run \
   --jobs-dir ./harbor-jobs/hermes-deepseek-flash
 ```
 
+## Kernel browser runtime (control arm)
+
+By default each Harbor trial runs Chromium inside its own container. Pass `--browser-runtime kernel` to the adapter to run the same tasks against one Kernel cloud browser per task instead:
+
+```bash
+uv run clawbench-harbor-adapt \
+  --output-dir ./harbor-datasets/clawbench-v2-kernel \
+  --browser-runtime kernel \
+  --browser-runtime-options '{"stealth": false}' \
+  --task-ids v2-1134-chapter-finder-redcross \
+  --overwrite
+```
+
+During task setup, the environment creates exactly one Kernel browser and replay, starts the ClawBench runtime server against it, and exposes only the local credential-free CDP bridge (`http://127.0.0.1:7878`) to the agent — the Kernel API key is never visible to the benchmark agent. Session identity and cleanup metadata land in `/my-info/kernel_browser.json`. During verification the provider replay is finalized, `recording.mp4` is downloaded into `/data`, and the browser is deleted (idempotently, including failure paths via a setup trap).
+
+Generated tasks register a pinned Playwright MCP package (`@playwright/mcp@0.0.79`) pointed at the CDP bridge, so Harbor's stock Claude Code and Codex agents drive the Kernel browser with native Playwright MCP tool calls — structurally identical to ClawBench's native Claude/Codex harnesses.
+
+Export `KERNEL_API_KEY` (and optionally `KERNEL_BASE_URL` for non-production gateways) before `harbor run`; no extra flags are needed.
+
 ## Making it fast
 
 A full V2 sweep is 129 containerized browser sessions, each capped by the task's `time_limit`. Serial, that is a very long night. What actually moves the needle, in order:

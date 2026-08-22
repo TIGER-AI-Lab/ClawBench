@@ -558,6 +558,16 @@ class KernelRuntimeProvider:
             raise
         return "deleted"
 
+    def session_exists(self, session_id: str) -> bool:
+        """Return True if the provider still reports this browser session."""
+        try:
+            self._request("GET", f"/browsers/{session_id}")
+        except _KernelApiError as e:
+            if e.status == 404:
+                return False
+            raise
+        return True
+
     def _stop_replay(self, session_id: str, replay_id: str) -> None:
         try:
             self._request(

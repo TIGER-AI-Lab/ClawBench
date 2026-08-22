@@ -8,7 +8,7 @@ RUN echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/01disable-sandbox \
     && printf '#!/bin/sh\n/usr/bin/dpkg-statoverride.real "$@" 2>/dev/null || true\n' \
     > /usr/bin/dpkg-statoverride && chmod +x /usr/bin/dpkg-statoverride \
     && apt-get update && apt-get install -y --no-install-recommends \
-    chromium xvfb ffmpeg socat curl git x11vnc xclip \
+    chromium xvfb ffmpeg socat curl git x11vnc xclip nodejs npm \
     libegl1 libgbm1 \
     fonts-noto-color-emoji fonts-noto-cjk \
     && mv /usr/bin/dpkg-statoverride.real /usr/bin/dpkg-statoverride \

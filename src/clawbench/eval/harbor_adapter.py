@@ -11,11 +11,24 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from clawbench.runner.run_support.browser_runtime.providers import (
+    BrowserRuntimeError,
+    _parse_options,
+)
 from clawbench.runner.run_support.task import build_instruction, validate_task_data
 from clawbench.utils.paths import RUNTIME_ROOT, asset_path
 
 DEFAULT_CASES_DIR = asset_path("test-cases", "v2")
 STEP_NAME = "run"
+HARBOR_BROWSER_RUNTIMES = ("local", "kernel")
+# Remote browser runtimes connect through the runtime server's local,
+# credential-free CDP bridge instead of a container-local Chromium.
+REMOTE_BRIDGE_CDP_URL = "http://127.0.0.1:7878"
+LOCAL_CDP_URL = "http://127.0.0.1:9223"
+# Pinned Playwright MCP package Harbor's stock Claude Code and Codex agents
+# use to drive the ClawBench browser through the CDP bridge.
+PLAYWRIGHT_MCP_PACKAGE = "@playwright/mcp"
+PLAYWRIGHT_MCP_VERSION = "0.0.79"
 
 
 def sanitize_task_name(raw: str) -> str:
@@ -96,6 +109,16 @@ def copy_environment(env_dir: Path) -> None:
     copytree_filtered(RUNTIME_ROOT / "shared", env_dir / "shared")
     copytree_filtered(RUNTIME_ROOT / "harbor", env_dir / "harbor")
     (env_dir / "harbor" / "Dockerfile").unlink(missing_ok=True)
+    # The Kernel lifecycle scripts reuse the same provider implementation as
+    # the native runner.
+    shutil.copy2(
+        Path(__file__).resolve().parents[1]
+        / "runner"
+        / "run_support"
+        / "browser_runtime"
+        / "providers.py",
+        env_dir / "harbor" / "browser_runtime_providers.py",
+    )
     shutil.copy2(
         Path(__file__).resolve().parents[1]
         / "runner"
@@ -108,18 +131,71 @@ def copy_environment(env_dir: Path) -> None:
             chmod_executable(script)
 
 
-def harbor_instruction(task: dict[str, Any]) -> str:
+def playwright_mcp_server(cdp_url: str) -> dict[str, Any]:
+    return {
+        "name": "playwright",
+        "transport": "stdio",
+        "command": "npx",
+        "args": [
+            "-y",
+            f"{PLAYWRIGHT_MCP_PACKAGE}@{PLAYWRIGHT_MCP_VERSION}",
+            "--cdp-endpoint",
+            cdp_url,
+        ],
+    }
+
+
+def mcp_servers_toml(servers: list[dict[str, Any]]) -> str:
+    if not servers:
+        return ""
+    blocks = []
+    for server in servers:
+        args = ", ".join(json.dumps(arg) for arg in server["args"])
+        blocks.append(
+            "[[environment.mcp_servers]]\n"
+            f"name = {json.dumps(server['name'])}\n"
+            f"transport = {json.dumps(server['transport'])}\n"
+            f"command = {json.dumps(server['command'])}\n"
+            f"args = [{args}]\n"
+        )
+    return "\n" + "\n".join(blocks)
+
+
+def harbor_instruction(task: dict[str, Any], *, browser_runtime: str = "local") -> str:
     instruction = build_instruction(task)
-    return (
-        instruction + "\n\n---\n"
+    cdp_url = REMOTE_BRIDGE_CDP_URL if browser_runtime == "kernel" else LOCAL_CDP_URL
+    runtime_section = (
         "Harbor browser runtime:\n"
-        "- Use the existing Chromium session exposed by Chrome DevTools Protocol.\n"
-        "- CDP endpoint: http://127.0.0.1:9223\n"
+        "- Use the existing browser session exposed by Chrome DevTools Protocol.\n"
+        f"- CDP endpoint: {cdp_url}\n"
         "- CDP environment variables are also set for the agent process: "
         "CLAWBENCH_CDP_URL, BROWSER_CDP_URL, CDP_URL, CHROME_CDP_URL, and PLAYWRIGHT_CDP_URL.\n"
-        "- noVNC viewer, if needed: http://127.0.0.1:6080/vnc.html\n"
-        "- Do not launch a separate browser. Complete the task through the existing browser session.\n"
-        "---\n"
+    )
+    if browser_runtime == "local":
+        runtime_section += "- noVNC viewer, if needed: http://127.0.0.1:6080/vnc.html\n"
+    restrictions = (
+        "Task constraints (matching the native ClawBench harness rules):\n"
+        f"- Time limit: {task.get('time_limit')} minutes. The harness stops the "
+        "run when the limit elapses, so finish and submit before then.\n"
+        "- Complete the task entirely in the browser; do not launch or use any "
+        "other browser.\n"
+        "- Use only Playwright MCP browser tools plus reading files under "
+        "./my-info/ to accomplish the task.\n"
+        "- Do NOT make direct HTTP/network requests for task completion via shell "
+        "tools, scripts, API calls, or SMTP — every task action must go through "
+        "the browser.\n"
+        "- Submit through the browser: perform the task's final submission action "
+        "in the browser so the request happens on the page.\n"
+        "- Stop after submission: once the final action is submitted, stop and do "
+        "not start other work.\n"
+    )
+    return (
+        instruction
+        + "\n\n---\n"
+        + runtime_section
+        + "- Do not launch a separate browser. Complete the task through the existing browser session.\n"
+        + "---\n\n"
+        + restrictions
     )
 
 
@@ -130,12 +206,37 @@ def task_toml(
     dataset_name: str,
     timeout_sec: int,
     task_dir_name: str,
+    browser_runtime: str = "local",
+    browser_runtime_options: str | None = None,
 ) -> str:
     escaped_description = json.dumps(description)
     escaped_dataset = json.dumps(dataset_name)
     escaped_source = json.dumps(task_dir_name)
     escaped_package = json.dumps(package_name)
-    return f"""schema_version = "1.3"
+    cdp_url = REMOTE_BRIDGE_CDP_URL if browser_runtime == "kernel" else LOCAL_CDP_URL
+    kernel_env = ""
+    mcp_servers = ""
+    if browser_runtime == "kernel":
+        runtime_options_line = (
+            f"\nCLAWBENCH_BROWSER_RUNTIME_OPTIONS = {json.dumps(browser_runtime_options)}"
+            if browser_runtime_options
+            else '\nCLAWBENCH_BROWSER_RUNTIME_OPTIONS = "${CLAWBENCH_BROWSER_RUNTIME_OPTIONS:-}"'
+        )
+        kernel_env = (
+            '\nCLAWBENCH_HARBOR_BROWSER_RUNTIME = "kernel"'
+            '\nKERNEL_API_KEY = "${KERNEL_API_KEY}"'
+            '\nKERNEL_BASE_URL = "${KERNEL_BASE_URL:-}"'
+            + runtime_options_line
+            + '\nCLAWBENCH_RECORDING_MODE = "provider-download"'
+        )
+        mcp_servers = mcp_servers_toml([playwright_mcp_server(REMOTE_BRIDGE_CDP_URL)])
+    healthcheck_command = (
+        "curl -sf http://127.0.0.1:7878/api/status | grep -q '"
+        + '\\"eval_interceptor_ready\\":true'
+        + f"' && curl -sf {cdp_url}/json/version >/dev/null"
+    )
+    return (
+        f"""schema_version = "1.3"
 source = "clawbench-v2"
 artifacts = ["/data"]
 
@@ -147,20 +248,24 @@ keywords = ["clawbench", "v2", "web-agent", "browser"]
 [metadata]
 dataset = {escaped_dataset}
 source_task = {escaped_source}
+browser_runtime = "{browser_runtime}"
 
 [environment]
 build_timeout_sec = 1200.0
 network_mode = "public"
-workdir = "/app"
+# The container root doubles as the step workdir so every exec runs with a
+# cwd that exists even on overlay drivers that cannot resolve image-created
+# directories during `docker exec`.
+workdir = "/"
 
 [environment.env]
 PURELY_MAIL_API_KEY = "${{PURELY_MAIL_API_KEY}}"
 PURELY_MAIL_DOMAIN = "${{PURELY_MAIL_DOMAIN}}"
-CLAWBENCH_CDP_URL = "http://127.0.0.1:9223"
-BROWSER_CDP_URL = "http://127.0.0.1:9223"
-CDP_URL = "http://127.0.0.1:9223"
-CHROME_CDP_URL = "http://127.0.0.1:9223"
-PLAYWRIGHT_CDP_URL = "http://127.0.0.1:9223"
+CLAWBENCH_CDP_URL = "{cdp_url}"
+BROWSER_CDP_URL = "{cdp_url}"
+CDP_URL = "{cdp_url}"
+CHROME_CDP_URL = "{cdp_url}"
+PLAYWRIGHT_CDP_URL = "{cdp_url}"{kernel_env}
 CLAWBENCH_NOVNC_URL = "http://127.0.0.1:6080/vnc.html"
 CLAWBENCH_RUNTIME_URL = "http://127.0.0.1:7878"
 CLAWBENCH_JUDGE_BASE_URL = "${{CLAWBENCH_JUDGE_BASE_URL:-}}"
@@ -178,37 +283,59 @@ timeout_sec = {float(timeout_sec):.1f}
 timeout_sec = 300.0
 
 [steps.healthcheck]
-command = "curl -sf http://127.0.0.1:7878/api/status | grep -q '\\\"eval_interceptor_ready\\\":true' && curl -sf http://127.0.0.1:9223/json/version >/dev/null"
+command = "{healthcheck_command}"
 interval_sec = 2.0
 timeout_sec = 5.0
 start_period_sec = 2.0
 start_interval_sec = 1.0
 retries = 30
 """
+        + mcp_servers
+    )
 
 
-def setup_script() -> str:
-    return """#!/bin/bash
+def setup_script(browser_runtime: str = "local") -> str:
+    kernel_setup = ""
+    readiness = (
+        "  if curl -sf http://127.0.0.1:7878/api/status >/dev/null \\\n"
+        "    && curl -sf http://127.0.0.1:9223/json/version >/dev/null; then\n"
+    )
+    if browser_runtime == "kernel":
+        readiness = (
+            "  if curl -sf http://127.0.0.1:7878/api/status >/dev/null \\\n"
+            "    && curl -sf http://127.0.0.1:7878/json/version >/dev/null; then\n"
+        )
+        kernel_setup = (
+            "# Create the Kernel browser and replay before the runtime server"
+            " starts so it can bridge the provider CDP endpoint.\n"
+            "/app/src/runtime-server/.venv/bin/python /app/src/harbor/kernel-browser.py start\n"
+            "export CLAWBENCH_BROWSER_CDP_URL_FILE=/tmp/clawbench-run/kernel-cdp-url\n"
+            "\n"
+            "cleanup_browser() {\n"
+            "  /app/src/runtime-server/.venv/bin/python /app/src/harbor/kernel-browser.py cleanup || true\n"
+            "}\n"
+            "trap cleanup_browser EXIT\n"
+            "\n"
+        )
+    return f"""#!/bin/bash
 set -euo pipefail
 
-mkdir -p /data /logs/verifier /app/extra_info
-cp /app/eval-schema.json /eval-schema.json
+mkdir -p /data /logs/verifier /extra_info
 
 /app/src/runtime-server/.venv/bin/python /app/src/harbor/prepare-task.py \
-  --task-json /app/task.json \
-  --extra-info-dir /app/extra_info \
-  --output-dir /app/my-info
+  --task-json /task.json \
+  --extra-info-dir /extra_info \
+  --output-dir /my-info
 
 # Harbor installs its stock agent before step setup. Wrap that executable so
 # ClawBench's existing /data/.stop-requested signal ends the agent cleanly.
 /app/src/harbor/wrap-harbor-agent.sh
 
-/app/src/harbor/start-runtime.sh
+{kernel_setup}/app/src/harbor/start-runtime.sh
 
 for _ in $(seq 1 60); do
-  if curl -sf http://127.0.0.1:7878/api/status >/dev/null \
-    && curl -sf http://127.0.0.1:9223/json/version >/dev/null; then
-    rm -f /app/setup.sh
+{readiness}    rm -f /app/setup.sh
+    trap - EXIT
     exit 0
   fi
   sleep 1
@@ -219,15 +346,21 @@ exit 1
 """
 
 
-def test_script() -> str:
-    return """#!/bin/bash
+def test_script(browser_runtime: str = "local") -> str:
+    kernel_finalize = ""
+    if browser_runtime == "kernel":
+        kernel_finalize = (
+            "# Stop the provider replay, download the recording, delete the browser.\n"
+            "/app/src/runtime-server/.venv/bin/python /app/src/harbor/kernel-browser.py finalize\n"
+        )
+    return f"""#!/bin/bash
 set -euo pipefail
 
 curl -sf -X POST http://127.0.0.1:7878/api/stop || true
 curl -sf -X POST http://127.0.0.1:7878/api/stop-recording || true
 sleep 2
 rm -f /data/.stop-requested
-rm -rf /logs/verifier/data
+{kernel_finalize}rm -rf /logs/verifier/data
 cp -a /data /logs/verifier/data
 
 /app/src/runtime-server/.venv/bin/python /app/src/harbor/verify.py
@@ -269,6 +402,8 @@ def write_harbor_task(
     output_name: str,
     org: str,
     dataset_name: str,
+    browser_runtime: str = "local",
+    browser_runtime_options: str | None = None,
 ) -> Path:
     dest = output_root / output_name
     if dest.exists():
@@ -296,15 +431,19 @@ def write_harbor_task(
             dataset_name=dataset_name,
             timeout_sec=timeout_sec,
             task_dir_name=task_dir.name,
+            browser_runtime=browser_runtime,
+            browser_runtime_options=browser_runtime_options,
         )
     )
-    (step_dir / "instruction.md").write_text(harbor_instruction(task))
+    (step_dir / "instruction.md").write_text(
+        harbor_instruction(task, browser_runtime=browser_runtime)
+    )
     (workdir / "eval-schema.json").write_text(json.dumps(task["eval_schema"], indent=2))
     (workdir / "task.json").write_text(json.dumps(task, indent=2, ensure_ascii=False))
     copy_extra_info(task, task_dir, workdir / "extra_info")
-    write_text_executable(workdir / "setup.sh", setup_script())
+    write_text_executable(workdir / "setup.sh", setup_script(browser_runtime))
     (tests_dir / "task.json").write_text(json.dumps(task, indent=2, ensure_ascii=False))
-    write_text_executable(tests_dir / "test.sh", test_script())
+    write_text_executable(tests_dir / "test.sh", test_script(browser_runtime))
     write_text_executable(solution_dir / "solve.sh", solve_script())
     copy_environment(env_dir)
     return dest
@@ -343,12 +482,31 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Overwrite an existing output directory",
     )
+    parser.add_argument(
+        "--browser-runtime",
+        choices=HARBOR_BROWSER_RUNTIMES,
+        default="local",
+        help="Browser runtime for the generated tasks; kernel creates one "
+        "Kernel browser per task during Harbor setup",
+    )
+    parser.add_argument(
+        "--browser-runtime-options",
+        default=None,
+        help="JSON object with runtime options, e.g. '{\"stealth\":true}'",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    options: dict[str, Any] = {}
+    if args.browser_runtime_options:
+        try:
+            options = _parse_options(args.browser_runtime_options)
+        except BrowserRuntimeError as exc:
+            parser.error(str(exc))
 
     cases_dir = (args.cases_dir or DEFAULT_CASES_DIR).resolve()
     default_cases = args.cases_dir is None
@@ -388,10 +546,16 @@ def main(argv: list[str] | None = None) -> int:
                 output_name=out_name,
                 org=args.org,
                 dataset_name=args.dataset_name,
+                browser_runtime=args.browser_runtime,
+                browser_runtime_options=(json.dumps(options) if options else None),
             )
         )
 
     print(f"Wrote {len(written)} Harbor task(s) to {output_dir}")
+    if args.browser_runtime != "local":
+        print(f"Browser runtime: {args.browser_runtime}")
+        if options:
+            print(f"Runtime options: {json.dumps(options)}")
     return 0
 
 

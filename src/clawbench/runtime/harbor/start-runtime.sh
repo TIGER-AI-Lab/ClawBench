@@ -8,6 +8,15 @@ if [ -f /tmp/clawbench-run/runtime.pid ] && kill -0 "$(cat /tmp/clawbench-run/ru
   exit 0
 fi
 
+# Remote browser runtimes (e.g. Kernel) hand us a provider CDP URL through a
+# file instead of launching local Chromium. The runtime server proxies that
+# WebSocket behind a credential-free local bridge on port 7878.
+REMOTE_MODE=false
+if [ -n "${CLAWBENCH_BROWSER_CDP_URL_FILE:-}" ] && [ -f "${CLAWBENCH_BROWSER_CDP_URL_FILE}" ]; then
+  REMOTE_MODE=true
+fi
+
+if [ "$REMOTE_MODE" = false ]; then
 export DISPLAY="${DISPLAY:-:99}"
 Xvfb "$DISPLAY" -screen 0 1920x1080x24 >/tmp/clawbench-run/xvfb.log 2>&1 &
 echo "$!" > /tmp/clawbench-run/xvfb.pid
@@ -118,6 +127,12 @@ sleep 1
 
 /opt/novnc/utils/novnc_proxy --vnc localhost:5900 --listen 6080 >/tmp/clawbench-run/novnc.log 2>&1 &
 echo "$!" > /tmp/clawbench-run/novnc.pid
+fi
+
+if [ "$REMOTE_MODE" = true ]; then
+  # Provider replays replace local X11 recording.
+  export CLAWBENCH_RECORDING_MODE="${CLAWBENCH_RECORDING_MODE:-provider-download}"
+fi
 
 echo "$$" > /tmp/clawbench-run/runtime.pid
 echo "CDP ready at http://127.0.0.1:9223"
