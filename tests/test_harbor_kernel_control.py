@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -50,6 +51,27 @@ def adapted_kernel_task(tmp_path: Path) -> Path:
         dataset_name="v2",
         browser_runtime="kernel",
     )
+
+
+def test_redcross_task_intercepts_zip_lookup_not_chapter_finder_page() -> None:
+    task_path = (
+        REPO_ROOT
+        / "test-cases"
+        / "v2"
+        / "v2-1134-chapter-finder-redcross"
+        / "task.json"
+    )
+    schema = json.loads(task_path.read_text())["eval_schema"]
+
+    assert not re.search(
+        schema["url_pattern"],
+        "https://www.redcross.org/find-your-local-chapter.html",
+    )
+    assert re.search(
+        schema["url_pattern"],
+        "https://www.redcross.org/api/lookup/v1/region-mappings/90210?type=RCO",
+    )
+    assert schema["params"] == {"type": "RCO"}
 
 
 def test_kernel_runtime_selection_writes_bridge_env_and_pinned_mcp(
@@ -229,7 +251,11 @@ class FakeSession:
             cdp_url="wss://kernel.example/browser/sess-123/cdp?token=secret-token",
             viewer_url="https://kernel.example/live/sess-123",
             viewer_url_sensitive=True,
-            metadata={"replay_id": "replay-9", "region": "us-east"},
+            metadata={
+                "replay_id": "replay-9",
+                "region": "us-east",
+                "stealth": False,
+            },
             recording_mode="provider-download",
         )
 
@@ -304,6 +330,7 @@ def test_start_writes_state_and_credential_free_metadata(
     metadata = json.loads(module.METADATA_FILE.read_text())
     assert metadata["session_id"] == "sess-123"
     assert metadata["replay_id"] == "replay-9"
+    assert metadata["stealth"] is False
     assert metadata["cdp_bridge_url"] == "http://127.0.0.1:7878"
     blob = module.METADATA_FILE.read_text()
     assert "k-test-key" not in blob

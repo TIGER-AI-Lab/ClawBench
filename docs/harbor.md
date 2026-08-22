@@ -116,7 +116,7 @@ By default each Harbor trial runs Chromium inside its own container. Pass `--bro
 uv run clawbench-harbor-adapt \
   --output-dir ./harbor-datasets/clawbench-v2-kernel \
   --browser-runtime kernel \
-  --browser-runtime-options '{"stealth": false}' \
+  --browser-runtime-options '{"stealth": true}' \
   --task-ids v2-1134-chapter-finder-redcross \
   --overwrite
 ```

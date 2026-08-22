@@ -100,7 +100,9 @@ def _public_metadata(state: dict[str, Any]) -> dict[str, Any]:
         "session_id": metadata.get("session_id"),
         "replay_id": inner.get("replay_id") or metadata.get("replay_id"),
         "region": inner.get("region") or metadata.get("region"),
-        "stealth": inner.get("stealth") or metadata.get("stealth"),
+        "stealth": (
+            inner["stealth"] if "stealth" in inner else metadata.get("stealth")
+        ),
         "timeout_seconds": (
             inner.get("timeout_seconds") or metadata.get("timeout_seconds")
         ),

@@ -585,13 +585,9 @@ class KernelRuntimeProvider:
         timeout_seconds = min(259200, max(10, time_limit_s + 120))
         payload = {
             **self.options,
+            "stealth": self.options.get("stealth", True),
             "headless": False,
             "timeout_seconds": timeout_seconds,
-            "viewport": {
-                "width": 1920,
-                "height": 1080,
-                "refresh_rate": 25,
-            },
         }
         try:
             result = self._request_json("POST", "/browsers", payload)
