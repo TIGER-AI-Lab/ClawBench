@@ -16,15 +16,22 @@ if [ -n "${CLAWBENCH_BROWSER_CDP_URL_FILE:-}" ] && [ -f "${CLAWBENCH_BROWSER_CDP
   REMOTE_MODE=true
 fi
 
-if [ "$REMOTE_MODE" = false ]; then
-export DISPLAY="${DISPLAY:-:99}"
-Xvfb "$DISPLAY" -screen 0 1920x1080x24 >/tmp/clawbench-run/xvfb.log 2>&1 &
-echo "$!" > /tmp/clawbench-run/xvfb.pid
-sleep 1
-
 cd /app/src/runtime-server
 uv run --no-sync uvicorn server:app --host 0.0.0.0 --port 7878 >/tmp/clawbench-run/runtime-server.log 2>&1 &
 echo "$!" > /tmp/clawbench-run/runtime-server.pid
+sleep 1
+
+if [ "$REMOTE_MODE" = true ]; then
+  # Provider replays replace local X11 recording.
+  export CLAWBENCH_RECORDING_MODE="${CLAWBENCH_RECORDING_MODE:-provider-download}"
+  echo "CDP bridge ready at http://127.0.0.1:7878"
+  echo "$$" > /tmp/clawbench-run/runtime.pid
+  exit 0
+fi
+
+export DISPLAY="${DISPLAY:-:99}"
+Xvfb "$DISPLAY" -screen 0 1920x1080x24 >/tmp/clawbench-run/xvfb.log 2>&1 &
+echo "$!" > /tmp/clawbench-run/xvfb.pid
 sleep 1
 
 mkdir -p /tmp/chrome-profile/Default
@@ -127,12 +134,6 @@ sleep 1
 
 /opt/novnc/utils/novnc_proxy --vnc localhost:5900 --listen 6080 >/tmp/clawbench-run/novnc.log 2>&1 &
 echo "$!" > /tmp/clawbench-run/novnc.pid
-fi
-
-if [ "$REMOTE_MODE" = true ]; then
-  # Provider replays replace local X11 recording.
-  export CLAWBENCH_RECORDING_MODE="${CLAWBENCH_RECORDING_MODE:-provider-download}"
-fi
 
 echo "$$" > /tmp/clawbench-run/runtime.pid
 echo "CDP ready at http://127.0.0.1:9223"
