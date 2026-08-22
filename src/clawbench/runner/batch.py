@@ -18,6 +18,7 @@ from pathlib import Path
 import yaml
 
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
+from clawbench.utils.timeouts import BATCH_JOB_GRACE_S, DEFAULT_TIME_LIMIT_S
 
 
 def detect_engine() -> str:
@@ -102,6 +103,23 @@ def _resolve_cases_dir(cases_dir: str | Path) -> Path:
                 return candidate
         path = WORKSPACE_ROOT / path
     return path
+
+
+def job_timeout_s(
+    case_dir: Path, override_minutes: float | None = None
+) -> float | None:
+    """Wall-clock bound for one job, or None when the user disabled it."""
+    if override_minutes is not None:
+        return None if override_minutes <= 0 else override_minutes * 60
+
+    task_file = case_dir if case_dir.is_file() else case_dir / "task.json"
+    limit_s = DEFAULT_TIME_LIMIT_S
+    try:
+        task = json.loads(task_file.read_text(encoding="utf-8"))
+        limit_s = int(float(task["time_limit"]) * 60)
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return limit_s + BATCH_JOB_GRACE_S
 
 
 def _flat_case_files(base: Path) -> list[Path]:
@@ -248,6 +266,7 @@ async def run_job(
     browser_runtime_options: str | None = None,
     judge: str | None = None,
     no_judge: bool = False,
+    job_timeout: float | None = None,
 ) -> None:
     assert shutdown_event is not None
     try:
@@ -312,17 +331,47 @@ async def run_job(
                 )
                 job.proc = proc
                 running_procs.append(proc)
+                bound = job_timeout_s(job.case_dir, job_timeout)
+                host_timed_out = False
                 try:
-                    stdout, _ = await proc.communicate()
+                    stdout, _ = await asyncio.wait_for(
+                        proc.communicate(), timeout=bound
+                    )
+                except asyncio.TimeoutError:
+                    # The child is wedged past even its own host-side deadline.
+                    # Kill the whole process group and keep the batch moving.
+                    host_timed_out = True
+                    print(
+                        f"[{ts()}] HOST TIMEOUT {job.case_name} ({job.model}) "
+                        f"after {int(bound or 0)}s — killing"
+                    )
+                    try:
+                        os.killpg(proc.pid, signal.SIGKILL)
+                    except (ProcessLookupError, OSError):
+                        pass
+                    try:
+                        stdout, _ = await asyncio.wait_for(
+                            proc.communicate(), timeout=30
+                        )
+                    except (asyncio.TimeoutError, ProcessLookupError, OSError):
+                        stdout = b""
                 finally:
                     if proc in running_procs:
                         running_procs.remove(proc)
                     job.proc = None
 
                 job.duration = time.monotonic() - start
+                if host_timed_out:
+                    marker = (
+                        f"\nbatch.py: host_timeout after {int(bound or 0)}s; "
+                        "container and child process killed\n"
+                    )
+                    stdout = (stdout or b"") + marker.encode()
                 log_path.write_bytes(stdout or b"")
 
-                if proc.returncode == 0:
+                if host_timed_out:
+                    job.status = "error"
+                elif proc.returncode == 0:
                     job.status = "passed"
                 elif proc.returncode == 1:
                     job.status = "failed"
@@ -735,6 +784,7 @@ async def async_main(args: argparse.Namespace) -> int:
                 browser_runtime_options=getattr(args, "browser_runtime_options", None),
                 judge=args.judge,
                 no_judge=args.no_judge,
+                job_timeout=args.job_timeout,
             )
         )
         for j in jobs
@@ -827,6 +877,13 @@ def main() -> None:
         help="Max parallel jobs (default: 1 for managed runtimes, otherwise 2)",
     )
     p.add_argument("--output-dir", default="test-output", help="Base output directory")
+    p.add_argument(
+        "--job-timeout",
+        type=float,
+        default=None,
+        help="Per-job wall-clock limit in minutes. Default: the case's own "
+        "time_limit plus head-room for pull/copy/judge. 0 disables the bound.",
+    )
     p.add_argument(
         "--stagger-delay",
         type=float,
