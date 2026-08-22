@@ -29,6 +29,9 @@ RUN UV_PYTHON_PREFERENCE=only-system uv sync --frozen
 
 WORKDIR /app
 COPY runtime-server/server.py ./src/runtime-server/server.py
+# Stage-1 matching predicate, imported by server.py and shared with the
+# offline verifier. Must ship alongside server.py or interception breaks.
+COPY runtime-server/matching.py ./src/runtime-server/matching.py
 
 COPY chrome-extension/ ./src/chrome-extension/
 
