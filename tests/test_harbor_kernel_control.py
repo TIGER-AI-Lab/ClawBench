@@ -324,8 +324,9 @@ def test_start_writes_state_and_credential_free_metadata(
     state = json.loads(module.STATE_FILE.read_text())
     assert state["status"] == "created"
     assert state["cdp_url"].startswith("wss://kernel.example")
-    assert oct(module.STATE_FILE.stat().st_mode & 0o777) == "0o600"
-    assert oct(module.CDP_URL_FILE.stat().st_mode & 0o777) == "0o600"
+    if sys.platform != "win32":
+        assert oct(module.STATE_FILE.stat().st_mode & 0o777) == "0o600"
+        assert oct(module.CDP_URL_FILE.stat().st_mode & 0o777) == "0o600"
 
     metadata = json.loads(module.METADATA_FILE.read_text())
     assert metadata["session_id"] == "sess-123"
