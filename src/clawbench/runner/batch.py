@@ -326,6 +326,11 @@ async def run_job(
                     job.status = "passed"
                 elif proc.returncode == 1:
                     job.status = "failed"
+                elif proc.returncode == 3:
+                    # run.py's own signal for "judge never rendered a verdict":
+                    # kept out of "failed" so a judge outage cannot masquerade
+                    # as the agent having failed the task.
+                    job.status = "judge_inconclusive"
                 else:
                     job.status = "error"
             except asyncio.CancelledError:
@@ -362,7 +367,7 @@ async def run_job(
         # Task cancelled while waiting on semaphore, throttle wait, or
         # before subprocess was created.  "running" can appear here if
         # CancelledError hit after status was set but before proc started.
-        if job.status not in ("passed", "failed", "error"):
+        if job.status not in ("passed", "failed", "error", "judge_inconclusive"):
             job.status = "skipped"
         raise
 
@@ -372,10 +377,12 @@ def print_progress(jobs: list[Job], start: float) -> None:
     running = sum(1 for j in jobs if j.status == "running")
     passed = sum(1 for j in jobs if j.status == "passed")
     failed = sum(1 for j in jobs if j.status in ("failed", "error"))
+    inconclusive = sum(1 for j in jobs if j.status == "judge_inconclusive")
     elapsed = fmt_duration(time.monotonic() - start)
     print(
         f"[{ts()}] [BATCH] {done}/{len(jobs)} done | {running} running | "
-        f"{passed} passed, {failed} failed | {elapsed} elapsed",
+        f"{passed} passed, {failed} failed, {inconclusive} judge-inconclusive | "
+        f"{elapsed} elapsed",
         file=sys.stderr,
     )
 
@@ -411,7 +418,7 @@ def print_summary(
         totals[j.status] = totals.get(j.status, 0) + 1
     parts = [
         f"{totals.get(s, 0)} {s}"
-        for s in ("passed", "failed", "error", "skipped")
+        for s in ("passed", "failed", "error", "judge_inconclusive", "skipped")
         if totals.get(s)
     ]
     print(f"\nTotal: {len(jobs)} jobs | {' | '.join(parts)}")
@@ -576,7 +583,7 @@ def write_summary_json(
         ],
         "totals": {
             s: sum(1 for j in jobs if j.status == s)
-            for s in ("passed", "failed", "error", "skipped")
+            for s in ("passed", "failed", "error", "judge_inconclusive", "skipped")
         },
     }
     (base_output / "batch-summary.json").write_text(json.dumps(data, indent=2))
