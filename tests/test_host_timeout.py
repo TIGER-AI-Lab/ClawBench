@@ -216,7 +216,7 @@ class _FakeRun:
             self._exited = asyncio.Event()
         return self._exited
 
-    async def communicate(self) -> tuple[bytes, bytes]:
+    async def communicate(self, input: bytes | None = None) -> tuple[bytes, bytes]:
         await self._event().wait()
         return self.output, b""
 

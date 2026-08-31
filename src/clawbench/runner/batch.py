@@ -14,6 +14,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Protocol
 
 import yaml
 
@@ -126,8 +127,22 @@ def job_timeout_s(
     return limit_s + BATCH_JOB_GRACE_S
 
 
+class _Stoppable(Protocol):
+    """The part of asyncio.subprocess.Process that stop_wedged_job uses.
+
+    Narrow enough that a test can stand in a stub run which honours only
+    the signals it chooses, which is how the SIGTERM-then-SIGKILL sequence
+    is made observable without a real container.
+    """
+
+    @property
+    def pid(self) -> int: ...
+
+    async def communicate(self, input: bytes | None = None) -> tuple[bytes, bytes]: ...
+
+
 async def stop_wedged_job(
-    proc: asyncio.subprocess.Process, grace_s: float = JOB_KILL_GRACE_S
+    proc: _Stoppable, grace_s: float = JOB_KILL_GRACE_S
 ) -> tuple[bytes, bool]:
     """Stop a job that blew through its bound. Returns (output, escalated).
 
@@ -369,6 +384,7 @@ async def run_job(
                 running_procs.append(proc)
                 bound = job_timeout_s(job.case_dir, job_timeout)
                 host_timed_out = False
+                killed_hard = False
                 try:
                     stdout, _ = await asyncio.wait_for(
                         proc.communicate(), timeout=bound
