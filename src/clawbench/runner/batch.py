@@ -18,7 +18,11 @@ from pathlib import Path
 import yaml
 
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
-from clawbench.utils.timeouts import BATCH_JOB_GRACE_S, DEFAULT_TIME_LIMIT_S
+from clawbench.utils.timeouts import (
+    BATCH_JOB_GRACE_S,
+    DEFAULT_TIME_LIMIT_S,
+    JOB_KILL_GRACE_S,
+)
 
 
 def detect_engine() -> str:
@@ -120,6 +124,38 @@ def job_timeout_s(
     except (OSError, ValueError, KeyError, TypeError):
         pass
     return limit_s + BATCH_JOB_GRACE_S
+
+
+async def stop_wedged_job(
+    proc: asyncio.subprocess.Process, grace_s: float = JOB_KILL_GRACE_S
+) -> tuple[bytes, bool]:
+    """Stop a job that blew through its bound. Returns (output, escalated).
+
+    SIGTERM first. clawbench-run installs a SIGTERM handler that raises
+    KeyboardInterrupt and unwinds through `finally: docker_rm(container)`
+    (run.py), so the container it started actually goes away. SIGKILL cannot
+    be caught: it reaps the Python child while the container keeps running
+    under the engine daemon, holding the CPU and memory this bound exists to
+    reclaim and leaving one stale container behind per timed-out job.
+
+    Escalates to SIGKILL only if the child is still alive after `grace_s`; a
+    run wedged badly enough to ignore SIGTERM must not hold its slot open.
+    The second element reports whether that escalation happened, so callers
+    can log what actually occurred instead of claiming a clean teardown.
+    """
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        try:
+            os.killpg(proc.pid, sig)
+        except (ProcessLookupError, OSError):
+            # The group is already gone, so clawbench-run reached the end of
+            # its own cleanup; nothing was escalated past SIGTERM.
+            return b"", False
+        try:
+            stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=grace_s)
+            return stdout or b"", sig is signal.SIGKILL
+        except (asyncio.TimeoutError, ProcessLookupError, OSError):
+            continue
+    return b"", True
 
 
 def _flat_case_files(base: Path) -> list[Path]:
@@ -338,23 +374,16 @@ async def run_job(
                         proc.communicate(), timeout=bound
                     )
                 except asyncio.TimeoutError:
-                    # The child is wedged past even its own host-side deadline.
-                    # Kill the whole process group and keep the batch moving.
+                    # The child is wedged past even its own host-side
+                    # deadline. Signal it down through its own cleanup and
+                    # keep the batch moving; stop_wedged_job explains why
+                    # this is not a SIGKILL.
                     host_timed_out = True
                     print(
                         f"[{ts()}] HOST TIMEOUT {job.case_name} ({job.model}) "
-                        f"after {int(bound or 0)}s — killing"
+                        f"after {int(bound or 0)}s — stopping"
                     )
-                    try:
-                        os.killpg(proc.pid, signal.SIGKILL)
-                    except (ProcessLookupError, OSError):
-                        pass
-                    try:
-                        stdout, _ = await asyncio.wait_for(
-                            proc.communicate(), timeout=30
-                        )
-                    except (asyncio.TimeoutError, ProcessLookupError, OSError):
-                        stdout = b""
+                    stdout, killed_hard = await stop_wedged_job(proc)
                 finally:
                     if proc in running_procs:
                         running_procs.remove(proc)
@@ -362,9 +391,18 @@ async def run_job(
 
                 job.duration = time.monotonic() - start
                 if host_timed_out:
+                    if killed_hard:
+                        # Say so plainly: SIGKILL skipped clawbench-run's
+                        # own cleanup, so its container may still be up.
+                        detail = (
+                            f"SIGTERM ignored for {int(JOB_KILL_GRACE_S)}s, "
+                            "escalated to SIGKILL; a container may have "
+                            "survived this job"
+                        )
+                    else:
+                        detail = "SIGTERM sent; clawbench-run cleaned up"
                     marker = (
-                        f"\nbatch.py: host_timeout after {int(bound or 0)}s; "
-                        "container and child process killed\n"
+                        f"\nbatch.py: host_timeout after {int(bound or 0)}s; {detail}\n"
                     )
                     stdout = (stdout or b"") + marker.encode()
                 log_path.write_bytes(stdout or b"")

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -13,7 +15,7 @@ from types import ModuleType
 
 import pytest
 
-from clawbench.runner.batch import job_timeout_s
+from clawbench.runner.batch import job_timeout_s, stop_wedged_job
 from clawbench.utils.timeouts import (
     BATCH_JOB_GRACE_S,
     DEFAULT_TIME_LIMIT_S,
@@ -182,3 +184,119 @@ def test_docker_wait_without_a_deadline_still_waits(
     )
 
     assert docker.docker_wait("healthy-container", timeout_s=None) is False
+
+
+# --- stopping a wedged job without orphaning its container --------------------
+
+
+posix_kill_only = pytest.mark.skipif(
+    not hasattr(signal, "SIGKILL"),
+    reason="the batch kill path is os.killpg + SIGKILL, neither of which "
+    "exists on Windows; the runner does not use it there either",
+)
+
+
+class _FakeRun:
+    """Stand-in for a wedged clawbench-run: exits only on signals it honours.
+
+    SIGTERM is catchable and run.py handles it (raising KeyboardInterrupt so
+    the `finally: docker_rm(container)` runs); SIGKILL is not. A stub that
+    honours only some signals is what makes the difference observable.
+    """
+
+    def __init__(self, honours: set[int], output: bytes = b"") -> None:
+        self.honours = honours
+        self.output = output
+        self.signals: list[int] = []
+        self.pid = 31337
+        self._exited: asyncio.Event | None = None
+
+    def _event(self) -> asyncio.Event:
+        if self._exited is None:
+            self._exited = asyncio.Event()
+        return self._exited
+
+    async def communicate(self) -> tuple[bytes, bytes]:
+        await self._event().wait()
+        return self.output, b""
+
+    def deliver(self, sig: int) -> None:
+        self.signals.append(sig)
+        if sig in self.honours:
+            self._event().set()
+
+
+def _run_stop(
+    proc: _FakeRun, monkeypatch: pytest.MonkeyPatch, grace_s: float = 0.05
+) -> tuple[bytes, bool]:
+    # raising=False: os.killpg is POSIX-only and absent on Windows, where the
+    # batch driver's kill path does not run either.
+    monkeypatch.setattr(
+        os,
+        "killpg",
+        lambda pid, sig: proc.deliver(sig) if pid == proc.pid else None,
+        raising=False,
+    )
+    return asyncio.run(stop_wedged_job(proc, grace_s=grace_s))
+
+
+@posix_kill_only
+def test_a_timed_out_job_is_asked_to_stop_before_it_is_killed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """SIGKILL cannot be caught, so killing the group outright reaps the
+    Python child and leaves its container running under the engine daemon.
+    The first signal must be one clawbench-run can act on."""
+    proc = _FakeRun(honours={signal.SIGTERM}, output=b"partial log\n")
+
+    stdout, escalated = _run_stop(proc, monkeypatch)
+
+    assert proc.signals == [signal.SIGTERM]
+    assert signal.SIGKILL not in proc.signals
+    assert escalated is False
+    assert stdout == b"partial log\n"
+
+
+@posix_kill_only
+def test_a_job_that_ignores_sigterm_is_still_killed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Graceful teardown must not become a second way to hang the batch."""
+    proc = _FakeRun(honours=set())
+
+    _, escalated = _run_stop(proc, monkeypatch)
+
+    assert proc.signals == [signal.SIGTERM, signal.SIGKILL]
+    assert escalated is True
+
+
+@posix_kill_only
+def test_escalation_is_reported_so_the_job_log_can_say_so(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A SIGKILLed run skipped its own cleanup, so the log must not claim the
+    container was removed. The flag is what lets batch.py tell them apart."""
+    graceful = _FakeRun(honours={signal.SIGTERM})
+    stubborn = _FakeRun(honours={signal.SIGKILL})
+
+    assert _run_stop(graceful, monkeypatch)[1] is False
+    assert _run_stop(stubborn, monkeypatch)[1] is True
+
+
+@posix_kill_only
+def test_an_already_dead_job_is_not_reported_as_escalated(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """If the group is gone the run finished its own teardown; saying it was
+    SIGKILLed would send a reader hunting for a container that isn't there."""
+    proc = _FakeRun(honours=set())
+
+    def gone(pid: int, sig: int) -> None:
+        raise ProcessLookupError
+
+    monkeypatch.setattr(os, "killpg", gone, raising=False)
+
+    stdout, escalated = asyncio.run(stop_wedged_job(proc, grace_s=0.05))
+
+    assert escalated is False
+    assert stdout == b""

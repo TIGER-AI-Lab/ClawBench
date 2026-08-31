@@ -17,5 +17,12 @@ HOST_TIMEOUT_GRACE_S = 300
 # batch bound stays a backstop for a child process that is itself wedged.
 BATCH_JOB_GRACE_S = 900
 
+# How long a wedged clawbench-run gets to tear itself down after SIGTERM
+# before the batch escalates to SIGKILL. Its handler raises KeyboardInterrupt
+# and unwinds through `finally: docker_rm(container)`, which also deletes the
+# disposable mailbox and the browser runtime, so this covers a few short
+# subprocess and network calls rather than any agent work.
+JOB_KILL_GRACE_S = 60
+
 # Fallback when a task file has no readable time_limit.
 DEFAULT_TIME_LIMIT_S = 1800
