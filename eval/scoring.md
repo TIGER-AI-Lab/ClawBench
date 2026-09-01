@@ -2,11 +2,11 @@
 
 This document specifies how a ClawBench run is scored. It is the canonical reference for the numbers shown on:
 
-- **Live leaderboard:** https://huggingface.co/spaces/NAIL-Group/clawbench-leaderboard
+- **Live leaderboard:** https://huggingface.co/spaces/TIGER-Lab/ClawBench
 - **Website snapshot:** https://claw-bench.com/leaderboard
 - **HF data card table:** https://huggingface.co/datasets/NAIL-Group/ClawBench
 
-Anyone can reproduce every number on the leaderboard from the public traces in [`NAIL-Group/ClawBenchV1Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) and [`NAIL-Group/ClawBenchV2Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace) by running `clawbench-rescore` (see [Reproducibility](#reproducibility) below).
+Anyone can reproduce every number on the leaderboard from the public traces in [`NAIL-Group/ClawBenchV1Trace`](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) and [`TIGER-Lab/ClawBenchV2Trace`](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) by running `clawbench-rescore` (see [Reproducibility](#reproducibility) below).
 
 ## Summary
 
@@ -155,7 +155,7 @@ To re-grade an existing trace bundle (no agent re-run required):
 pip install clawbench-eval
 
 # 2. download the trace bundle for the model you want to re-score
-hf download --repo-type dataset NAIL-Group/ClawBenchV2Trace \
+hf download --repo-type dataset TIGER-Lab/ClawBenchV2Trace \
   --include "*-claude-sonnet-4-6-*" \
   --local-dir ./v2-traces
 
@@ -187,4 +187,4 @@ Output: per-run `judge.json` updated in place, plus a fresh `rescore-summary.jso
 - [`clawbench-rescore`](../src/clawbench/eval/rescore.py) — the rescoring CLI (installed with the package; `uv run clawbench-rescore` from a source checkout).
 - [`test-cases/task.schema.json`](../test-cases/task.schema.json) — `eval_schema` field definition.
 - [Trace dataset (V1)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) — every layer of every V1 run.
-- [Trace dataset (V2)](https://huggingface.co/datasets/NAIL-Group/ClawBenchV2Trace) — V2 traces (rolling, as new models are evaluated).
+- [Trace dataset (V2)](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) — V2 traces (rolling, as new models are evaluated).
