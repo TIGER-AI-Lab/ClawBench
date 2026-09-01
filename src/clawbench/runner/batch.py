@@ -17,6 +17,7 @@ from pathlib import Path
 
 import yaml
 
+from clawbench.runner.run_support.results import NON_MODEL_FAILURE_CATEGORIES
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
 
 
@@ -191,7 +192,93 @@ class Job:
     case_name: str
     status: str = "pending"
     duration: float = 0.0
+    # True when --resume adopted a previous run's recorded outcome instead of
+    # running this job again. Its status is that run's result, not "skipped",
+    # so the rewritten batch-summary.json keeps the original tallies.
+    resumed: bool = False
     proc: asyncio.subprocess.Process | None = field(default=None, repr=False)
+
+
+def load_recorded_runs(base_output: Path) -> dict[tuple[str, str], dict]:
+    """Map (test_case, model) -> the newest run-meta.json under a batch output dir.
+
+    run.py writes run-meta.json for any run that got far enough to have an
+    outcome, failures included, and that file is the authoritative record of
+    what happened. A batch log file is not: it is created when a job starts,
+    so it exists for jobs that were killed mid-run and never finished.
+    """
+    if not base_output.is_dir():
+        return {}
+    newest: dict[tuple[str, str], tuple[str, dict]] = {}
+    for meta_file in sorted(base_output.glob("*/*/run-meta.json")):
+        try:
+            meta = json.loads(meta_file.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            # A truncated run-meta.json means that run's outcome is unknown, so
+            # leave the job to be run again rather than guessing at it.
+            continue
+        if not isinstance(meta, dict):
+            continue
+        case, model = meta.get("test_case"), meta.get("model")
+        if not case or not model:
+            continue
+        key = (str(case), str(model))
+        # A case x model pair can have several run dirs across resumes; the
+        # timestamp in the metadata orders them, with the dir name as a
+        # fallback for older runs that predate the field.
+        stamp = str(meta.get("timestamp") or meta_file.parent.name)
+        if key not in newest or stamp >= newest[key][0]:
+            newest[key] = (stamp, meta)
+    return {key: meta for key, (_, meta) in newest.items()}
+
+
+def is_infra_class_failure(meta: dict) -> bool:
+    """Did this run fail for a reason that says nothing about the model?
+
+    Uses the same vocabulary as the scorer: these are the categories excluded
+    from adjusted scoring, so a re-run is the only way to get a usable result.
+    """
+    return bool(meta.get("infra_failure")) or (
+        meta.get("failure_category") in NON_MODEL_FAILURE_CATEGORIES
+    )
+
+
+def recorded_outcome(meta: dict) -> tuple[str, float]:
+    """Batch job status and duration for a run that already happened."""
+    try:
+        duration = float(meta.get("duration_seconds") or 0)
+    except (TypeError, ValueError):
+        duration = 0.0
+    if meta.get("intercepted"):
+        return "passed", duration
+    if is_infra_class_failure(meta):
+        return "error", duration
+    return "failed", duration
+
+
+def apply_resume(
+    jobs: list["Job"], base_output: Path, retry_failed: bool = False
+) -> tuple[int, int]:
+    """Adopt each finished run's recorded outcome. Returns (carried, retried).
+
+    A job is carried over only when base_output holds a run-meta.json for it.
+    Anything else stays pending and runs again -- including a job that has a
+    batch log but no metadata, which is what a job killed mid-run looks like
+    and exactly the case the old log-existence check skipped.
+    """
+    recorded = load_recorded_runs(base_output)
+    carried = retried = 0
+    for job in jobs:
+        meta = recorded.get((job.case_name, job.model))
+        if meta is None:
+            continue
+        if retry_failed and is_infra_class_failure(meta):
+            retried += 1
+            continue
+        job.status, job.duration = recorded_outcome(meta)
+        job.resumed = True
+        carried += 1
+    return carried, retried
 
 
 def fmt_duration(s: float) -> str:
@@ -571,6 +658,7 @@ def write_summary_json(
                 "case": j.case_name,
                 "status": j.status,
                 "duration_seconds": round(j.duration),
+                "resumed": j.resumed,
             }
             for j in jobs
         ],
@@ -650,15 +738,12 @@ async def async_main(args: argparse.Namespace) -> int:
             print(f"ERROR: --resume directory does not exist: {base_output}")
             return 1
         log_dir = base_output / "batch-logs"
-        skipped = 0
-        for job in jobs:
-            safe_model = re.sub(r"[/:]+", "--", job.model)
-            if (log_dir / f"{job.case_name}-{safe_model}.log").exists():
-                job.status = "skipped"
-                skipped += 1
+        carried, retried = apply_resume(jobs, base_output, args.retry_failed)
         remaining = sum(1 for j in jobs if j.status == "pending")
         print(f"\n[RESUME] Reusing {base_output}")
-        print(f"[RESUME] {skipped} job(s) already done, {remaining} remaining")
+        print(f"[RESUME] {carried} job(s) already recorded, {remaining} to run")
+        if retried:
+            print(f"[RESUME] {retried} of those are infra failures being re-run")
         if remaining == 0:
             print("[RESUME] All jobs already completed.")
             return 0
@@ -714,11 +799,12 @@ async def async_main(args: argparse.Namespace) -> int:
     throttle = StartupThrottle(args.stagger_delay)
 
     async def _noop() -> None:
-        """Placeholder for jobs already marked skipped (e.g. by --resume)."""
+        """Placeholder for jobs that are not being run: skipped, or resumed
+        from a previous batch and carrying that run's recorded outcome."""
 
     all_tasks = [
         asyncio.create_task(_noop())
-        if j.status == "skipped"
+        if j.resumed or j.status == "skipped"
         else asyncio.create_task(
             run_job(
                 j,
@@ -849,7 +935,19 @@ def main() -> None:
         metavar="BATCH_DIR",
         help=(
             "Resume a previous batch run: reuse its output directory and skip "
-            "any (case x model) job whose batch-logs/<case>-<model>.log already exists."
+            "any (case x model) job whose run-meta.json records an outcome. "
+            "Jobs that started but never finished are run again."
+        ),
+    )
+    p.add_argument(
+        "--retry-failed",
+        action="store_true",
+        help=(
+            "With --resume, also re-run jobs whose recorded outcome was an "
+            "infra-class failure (infra_failure, api_or_credit, task_data, "
+            "build_instruction) -- the categories excluded from adjusted "
+            "scoring, where the run says nothing about the model. Genuine "
+            "model failures are kept."
         ),
     )
     from clawbench.runner.run import DEFAULT_HARNESS, HARNESSES
