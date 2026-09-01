@@ -136,6 +136,10 @@ test-output/<model>/<harness>-<case>-<model>-<timestamp>/
     interception.json       # Interception result
 ```
 
+## Changelog
+
+Every pull request must add a concise bullet for its change under `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md). If the `Unreleased` section or the needed subsection does not exist, create it. Follow the existing [Keep a Changelog](https://keepachangelog.com/) structure: use `### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, or `### Security` in that order, omit empty subsections, and keep released versions untouched.
+
 ## Key Documentation
 
 - [README.md#-cli](README.md#-cli) -- CLI usage, batch runner flags, output format
