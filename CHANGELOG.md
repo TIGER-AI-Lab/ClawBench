@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added `scripts/export_openeval.py` (+ `scripts/export_openeval.sh` wrapper), an optional/additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` (see #322).
 
 ## [0.10.0] - 2026-08-30
 ### Added
