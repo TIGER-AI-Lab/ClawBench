@@ -70,6 +70,10 @@ target-version = "py311"
 
 [tool.pyright]
 include = ["src/clawbench", "tests"]
+# tests/test_validate_tasks_script.py imports the CI task validator, which
+# is a standalone script rather than part of the package. Setting
+# extraPaths replaces the implicit source root, so "src" is listed too.
+extraPaths = ["src", "scripts/ci"]
 exclude = [
     ".venv",
     "src/clawbench/runtime",
