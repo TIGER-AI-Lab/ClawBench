@@ -18,13 +18,7 @@ def _suite_base(suite: str) -> Path:
 
 def _task_files_for_suite(suite: str) -> list[Path]:
     base = _suite_base(suite)
-    task_files = [path for path in base.glob("*/task.json") if path.is_file()]
-    task_files.extend(
-        path
-        for path in base.glob("*.json")
-        if path.is_file() and path.name != "eligibility-report.json"
-    )
-    return sorted(task_files)
+    return sorted(path for path in base.glob("*/task.json") if path.is_file())
 
 
 @pytest.mark.parametrize("suite", sorted(batch.CASE_SUITES))
@@ -37,10 +31,8 @@ def test_builtin_case_suites_are_discoverable(suite: str) -> None:
 
     assert cases, f"{suite} should contain at least one case"
     for case in cases:
-        if case.is_dir():
-            assert (case / "task.json").is_file()
-        else:
-            assert case.is_file()
+        assert case.is_dir(), f"{case} should be a task directory"
+        assert (case / "task.json").is_file()
 
 
 @pytest.mark.parametrize("suite", sorted(batch.CASE_SUITES))

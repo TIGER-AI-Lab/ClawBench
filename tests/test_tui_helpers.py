@@ -129,7 +129,7 @@ def test_tui_dataset_and_case_helpers_use_known_suites() -> None:
     )
 
 
-def test_tui_load_cases_reads_flat_and_directory_suites() -> None:
+def test_tui_load_cases_reads_every_builtin_suite() -> None:
     v1_cases = tui.load_cases("test-cases/v1")
     claw_eval_cases = tui.load_cases("test-cases/claw-eval")
 
