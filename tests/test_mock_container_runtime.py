@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import importlib
-import shutil
 import subprocess
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
@@ -13,21 +11,18 @@ from types import ModuleType
 import pytest
 
 
-def _import_docker_helpers(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
-    """Import docker helpers with a fake docker binary visible on PATH."""
+def _import_docker_helpers(
+    monkeypatch: pytest.MonkeyPatch, engine: str = "docker"
+) -> ModuleType:
+    """Import docker helpers with the container engine pinned to ``engine``.
 
-    for module_name in (
-        "clawbench.runner.run_support.docker",
-        "clawbench.runner.run_support.config",
-    ):
-        sys.modules.pop(module_name, None)
-    monkeypatch.delenv("CONTAINER_ENGINE", raising=False)
-    monkeypatch.setattr(
-        shutil,
-        "which",
-        lambda cmd: str(Path("mock-bin") / cmd) if cmd == "docker" else None,
-    )
-    return importlib.import_module("clawbench.runner.run_support.docker")
+    Importing the module is free of any engine probe, so the test only has to
+    say which engine the helpers should build commands for.
+    """
+
+    docker = importlib.import_module("clawbench.runner.run_support.docker")
+    monkeypatch.setattr(docker, "engine", lambda: engine)
+    return docker
 
 
 @dataclass
@@ -223,13 +218,12 @@ def test_docker_run_human_uses_podman_network_flags_with_mock_runtime(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    docker = _import_docker_helpers(monkeypatch)
+    docker = _import_docker_helpers(monkeypatch, engine="podman")
     commands: list[list[str]] = []
     schema_path = tmp_path / "eval-schema.json"
     personal_info_dir = tmp_path / "my-info"
     schema_path.write_text("{}")
     personal_info_dir.mkdir()
-    monkeypatch.setattr(docker, "ENGINE", "podman")
     monkeypatch.setattr(docker, "run", lambda cmd: commands.append(cmd))
 
     docker.docker_run_human(

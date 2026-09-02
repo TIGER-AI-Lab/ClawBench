@@ -1,8 +1,10 @@
 """Configuration and path helpers for single ClawBench runs."""
 
+import functools
 import os
 import shutil
 import sys
+import warnings
 from pathlib import Path
 
 import yaml
@@ -24,7 +26,6 @@ __all__ = [
     "ASSET_ROOT",
     "BASE_IMAGE",
     "DEFAULT_HARNESS",
-    "ENGINE",
     "HARNESS_REGISTRY",
     "HARNESS_REGISTRY_YAML",
     "HARNESSES",
@@ -33,6 +34,7 @@ __all__ = [
     "WORKSPACE_ROOT",
     "HarnessRegistry",
     "ModelConfigError",
+    "engine",
     "harness_image",
     "load_dotenv",
     "load_harness_registry",
@@ -74,14 +76,21 @@ def harness_image(harness: str) -> str:
 IMAGE = harness_image(DEFAULT_HARNESS)
 
 
-def _detect_engine() -> str:
-    # Help output is host-only and should work on machines that have not
-    # installed Docker/Podman yet. Actual run paths still call this without
-    # help flags and fail fast if no engine is available.
-    if any(arg in {"-h", "--help"} for arg in sys.argv[1:]):
-        env = os.environ.get("CONTAINER_ENGINE", "").strip().lower()
-        return env if env in ("docker", "podman") else "docker"
+@functools.lru_cache(maxsize=1)
+def engine() -> str:
+    """Return the container engine to shell out to, probing PATH on first call.
 
+    Resolution is deliberately lazy: importing this module must not require a
+    container runtime. Plenty of code that imports it never starts a container
+    (rescore, the Harbor adapter, batch's job planning, `--help` output), and
+    an import-time probe that ends in sys.exit gives those callers no way to
+    degrade. The probe happens here, on the first call that actually needs an
+    engine, where the failure is attributable to the operation that needs it.
+
+    Cached because every container command re-asks, and shutil.which walks
+    PATH each time. Call engine.cache_clear() if CONTAINER_ENGINE changes
+    within a process (batch does, after it resolves the engine for children).
+    """
     env = os.environ.get("CONTAINER_ENGINE", "").strip().lower()
     if env:
         if env not in ("docker", "podman"):
@@ -98,7 +107,25 @@ def _detect_engine() -> str:
     sys.exit(1)
 
 
-ENGINE = _detect_engine()
+def __getattr__(name: str) -> str:
+    """Deprecated back-compat shim for the old module-level ENGINE constant.
+
+    Kept for one release for out-of-tree callers; in-tree code calls engine().
+    Because this only fires on attribute access, `from ... import config` stays
+    free of the probe, which is the point of the change.
+    """
+    if name == "ENGINE":
+        warnings.warn(
+            "config.ENGINE is deprecated; call config.engine() instead. "
+            "The constant probed for a container engine at import time, which "
+            "made importing this module fail on hosts without one.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return engine()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 MODELS_YAML = WORKSPACE_ROOT / "models" / "models.yaml"
 
 

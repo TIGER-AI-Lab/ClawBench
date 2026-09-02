@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import importlib
 import json
-import shutil
-import sys
 import urllib.error
 import urllib.parse
 from email.message import Message
@@ -237,20 +235,9 @@ def test_preflight_failure_redacts_url_encoded_query_key(
 
 
 def _import_run_module(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
-    for module_name in (
-        "clawbench.runner.run",
-        "clawbench.runner.run_support.metadata",
-        "clawbench.runner.run_support.docker",
-        "clawbench.runner.run_support.config",
-    ):
-        sys.modules.pop(module_name, None)
-    monkeypatch.delenv("CONTAINER_ENGINE", raising=False)
-    monkeypatch.setattr(
-        shutil,
-        "which",
-        lambda cmd: str(Path("mock-bin") / cmd) if cmd == "docker" else None,
-    )
-    return importlib.import_module("clawbench.runner.run")
+    run_mod = importlib.import_module("clawbench.runner.run")
+    monkeypatch.setattr(run_mod, "engine", lambda: "docker")
+    return run_mod
 
 
 def test_run_stops_on_preflight_failure_before_docker_build(
