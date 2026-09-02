@@ -5,8 +5,6 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
-import shutil
-import sys
 from pathlib import Path
 
 import pytest
@@ -170,14 +168,8 @@ def test_remove_transient_usage_artifact(tmp_path: Path) -> None:
 def test_run_metadata_redacts_model_and_judge_secrets(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    for module_name in (
-        "clawbench.runner.run_support.metadata",
-        "clawbench.runner.run_support.docker",
-        "clawbench.runner.run_support.config",
-    ):
-        sys.modules.pop(module_name, None)
-    monkeypatch.setattr(shutil, "which", lambda cmd: cmd)
     metadata = importlib.import_module("clawbench.runner.run_support.metadata")
+    monkeypatch.setattr(metadata, "engine", lambda: "docker")
     monkeypatch.setattr(metadata, "container_engine_version", lambda: "docker fake")
     monkeypatch.setattr(metadata, "image_id", lambda _ref: "sha256:fake")
 

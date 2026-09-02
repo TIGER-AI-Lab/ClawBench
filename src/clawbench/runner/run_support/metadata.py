@@ -12,8 +12,8 @@ from typing import Any
 from clawbench.runner.run_support.config import (
     ASSET_ROOT,
     BASE_IMAGE,
-    ENGINE,
     WORKSPACE_ROOT,
+    engine,
     harness_image,
 )
 from clawbench.runner.run_support.docker import container_engine_version, image_id
@@ -118,7 +118,7 @@ def _sanitized_model_config(model_cfg: dict | None) -> dict[str, Any] | None:
 def _runtime_meta(harness: str) -> dict[str, Any]:
     harness_ref = None if harness == "human" else harness_image(harness)
     return {
-        "container_engine": ENGINE,
+        "container_engine": engine(),
         "container_engine_source": (
             "env" if os.environ.get("CONTAINER_ENGINE") else "auto"
         ),

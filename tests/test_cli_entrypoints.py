@@ -26,8 +26,11 @@ def test_module_help_does_not_require_container_runtime(module: str) -> None:
     """Help output should work even when docker/podman are unavailable.
 
     The subprocess monkeypatches ``shutil.which`` before running the module so
-    import-time container-engine probes see a host with no container runtime.
-    This keeps the test fully Python-based and cross-platform.
+    any container-engine probe sees a host with no container runtime. This
+    keeps the test fully Python-based and cross-platform. ``--help`` used to
+    pass only because ``_detect_engine`` sniffed ``sys.argv`` for a help flag
+    and returned a guess; it now passes because argparse exits before anything
+    asks for an engine.
     """
 
     code = textwrap.dedent(

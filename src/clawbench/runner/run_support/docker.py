@@ -18,10 +18,10 @@ from clawbench.runner.run_support.harness_registry import AgentMessageSource
 from clawbench.runner.run_support.config import (
     BASE_IMAGE,
     DEFAULT_HARNESS,
-    ENGINE,
     HARNESSES,
     HARNESS_REGISTRY,
     IMAGE,
+    engine,
     harness_image,
 )
 from clawbench.runner.run_support.usage import (
@@ -66,7 +66,7 @@ def run(cmd: list[str], **kwargs):  # type: ignore[no-untyped-def]
 def image_exists(ref: str = IMAGE) -> bool:
     return (
         subprocess.run(
-            [ENGINE, "image", "inspect", ref],
+            [engine(), "image", "inspect", ref],
             capture_output=True,
         ).returncode
         == 0
@@ -76,7 +76,7 @@ def image_exists(ref: str = IMAGE) -> bool:
 def image_id(ref: str) -> str | None:
     try:
         r = subprocess.run(
-            [ENGINE, "image", "inspect", ref, "--format", "{{.Id}}"],
+            [engine(), "image", "inspect", ref, "--format", "{{.Id}}"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -92,7 +92,7 @@ def image_id(ref: str) -> str | None:
 def container_engine_version() -> str | None:
     try:
         r = subprocess.run(
-            [ENGINE, "--version"],
+            [engine(), "--version"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -182,7 +182,15 @@ def _looks_like_stale_cache(output_lines: list[str]) -> bool:
 
 def _build_one(dockerfile: Path, tag: str) -> None:
     """Run one container build with a stale-cache retry."""
-    cmd = [ENGINE, "build", "-f", str(dockerfile), "-t", tag, str(DOCKER_CONTEXT_ROOT)]
+    cmd = [
+        engine(),
+        "build",
+        "-f",
+        str(dockerfile),
+        "-t",
+        tag,
+        str(DOCKER_CONTEXT_ROOT),
+    ]
     rc, last_line, output_lines = _run_build(cmd)
 
     if rc != 0 and _looks_like_stale_cache(output_lines):
@@ -197,7 +205,7 @@ def _build_one(dockerfile: Path, tag: str) -> None:
         )
         console.print()
         cmd_nc = [
-            ENGINE,
+            engine(),
             "build",
             "--no-cache",
             "-f",
@@ -246,7 +254,7 @@ def fix_data_ownership(data_dir: Path) -> None:
     """Fix root-owned copied data on Linux + rootful Docker."""
     if sys.platform != "linux":
         return
-    if ENGINE != "docker":
+    if engine() != "docker":
         return
     if not data_dir.exists():
         return
@@ -266,7 +274,7 @@ def fix_data_ownership(data_dir: Path) -> None:
     print(f"  Fixing ownership of {data_dir} (rootful Docker -> host UID)")
     subprocess.run(
         [
-            ENGINE,
+            engine(),
             "run",
             "--rm",
             "-v",
@@ -284,7 +292,7 @@ def fix_data_ownership(data_dir: Path) -> None:
 
 def _network_flags() -> list[str]:
     """Force slirp4netns on podman to avoid host-network port collisions."""
-    if ENGINE == "podman":
+    if engine() == "podman":
         return ["--network=slirp4netns"]
     return []
 
@@ -292,7 +300,7 @@ def _network_flags() -> list[str]:
 def _proxy_env_flags() -> list[str]:
     """Forward host proxy env vars into the container."""
     host_gw = (
-        "host.containers.internal" if ENGINE == "podman" else "host.docker.internal"
+        "host.containers.internal" if engine() == "podman" else "host.docker.internal"
     )
     flags: list[str] = []
     has_proxy = False
@@ -331,7 +339,7 @@ def docker_run_human(
     recording_mode: str = "x11",
 ) -> None:
     cmd = [
-        ENGINE,
+        engine(),
         "run",
         "-d",
         "--name",
@@ -376,7 +384,7 @@ def docker_run(
     recording_mode: str = "x11",
 ) -> None:
     env_flags = [
-        ENGINE,
+        engine(),
         "run",
         "-d",
         "--name",
@@ -497,7 +505,7 @@ def _container_usage_summary(
     try:
         r = subprocess.run(
             [
-                ENGINE,
+                engine(),
                 "exec",
                 name,
                 "sh",
@@ -527,7 +535,7 @@ def docker_wait(
     """Block until the container exits, showing a live status line."""
     start = time.time()
     proc = subprocess.Popen(
-        [ENGINE, "wait", name], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        [engine(), "wait", name], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     last_actions = 0
     usage_summary: dict | None = None
@@ -542,7 +550,7 @@ def docker_wait(
             mins, secs = divmod(elapsed, 60)
             try:
                 r = subprocess.run(
-                    [ENGINE, "exec", name, "wc", "-l", "/data/actions.jsonl"],
+                    [engine(), "exec", name, "wc", "-l", "/data/actions.jsonl"],
                     capture_output=True,
                     text=True,
                     timeout=30,
@@ -586,13 +594,13 @@ def docker_wait(
 
 
 def docker_copy(name: str, output_dir: Path) -> None:
-    run([ENGINE, "cp", f"{name}:/data", str(output_dir / "data")])
+    run([engine(), "cp", f"{name}:/data", str(output_dir / "data")])
     (output_dir / "data" / ".stop-requested").unlink(missing_ok=True)
 
 
 def docker_logs(name: str) -> None:
-    subprocess.run([ENGINE, "logs", "--tail", "40", name])
+    subprocess.run([engine(), "logs", "--tail", "40", name])
 
 
 def docker_rm(name: str) -> None:
-    subprocess.run([ENGINE, "rm", "-f", name], capture_output=True)
+    subprocess.run([engine(), "rm", "-f", name], capture_output=True)

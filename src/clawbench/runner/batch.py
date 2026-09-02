@@ -7,7 +7,6 @@ import itertools
 import json
 import os
 import re
-import shutil
 import signal
 import sys
 import time
@@ -17,24 +16,14 @@ from pathlib import Path
 
 import yaml
 
+from clawbench.runner.run_support.config import engine
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
 
 
-def detect_engine() -> str:
-    env = os.environ.get("CONTAINER_ENGINE", "").strip().lower()
-    if env:
-        if env not in ("docker", "podman"):
-            print(f"ERROR: CONTAINER_ENGINE must be 'docker' or 'podman', got '{env}'")
-            sys.exit(1)
-        if not shutil.which(env):
-            print(f"ERROR: CONTAINER_ENGINE={env} but '{env}' not found on PATH")
-            sys.exit(1)
-        return env
-    for cmd in ("docker", "podman"):
-        if shutil.which(cmd):
-            return cmd
-    print("ERROR: Neither 'docker' nor 'podman' found on PATH")
-    sys.exit(1)
+# Re-exported under its historical name. The body used to be a third copy of
+# the same PATH probe; it is config.engine() now that importing config no
+# longer costs a container-engine probe.
+detect_engine = engine
 
 
 # ---------------------------------------------------------------------------
@@ -636,10 +625,10 @@ async def async_main(args: argparse.Namespace) -> int:
     # Build image once — reuse run.py's spinner/progress helper so first-time
     # builds show a clear banner and live step counter instead of a wall of
     # apt/npm output.
-    engine = detect_engine()
+    resolved_engine = detect_engine()
     # Ensure child run.py processes (and the imported helper below) use the
     # same engine as we just detected.
-    os.environ["CONTAINER_ENGINE"] = engine
+    os.environ["CONTAINER_ENGINE"] = resolved_engine
     from clawbench.runner import run as _run_mod
 
     _run_mod.docker_build(args.harness)
