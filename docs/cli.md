@@ -79,6 +79,15 @@ Execution:
 
 `--harness`, `--judge`, `--no-judge`, `--no-upload`, and the `--browser-*` flags behave as in `clawbench-run`. A `batch-summary.json` is written alongside the per-run directories.
 
+### Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Intercepted, and judged a match (or `--no-judge`) |
+| 1 | The run failed: not intercepted, or the judge returned a mismatch |
+| 2 | The run itself errored before producing a result |
+| 3 | Intercepted, but the judge returned no verdict — a judge outage, not a model failure. `clawbench-batch` counts these as `unjudged`; re-judge them with `clawbench-rescore --only-unjudged` |
+
 ## `clawbench-rescore`
 
 Re-judge existing trajectories — no browser, no agent compute.
@@ -95,6 +104,7 @@ clawbench-rescore <run-or-batch-dir> --judge-model deepseek-v4-pro --rubric both
 | `--force` | off | Re-judge tasks that already have a verdict for this rubric |
 | `--limit <n>` | 0 (all) | Judge at most *n* tasks |
 | `--only-batch <name>` | — | Restrict to one batch inside a sweep |
+| `--only-unjudged` | off | Only re-score runs that intercepted but have no judge verdict — what a judge outage leaves behind |
 | `--eval-results-dir <path>` | `./eval_results` | Where per-task CSV + `summary.json` are written |
 | `--no-eval-results` | off | Skip writing the `eval_results/` artifact |
 | `--models-yaml <path>`, `--sweep-root <path>` | — | Override config / sweep locations |

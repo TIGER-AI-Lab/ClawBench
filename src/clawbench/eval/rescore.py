@@ -38,11 +38,33 @@ from typing import Any
 
 import yaml
 
+# run_support.results holds no container-engine probe, so importing it here
+# keeps rescore usable on a host with neither Docker nor Podman.
+from clawbench.runner.run_support.results import is_judge_inconclusive
+
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}
 
 
-def find_run_dirs(root: Path) -> list[Path]:
-    return [p.parent for p in root.rglob("run-meta.json")]
+def find_run_dirs(root: Path, only_unjudged: bool = False) -> list[Path]:
+    """Run directories under `root`, optionally only those still unjudged.
+
+    A judge outage leaves an otherwise complete run with no verdict. Those are
+    the runs worth re-judging after the provider recovers, and re-judging only
+    them costs a fraction of a full sweep.
+    """
+    run_dirs = [p.parent for p in root.rglob("run-meta.json")]
+    if not only_unjudged:
+        return run_dirs
+
+    selected = []
+    for run_dir in run_dirs:
+        try:
+            meta = json.loads((run_dir / "run-meta.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(meta, dict) and is_judge_inconclusive(meta):
+            selected.append(run_dir)
+    return selected
 
 
 def rescore_one(
@@ -242,6 +264,15 @@ def main() -> int:
     )
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--only-batch", type=Path, default=None)
+    p.add_argument(
+        "--only-unjudged",
+        action="store_true",
+        help=(
+            "Only re-score runs that intercepted but have no judge verdict "
+            "(judge_match null) -- what a judge outage leaves behind. Use "
+            "after the provider recovers to fill in exactly those runs."
+        ),
+    )
     args = p.parse_args()
 
     cfg_all = yaml.safe_load(args.models_yaml.read_text())
@@ -267,11 +298,11 @@ def main() -> int:
 
         judge_funcs["lenient"] = judge_lenient
 
-    run_dirs = (
-        find_run_dirs(args.only_batch)
-        if args.only_batch
-        else find_run_dirs(args.sweep_root)
-    )
+    root = args.only_batch or args.sweep_root
+    run_dirs = find_run_dirs(root, only_unjudged=args.only_unjudged)
+    if args.only_unjudged and not run_dirs:
+        print(f"No runs with a missing judge verdict under {root}")
+        return 0
 
     pending = []
     for rd in run_dirs:

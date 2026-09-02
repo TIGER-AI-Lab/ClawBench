@@ -17,6 +17,7 @@ from pathlib import Path
 
 import yaml
 
+from clawbench.runner.run_support.results import JUDGE_INCONCLUSIVE_EXIT
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
 
 
@@ -194,6 +195,12 @@ class Job:
     proc: asyncio.subprocess.Process | None = field(default=None, repr=False)
 
 
+# Terminal job statuses, in reporting order. "unjudged" is a run that
+# intercepted but whose stage-2 verdict never arrived; it is neither a pass nor
+# a model failure, and it is the set rescore should re-judge.
+JOB_STATUSES = ("passed", "failed", "unjudged", "error", "skipped")
+
+
 def fmt_duration(s: float) -> str:
     m, sec = divmod(int(s), 60)
     return f"{m}m{sec:02d}s"
@@ -326,6 +333,10 @@ async def run_job(
                     job.status = "passed"
                 elif proc.returncode == 1:
                     job.status = "failed"
+                elif proc.returncode == JUDGE_INCONCLUSIVE_EXIT:
+                    # The run is fine; only the verdict is missing. Counting it
+                    # as "failed" silently deflates the batch's reward.
+                    job.status = "unjudged"
                 else:
                     job.status = "error"
             except asyncio.CancelledError:
@@ -409,11 +420,7 @@ def print_summary(
     totals = {}
     for j in jobs:
         totals[j.status] = totals.get(j.status, 0) + 1
-    parts = [
-        f"{totals.get(s, 0)} {s}"
-        for s in ("passed", "failed", "error", "skipped")
-        if totals.get(s)
-    ]
+    parts = [f"{totals.get(s, 0)} {s}" for s in JOB_STATUSES if totals.get(s)]
     print(f"\nTotal: {len(jobs)} jobs | {' | '.join(parts)}")
     print(f"Total elapsed: {fmt_duration(elapsed)} (max_concurrent={max_concurrent})")
 
@@ -574,10 +581,7 @@ def write_summary_json(
             }
             for j in jobs
         ],
-        "totals": {
-            s: sum(1 for j in jobs if j.status == s)
-            for s in ("passed", "failed", "error", "skipped")
-        },
+        "totals": {s: sum(1 for j in jobs if j.status == s) for s in JOB_STATUSES},
     }
     (base_output / "batch-summary.json").write_text(json.dumps(data, indent=2))
 

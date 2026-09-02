@@ -57,6 +57,30 @@ API_OR_CREDIT_PATTERNS = (
     " 429 ",
 )
 
+# clawbench-run exit code for "intercepted, but the judge returned no verdict".
+# Distinct from 1 (the agent genuinely failed stage 1 or the judge said no) so a
+# judge outage is not recorded as the model having failed the task.
+JUDGE_INCONCLUSIVE_EXIT = 3
+
+
+def is_judge_inconclusive(meta: dict[str, Any]) -> bool:
+    """Did stage 2 fail to produce a verdict on an otherwise complete run?
+
+    judge.py returns match=None when the call fails after retries -- HTTP 402,
+    a timeout, an unsupported api_type. The run itself is fine; what is missing
+    is the judgement, so it needs re-judging rather than counting against the
+    model.
+
+    A run that was never judged (--no-judge) has no judge_match key and is not
+    inconclusive: nothing was attempted, so nothing is outstanding.
+    """
+    if not meta.get("intercepted"):
+        return False
+    if "judge_match" not in meta:
+        return False
+    return meta["judge_match"] is None
+
+
 NON_MODEL_FAILURE_CATEGORIES = {
     "infra_failure",
     "api_or_credit",

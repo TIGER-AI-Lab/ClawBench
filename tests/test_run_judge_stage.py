@@ -30,6 +30,8 @@ from typing import Any
 
 import pytest
 
+from clawbench.runner.run_support.results import JUDGE_INCONCLUSIVE_EXIT
+
 
 def _import_run_module(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     for module_name in (
@@ -237,8 +239,10 @@ def test_judge_failure_after_the_run_still_writes_run_meta(
     with pytest.raises(SystemExit) as excinfo:
         run_mod.main()
 
-    # Inconclusive judge -> normal exit 1, not an uncaught crash.
-    assert excinfo.value.code == 1
+    # A clean exit, not an uncaught crash. #299 gave the inconclusive verdict
+    # its own code so a judge outage is not counted as the model failing; this
+    # run intercepted, and only stage 2 is missing.
+    assert excinfo.value.code == JUDGE_INCONCLUSIVE_EXIT
     assert docker_calls == ["run"]  # the agent did run
 
     # The core regression: its results must not be silently discarded.

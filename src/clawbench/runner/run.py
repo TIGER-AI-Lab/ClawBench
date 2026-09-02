@@ -53,6 +53,7 @@ from clawbench.runner.run_support.docker import (
 from clawbench.runner.run_support.email import create_email, delete_email
 from clawbench.runner.run_support.metadata import make_run_meta, write_run_meta
 from clawbench.runner.run_support.results import (
+    JUDGE_INCONCLUSIVE_EXIT,
     classify_run,
     ensure_interception,
     print_results,
@@ -794,7 +795,12 @@ def main():
             f"\nINTERCEPTED but JUDGE {'MISMATCH' if verdict is False else 'INCONCLUSIVE'} "
             f"— results in {output_dir}\n  reason: {reason[:200]}"
         )
-        sys.exit(1)
+        # An inconclusive judge is a missing verdict, not a failed task: the
+        # agent did intercept. Exiting 1 here made a judge outage -- an HTTP
+        # 402 mid-sweep, a timeout -- indistinguishable from the model
+        # failing, and whole batches were recorded as failures. A distinct
+        # code lets batch.py count these apart and rescore target them.
+        sys.exit(1 if verdict is False else JUDGE_INCONCLUSIVE_EXIT)
     if final_pass:
         status = "INTERCEPTED" if args.no_judge else "INTERCEPTED + JUDGE MATCH"
         print(f"\n{status} — results in {output_dir}")
