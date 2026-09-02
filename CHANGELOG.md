@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Updated the harbor adaptor to support the full V2 lenient & strict and reports numeric results.
 
 ### Fixed
+- Fail task setup when PurelyMail returns an API error instead of emitting credentials for an account that was not created.
 - Fixed an issue where malformed per-run metadata could prevent `batch-summary.json` from being written and, when configured, uploaded.
 - Fixed the issue that an invalid judge model would lose the `run-meta.json` file.
 
