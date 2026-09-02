@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added an opt-in `tests/test_harbor_version_compatibility.py` that loads every generated Harbor task with Harbor's own loader, so a Harbor version bump can be verified instead of assumed. Skipped unless Harbor is installed.
+
+### Changed
+- Harbor docs now pin `harbor==0.22.0` instead of the six-releases-stale `harbor==0.15.0`, and document which version the generated dataset was verified against.
 
 ## [0.10.0] - 2026-08-30
 ### Added
