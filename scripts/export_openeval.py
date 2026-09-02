@@ -85,6 +85,7 @@ validation fails; if it isn't installed, the script skips that step and
 says so. Either way, nothing in ClawBench's own pyproject.toml dependency
 list changes.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -146,7 +147,9 @@ def run_to_result(
         if task_id:
             test_case_id = str(task_id).split("#", 1)[0]
     if not test_case_id:
-        raise ValueError("run_meta must have a 'test_case' or 'task_id' to become a Result.test_case_id")
+        raise ValueError(
+            "run_meta must have a 'test_case' or 'task_id' to become a Result.test_case_id"
+        )
 
     intercepted = bool(_get(run_meta, "intercepted"))
 
@@ -156,7 +159,9 @@ def run_to_result(
             "type": "custom",
             "score": 1.0 if intercepted else 0.0,
             "passed": intercepted,
-            "reason": "final request matched eval_schema" if intercepted else "final request did not match eval_schema (or agent never reached it)",
+            "reason": "final request matched eval_schema"
+            if intercepted
+            else "final request did not match eval_schema (or agent never reached it)",
             "metadata": {"handler": "clawbench:interception"},
         }
     ]
@@ -183,7 +188,14 @@ def run_to_result(
     passed = bool(intercepted and judge_match is True)
 
     metadata: Dict[str, Any] = {}
-    for key in ("result_category", "failure_category", "adjusted_eligible", "model", "harness", "task_id"):
+    for key in (
+        "result_category",
+        "failure_category",
+        "adjusted_eligible",
+        "model",
+        "harness",
+        "task_id",
+    ):
         value = _get(run_meta, key)
         if value is not None:
             metadata[key] = value
@@ -273,11 +285,14 @@ def to_openeval(
 
     batch_dir = rescore_summary.get("batch_dir")
     resolved_suite_id = suite_id or (
-        f"clawbench_{batch_dir.rstrip('/').rsplit('/', 1)[-1]}" if batch_dir else "clawbench_batch"
+        f"clawbench_{batch_dir.rstrip('/').rsplit('/', 1)[-1]}"
+        if batch_dir
+        else "clawbench_batch"
     )
 
     try:
         from openeval.types import OPENEVAL_VERSION as _V
+
         version = _V
     except ImportError:
         version = OPENEVAL_VERSION_FALLBACK
@@ -325,20 +340,56 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("batch_dir", type=Path, help="Batch directory containing rescore-summary.json")
-    parser.add_argument("--run-id", required=True, help="Run id for the resulting ResultSet (e.g. the batch directory name)")
-    parser.add_argument("--started-at", required=True, help="ISO-8601 start timestamp for the batch (rescore-summary.json doesn't record one)")
-    parser.add_argument("--completed-at", default=None, help="Optional ISO-8601 completion timestamp")
-    parser.add_argument("--rubric", default=None, help="Which rubric to score against (default: the first one in rescore-summary.json's rubrics)")
-    parser.add_argument("--suite-id", default=None, help="Optional suite id override (default: derived from the batch directory name)")
-    parser.add_argument("--out", type=Path, default=None, help="Output path (default: <batch_dir>/resultset.json)")
-    parser.add_argument("--stdout", action="store_true", help="Print the ResultSet to stdout instead of writing a file")
-    parser.add_argument("--no-validate", action="store_true", help="Skip validation even if evalport-sdk is installed")
+    parser.add_argument(
+        "batch_dir", type=Path, help="Batch directory containing rescore-summary.json"
+    )
+    parser.add_argument(
+        "--run-id",
+        required=True,
+        help="Run id for the resulting ResultSet (e.g. the batch directory name)",
+    )
+    parser.add_argument(
+        "--started-at",
+        required=True,
+        help="ISO-8601 start timestamp for the batch (rescore-summary.json doesn't record one)",
+    )
+    parser.add_argument(
+        "--completed-at", default=None, help="Optional ISO-8601 completion timestamp"
+    )
+    parser.add_argument(
+        "--rubric",
+        default=None,
+        help="Which rubric to score against (default: the first one in rescore-summary.json's rubrics)",
+    )
+    parser.add_argument(
+        "--suite-id",
+        default=None,
+        help="Optional suite id override (default: derived from the batch directory name)",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="Output path (default: <batch_dir>/resultset.json)",
+    )
+    parser.add_argument(
+        "--stdout",
+        action="store_true",
+        help="Print the ResultSet to stdout instead of writing a file",
+    )
+    parser.add_argument(
+        "--no-validate",
+        action="store_true",
+        help="Skip validation even if evalport-sdk is installed",
+    )
     args = parser.parse_args(argv)
 
     summary_path = args.batch_dir / "rescore-summary.json"
     if not summary_path.exists():
-        print(f"error: {summary_path} not found -- run clawbench-rescore / scripts/rescore.sh on this batch first", file=sys.stderr)
+        print(
+            f"error: {summary_path} not found -- run clawbench-rescore / scripts/rescore.sh on this batch first",
+            file=sys.stderr,
+        )
         return 2
     rescore_summary = json.loads(summary_path.read_text())
 
@@ -362,15 +413,24 @@ def main(argv: Optional[List[str]] = None) -> int:
         try:
             from openeval.validate import validate_result_set
         except ImportError:
-            print("note: evalport-sdk not installed, skipping schema validation (pip install evalport-sdk to enable)", file=sys.stderr)
+            print(
+                "note: evalport-sdk not installed, skipping schema validation (pip install evalport-sdk to enable)",
+                file=sys.stderr,
+            )
         else:
             validation = validate_result_set(result_set)
             if not validation.valid:
-                print("error: produced ResultSet failed EvalPort schema validation:", file=sys.stderr)
+                print(
+                    "error: produced ResultSet failed EvalPort schema validation:",
+                    file=sys.stderr,
+                )
                 for err in validation.errors:
                     print(f"  - {err}", file=sys.stderr)
                 return 1
-            print(f"validated OK against evalport-sdk's real schema ({len(result_set['results'])} results)", file=sys.stderr)
+            print(
+                f"validated OK against evalport-sdk's real schema ({len(result_set['results'])} results)",
+                file=sys.stderr,
+            )
 
     payload = json.dumps(result_set, indent=2, ensure_ascii=False)
     if args.stdout:

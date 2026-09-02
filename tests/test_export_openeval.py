@@ -93,7 +93,9 @@ def test_run_to_result_judge_could_not_decide_is_not_passed_with_null_score():
     result = module.run_to_result(run_meta, judge)
 
     assert result["passed"] is False
-    judge_gr = next(g for g in result["grader_results"] if g["grader_id"] == "gr_judge_match")
+    judge_gr = next(
+        g for g in result["grader_results"] if g["grader_id"] == "gr_judge_match"
+    )
     assert judge_gr["score"] is None
     assert judge_gr["passed"] is False
 
@@ -167,14 +169,33 @@ def test_to_openeval_builds_valid_result_set_and_summary():
 
     # Enriched result carries instruction/model/harness from run_metas;
     # the un-enriched one only has what the task row itself carries.
-    enriched = next(r for r in result_set["results"] if r["test_case_id"] == "myrecipes/leave-review")
-    assert enriched["metadata"]["instruction"] == run_metas["myrecipes/leave-review"]["instruction"]
-    bare = next(r for r in result_set["results"] if r["test_case_id"] == "citylibrary/reserve-book")
+    enriched = next(
+        r
+        for r in result_set["results"]
+        if r["test_case_id"] == "myrecipes/leave-review"
+    )
+    assert (
+        enriched["metadata"]["instruction"]
+        == run_metas["myrecipes/leave-review"]["instruction"]
+    )
+    bare = next(
+        r
+        for r in result_set["results"]
+        if r["test_case_id"] == "citylibrary/reserve-book"
+    )
     assert "instruction" not in bare.get("metadata", {})
 
-    from openeval.validate import validate_result_set
+    # evalport-sdk is an optional dependency (matching export_openeval.py's own
+    # graceful degradation: it validates against the real OpenEval schema when
+    # the package happens to be installed, and skips that step otherwise). CI
+    # doesn't install it, so this real-schema check is opportunistic here too.
+    import pytest
 
-    validation = validate_result_set(result_set)
+    openeval_validate = pytest.importorskip(
+        "openeval.validate",
+        reason="evalport-sdk not installed; skipping real-schema validation",
+    )
+    validation = openeval_validate.validate_result_set(result_set)
     assert validation.valid, validation.errors
 
 
@@ -202,9 +223,15 @@ def test_to_openeval_gates_judge_grader_on_intercepted():
     summary["tasks"][1]["match_lenient"] = None
     summary["tasks"][1]["reason_lenient"] = ""
 
-    result_set = module.to_openeval(summary, run_id="r1", started_at="2026-09-02T14:00:00Z")
+    result_set = module.to_openeval(
+        summary, run_id="r1", started_at="2026-09-02T14:00:00Z"
+    )
 
-    never_intercepted = next(r for r in result_set["results"] if r["test_case_id"] == "citylibrary/reserve-book")
+    never_intercepted = next(
+        r
+        for r in result_set["results"]
+        if r["test_case_id"] == "citylibrary/reserve-book"
+    )
     assert len(never_intercepted["grader_results"]) == 1
     assert never_intercepted["grader_results"][0]["grader_id"] == "gr_interception"
 
@@ -244,7 +271,11 @@ def test_cli_writes_resultset_json_and_validates(tmp_path: Path):
     assert len(result_set["results"]) == 2
     # The enriched result should have picked up instruction/model/harness
     # from myrecipes-leave-review/run-meta.json found by rglob.
-    enriched = next(r for r in result_set["results"] if r["test_case_id"] == "myrecipes/leave-review")
+    enriched = next(
+        r
+        for r in result_set["results"]
+        if r["test_case_id"] == "myrecipes/leave-review"
+    )
     assert enriched["metadata"]["model"] == "gpt-5"
 
 
