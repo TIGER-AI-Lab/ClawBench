@@ -14,6 +14,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -431,13 +432,17 @@ def print_summary(
             print(f"  ... and {len(bad) - 10} more")
 
 
-def print_run_stats(base_output: Path) -> None:
-    """Print per-run statistics from output directories."""
-    print(f"\n{'=' * 80}")
-    print("PER-RUN STATS")
-    print(f"{'=' * 80}")
+def collect_run_rows(base_output: Path) -> list[dict[str, Any]]:
+    """Read per-run stats out of a batch output directory.
 
-    rows = []
+    Both scoring stages are read here so no caller has to reach for one
+    without the other: ``intercepted`` is Stage 1 (the interceptor matched the
+    task's request schema) and ``judged`` is Stage 2 (the LLM judge confirmed
+    the payload fulfils the instruction). ``judged`` is None when no verdict
+    exists -- either the judge was not run (``--no-judge``) or it failed to
+    return one.
+    """
+    rows: list[dict[str, Any]] = []
     for model_dir in sorted(base_output.iterdir()):
         if not model_dir.is_dir() or model_dir.name.startswith("batch-"):
             continue
@@ -462,12 +467,22 @@ def print_run_stats(base_output: Path) -> None:
                     and browser_runtime.get("recording_mode") == "provider"
                     and browser_runtime.get("recording_url")
                 )
+                judged = meta.get("judge_match")
+                judged = judged if isinstance(judged, bool) else None
+                judge_attempted = "judge_match" in meta
+                run_flags = meta.get("run_flags")
+                judge_model = (
+                    run_flags.get("judge") if isinstance(run_flags, dict) else None
+                )
             else:
                 case = run_dir.name
                 model = model_dir.name
                 intercepted = False
                 duration = 0
                 provider_recording = False
+                judged = None
+                judge_attempted = False
+                judge_model = None
 
             # Count actions
             actions_file = data / "actions.jsonl"
@@ -495,8 +510,88 @@ def print_run_stats(base_output: Path) -> None:
                     "provider_recording": provider_recording,
                     "duration": duration,
                     "intercepted": intercepted,
+                    "judged": judged,
+                    "judge_attempted": judge_attempted,
+                    "judge_model": judge_model,
                 }
             )
+
+    return rows
+
+
+def stage_totals(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Count both scoring stages together.
+
+    Stage-1 interception on its own overcounts success by roughly 2x -- the
+    interceptor sees the right request; the judge is what decides whether it
+    carried the right intent (#243). Reporting only Stage 1 makes an agent look
+    about twice as good as it is, and reporting only Stage 2 hides how much of
+    the corpus the interceptor covered. So this returns both, plus the
+    precision between them, and every caller prints all of it.
+    """
+    runs = len(rows)
+    intercepted = sum(1 for r in rows if r["intercepted"])
+    judged_match = sum(1 for r in rows if r["judged"] is True)
+    unjudged = sum(
+        1
+        for r in rows
+        if r["intercepted"] and r["judge_attempted"] and r["judged"] is None
+    )
+    judge_ran = any(r["judge_attempted"] for r in rows)
+    return {
+        "runs": runs,
+        "stage1_intercepted": intercepted,
+        "stage1_rate": round(intercepted / runs, 4) if runs else None,
+        "stage2_judged_match": judged_match,
+        # None, not 0.0: with --no-judge there is no stage-2 rate to quote, and
+        # a zero would read as "the judge rejected everything".
+        "stage2_rate": round(judged_match / runs, 4) if runs and judge_ran else None,
+        "stage2_unjudged": unjudged,
+        "stage1_precision": (
+            round(judged_match / intercepted, 4) if intercepted and judge_ran else None
+        ),
+        "judge_models": sorted({r["judge_model"] for r in rows if r["judge_model"]}),
+        "judge_ran": judge_ran,
+    }
+
+
+def format_stage_totals(totals: dict[str, Any]) -> str:
+    """One line carrying both stages, never one of them.
+
+    The point of #243 is that a single headline number gets misread, so this
+    refuses to render Stage 1 alone: when the judge did not run it says so
+    explicitly rather than letting the interception count stand as "the" score.
+    """
+    runs = totals["runs"]
+    stage1 = f"stage 1 (intercepted): {totals['stage1_intercepted']}/{runs}"
+    if totals["stage1_rate"] is not None:
+        stage1 += f" ({totals['stage1_rate']:.0%})"
+    if not totals["judge_ran"]:
+        return (
+            f"{stage1}  |  stage 2 (judged): not run"
+            " -- stage 1 alone overcounts success"
+        )
+
+    judges = ", ".join(totals["judge_models"]) or "unknown judge"
+    stage2 = f"stage 2 (judged, {judges}): {totals['stage2_judged_match']}/{runs}"
+    if totals["stage2_rate"] is not None:
+        stage2 += f" ({totals['stage2_rate']:.0%})"
+    line = f"{stage1}  |  {stage2}"
+    if totals["stage1_precision"] is not None:
+        line += f"  |  stage-1 precision: {totals['stage1_precision']:.0%}"
+    if totals["stage2_unjudged"]:
+        line += f"  |  {totals['stage2_unjudged']} awaiting a verdict"
+    return line
+
+
+def print_run_stats(base_output: Path) -> None:
+    """Print per-run statistics from output directories."""
+    print("")
+    print("=" * 80)
+    print("PER-RUN STATS")
+    print("=" * 80)
+
+    rows = collect_run_rows(base_output)
 
     if not rows:
         print("  No run data found.")
@@ -507,11 +602,14 @@ def print_run_stats(base_output: Path) -> None:
 
     case_w = min(max(len(r["case"]) for r in rows), 50)
     model_w = max(len(r["model"]) for r in rows)
-    header = f"{'Case':<{case_w}}  {'Model':<{model_w}}  Actions  Screenshots  Recording   Duration  Intercepted"
+    header = f"{'Case':<{case_w}}  {'Model':<{model_w}}  Actions  Screenshots  Recording   Duration  Stage1  Stage2"
     print(header)
     print("-" * len(header))
     for r in rows:
-        result = "yes" if r["intercepted"] else "no"
+        stage1 = "yes" if r["intercepted"] else "no"
+        # "-" is not a fail: it means no verdict exists for this run, either
+        # because --no-judge skipped stage 2 or because the judge returned none.
+        stage2 = "-" if r["judged"] is None else ("yes" if r["judged"] else "no")
         case = r["case"][:case_w]
         # Flag abnormal runs: no actions, no screenshots, no recording, or very short duration
         abnormal = (
@@ -527,14 +625,13 @@ def print_run_stats(base_output: Path) -> None:
             f"{case:<{case_w}}  {r['model']:<{model_w}}  "
             f"{r['actions']:>7}  {r['screenshots']:>11}  "
             f"{recording:>10}  "
-            f"{fmt_duration(r['duration']):>8}  {result}"
+            f"{fmt_duration(r['duration']):>8}  {stage1:<6}  {stage2}"
         )
         if abnormal:
             print(f"{RED}{line}{RESET}")
         else:
             print(line)
 
-    total_pass = sum(1 for r in rows if r["intercepted"])
     abnormal_count = sum(
         1
         for r in rows
@@ -543,11 +640,10 @@ def print_run_stats(base_output: Path) -> None:
         or (not r["provider_recording"] and r["recording_mb"] < 0.5)
         or r["duration"] < 30
     )
-    print(f"\n{total_pass}/{len(rows)} intercepted", end="")
+    print("")
+    print(format_stage_totals(stage_totals(rows)))
     if abnormal_count:
-        print(f"  |  {RED}{abnormal_count} abnormal{RESET}")
-    else:
-        print()
+        print(f"{RED}{abnormal_count} abnormal{RESET}")
 
 
 def write_summary_json(
@@ -559,6 +655,11 @@ def write_summary_json(
     browser_runtime: str = "local",
 ) -> None:
     now = datetime.now(timezone.utc).isoformat()
+    # Job status already folds both stages into one verdict ("passed" means
+    # intercepted AND judged). Carry the stages separately as well so a
+    # consumer of this file can report interception and judged rates without
+    # re-walking every run directory -- and so neither can be quoted alone.
+    stages = stage_totals(collect_run_rows(base_output))
     data = {
         "started_at": started_at,
         "finished_at": now,
@@ -574,6 +675,7 @@ def write_summary_json(
             }
             for j in jobs
         ],
+        "stages": stages,
         "totals": {
             s: sum(1 for j in jobs if j.status == s)
             for s in ("passed", "failed", "error", "skipped")

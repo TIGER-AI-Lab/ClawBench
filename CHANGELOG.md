@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- `batch-summary.json` now carries a `stages` block with the Stage-1 (interception) and Stage-2 (judged) counts, rates, and the judge model, so both stages can be reported without re-walking every run directory.
+
+### Changed
+- `clawbench-batch` per-run stats now show a `Stage1`/`Stage2` column pair and end with a line reporting both stages plus stage-1 precision, instead of the interception count alone.
 
 ## [0.10.0] - 2026-08-30
 ### Added
