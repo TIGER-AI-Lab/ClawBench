@@ -81,7 +81,7 @@ def discover_models(patterns: list[str] | None, all_models: bool) -> list[str]:
 
 
 def _case_id(d: Path) -> int | None:
-    """Extract the numeric task ID from V1/V2/flat Claw-Eval case names."""
+    """Extract the numeric task ID from V1/V2/Claw-Eval case names."""
     match = re.match(r"^(?:v\d+-|ce-)?[A-Za-z]?(\d+)", d.stem)
     if not match:
         return None
@@ -104,16 +104,8 @@ def _resolve_cases_dir(cases_dir: str | Path) -> Path:
     return path
 
 
-def _flat_case_files(base: Path) -> list[Path]:
-    return [
-        p
-        for p in base.glob("*.json")
-        if p.is_file() and p.name not in {"eligibility-report.json"}
-    ]
-
-
 def _all_cases_in(base: Path) -> list[Path]:
-    return [p.parent for p in base.glob("*/task.json")] + _flat_case_files(base)
+    return [p.parent for p in base.glob("*/task.json")]
 
 
 def discover_cases(
@@ -138,8 +130,6 @@ def discover_cases(
                 expanded.extend(base.glob(pat))
             for d in expanded:
                 if d.is_dir() and (d / "task.json").exists():
-                    dirs.append(d)
-                elif d.is_file() and d.suffix == ".json":
                     dirs.append(d)
     elif case_range:
         dirs = sorted(_all_cases_in(base), key=_case_sort_key)

@@ -383,13 +383,8 @@ def _case_sort_key(case: str) -> tuple[int, int, str]:
 
 def load_cases(cases_dir_name: str = "test-cases") -> list[str]:
     cases_dir = ASSET_ROOT / cases_dir_name
-    flat_cases = [
-        p.stem
-        for p in cases_dir.glob("*.json")
-        if p.name not in {"eligibility-report.json"}
-    ]
     cases = sorted(
-        [*(p.parent.name for p in cases_dir.glob("*/task.json")), *flat_cases],
+        (p.parent.name for p in cases_dir.glob("*/task.json")),
         key=_case_sort_key,
     )
     if not cases:
