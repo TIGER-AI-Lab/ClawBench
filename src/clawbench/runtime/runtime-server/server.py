@@ -2,19 +2,22 @@ import asyncio
 import base64
 import json
 import os
-import re
 import signal
 import subprocess
 import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs
 import urllib.request
 
 import websocket
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse
+
+# Sibling module, shared verbatim with the offline verifier
+# (clawbench.eval.edgebench_judge) so the two cannot drift.
+from matching import query_params_from_url, stage1_match
 
 DATA_DIR = Path(os.environ.get("CLAWBENCH_DATA_DIR", "/data"))
 ACTIONS_FILE = DATA_DIR / "actions.jsonl"
@@ -170,21 +173,6 @@ ACTION_CAPTURE_SCRIPT = r"""
 """
 
 
-def _const_fields_match(expected, actual):
-    """Check that all key-value pairs in expected match in actual data.
-    For list bodies (batched GraphQL), returns True if any item matches.
-    Returns True if all match or expected is empty/None."""
-    if not expected:
-        return True
-    if not actual:
-        return False
-    if isinstance(actual, list):
-        return any(_const_fields_match(expected, item) for item in actual)
-    if not isinstance(actual, dict):
-        return False
-    return all(actual.get(k) == v for k, v in expected.items())
-
-
 FILTERED_PREFIXES = (
     "http://localhost:7878",
     "http://127.0.0.1:7878",
@@ -218,18 +206,13 @@ def _log_request(log_file, params):
     if any(request_url.startswith(p) for p in FILTERED_PREFIXES):
         return
 
-    parsed = urlparse(request_url)
-    query_params = {
-        k: v[0] if len(v) == 1 else v for k, v in parse_qs(parsed.query).items()
-    }
-
     entry = {
         "timestamp": time.time(),
         "url": request_url,
         "method": request["method"],
         "headers": request.get("headers", {}),
         "body": _parse_body(request.get("postData")),
-        "query_params": query_params,
+        "query_params": query_params_from_url(request_url),
         "resource_type": params.get("resourceType", "Other"),
     }
     log_file.write(json.dumps(entry) + "\n")
@@ -451,26 +434,23 @@ def start_cdp_handler(
                 continue
 
             # --- Intercept: block if URL + method + body/params match ---
-            if not re.search(url_pattern, request_url):
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            if required_method and params["request"]["method"] != required_method:
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            # Parse request data for body/params matching
-            parsed = urlparse(request_url)
-            query_params = {
-                k: v[0] if len(v) == 1 else v for k, v in parse_qs(parsed.query).items()
-            }
+            # One shared predicate, not four inline branches: every failing
+            # check here continues the request, and the offline verifier has
+            # to reach the identical verdict from the archived evidence.
             body = _parse_body(params["request"].get("postData"))
-
-            if not _const_fields_match(match_body, body):
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            if not _const_fields_match(match_params, query_params):
+            if not stage1_match(
+                {
+                    "url": request_url,
+                    "method": params["request"]["method"],
+                    "body": body,
+                },
+                {
+                    "url_pattern": url_pattern,
+                    "method": required_method,
+                    "body": match_body,
+                    "params": match_params,
+                },
+            ):
                 send("Fetch.continueRequest", {"requestId": request_id}, session_id)
                 continue
 
@@ -478,7 +458,7 @@ def start_cdp_handler(
             request_obj = {
                 "url": request_url,
                 "method": params["request"]["method"],
-                "params": query_params,
+                "params": query_params_from_url(request_url),
                 "body": body,
             }
 
