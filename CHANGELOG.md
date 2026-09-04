@@ -14,11 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Added Kernel as a managed remote browser runtime with live view and downloaded replay recordings. Thanks to @[rgarcia](https://github.com/rgarcia).
 - Added `clawbench-analyze` entrypoint for aggregate batch error analysis.
+- Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 
 ### Changed
 - Updated the harbor adaptor to support the full V2 lenient & strict and reports numeric results.
 
 ### Fixed
+- Fail task setup when PurelyMail returns an API error instead of emitting credentials for an account that was not created.
 - Fixed an issue where malformed per-run metadata could prevent `batch-summary.json` from being written and, when configured, uploaded.
 - Fixed the issue that an invalid judge model would lose the `run-meta.json` file.
 

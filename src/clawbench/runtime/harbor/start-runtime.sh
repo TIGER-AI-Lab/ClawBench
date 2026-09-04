@@ -8,14 +8,30 @@ if [ -f /tmp/clawbench-run/runtime.pid ] && kill -0 "$(cat /tmp/clawbench-run/ru
   exit 0
 fi
 
-export DISPLAY="${DISPLAY:-:99}"
-Xvfb "$DISPLAY" -screen 0 1920x1080x24 >/tmp/clawbench-run/xvfb.log 2>&1 &
-echo "$!" > /tmp/clawbench-run/xvfb.pid
-sleep 1
+# Remote browser runtimes (e.g. Kernel) hand us a provider CDP URL through a
+# file instead of launching local Chromium. The runtime server proxies that
+# WebSocket behind a credential-free local bridge on port 7878.
+REMOTE_MODE=false
+if [ -n "${CLAWBENCH_BROWSER_CDP_URL_FILE:-}" ] && [ -f "${CLAWBENCH_BROWSER_CDP_URL_FILE}" ]; then
+  REMOTE_MODE=true
+fi
 
 cd /app/src/runtime-server
 uv run --no-sync uvicorn server:app --host 0.0.0.0 --port 7878 >/tmp/clawbench-run/runtime-server.log 2>&1 &
 echo "$!" > /tmp/clawbench-run/runtime-server.pid
+sleep 1
+
+if [ "$REMOTE_MODE" = true ]; then
+  # Provider replays replace local X11 recording.
+  export CLAWBENCH_RECORDING_MODE="${CLAWBENCH_RECORDING_MODE:-provider-download}"
+  echo "CDP bridge ready at http://127.0.0.1:7878"
+  echo "$$" > /tmp/clawbench-run/runtime.pid
+  exit 0
+fi
+
+export DISPLAY="${DISPLAY:-:99}"
+Xvfb "$DISPLAY" -screen 0 1920x1080x24 >/tmp/clawbench-run/xvfb.log 2>&1 &
+echo "$!" > /tmp/clawbench-run/xvfb.pid
 sleep 1
 
 mkdir -p /tmp/chrome-profile/Default

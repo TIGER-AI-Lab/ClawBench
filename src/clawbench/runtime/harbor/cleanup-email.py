@@ -28,7 +28,14 @@ def purelymail_request(endpoint: str, body: dict, api_key: str) -> dict:
         method="POST",
     )
     with urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read())
+        result = json.loads(resp.read())
+    if not isinstance(result, dict):
+        raise RuntimeError(f"PurelyMail {endpoint} returned an invalid response")
+    if result.get("type") == "error":
+        code = f" ({result['code']})" if result.get("code") else ""
+        message = f": {result['message']}" if result.get("message") else ""
+        raise RuntimeError(f"PurelyMail {endpoint} failed{code}{message}")
+    return result
 
 
 def main() -> int:

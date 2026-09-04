@@ -398,7 +398,7 @@ def test_kernel_session_replay_and_cleanup(
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     provider = KernelRuntimeProvider(
         api_key="kernel-secret",
-        options={"stealth": True, "region": "us-east"},
+        options={"region": "us-east"},
         replay_poll_interval_s=0,
         replay_poll_timeout_s=1,
     )
@@ -413,7 +413,6 @@ def test_kernel_session_replay_and_cleanup(
         "region": "us-east",
         "headless": False,
         "timeout_seconds": 1920,
-        "viewport": {"width": 1920, "height": 1080, "refresh_rate": 25},
     }
     assert session.provider == "kernel"
     assert session.recording_mode == "provider-download"
