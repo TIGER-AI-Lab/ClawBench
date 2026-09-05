@@ -74,8 +74,11 @@ def rescore_one(
         judge_p = run_dir / JUDGE_FILE[rubric]
         if judge_p.exists() and not force:
             try:
-                out[rubric] = json.loads(judge_p.read_text())
-                continue
+                cached = json.loads(judge_p.read_text())
+                # A cached match=None is not a scored result: retry it.
+                if cached.get("match") is not None:
+                    out[rubric] = cached
+                    continue
             except Exception:
                 pass
         verdict = judge_funcs[rubric](model_cfg, judge_model, instruction, intercept)
@@ -280,7 +283,10 @@ def main() -> int:
             if not m.get("intercepted"):
                 continue
             needs = any(
-                args.force or not (rd / JUDGE_FILE[r]).exists() for r in rubrics
+                args.force
+                or not (rd / JUDGE_FILE[r]).exists()
+                or json.loads((rd / JUDGE_FILE[r]).read_text()).get("match") is None
+                for r in rubrics
             )
             if needs:
                 pending.append(rd)

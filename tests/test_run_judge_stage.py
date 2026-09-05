@@ -237,8 +237,9 @@ def test_judge_failure_after_the_run_still_writes_run_meta(
     with pytest.raises(SystemExit) as excinfo:
         run_mod.main()
 
-    # Inconclusive judge -> normal exit 1, not an uncaught crash.
-    assert excinfo.value.code == 1
+    # Inconclusive judge (issue #299) -> its own exit code, never an uncaught
+    # crash and never sharing exit 1 with a genuine JUDGE MISMATCH.
+    assert excinfo.value.code == 3
     assert docker_calls == ["run"]  # the agent did run
 
     # The core regression: its results must not be silently discarded.
@@ -247,6 +248,38 @@ def test_judge_failure_after_the_run_still_writes_run_meta(
     assert meta["judge_match"] is None
     assert "judge_setup_failed" in meta["judge"]["reason"]
     assert "went away mid-run" in meta["judge"]["reason"]
+    assert meta["pass"] is False
+
+
+def test_judge_mismatch_keeps_exit_code_1_distinct_from_inconclusive(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A judge that actually renders match=False is a real result, not an
+    outage: it must keep exit 1, not be folded into #299's exit 3."""
+    run_mod, written, docker_calls = _prepare_run(monkeypatch, tmp_path, "model-a")
+
+    import clawbench.runner.judge as judge_mod
+
+    monkeypatch.setattr(
+        judge_mod,
+        "judge_request",
+        lambda *a, **k: {
+            "match": False,
+            "reason": "did not fulfill the instruction",
+            "judge_model": "model-a",
+            "raw": "{}",
+            "error": None,
+        },
+    )
+
+    with pytest.raises(SystemExit) as excinfo:
+        run_mod.main()
+
+    assert excinfo.value.code == 1
+    assert docker_calls == ["run"]
+    meta = written[0][1]
+    assert meta["judge_match"] is False
     assert meta["pass"] is False
 
 
