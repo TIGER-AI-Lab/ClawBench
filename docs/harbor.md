@@ -4,20 +4,29 @@
 
 **Use Harbor when** you already run other benchmarks through it, you want Harbor's agent registry (`-a openclaw`, `-a hermes`, …) instead of ClawBench's own harnesses, or you need Harbor's retry/attempt semantics. **Use `clawbench-batch` instead** when you just want to score a model on ClawBench — it is the shorter path and it is what the leaderboard uses.
 
-- [Prerequisites](#prerequisites)
-- [1. Convert V2 into a Harbor dataset](#1-convert-v2-into-a-harbor-dataset)
-- [2. Wire up the judge](#2-wire-up-the-judge)
-- [3. Run it](#3-run-it)
-- [Making it fast](#making-it-fast)
-- [What the generated environment contains](#what-the-generated-environment-contains)
-- [Troubleshooting](#troubleshooting)
+- [Running ClawBench through Harbor](#running-clawbench-through-harbor)
+  - [Prerequisites](#prerequisites)
+  - [Harbor versions](#harbor-versions)
+  - [1. Convert V2 into a Harbor dataset](#1-convert-v2-into-a-harbor-dataset)
+  - [2. Wire up the judge](#2-wire-up-the-judge)
+  - [3. Run it](#3-run-it)
+    - [OpenClaw through an OpenAI-compatible endpoint](#openclaw-through-an-openai-compatible-endpoint)
+    - [Hermes through OpenRouter](#hermes-through-openrouter)
+  - [Making it fast](#making-it-fast)
+  - [What the generated environment contains](#what-the-generated-environment-contains)
+  - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
+- **Harbor 0.22.0.** Every command below pins `harbor==0.22.0`, which is the version the generated dataset is verified against — see [Harbor versions](#harbor-versions).
 - **Docker.** Harbor runs use Harbor's Docker provider, so Docker must be available even if you normally use Podman for native ClawBench runs.
 - **ClawBench installed** (`uv tool install clawbench-eval`, or a source checkout with `uv run` prefixes).
 - **Judge credentials.** Scoring requires both an intercepted request *and* a judge verdict; without judge credentials every intercepted task scores `0`.
 - **PurelyMail credentials** from `.env`, passed through with `--env-file .env`.
+
+## Harbor versions
+
+The commands here pin **`harbor==0.22.0`**, the current release at the time of writing. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install.
 
 ## 1. Convert V2 into a Harbor dataset
 
@@ -59,7 +68,7 @@ Use `deepseek-v4-pro` if you want numbers comparable to the published leaderboar
 ## 3. Run it
 
 ```bash
-uvx --from harbor==0.15.0 harbor run \
+uvx --from harbor==0.22.0 harbor run \
   -p ./harbor-datasets/clawbench-v2 \
   -a "<agent>" \
   -m "<model>" \
@@ -70,7 +79,7 @@ uvx --from harbor==0.15.0 harbor run \
   --ve CLAWBENCH_JUDGE_API_TYPE="${CLAWBENCH_JUDGE_API_TYPE:-openai-completions}"
 ```
 
-Drop `uvx --from harbor==0.15.0` if Harbor is already installed.
+Drop `uvx --from harbor==0.22.0` if Harbor is already installed.
 
 ### OpenClaw through an OpenAI-compatible endpoint
 
@@ -78,7 +87,7 @@ Drop `uvx --from harbor==0.15.0` if Harbor is already installed.
 export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
 export OPENAI_API_KEY="$OPENROUTER_API_KEY"
 
-uvx --from harbor==0.15.0 harbor run \
+uvx --from harbor==0.22.0 harbor run \
   -p ./harbor-datasets/clawbench-v2 \
   -a openclaw \
   -m openai/deepseek/deepseek-v4-flash \
@@ -96,7 +105,7 @@ uvx --from harbor==0.15.0 harbor run \
 ```bash
 export OPENROUTER_API_KEY="your-openrouter-key"
 
-uvx --from harbor==0.15.0 harbor run \
+uvx --from harbor==0.22.0 harbor run \
   -p ./harbor-datasets/clawbench-v2 \
   -a hermes \
   -m deepseek/deepseek-v4-flash \
@@ -115,7 +124,7 @@ A full V2 sweep is 129 containerized browser sessions, each capped by the task's
 **1. Raise concurrency.** `-n / --n-concurrent` is the single biggest lever:
 
 ```bash
-uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 \
+uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2 \
   -a hermes -m deepseek/deepseek-v4-flash -n 8 --env-file .env --ve ...
 ```
 
@@ -124,7 +133,7 @@ Each trial is a full Chromium container, so budget roughly **1 CPU core and ~2 G
 **2. Build the image once.** The first trial builds the ClawBench environment image; parallel cold starts all build at once. Warm the cache with the smoke dataset before the real sweep:
 
 ```bash
-uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2-smoke \
+uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2-smoke \
   -a hermes -m deepseek/deepseek-v4-flash --env-file .env --ve ...
 ```
 

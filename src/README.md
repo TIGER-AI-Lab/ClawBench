@@ -26,10 +26,10 @@ uv run clawbench-harbor-adapt --output-dir ./harbor-datasets/clawbench-v2 --over
 
 # Example Harbor runs after adaptation:
 # OpenClaw via OpenRouter/OpenAI-compatible API:
-uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off --env-file .env
+uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2 -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off --env-file .env
 
 # Hermes via OpenRouter:
-uvx --from harbor==0.15.0 harbor run -p ./harbor-datasets/clawbench-v2 -a hermes -m deepseek/deepseek-v4-flash --env-file .env
+uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2 -a hermes -m deepseek/deepseek-v4-flash --env-file .env
 ```
 
 The console scripts are defined in the root `pyproject.toml`:
