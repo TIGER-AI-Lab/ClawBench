@@ -283,7 +283,10 @@ def main() -> int:
             if not m.get("intercepted"):
                 continue
             needs = any(
-                args.force or not (rd / JUDGE_FILE[r]).exists() for r in rubrics
+                args.force
+                or not (rd / JUDGE_FILE[r]).exists()
+                or json.loads((rd / JUDGE_FILE[r]).read_text()).get("match") is None
+                for r in rubrics
             )
             if needs:
                 pending.append(rd)
