@@ -794,7 +794,10 @@ def main():
             f"\nINTERCEPTED but JUDGE {'MISMATCH' if verdict is False else 'INCONCLUSIVE'} "
             f"— results in {output_dir}\n  reason: {reason[:200]}"
         )
-        sys.exit(1)
+        # match=None means the judge never rendered a verdict (outage, retries
+        # exhausted, unparseable reply): give it its own exit code instead of
+        # sharing exit 1 with a genuine JUDGE MISMATCH.
+        sys.exit(1 if verdict is False else 3)
     if final_pass:
         status = "INTERCEPTED" if args.no_judge else "INTERCEPTED + JUDGE MATCH"
         print(f"\n{status} — results in {output_dir}")

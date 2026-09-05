@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
 
+### Fixed
+- Fixed a judge-provider outage (or an unparseable judge reply) being recorded as an agent failure. `run.py` now exits 3 instead of 1 when the judge never renders a verdict, `batch.py` gives it its own `judge_inconclusive` bucket in `batch-summary.json` instead of folding it into `failed`, and `clawbench-rescore` now retries a cached `match: null` verdict even without `--force`.
+
 ## [0.10.0] - 2026-08-30
 ### Added
 - Added Kernel as a managed remote browser runtime with live view and downloaded replay recordings. Thanks to @[rgarcia](https://github.com/rgarcia).
