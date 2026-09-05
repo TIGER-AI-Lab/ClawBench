@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
+
+## [0.10.0] - 2026-08-30
 ### Added
 - Added Kernel as a managed remote browser runtime with live view and downloaded replay recordings. Thanks to @[rgarcia](https://github.com/rgarcia).
 - Added `clawbench-analyze` entrypoint for aggregate batch error analysis.

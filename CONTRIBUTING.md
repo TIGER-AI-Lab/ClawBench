@@ -117,6 +117,29 @@ For changes to the framework itself (test driver, runtime server, Chrome extensi
 2. Open an issue first for anything beyond a small bug fix so we can align on approach before you spend time.
 3. Open a PR with a clear description of the change and how you tested it.
 
+## Changelog
+
+Every pull request must add a concise bullet describing its change under `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md). If the `Unreleased` section or the appropriate subsection does not exist, create it.
+
+Follow the existing [Keep a Changelog](https://keepachangelog.com/) structure:
+
+```markdown
+## [Unreleased]
+
+### Added
+
+- Added a new capability.
+
+### Fixed
+
+- Fixed a user-visible bug.
+
+## [X.Y.Z] - YYYY-MM-DD
+```
+
+Use only `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security` subsections, in that order, and omit empty subsections.
+Released versions should not be modified by contributors other than maintainers.
+
 ## Reporting issues
 
 Please use the [issue templates](https://github.com/reacher-z/ClawBench/issues/new/choose) to report bugs or propose new test cases.

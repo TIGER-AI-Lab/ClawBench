@@ -38,7 +38,7 @@ Provenance: `test-cases/v1/**/task.json`, `test-cases/v2/**/task.json`, `task.sc
 
 V1's "agentic evaluator" model meant tasks without a regex were judged after the fact from the human-reference trace — fine for offline analysis, but the agent could in principle submit a real request before the eval ran. V2 requires every task to declare a URL+method pattern up front, so the interceptor blocks the request *before* it leaves the container.
 
-Provenance: `eval/agentic_eval.md` (V1 nine-rule rubric); `docs/scoring.md`; sample `task.json` files from both corpora.
+Provenance: `eval/agentic_eval.md` (V1 nine-rule rubric); `eval/scoring.md`; sample `task.json` files from both corpora.
 
 ---
 

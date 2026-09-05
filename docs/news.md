@@ -14,7 +14,7 @@ The five most recent items live in the [README](../README.md#news). Everything e
 - **[2026.05.16]** — Added Claw-Eval suite: 19 browser-research tasks with final-answer submission. [Details →](../test-cases/claw-eval/)
 - **[2026.05.12]** — Canonical leaderboard moved to the TIGER-Lab/ClawBench Gradio Space. [Details →](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
 - **[2026.05.11]** — V2 leaderboard ships: top so far `glm-5.1 / hermes` at 18.5% reward / 48.5% intercepted. [Details →](https://claw-bench.com/leaderboard)
-- **[2026.05.09]** — Inline LLM judge added as a second scoring stage; runs now auto-produce pass/fail. [Details →](scoring.md)
+- **[2026.05.09]** — Inline LLM judge added as a second scoring stage; runs now auto-produce pass/fail. [Details →](../eval/scoring.md)
 - **[2026.05.09]** — `clawbench-eval` published to PyPI for one-command install. [Details →](https://pypi.org/project/clawbench-eval/)
 - **[2026.05.09]** — Released ClawBenchV1Trace: full 5-layer execution trace for every V1 run. [Details →](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)
 - **[2026.04.25]** — Added support for the hermes harness. [Details →](../src/clawbench/runtime/harnesses/hermes/)
