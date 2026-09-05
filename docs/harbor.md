@@ -4,14 +4,17 @@
 
 **Use Harbor when** you already run other benchmarks through it, you want Harbor's agent registry (`-a openclaw`, `-a hermes`, …) instead of ClawBench's own harnesses, or you need Harbor's retry/attempt semantics. **Use `clawbench-batch` instead** when you just want to score a model on ClawBench — it is the shorter path and it is what the leaderboard uses.
 
-- [Prerequisites](#prerequisites)
-- [Harbor versions](#harbor-versions)
-- [1. Convert V2 into a Harbor dataset](#1-convert-v2-into-a-harbor-dataset)
-- [2. Wire up the judge](#2-wire-up-the-judge)
-- [3. Run it](#3-run-it)
-- [Making it fast](#making-it-fast)
-- [What the generated environment contains](#what-the-generated-environment-contains)
-- [Troubleshooting](#troubleshooting)
+- [Running ClawBench through Harbor](#running-clawbench-through-harbor)
+  - [Prerequisites](#prerequisites)
+  - [Harbor versions](#harbor-versions)
+  - [1. Convert V2 into a Harbor dataset](#1-convert-v2-into-a-harbor-dataset)
+  - [2. Wire up the judge](#2-wire-up-the-judge)
+  - [3. Run it](#3-run-it)
+    - [OpenClaw through an OpenAI-compatible endpoint](#openclaw-through-an-openai-compatible-endpoint)
+    - [Hermes through OpenRouter](#hermes-through-openrouter)
+  - [Making it fast](#making-it-fast)
+  - [What the generated environment contains](#what-the-generated-environment-contains)
+  - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
@@ -24,16 +27,6 @@
 ## Harbor versions
 
 The commands here pin **`harbor==0.22.0`**, the current release at the time of writing. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install.
-
-**What was checked.** `clawbench-harbor-adapt` output loads under 0.22.0: all 129 generated V2 tasks construct as `harbor.models.task.task.Task` with no errors, and every flag these docs use (`-p`, `-a`, `-m`, `--ak`, `--env-file`, `--ve`, `--jobs-dir`, `-n`, `-k`, `-r`, `--timeout-multiplier` and the per-phase multipliers) still exists on `harbor run`. `tests/test_harbor_version_compatibility.py` re-runs the task-loading half of that check; it skips unless Harbor is installed, so a version bump can be re-verified with:
-
-```bash
-uv run --with harbor==<new-version> pytest tests/test_harbor_version_compatibility.py
-```
-
-**What was not checked.** No end-to-end `harbor run` against live sites — that needs Docker, a browser container per trial, and judge credentials. Loading proves the dataset format is accepted, not that a full sweep passes.
-
-**On the local-path form.** `harbor run -p ./harbor-datasets/clawbench-v2` is still supported in 0.22.0; the newer `-d org/dataset@version` form addresses hub-published datasets and is an addition, not a replacement. Publishing ClawBench to the Harbor hub is tracked separately in [#331](https://github.com/TIGER-AI-Lab/ClawBench/issues/331).
 
 ## 1. Convert V2 into a Harbor dataset
 
