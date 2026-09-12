@@ -17,6 +17,7 @@ HELP_MODULES = (
     "clawbench.tui",
     "clawbench.runner.run",
     "clawbench.runner.batch",
+    "clawbench.runner.watch",
     "clawbench.eval.harbor_adapter",
 )
 

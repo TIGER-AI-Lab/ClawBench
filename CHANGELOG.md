@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Added `clawbench-batch --auto-restart N`, a supervisor that re-invokes an aborted batch with `--resume` into the same directory up to N times, and `clawbench-batch-watch`, which posts to a Slack/Discord webhook when a batch aborts, completes, or every N tasks. See [`docs/operations.md`](docs/operations.md).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 

@@ -949,6 +949,24 @@ def main() -> None:
             "any (case x model) job whose batch-logs/<case>-<model>.log already exists."
         ),
     )
+    p.add_argument(
+        "--auto-restart",
+        type=int,
+        default=0,
+        metavar="N",
+        help=(
+            "Supervise the batch: if it exits non-zero (OOM-killed container, "
+            "provider outage, queue cap), wait and re-invoke it with --resume up "
+            "to N times. Ctrl-C is never retried."
+        ),
+    )
+    p.add_argument(
+        "--auto-restart-delay",
+        type=float,
+        default=30.0,
+        metavar="SECONDS",
+        help="Seconds to wait before each --auto-restart re-invocation (default: 30)",
+    )
     from clawbench.runner.run import DEFAULT_HARNESS, HARNESSES
 
     p.add_argument(
@@ -997,6 +1015,23 @@ def main() -> None:
     if args.cases_dir is None:
         suite = args.cases_suite or DEFAULT_CASES_SUITE
         args.cases_dir = CASE_SUITES[suite]
+
+    if args.auto_restart > 0:
+        # The batch cannot retry its own death, so a supervisor re-invokes it.
+        from clawbench.runner.supervise import (
+            resolve_batch_dir,
+            run_supervised,
+            strip_supervisor_flags,
+        )
+
+        sys.exit(
+            run_supervised(
+                strip_supervisor_flags(sys.argv[1:]),
+                batch_dir=resolve_batch_dir(args.resume, args.output_dir),
+                max_restarts=args.auto_restart,
+                delay_s=args.auto_restart_delay,
+            )
+        )
 
     rc = asyncio.run(async_main(args))
     sys.exit(rc)

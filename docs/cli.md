@@ -7,6 +7,7 @@ Every ClawBench command. From a PyPI install run them directly (`clawbench-run �
 | `clawbench` | Interactive TUI — guided model and test-case selection. Needs a TTY. |
 | `clawbench-run` | One task, one model (or human mode). |
 | `clawbench-batch` | A matrix of models × cases. |
+| `clawbench-batch-watch` | Post to a webhook when a batch aborts or finishes — see [`operations.md`](operations.md). |
 | `clawbench-rescore` | Re-judge trajectories you already have, without re-running agents. |
 | `clawbench-reproduce` | Download published traces for one leaderboard row and check you reproduce it. |
 | `clawbench-harbor-adapt` | Convert V2 into a Harbor dataset — see [`harbor.md`](harbor.md). |
@@ -74,6 +75,8 @@ Execution:
 | `--max-concurrent <n>` | 2 local, 1 Kernel/Browserbase | Parallel jobs |
 | `--stagger-delay <s>` | 15 | Minimum seconds between consecutive container starts (rolling start) |
 | `--resume <dir>` | — | Reuse a previous batch's output directory and skip finished runs |
+| `--auto-restart <n>` | `0` | Supervise the batch: re-invoke with `--resume` up to n times if it exits non-zero — see [`operations.md`](operations.md) |
+| `--auto-restart-delay <s>` | `30` | Seconds to wait before each re-invocation |
 | `--dry-run` | off | Print the job matrix without running anything |
 | `--output-dir <path>` | `test-output` | Base output directory |
 
