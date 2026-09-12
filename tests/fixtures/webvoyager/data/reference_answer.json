@@ -1,0 +1,9 @@
+{
+  "ExampleRecipes": {
+    "notice": "Synthetic fixture in the upstream reference_answer.json shape; not WebVoyager content.",
+    "answers": [
+      {"id": 0, "type": "golden", "ans": "World's Best Vegetarian Lasagna"},
+      {"id": 0, "type": "possible", "ans": "Spinach and Ricotta Lasagna"}
+    ]
+  }
+}

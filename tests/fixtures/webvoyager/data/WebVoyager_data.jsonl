@@ -1,0 +1,3 @@
+{"web_name": "ExampleRecipes", "id": "ExampleRecipes--0", "ques": "Find a vegetarian lasagna recipe rated at least 4.5 stars with over 100 reviews and report its name.", "web": "https://recipes.example.test/"}
+{"web_name": "ExampleRecipes", "id": "ExampleRecipes--1", "ques": "How many minutes does the highest-rated banana bread recipe take to bake?", "web": "https://recipes.example.test/"}
+{"web_name": "ExampleMaps", "id": "ExampleMaps--0", "ques": "What is the driving distance from the central station to the airport?"}
