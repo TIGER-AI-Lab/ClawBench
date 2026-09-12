@@ -12,12 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 
 ### Changed
+- Stage-1 interception matching now has a single implementation, `runtime/shared/matching.py`, imported by both the in-container interceptor and the offline EdgeBench judge; the two hand-maintained copies had drifted on repeated query keys and on malformed patterns. A task whose `eval_schema.url_pattern` is not a valid regex is now rejected at load time.
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
 - Changed the default Harbor version to `0.22.0`.
 
 ### Fixed
+- A malformed `eval_schema.url_pattern` no longer kills the interceptor thread on the first request — which silently ended both interception and request logging for the rest of the run (#258). The pattern is compiled once at startup and a bad one is reported loudly.
 - Host-timeout container termination now uses the lazy container-engine resolver.
 - Added host-side container and batch-job timeouts so a wedged run cannot stall a batch indefinitely.
 - Fixed a judge-provider outage (or an unparseable judge reply) being recorded as an agent failure. `run.py` now exits 3 instead of 1 when the judge never renders a verdict, `batch.py` gives it its own `judge_inconclusive` bucket in `batch-summary.json` instead of folding it into `failed`, and `clawbench-rescore` now retries a cached `match: null` verdict even without `--force`.

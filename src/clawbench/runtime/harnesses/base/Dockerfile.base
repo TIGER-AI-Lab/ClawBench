@@ -29,6 +29,9 @@ RUN UV_PYTHON_PREFERENCE=only-system uv sync --frozen
 
 WORKDIR /app
 COPY runtime-server/server.py ./src/runtime-server/server.py
+# Stage-1 matching is shared with the host-side judge; the canonical copy
+# lives in shared/ and is placed next to server.py so it imports as `matching`.
+COPY shared/matching.py ./src/runtime-server/matching.py
 
 COPY chrome-extension/ ./src/chrome-extension/
 

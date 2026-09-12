@@ -62,6 +62,8 @@ If `intercepted: false`, **reward = 0** for that task regardless of how close th
 - agent reached a different endpoint than the rubric expects (alternate-flow miss)
 - agent hit a CAPTCHA / login / verification wall and could not solve it
 
+The matching predicate — `url_pattern` regex search, `method`, and constant `body`/`params` fields, with query parameters always read from the URL — is implemented once in [`src/clawbench/runtime/shared/matching.py`](../src/clawbench/runtime/shared/matching.py). The in-container interceptor and the offline EdgeBench judge both import it, so a re-derived Stage 1 verdict is the same decision the run made, not a re-implementation of it. A task whose `url_pattern` is not a valid regex is rejected before a container starts.
+
 Note that **Stage 1 alone is too lenient** — an agent that intercepts but submits the wrong payload would pass. Stage 2 closes that gap.
 
 ## Stage 2 — LLM judge

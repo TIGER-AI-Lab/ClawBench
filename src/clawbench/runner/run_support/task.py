@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from clawbench.runner.run_support.resume import generate_resume_pdf
+from clawbench.runtime.shared.matching import InvalidUrlPattern, compile_url_pattern
 
 RESUME_TEMPLATE = Path(__file__).resolve().parent / "resume_template.json"
 
@@ -254,6 +255,15 @@ def validate_task_data(task: Any, task_file: Path) -> dict:
         raise ValueError("task eval_schema must be an object")
     if not isinstance(eval_schema.get("url_pattern"), str):
         raise ValueError("task eval_schema.url_pattern must be a string")
+    # Reject a malformed regex here, before a container is paid for: the
+    # interceptor would otherwise disable itself at startup and the run would
+    # complete with Stage 1 silently impossible.
+    try:
+        compile_url_pattern(eval_schema["url_pattern"])
+    except InvalidUrlPattern as e:
+        raise ValueError(
+            f"task eval_schema.url_pattern is not a valid regex: {e}"
+        ) from None
     if not isinstance(eval_schema.get("method"), str):
         raise ValueError("task eval_schema.method must be a string")
     raw_time_limit = task.get("time_limit")

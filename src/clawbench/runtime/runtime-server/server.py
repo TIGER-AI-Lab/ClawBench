@@ -2,19 +2,27 @@ import asyncio
 import base64
 import json
 import os
-import re
 import signal
 import subprocess
 import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
 import urllib.request
 
 import websocket
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse
+
+# Stage-1 matching is shared with the offline judge (eval/edgebench_judge.py).
+# The file is copied next to this one at image build; see shared/matching.py.
+from matching import (
+    InvalidUrlPattern,
+    compile_url_pattern,
+    parse_body,
+    query_params_from_url,
+    stage1_match,
+)
 
 DATA_DIR = Path(os.environ.get("CLAWBENCH_DATA_DIR", "/data"))
 ACTIONS_FILE = DATA_DIR / "actions.jsonl"
@@ -170,21 +178,6 @@ ACTION_CAPTURE_SCRIPT = r"""
 """
 
 
-def _const_fields_match(expected, actual):
-    """Check that all key-value pairs in expected match in actual data.
-    For list bodies (batched GraphQL), returns True if any item matches.
-    Returns True if all match or expected is empty/None."""
-    if not expected:
-        return True
-    if not actual:
-        return False
-    if isinstance(actual, list):
-        return any(_const_fields_match(expected, item) for item in actual)
-    if not isinstance(actual, dict):
-        return False
-    return all(actual.get(k) == v for k, v in expected.items())
-
-
 FILTERED_PREFIXES = (
     "http://localhost:7878",
     "http://127.0.0.1:7878",
@@ -192,22 +185,6 @@ FILTERED_PREFIXES = (
     "devtools://",
     "chrome://",
 )
-
-
-def _parse_body(post_data):
-    """Parse postData string into a structured body (JSON dict, form dict, or raw string)."""
-    if not post_data:
-        return None
-    try:
-        return json.loads(post_data)
-    except (json.JSONDecodeError, TypeError):
-        try:
-            parsed = parse_qs(post_data, keep_blank_values=True)
-            if parsed:
-                return {k: v[0] if len(v) == 1 else v for k, v in parsed.items()}
-        except Exception:
-            pass
-        return post_data
 
 
 def _log_request(log_file, params):
@@ -218,17 +195,14 @@ def _log_request(log_file, params):
     if any(request_url.startswith(p) for p in FILTERED_PREFIXES):
         return
 
-    parsed = urlparse(request_url)
-    query_params = {
-        k: v[0] if len(v) == 1 else v for k, v in parse_qs(parsed.query).items()
-    }
+    query_params = query_params_from_url(request_url)
 
     entry = {
         "timestamp": time.time(),
         "url": request_url,
         "method": request["method"],
         "headers": request.get("headers", {}),
-        "body": _parse_body(request.get("postData")),
+        "body": parse_body(request.get("postData")),
         "query_params": query_params,
         "resource_type": params.get("resourceType", "Other"),
     }
@@ -292,9 +266,12 @@ def start_cdp_handler(
         },
     )
 
-    if url_pattern:
+    if url_pattern is not None:
         eval_interceptor_ready = True
-        print(f"[cdp] Interceptor connected, watching for: {url_pattern}", flush=True)
+        print(
+            f"[cdp] Interceptor connected, watching for: {url_pattern.pattern}",
+            flush=True,
+        )
     else:
         print("[cdp] Request logger connected (no intercept pattern)", flush=True)
 
@@ -446,31 +423,21 @@ def start_cdp_handler(
             _log_request(requests_log_file, params)
 
             # If no intercept pattern, just continue the request
-            if not url_pattern:
+            if url_pattern is None:
                 send("Fetch.continueRequest", {"requestId": request_id}, session_id)
                 continue
 
             # --- Intercept: block if URL + method + body/params match ---
-            if not re.search(url_pattern, request_url):
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            if required_method and params["request"]["method"] != required_method:
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            # Parse request data for body/params matching
-            parsed = urlparse(request_url)
-            query_params = {
-                k: v[0] if len(v) == 1 else v for k, v in parse_qs(parsed.query).items()
-            }
-            body = _parse_body(params["request"].get("postData"))
-
-            if not _const_fields_match(match_body, body):
-                send("Fetch.continueRequest", {"requestId": request_id}, session_id)
-                continue
-
-            if not _const_fields_match(match_params, query_params):
+            body = parse_body(params["request"].get("postData"))
+            if not stage1_match(
+                url=request_url,
+                method=params["request"]["method"],
+                body=body,
+                url_pattern=url_pattern,
+                required_method=required_method,
+                match_body=match_body,
+                match_params=match_params,
+            ):
                 send("Fetch.continueRequest", {"requestId": request_id}, session_id)
                 continue
 
@@ -478,7 +445,7 @@ def start_cdp_handler(
             request_obj = {
                 "url": request_url,
                 "method": params["request"]["method"],
-                "params": query_params,
+                "params": query_params_from_url(request_url),
                 "body": body,
             }
 
@@ -525,8 +492,14 @@ async def lifespan(app: FastAPI):
     match_params = None
     if EVAL_SCHEMA_PATH.exists():
         eval_schema = json.loads(EVAL_SCHEMA_PATH.read_text())
-        url_pattern = eval_schema.get("url_pattern", "")
-        if not url_pattern:
+        # Compile once here so a malformed pattern fails loudly at startup.
+        # It used to be matched per request inside the CDP loop, where the
+        # regex error escaped, killed the thread, and silently ended both
+        # interception and request logging for the rest of the run (#258).
+        try:
+            url_pattern = compile_url_pattern(eval_schema.get("url_pattern"))
+        except InvalidUrlPattern as e:
+            print(f"[interceptor] ERROR: {e}; interception disabled", flush=True)
             url_pattern = None
         required_method = eval_schema.get("method")
         match_body = eval_schema.get("body")
