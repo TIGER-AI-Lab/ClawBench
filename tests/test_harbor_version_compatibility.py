@@ -28,8 +28,10 @@ harbor_task = pytest.importorskip(
 DOCUMENTED_HARBOR_VERSION = "0.22.0"
 
 
-@pytest.fixture(scope="module")
-def generated_dataset(tmp_path_factory: pytest.TempPathFactory) -> Path:
+@pytest.fixture(scope="module", params=["local", "kernel"])
+def generated_dataset(
+    tmp_path_factory: pytest.TempPathFactory, request: pytest.FixtureRequest
+) -> Path:
     """Convert the real V2 corpus, not a synthetic task.
 
     A hand-built fixture would only prove the fixture loads. What has to hold
@@ -37,7 +39,9 @@ def generated_dataset(tmp_path_factory: pytest.TempPathFactory) -> Path:
     accepts.
     """
     out = tmp_path_factory.mktemp("harbor-dataset") / "clawbench-v2"
-    rc = harbor_adapter.main(["--output-dir", str(out), "--overwrite"])
+    rc = harbor_adapter.main(
+        ["--output-dir", str(out), "--browser-runtime", request.param, "--overwrite"]
+    )
     assert rc == 0
     return out
 
@@ -47,11 +51,7 @@ def test_installed_harbor_version_is_reported(record_property) -> None:
 
     installed = version("harbor")
     record_property("harbor_version", installed)
-    if installed != DOCUMENTED_HARBOR_VERSION:
-        pytest.skip(
-            f"harbor {installed} installed, docs pin {DOCUMENTED_HARBOR_VERSION}; "
-            "the load test below still runs"
-        )
+    record_property("documented_harbor_version", DOCUMENTED_HARBOR_VERSION)
 
 
 def test_every_generated_task_loads_with_harbors_own_loader(
@@ -66,7 +66,16 @@ def test_every_generated_task_loads_with_harbors_own_loader(
             failures.append((task_dir.name, "Harbor does not recognise the directory"))
             continue
         try:
-            harbor_task.Task(task_dir)
+            loaded = harbor_task.Task(task_dir)
+            servers = loaded.config.environment.mcp_servers
+            assert len(servers) == 1
+            assert servers[0].command == "npx"
+            assert servers[0].args == [
+                "-y",
+                f"{harbor_adapter.PLAYWRIGHT_MCP_PACKAGE}@{harbor_adapter.PLAYWRIGHT_MCP_VERSION}",
+                "--cdp-endpoint",
+                loaded.config.environment.env["PLAYWRIGHT_CDP_URL"],
+            ]
         except Exception as exc:  # noqa: BLE001 - report whatever Harbor raises
             failures.append((task_dir.name, f"{type(exc).__name__}: {exc}"))
 
