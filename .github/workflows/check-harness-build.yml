@@ -6,11 +6,13 @@ on:
     paths:
       - "src/clawbench/runtime/**"
       - ".github/workflows/check-harness-build.yml"
+      - "scripts/ci/select_harness_builds.py"
   push:
     branches: [ main ]
     paths:
       - "src/clawbench/runtime/**"
       - ".github/workflows/check-harness-build.yml"
+      - "scripts/ci/select_harness_builds.py"
   workflow_dispatch:
 
 jobs:
@@ -72,116 +74,27 @@ jobs:
       - name: Select harness Dockerfiles
         id: dockerfiles
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
-
-          runtime_root="src/clawbench/runtime"
-          harness_root="${runtime_root}/harnesses"
-          base_dockerfile="${harness_root}/base/Dockerfile.base"
-
-          mapfile -t all_harness_dockerfiles < <(
-            find "${harness_root}" -mindepth 2 -maxdepth 2 -type f -name 'Dockerfile*' \
-              ! -path "${base_dockerfile}" \
-              | sort
-          )
-
-          build_all=false
-          changed_runtime_files=()
-          changed_dockerfiles=()
-
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            build_all=true
+          selector_args=(--github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY")
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            python scripts/ci/select_harness_builds.py --all "${selector_args[@]}"
           else
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              base_sha="${{ github.event.pull_request.base.sha }}"
-              head_sha="${{ github.event.pull_request.head.sha }}"
-            else
-              base_sha="${{ github.event.before }}"
-              head_sha="${{ github.sha }}"
-            fi
-
-            if [[ -z "${base_sha}" || "${base_sha}" =~ ^0+$ ]]; then
+            if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
               echo "Unable to determine base SHA for Dockerfile diff." >&2
               exit 1
-            elif ! git cat-file -e "${base_sha}^{commit}" 2>/dev/null; then
-              echo "Base SHA ${base_sha} is not available in the checkout." >&2
-              exit 1
-            elif ! git cat-file -e "${head_sha}^{commit}" 2>/dev/null; then
-              echo "Head SHA ${head_sha} is not available in the checkout." >&2
-              exit 1
-            else
-              mapfile -t changed_runtime_files < <(
-                git diff --name-only --diff-filter=ACMRT "${base_sha}" "${head_sha}" -- "${runtime_root}" \
-                  | sort
-              )
-
-              if (( ${#changed_runtime_files[@]} == 0 )); then
-                build_all=true
-              fi
-
-              for path in "${changed_runtime_files[@]}"; do
-                case "${path}" in
-                  "${harness_root}/base/"*|"${runtime_root}/chrome-extension/"*|"${runtime_root}/extension-server/"*|"${runtime_root}/shared/"*)
-                    build_all=true
-                    break
-                    ;;
-                  "${harness_root}/"*)
-                    harness="${path#"${harness_root}/"}"
-                    harness="${harness%%/*}"
-                    dockerfile="${harness_root}/${harness}/Dockerfile.${harness}"
-                    if [[ -f "${dockerfile}" ]]; then
-                      changed_dockerfiles+=("${dockerfile}")
-                    fi
-                    ;;
-                esac
-              done
             fi
+            git cat-file -e "${BASE_SHA}^{commit}"
+            git cat-file -e "${HEAD_SHA}^{commit}"
+            changed_files="$(mktemp)"
+            trap 'rm -f "$changed_files"' EXIT
+            git diff --no-renames --name-only -z --diff-filter=ACDMRT "$BASE_SHA" "$HEAD_SHA" -- src/clawbench/runtime > "$changed_files"
+            python scripts/ci/select_harness_builds.py --changed-files "$changed_files" "${selector_args[@]}"
           fi
-
-          if [[ "${build_all}" == "true" ]]; then
-            selected_dockerfiles=("${all_harness_dockerfiles[@]}")
-          else
-            selected_dockerfiles=()
-            for dockerfile in "${changed_dockerfiles[@]}"; do
-              if [[ "${dockerfile}" != "${base_dockerfile}" && -f "${dockerfile}" ]]; then
-                selected_dockerfiles+=("${dockerfile}")
-              fi
-            done
-            if (( ${#selected_dockerfiles[@]} > 0 )); then
-              mapfile -t selected_dockerfiles < <(printf '%s\n' "${selected_dockerfiles[@]}" | sort -u)
-            fi
-          fi
-
-          matrix_json="$(
-            printf '%s\n' "${selected_dockerfiles[@]}" \
-              | python -c 'import json, pathlib, sys; dockerfiles=[line.strip() for line in sys.stdin if line.strip()]; print(json.dumps({"include":[{"harness":pathlib.Path(path).parent.name,"dockerfile":path,"image":"clawbench-" + pathlib.Path(path).parent.name} for path in dockerfiles]}, separators=(",", ":")))'
-          )"
-
-          {
-            echo "matrix=${matrix_json}"
-            echo "count=${#selected_dockerfiles[@]}"
-          } >> "${GITHUB_OUTPUT}"
-
-          echo "Selected ${#selected_dockerfiles[@]} harness Dockerfile(s):"
-          printf '  %s\n' "${selected_dockerfiles[@]}"
-          echo "::notice title=Harness build plan::Selected ${#selected_dockerfiles[@]} harness Dockerfile(s)"
-
-          {
-            echo "## Harness build plan"
-            echo
-            echo "- Event: \`${{ github.event_name }}\`"
-            echo "- Selection mode: \`$([[ "${build_all}" == "true" ]] && echo all || echo changed)\`"
-            echo "- Base image: \`clawbench-base\`, \`clawbench-base:amd64\`"
-            echo "- Harness images: \`${#selected_dockerfiles[@]}\`"
-            echo
-            echo "| Image | Dockerfile |"
-            echo "| --- | --- |"
-            echo "| \`clawbench-base\`, \`clawbench-base:amd64\` | \`${base_dockerfile}\` |"
-            for dockerfile in "${selected_dockerfiles[@]}"; do
-              harness="$(basename "$(dirname "${dockerfile}")")"
-              echo "| \`clawbench-${harness}\` | \`${dockerfile}\` |"
-            done
-          } >> "${GITHUB_STEP_SUMMARY}"
 
   build-base:
     runs-on: ubuntu-latest
