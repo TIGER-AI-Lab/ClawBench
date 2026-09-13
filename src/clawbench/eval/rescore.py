@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -40,9 +41,50 @@ import yaml
 
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}
 
+# model_cfg keys excluded from the cache fingerprint so it stays non-secret.
+_FINGERPRINT_SECRET_KEYS = {"api_key", "api_keys"}
+
 
 def find_run_dirs(root: Path) -> list[Path]:
     return [p.parent for p in root.rglob("run-meta.json")]
+
+
+def _digest(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, default=str).encode()
+    ).hexdigest()[:16]
+
+
+def _cache_fingerprint(
+    judge_model: str, model_cfg: dict, rubric: str, instruction: str, intercept: dict
+) -> dict[str, str]:
+    """Identity of the inputs a cached verdict is only valid for.
+
+    A cache hit is trustworthy only when the judge (model + its non-secret
+    config), the rubric, the instruction and the intercepted evidence are all
+    unchanged from when the verdict was written: any of those changing means
+    the cached match/reason belongs to a different evaluation and must not be
+    reused as-is.
+    """
+    cfg = {k: v for k, v in model_cfg.items() if k not in _FINGERPRINT_SECRET_KEYS}
+    return {
+        "judge_model": judge_model,
+        "judge_config_sha256": _digest(cfg),
+        "rubric": rubric,
+        "instruction_sha256": _digest(instruction),
+        "intercepted_sha256": _digest(intercept),
+    }
+
+
+def _cache_is_stale(cached: dict, fingerprint: dict) -> bool:
+    """True when a cached verdict must not be reused for this fingerprint.
+
+    Shared by the pending-selection filter (should this run be judged at
+    all?) and rescore_one's own cache check (given it will run, can the
+    on-disk verdict answer it?) so the two can never disagree about what
+    counts as a valid cache hit.
+    """
+    return cached.get("match") is None or cached.get("cache_fingerprint") != fingerprint
 
 
 def rescore_one(
@@ -72,11 +114,13 @@ def rescore_one(
     instruction = meta.get("instruction", "") or ""
     for rubric in rubrics:
         judge_p = run_dir / JUDGE_FILE[rubric]
+        fingerprint = _cache_fingerprint(
+            judge_model, model_cfg, rubric, instruction, intercept
+        )
         if judge_p.exists() and not force:
             try:
                 cached = json.loads(judge_p.read_text())
-                # A cached match=None is not a scored result: retry it.
-                if cached.get("match") is not None:
+                if not _cache_is_stale(cached, fingerprint):
                     out[rubric] = cached
                     continue
             except Exception:
@@ -86,6 +130,7 @@ def rescore_one(
         verdict["test_case"] = meta.get("test_case")
         verdict["original_intercepted"] = True
         verdict["rubric"] = rubric
+        verdict["cache_fingerprint"] = fingerprint
         judge_p.write_text(json.dumps(verdict, indent=2, ensure_ascii=False))
         out[rubric] = verdict
     return out
@@ -102,6 +147,7 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
         out[f"n_match_{r}"] = 0
         out[f"n_mismatch_{r}"] = 0
         out[f"n_judge_err_{r}"] = 0
+    judge_models_used: set[str] = set()
     for meta_p in sorted(batch_dir.rglob("run-meta.json")):
         run_dir = meta_p.parent
         try:
@@ -121,15 +167,18 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
             judge_p = run_dir / JUDGE_FILE[r]
             match: Any = None
             reason = ""
+            verdict_judge_model = None
             if judge_p.exists():
                 try:
                     jd = json.loads(judge_p.read_text())
                     match = jd.get("match")
                     reason = jd.get("reason", "")
+                    verdict_judge_model = jd.get("judge_model")
                 except Exception:
                     pass
             task_row[f"match_{r}"] = match
             task_row[f"reason_{r}"] = reason
+            task_row[f"judge_model_{r}"] = verdict_judge_model
             if intercepted:
                 if match is True:
                     out[f"n_match_{r}"] += 1
@@ -137,7 +186,10 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
                     out[f"n_mismatch_{r}"] += 1
                 else:
                     out[f"n_judge_err_{r}"] += 1
+                if verdict_judge_model:
+                    judge_models_used.add(verdict_judge_model)
         out["tasks"].append(task_row)
+    out["judge_models_used"] = sorted(judge_models_used)
     n = out["n_total"]
     out["pass_rate_stage1_only"] = out["n_intercepted"] / n if n else 0
     for r in rubrics:
@@ -282,12 +334,24 @@ def main() -> int:
             m = json.loads((rd / "run-meta.json").read_text())
             if not m.get("intercepted"):
                 continue
-            needs = any(
-                args.force
-                or not (rd / JUDGE_FILE[r]).exists()
-                or json.loads((rd / JUDGE_FILE[r]).read_text()).get("match") is None
-                for r in rubrics
+            instruction = m.get("instruction", "") or ""
+            intercept_p = rd / "data" / "interception.json"
+            intercept = (
+                json.loads(intercept_p.read_text()) if intercept_p.exists() else {}
             )
+            needs = False
+            for r in rubrics:
+                judge_p = rd / JUDGE_FILE[r]
+                if args.force or not judge_p.exists():
+                    needs = True
+                    break
+                cached = json.loads(judge_p.read_text())
+                fingerprint = _cache_fingerprint(
+                    args.judge_model, judge_cfg, r, instruction, intercept
+                )
+                if _cache_is_stale(cached, fingerprint):
+                    needs = True
+                    break
             if needs:
                 pending.append(rd)
         except Exception:
@@ -349,7 +413,19 @@ def main() -> int:
         except Exception as e:
             print(f"  err rolling up {bd}: {e}")
             continue
-        roll["judge_model"] = args.judge_model
+        judge_models_used = roll.get("judge_models_used", [])
+        mixed = bool(judge_models_used) and judge_models_used != [args.judge_model]
+        roll["judge_model"] = "mixed" if mixed else args.judge_model
+        roll["judge_model_mixed"] = mixed
+        if mixed:
+            print(
+                f"  WARNING: {bd.name} rolls up verdicts from multiple judges "
+                f"{judge_models_used}, not only {args.judge_model!r}: some "
+                "tasks were not judged or refreshed this run (e.g. skipped by "
+                "--limit or --only-batch) and still carry an older judge's "
+                "verdict; rerun without --limit, or with --force, for a "
+                "single-judge report"
+            )
         roll["rubrics"] = rubrics
         (bd / "rescore-summary.json").write_text(
             json.dumps(roll, indent=2, ensure_ascii=False)
