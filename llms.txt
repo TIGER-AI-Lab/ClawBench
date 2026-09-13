@@ -2,14 +2,14 @@
 
 > ClawBench is an open-source benchmark for evaluating browser and computer-use agents on everyday tasks performed on live websites.
 
-ClawBench measures end-to-end task success while preserving replayable evidence from browser actions, screenshots, network requests, agent messages, and session recordings. The benchmark blocks only the final side-effecting submission request so tasks can run on real websites without completing purchases, bookings, or applications.
+ClawBench measures end-to-end task success while preserving replayable evidence from browser actions, screenshots, network requests, agent messages, and session recordings. The runtime intercepts requests matching each task’s evaluation schema; scoring distinguishes interception from judged task fulfillment. See the scoring documentation for the evaluation contract.
 
 ## Canonical resources
 
 - [Project page](https://claw-bench.com): overview, task explorer, leaderboard, and evaluation details.
-- [GitHub repository](https://github.com/reacher-z/ClawBench): source code, task definitions, harnesses, and documentation.
+- [GitHub repository](https://github.com/TIGER-AI-Lab/ClawBench): source code, task definitions, harnesses, and documentation.
 - [Research paper](https://arxiv.org/abs/2604.08523): *ClawBench: Can AI Agents Complete Everyday Online Tasks?*
-- [Citation metadata](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff): machine-readable citation record.
+- [Citation metadata](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/CITATION.cff): machine-readable citation record.
 - [Task and leaderboard Space](https://huggingface.co/spaces/TIGER-Lab/ClawBench): live evaluation results and task explorer.
 - [Task dataset](https://huggingface.co/datasets/NAIL-Group/ClawBench): V1/V2 task definitions and evaluation metadata.
 - [V1 execution traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace): replayable run artifacts.
@@ -17,11 +17,22 @@ ClawBench measures end-to-end task success while preserving replayable evidence 
 
 ## Quick facts
 
-- V1: 153 tasks across 144 live websites and 15 life categories.
-- V2: 130 tasks with six first-class agent harnesses.
+- Shipping V1 corpus: 152 tasks across 143 live websites and 15 life categories.
+- Shipping V2 corpus: 129 tasks across 63 live websites.
+- The paper reports 153 V1 and 130 V2 tasks; two ASPCA tasks were removed after publication. Historical results may use the original corpus; report the corpus revision and denominator when comparing scores.
+- V1 Lite: 20 selected V1 tasks, not an additional independent corpus.
 - Evidence layers: session replay, screenshots, HTTP traffic, browser actions, and agent messages.
 - Supported harnesses include OpenClaw, OpenCode, Claude Code, Codex, Browser-Use, Hermes, Pi, and other compatible browser agents.
 
+## Evaluation and getting started
+
+- [Installation and quick start](https://github.com/TIGER-AI-Lab/ClawBench#quick-start): prerequisites, model configuration, and CLI entry points.
+- [Scoring contract](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/eval/scoring.md): Stage 1 interception, Stage 2 judged fulfillment, and rubric definitions.
+- [Contributing](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/CONTRIBUTING.md): task contributions and review guidance.
+- [Release history](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/CHANGELOG.md): versioned changes.
+
+Consult the linked leaderboard for current scores, selecting the corpus, harness, rubric, and snapshot. Historical paper scores are not a claim about today's best result.
+
 ## Citation
 
-If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/reacher-z/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
+If you use ClawBench, cite the paper listed in [CITATION.cff](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/CITATION.cff) and link to the canonical repository.
