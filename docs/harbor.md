@@ -24,9 +24,24 @@
 - **Judge credentials.** Scoring requires both an intercepted request *and* a judge verdict; without judge credentials every intercepted task scores `0`.
 - **PurelyMail credentials** from `.env`, passed through with `--env-file .env`.
 
+## Browser tools
+
+Both local Chromium and Kernel tasks register `@playwright/mcp@0.0.79` against
+`http://127.0.0.1:9223`. Harbor agents that consume task MCP configuration,
+including stock Claude Code and Codex, receive tools for the existing recorded
+browser. Other agents must support task MCP configuration or explicitly connect
+to the advertised CDP endpoint; a CDP environment variable alone does not install
+a browser tool. This configuration does not establish end-to-end support for
+every Harbor agent.
+
+See the [September compatibility assessment](harbor-compatibility-2026-09-13.md)
+for the remaining runtime, upstream acceptance, and parity work.
+
 ## Harbor versions
 
-The commands here pin **`harbor==0.22.0`**, the current release at the time of writing. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install.
+The commands here pin **`harbor==0.22.0`**, the documented baseline. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install.
+
+The loader compatibility tests also pass against Harbor `0.23.0` for all V2 tasks in both browser modes. This is task parsing and MCP configuration coverage, not a Docker or cloud execution result; the run commands retain the `0.22.0` baseline.
 
 ## 1. Convert V2 into a Harbor dataset
 
