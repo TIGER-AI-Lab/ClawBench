@@ -73,7 +73,8 @@ Execution:
 | --- | --- | --- |
 | `--max-concurrent <n>` | 2 local, 1 Kernel/Browserbase | Parallel jobs |
 | `--stagger-delay <s>` | 15 | Minimum seconds between consecutive container starts (rolling start) |
-| `--resume <dir>` | — | Reuse a previous batch's output directory and skip finished runs |
+| `--resume <dir>` | — | Reuse a previous batch's output directory and skip jobs whose `run-meta.json` records an outcome. Jobs that started but never finished are run again |
+| `--retry-failed` | off | With `--resume`, also re-run jobs whose recorded outcome was an infra-class failure (the categories excluded from adjusted scoring). Genuine model failures are kept |
 | `--dry-run` | off | Print the job matrix without running anything |
 | `--output-dir <path>` | `test-output` | Base output directory |
 
