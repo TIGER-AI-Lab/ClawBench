@@ -18,7 +18,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
+import tempfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 import subprocess
 import sys
 from pathlib import Path
@@ -112,6 +114,21 @@ def verdict(
     return ok, "\n".join(lines)
 
 
+@contextmanager
+def download_cache(work_dir: Path, keep_cache: bool) -> Iterator[Path]:
+    """Own only a unique child directory, never the caller's work directory."""
+    work_dir.mkdir(parents=True, exist_ok=True)
+    if keep_cache:
+        cache_dir = Path(tempfile.mkdtemp(prefix="clawbench-", dir=work_dir))
+        print(f"  Cache retained at: {cache_dir}")
+        yield cache_dir
+    else:
+        with tempfile.TemporaryDirectory(prefix="clawbench-", dir=work_dir) as tmp:
+            cache_dir = Path(tmp)
+            print(f"  Temporary cache: {cache_dir}")
+            yield cache_dir
+
+
 def main() -> int:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -139,7 +156,7 @@ def main() -> int:
         "--work-dir",
         type=Path,
         default=Path("./reproduce-cache"),
-        help="Local dir for HF download (default ./reproduce-cache)",
+        help="Parent directory for an isolated download cache (default ./reproduce-cache)",
     )
     p.add_argument(
         "--keep-cache",
@@ -157,66 +174,64 @@ def main() -> int:
         return 2
 
     published = PUBLISHED_V2_HERMES[args.model]
-    args.work_dir.mkdir(parents=True, exist_ok=True)
-    print(
-        f"== Reproducing {args.model} (n={published[3]}, tolerance ±{args.tolerance}pp) ==\n"
-    )
-    print("[1/3] Download trace subset from HF ...")
-    batch_dir = download(args.model, args.work_dir)
-
-    # Need a model batch root; HF subset puts task dirs under
-    # batch-aligned-.../<model>/batch-.../<model>/ → walk down.
-    candidates = [p for p in batch_dir.rglob("batch-*") if p.is_dir()]
-    if not candidates:
-        # No nested batch-* dir? The batch_dir itself is the root.
-        candidates = [batch_dir]
-    inner_batch = candidates[0]
-    # If there's a model sub-dir inside, use it
-    sub = [
-        c
-        for c in inner_batch.iterdir()
-        if c.is_dir() and not c.name.startswith("batch-logs")
-    ]
-    if sub and any(
-        (
-            c / next(c.iterdir(), Path("/dev/null")) / "data" / "interception.json"
-        ).exists()
-        for c in sub
-    ):
-        inner_batch = sub[0]
-    print(f"  → batch root: {inner_batch}")
-
-    print(f"\n[2/3] Re-judge with {args.judge_model} (rubric={args.rubric}) ...")
-    summary = rescore(inner_batch, args.judge_model, args.rubric)
-
-    n = summary["n_total"]
-    observed_icpt = 100.0 * summary["n_intercepted"] / n if n else 0.0
-    observed_lenient = 100.0 * summary.get("reward_pct_lenient", 0)
-    observed_strict = 100.0 * summary.get("reward_pct_strict", 0)
-    observed = (observed_icpt, observed_lenient, observed_strict, n)
-
-    print("\n[3/3] Compare to published row ...")
-    ok, table = verdict(observed, published, args.tolerance)
-    print(table)
-    print()
-    if ok:
+    with download_cache(args.work_dir, args.keep_cache) as cache_dir:
         print(
-            f"✓ PASS — reproduction within ±{args.tolerance} pp of published numbers."
+            f"== Reproducing {args.model} (n={published[3]}, tolerance ±{args.tolerance}pp) ==\n"
         )
-    else:
-        print(f"✗ FAIL — at least one metric deviates more than ±{args.tolerance} pp.")
-        print("  Possible causes:")
-        print("  - Different judge model (we use deepseek-v4-pro on OpenRouter).")
-        print(
-            "  - Different rubric (our prompts in src/clawbench/runner/judge_llm.py)."
-        )
-        print("  - HF dataset rev drift — try `hf download --revision <commit>`.")
+        print("[1/3] Download trace subset from HF ...")
+        batch_dir = download(args.model, cache_dir)
 
-    if not args.keep_cache:
-        shutil.rmtree(args.work_dir, ignore_errors=True)
-        print(f"  (deleted {args.work_dir}; pass --keep-cache to keep traces)")
+        # Need a model batch root; HF subset puts task dirs under
+        # batch-aligned-.../<model>/batch-.../<model>/ → walk down.
+        candidates = [p for p in batch_dir.rglob("batch-*") if p.is_dir()]
+        if not candidates:
+            # No nested batch-* dir? The batch_dir itself is the root.
+            candidates = [batch_dir]
+        inner_batch = candidates[0]
+        # If there's a model sub-dir inside, use it
+        sub = [
+            c
+            for c in inner_batch.iterdir()
+            if c.is_dir() and not c.name.startswith("batch-logs")
+        ]
+        if sub and any(
+            (
+                c / next(c.iterdir(), Path("/dev/null")) / "data" / "interception.json"
+            ).exists()
+            for c in sub
+        ):
+            inner_batch = sub[0]
+        print(f"  → batch root: {inner_batch}")
 
-    return 0 if ok else 1
+        print(f"\n[2/3] Re-judge with {args.judge_model} (rubric={args.rubric}) ...")
+        summary = rescore(inner_batch, args.judge_model, args.rubric)
+
+        n = summary["n_total"]
+        observed_icpt = 100.0 * summary["n_intercepted"] / n if n else 0.0
+        observed_lenient = 100.0 * summary.get("reward_pct_lenient", 0)
+        observed_strict = 100.0 * summary.get("reward_pct_strict", 0)
+        observed = (observed_icpt, observed_lenient, observed_strict, n)
+
+        print("\n[3/3] Compare to published row ...")
+        ok, table = verdict(observed, published, args.tolerance)
+        print(table)
+        print()
+        if ok:
+            print(
+                f"✓ PASS — reproduction within ±{args.tolerance} pp of published numbers."
+            )
+        else:
+            print(
+                f"✗ FAIL — at least one metric deviates more than ±{args.tolerance} pp."
+            )
+            print("  Possible causes:")
+            print("  - Different judge model (we use deepseek-v4-pro on OpenRouter).")
+            print(
+                "  - Different rubric (our prompts in src/clawbench/runner/judge_llm.py)."
+            )
+            print("  - HF dataset rev drift — try `hf download --revision <commit>`.")
+
+        return 0 if ok else 1
 
 
 if __name__ == "__main__":
