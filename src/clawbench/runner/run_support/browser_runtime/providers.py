@@ -31,6 +31,18 @@ _KERNEL_ALLOWED_OPTIONS = {
     "stealth",
     "tags",
 }
+_STEEL_API_URL = "https://api.steel.dev"
+_STEEL_ALLOWED_OPTIONS = {
+    "blockAds",
+    "extensionIds",
+    "proxyUrl",
+    "region",
+    "sessionContext",
+    "solveCaptcha",
+    "stealthConfig",
+    "useProxy",
+    "userAgent",
+}
 DEFAULT_BROWSER_CDP_URL = os.environ.get(
     "CLAWBENCH_BROWSER_CDP_URL",
     "http://127.0.0.1:9222",
@@ -156,6 +168,12 @@ class _KernelApiError(RuntimeError):
         self.status = status
 
 
+class _SteelApiError(RuntimeError):
+    def __init__(self, message: str, *, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
+
 def _parse_options(raw: str | None) -> dict[str, Any]:
     if not raw:
         return {}
@@ -171,6 +189,19 @@ def _parse_options(raw: str | None) -> dict[str, Any]:
 def _env_value(env: dict[str, str], key: str) -> str | None:
     value = env.get(key) or os.environ.get(key)
     return value if value else None
+
+
+def _scrub_secret(text: str, secret: str | None) -> str:
+    """Remove an API key from an error string, including URL-encoded forms."""
+    if not secret:
+        return text
+    for form in (
+        secret,
+        urllib.parse.quote(secret, safe=""),
+        urllib.parse.quote_plus(secret, safe=""),
+    ):
+        text = text.replace(form, "[REDACTED]")
+    return text
 
 
 def _pick_free_port() -> int:
@@ -232,22 +263,184 @@ class RemoteCdpBrowserRuntimeProvider:
 
 
 class SteelBrowserRuntimeProvider:
-    name = "steel"
-    default_recording_mode = "disabled"
+    """Steel sessions, either Steel Cloud or a self-hosted steel-browser.
 
-    def __init__(self, *, options: dict[str, Any]) -> None:
+    Both speak the same ``/v1/sessions`` API; the only difference is that
+    Steel Cloud authenticates with ``steel-api-key`` while a self-hosted
+    deployment (``STEEL_BASE_URL``) usually takes no key at all.
+    """
+
+    name = "steel"
+    default_recording_mode = "provider"
+
+    def __init__(
+        self,
+        *,
+        api_key: str | None,
+        options: dict[str, Any],
+        api_url: str = _STEEL_API_URL,
+    ) -> None:
+        unknown = sorted(set(options) - _STEEL_ALLOWED_OPTIONS)
+        if unknown:
+            allowed = ", ".join(sorted(_STEEL_ALLOWED_OPTIONS))
+            raise BrowserRuntimeError(
+                "steel runtime options contain unsupported field(s): "
+                f"{', '.join(unknown)}; allowed fields: {allowed}"
+            )
+        for key in ("blockAds", "solveCaptcha", "useProxy"):
+            value = options.get(key)
+            if value is not None and not isinstance(value, bool):
+                raise BrowserRuntimeError(f"steel {key} option must be a boolean")
+        for key in ("proxyUrl", "region", "userAgent"):
+            value = options.get(key)
+            if value is not None and not isinstance(value, str):
+                raise BrowserRuntimeError(f"steel {key} option must be a string")
+        for key in ("sessionContext", "stealthConfig"):
+            value = options.get(key)
+            if value is not None and not isinstance(value, dict):
+                raise BrowserRuntimeError(f"steel {key} option must be a JSON object")
+        extension_ids = options.get("extensionIds")
+        if extension_ids is not None and not isinstance(extension_ids, list):
+            raise BrowserRuntimeError("steel extensionIds option must be a JSON array")
+        self.api_key = api_key
         self.options = options
+        self.api_url = api_url.rstrip("/")
+
+    @property
+    def _is_cloud(self) -> bool:
+        return self.api_url == _STEEL_API_URL
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        data = (
+            json.dumps(payload, separators=(",", ":")).encode()
+            if payload is not None
+            else None
+        )
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["steel-api-key"] = self.api_key
+        request = urllib.request.Request(
+            f"{self.api_url}{path}",
+            data=data,
+            method=method,
+            headers=headers,
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=15) as response:
+                raw = response.read()
+        except urllib.error.HTTPError as e:
+            if e.code in {401, 403}:
+                message = "Steel authentication failed"
+            elif e.code in {402, 429}:
+                message = "Steel quota or concurrency limit was exceeded"
+            else:
+                message = f"Steel API returned HTTP {e.code}"
+            raise _SteelApiError(message, status=e.code) from None
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            reason = _scrub_secret(str(getattr(e, "reason", e)), self.api_key)
+            raise _SteelApiError(f"Steel API request failed: {reason}") from None
+
+        try:
+            result = json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise _SteelApiError("Steel API returned malformed JSON") from None
+        if not isinstance(result, dict):
+            raise _SteelApiError("Steel API returned non-object JSON")
+        return result
+
+    def _release(self, session_id: str) -> str:
+        try:
+            self._request("POST", f"/v1/sessions/{session_id}/release")
+        except _SteelApiError as e:
+            if e.status in {404, 409}:
+                return "already_closed"
+            raise
+        return "released"
 
     def start(self, task: dict[str, Any], time_limit_s: int) -> BrowserSession:
-        raise BrowserRuntimeError(
-            "steel browser runtime is reserved but not implemented yet"
+        if not self.api_key and self._is_cloud:
+            raise BrowserRuntimeError(
+                "steel browser runtime requires STEEL_API_KEY (or STEEL_BASE_URL "
+                "pointing at a self-hosted steel-browser)"
+            )
+
+        # Steel expresses session timeouts in milliseconds; ClawBench works in
+        # seconds and adds the same 120s of headroom the other managed runtimes
+        # use for startup and teardown.
+        timeout_ms = min(86_400_000, max(60_000, (time_limit_s + 120) * 1000))
+        payload = {
+            **self.options,
+            "dimensions": {"width": 1920, "height": 1080},
+            "timeout": timeout_ms,
+        }
+        try:
+            result = self._request("POST", "/v1/sessions", payload)
+        except _SteelApiError as e:
+            raise BrowserRuntimeError(str(e)) from None
+
+        session_id = result.get("id")
+        cdp_url = result.get("websocketUrl")
+        if not isinstance(session_id, str) or not session_id:
+            raise BrowserRuntimeError(
+                "Steel session response did not include a valid id"
+            )
+        if not isinstance(cdp_url, str) or not cdp_url.startswith(("ws://", "wss://")):
+            try:
+                self._release(session_id)
+            except _SteelApiError:
+                pass
+            raise BrowserRuntimeError(
+                "Steel session response did not include a valid websocketUrl"
+            )
+
+        viewer_url = result.get("sessionViewerUrl")
+        if not isinstance(viewer_url, str) or not viewer_url.startswith(
+            ("http://", "https://")
+        ):
+            viewer_url = None
+        debug_url = result.get("debugUrl")
+        if not isinstance(debug_url, str) or not debug_url.startswith(
+            ("http://", "https://")
+        ):
+            debug_url = None
+
+        return BrowserSession(
+            provider=self.name,
+            mode="remote",
+            session_id=session_id,
+            cdp_url=cdp_url,
+            viewer_url=viewer_url,
+            debug_url=debug_url,
+            # Steel keeps the rrweb session replay behind the same viewer URL
+            # instead of handing back a downloadable file, so a Steel run has
+            # no local recording.mp4.
+            recording_url=viewer_url,
+            metadata={
+                "deployment": "cloud" if self._is_cloud else "self-hosted",
+                "region": result.get("region"),
+                "timeout_ms": timeout_ms,
+                "proxy_source": result.get("proxySource"),
+                "solve_captcha": result.get("solveCaptcha"),
+            },
+            recording_mode="provider",
         )
 
     def finalize(self, session: BrowserSession, output_dir: Path) -> None:
         pass
 
     def cleanup(self, session: BrowserSession) -> None:
-        session.cleanup_status = "not_required"
+        if not session.session_id:
+            session.cleanup_status = "not_required"
+            return
+        try:
+            session.cleanup_status = self._release(session.session_id)
+        except _SteelApiError as e:
+            raise BrowserRuntimeError(str(e)) from None
 
 
 class BrowserbaseRuntimeProvider:
@@ -324,14 +517,7 @@ class BrowserbaseRuntimeProvider:
                 message = f"Browserbase API returned HTTP {e.code}"
             raise _BrowserbaseApiError(message, status=e.code) from None
         except (urllib.error.URLError, TimeoutError, OSError) as e:
-            reason = str(getattr(e, "reason", e))
-            for secret in (
-                self.api_key,
-                urllib.parse.quote(self.api_key, safe=""),
-                urllib.parse.quote_plus(self.api_key, safe=""),
-            ):
-                if secret:
-                    reason = reason.replace(secret, "[REDACTED]")
+            reason = _scrub_secret(str(getattr(e, "reason", e)), self.api_key)
             raise _BrowserbaseApiError(
                 f"Browserbase API request failed: {reason}"
             ) from None
@@ -511,14 +697,7 @@ class KernelRuntimeProvider:
                 message = f"Kernel API returned HTTP {e.code}"
             raise _KernelApiError(message, status=e.code) from None
         except (urllib.error.URLError, TimeoutError, OSError) as e:
-            reason = str(getattr(e, "reason", e))
-            for secret in (
-                self.api_key,
-                urllib.parse.quote(self.api_key, safe=""),
-                urllib.parse.quote_plus(self.api_key, safe=""),
-            ):
-                if secret:
-                    reason = reason.replace(secret, "[REDACTED]")
+            reason = _scrub_secret(str(getattr(e, "reason", e)), self.api_key)
             raise _KernelApiError(f"Kernel API request failed: {reason}") from None
 
     def _request(
@@ -783,7 +962,20 @@ def make_browser_runtime_provider(
             },
         )
     if runtime == "steel":
-        return SteelBrowserRuntimeProvider(options=options)
+        api_url = _env_value(env, "STEEL_BASE_URL") or _STEEL_API_URL
+        api_key = _env_value(env, "STEEL_API_KEY")
+        # A self-hosted steel-browser normally runs unauthenticated, so the key
+        # is only mandatory when talking to Steel Cloud.
+        if not api_key and api_url.rstrip("/") == _STEEL_API_URL:
+            raise BrowserRuntimeError(
+                "steel browser runtime requires STEEL_API_KEY (or STEEL_BASE_URL "
+                "pointing at a self-hosted steel-browser)"
+            )
+        return SteelBrowserRuntimeProvider(
+            api_key=api_key,
+            options=options,
+            api_url=api_url,
+        )
     if runtime == "browserbase":
         api_key = _env_value(env, "BROWSERBASE_API_KEY")
         if not api_key:

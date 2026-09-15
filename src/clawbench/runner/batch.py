@@ -44,7 +44,7 @@ CASE_SUITES = {
     "claw-eval": "test-cases/claw-eval",
 }
 DEFAULT_CASES_SUITE = "v2"
-MANAGED_BROWSER_RUNTIMES = frozenset({"browserbase", "kernel"})
+MANAGED_BROWSER_RUNTIMES = frozenset({"browserbase", "kernel", "steel"})
 
 
 def load_models_yaml() -> dict:

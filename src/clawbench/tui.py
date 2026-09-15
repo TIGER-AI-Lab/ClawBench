@@ -21,6 +21,7 @@ from rich.status import Status
 from rich.table import Table
 from rich.text import Text
 
+from clawbench.runner.batch import MANAGED_BROWSER_RUNTIMES
 from clawbench.runner.run_support.harness_registry import HARNESS_REGISTRY
 from clawbench.utils.paths import ASSET_ROOT, WORKSPACE_ROOT, ensure_workspace_templates
 
@@ -529,6 +530,7 @@ def _pick_browser_runtime(harness: str) -> str | None:
                     "Browserbase cloud browser",
                     value="browserbase",
                 ),
+                questionary.Choice("Steel cloud browser", value="steel"),
             ]
         )
     return questionary.select(
@@ -684,6 +686,9 @@ def mode_single(
             else "  [dim]Tip: open the Kernel live-view URL printed below\n"
             "  to watch the cloud browser in real time.[/]"
             if browser_runtime == "kernel"
+            else "  [dim]Tip: open the Steel session viewer URL printed below\n"
+            "  to watch the cloud browser and replay the session.[/]"
+            if browser_runtime == "steel"
             else "  [dim]Tip: once the container starts, open the noVNC URL\n"
             "  printed below to watch the agent operate the browser\n"
             "  in real-time.[/]"
@@ -782,7 +787,7 @@ def mode_batch(
         case_args = ["--cases"] + [f"{cases_dir_name}/{c}" for c in selected_cases]
         case_summary = f"{len(selected_cases)} selected"
 
-    if browser_runtime in {"browserbase", "kernel"}:
+    if browser_runtime in MANAGED_BROWSER_RUNTIMES:
         recommended = 1
         console.print(
             f"  {browser_runtime.capitalize()} concurrency depends on the account limit; "

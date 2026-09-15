@@ -194,4 +194,4 @@ def test_tui_lists_kernel_for_remote_capable_harness(
     selected = tui._pick_browser_runtime("openclaw")
 
     assert selected == "kernel"
-    assert captured_values == ["local", "kernel", "browserbase"]
+    assert captured_values == ["local", "kernel", "browserbase", "steel"]

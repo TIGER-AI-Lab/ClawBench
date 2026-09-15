@@ -337,7 +337,7 @@ Full registry: [`src/clawbench/runtime/harnesses/harnesses.yaml`](src/clawbench/
 
 | I want to… | Where |
 | --- | --- |
-| Use a managed remote browser instead of a local container | [`docs/browser-runtimes.md`](docs/browser-runtimes.md) — Kernel and Browserbase setup, options, and recordings |
+| Use a managed remote browser instead of a local container | [`docs/browser-runtimes.md`](docs/browser-runtimes.md) — Kernel, Browserbase, and Steel setup, options, and recordings |
 | Run V2 through the Harbor framework (and run it fast) | [`docs/harbor.md`](docs/harbor.md) — conversion, judge wiring, concurrency, troubleshooting |
 | See every CLI command and flag | [`docs/cli.md`](docs/cli.md) |
 

@@ -42,7 +42,7 @@ clawbench-run <case-dir> --human      # human reference run
 | `--output-dir <path>` | `<project>/test-output` | Where run directories are written |
 | `--no-build` | off | Skip building the container image (assumes it exists) |
 | `--no-upload` | off | Skip HuggingFace upload even if `HF_TOKEN` is configured |
-| `--browser-runtime <name>` | `local` | `local`, `kernel`, `browserbase`, `remote-cdp` — see [`browser-runtimes.md`](browser-runtimes.md) |
+| `--browser-runtime <name>` | `local` | `local`, `kernel`, `browserbase`, `steel`, `remote-cdp` — see [`browser-runtimes.md`](browser-runtimes.md) |
 | `--browser-cdp-url <url>` | — | CDP endpoint for `--browser-runtime remote-cdp` |
 | `--browser-runtime-options <json>` | — | Provider-specific options, e.g. `'{"region":"us-west-2"}'` |
 

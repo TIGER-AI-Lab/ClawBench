@@ -113,13 +113,6 @@ def test_local_browser_runtime_defaults_to_local_mode() -> None:
     assert isinstance(session.local_viewer_port, int)
 
 
-def test_steel_provider_is_reserved_not_implemented() -> None:
-    provider = SteelBrowserRuntimeProvider(options={})
-
-    with pytest.raises(BrowserRuntimeError, match="not implemented"):
-        provider.start({}, 60)
-
-
 def test_browserbase_requires_api_key() -> None:
     provider = BrowserbaseRuntimeProvider(api_key=None, options={})
 
@@ -478,3 +471,279 @@ def test_redact_cdp_url_masks_common_secret_query_params() -> None:
         "wss://example.test/devtools?apiKey=%5BREDACTED%5D&"
         "jwt=%5BREDACTED%5D&token=%5BREDACTED%5D&x=ok"
     )
+
+
+def test_steel_requires_api_key_for_cloud() -> None:
+    provider = SteelBrowserRuntimeProvider(api_key=None, options={})
+
+    with pytest.raises(BrowserRuntimeError, match="STEEL_API_KEY"):
+        provider.start({}, 60)
+    with pytest.raises(BrowserRuntimeError, match="STEEL_API_KEY"):
+        make_browser_runtime_provider(_args(browser_runtime="steel"), {})
+
+
+def test_steel_self_hosted_does_not_require_api_key() -> None:
+    provider = make_browser_runtime_provider(
+        _args(browser_runtime="steel"),
+        {"STEEL_BASE_URL": "http://localhost:3000"},
+    )
+
+    assert isinstance(provider, SteelBrowserRuntimeProvider)
+    assert provider.api_key is None
+    assert provider.api_url == "http://localhost:3000"
+
+
+def test_steel_rejects_reserved_options() -> None:
+    with pytest.raises(BrowserRuntimeError, match="dimensions"):
+        SteelBrowserRuntimeProvider(
+            api_key="steel-secret",
+            options={"dimensions": {"width": 800, "height": 600}},
+        )
+    with pytest.raises(BrowserRuntimeError, match="timeout"):
+        SteelBrowserRuntimeProvider(
+            api_key="steel-secret",
+            options={"timeout": 300},
+        )
+
+
+def test_steel_rejects_mistyped_options() -> None:
+    with pytest.raises(BrowserRuntimeError, match="blockAds"):
+        SteelBrowserRuntimeProvider(api_key="steel-secret", options={"blockAds": "yes"})
+    with pytest.raises(BrowserRuntimeError, match="stealthConfig"):
+        SteelBrowserRuntimeProvider(
+            api_key="steel-secret",
+            options={"stealthConfig": ["humanize"]},
+        )
+
+
+def test_steel_create_session_payload_and_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    requests: list[urllib.request.Request] = []
+
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        requests.append(request)
+        assert timeout == 15
+        return _FakeResponse(
+            {
+                "id": "sess_abc",
+                "websocketUrl": (
+                    "wss://connect.steel.dev?sessionId=sess_abc&apiKey=steel-secret"
+                ),
+                "sessionViewerUrl": "https://app.steel.dev/sessions/sess_abc",
+                "debugUrl": (
+                    "https://app.steel.dev/sessions/sess_abc/debug?apiKey=steel-secret"
+                ),
+                "region": "lax",
+                "proxySource": "steel",
+                "solveCaptcha": False,
+            }
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(
+        api_key="steel-secret",
+        options={"blockAds": True, "region": "lax"},
+    )
+
+    session = provider.start({}, 1800)
+
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.get_method() == "POST"
+    assert request.full_url == "https://api.steel.dev/v1/sessions"
+    assert request.headers["Steel-api-key"] == "steel-secret"
+    assert isinstance(request.data, bytes)
+    assert json.loads(request.data) == {
+        "blockAds": True,
+        "region": "lax",
+        "dimensions": {"width": 1920, "height": 1080},
+        "timeout": 1_920_000,
+    }
+    assert session.provider == "steel"
+    assert session.mode == "remote"
+    assert session.session_id == "sess_abc"
+    assert session.recording_mode == "provider"
+    assert session.recording_url == "https://app.steel.dev/sessions/sess_abc"
+    assert session.viewer_url == session.recording_url
+    assert session.metadata["deployment"] == "cloud"
+    metadata = session.to_metadata()
+    assert "steel-secret" not in json.dumps(metadata)
+    assert "apiKey=%5BREDACTED%5D" in metadata["cdp_url"]
+    assert "apiKey=%5BREDACTED%5D" in metadata["debug_url"]
+
+
+def test_steel_timeout_is_bounded_in_milliseconds(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payloads: list[dict[str, object]] = []
+
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        assert isinstance(request.data, bytes)
+        payloads.append(json.loads(request.data))
+        return _FakeResponse(
+            {
+                "id": f"sess_{len(payloads)}",
+                "websocketUrl": f"wss://connect.steel.dev?sessionId=sess_{len(payloads)}",
+            }
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+
+    provider.start({}, 1)
+    provider.start({}, 999_999)
+
+    assert [payload["timeout"] for payload in payloads] == [121_000, 86_400_000]
+
+
+def test_steel_start_releases_session_when_websocket_url_is_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[tuple[str, str]] = []
+
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        calls.append((request.get_method(), request.full_url))
+        if request.full_url.endswith("/release"):
+            return _FakeResponse({"success": True})
+        return _FakeResponse({"id": "sess_abc"})
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+
+    with pytest.raises(BrowserRuntimeError, match="websocketUrl"):
+        provider.start({}, 60)
+
+    assert calls == [
+        ("POST", "https://api.steel.dev/v1/sessions"),
+        ("POST", "https://api.steel.dev/v1/sessions/sess_abc/release"),
+    ]
+
+
+def test_steel_cleanup_releases_session(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[tuple[str, str]] = []
+
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        calls.append((request.get_method(), request.full_url))
+        return _FakeResponse({"success": True})
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(
+        api_key="steel-secret",
+        options={},
+        api_url="http://localhost:3000",
+    )
+    session = BrowserSession(
+        provider="steel",
+        mode="remote",
+        session_id="sess_abc",
+        cdp_url="ws://localhost:3000/v1/sessions/sess_abc/cdp",
+    )
+
+    provider.cleanup(session)
+
+    assert calls == [
+        ("POST", "http://localhost:3000/v1/sessions/sess_abc/release"),
+    ]
+    assert session.cleanup_status == "released"
+
+
+def test_steel_cleanup_treats_missing_session_as_already_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        raise urllib.error.HTTPError(
+            request.full_url,
+            404,
+            "Not Found",
+            hdrs=Message(),
+            fp=None,
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+    session = BrowserSession(
+        provider="steel",
+        mode="remote",
+        session_id="sess_abc",
+        cdp_url="wss://connect.steel.dev?sessionId=sess_abc",
+    )
+
+    provider.cleanup(session)
+
+    assert session.cleanup_status == "already_closed"
+
+
+def test_steel_http_errors_do_not_expose_api_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        raise urllib.error.HTTPError(
+            request.full_url,
+            401,
+            "steel-secret",
+            hdrs=Message(),
+            fp=None,
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+
+    with pytest.raises(BrowserRuntimeError) as exc_info:
+        provider.start({}, 60)
+
+    assert "authentication failed" in str(exc_info.value)
+    assert "steel-secret" not in str(exc_info.value)
+
+
+def test_steel_network_errors_do_not_expose_api_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        raise urllib.error.URLError("connection refused for key steel-secret")
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+
+    with pytest.raises(BrowserRuntimeError) as exc_info:
+        provider.start({}, 60)
+
+    assert "steel-secret" not in str(exc_info.value)
+    assert "[REDACTED]" in str(exc_info.value)
+
+
+def test_steel_malformed_response_is_safe(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        urllib.request,
+        "urlopen",
+        lambda request, timeout: _FakeResponse(b"not-json"),
+    )
+    provider = SteelBrowserRuntimeProvider(api_key="steel-secret", options={})
+
+    with pytest.raises(BrowserRuntimeError, match="malformed JSON"):
+        provider.start({}, 60)
