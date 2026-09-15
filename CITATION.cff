@@ -6,7 +6,7 @@ version: "0.10.0"
 license: Apache-2.0
 url: "https://claw-bench.com"
 repository-code: "https://github.com/TIGER-AI-Lab/ClawBench"
-date-released: "2026-06-22"
+date-released: "2026-08-30"
 identifiers:
   - type: swh
     value: "swh:1:snp:4baa3fe53cbce2b1abfae44a21170ab079e351a3"
