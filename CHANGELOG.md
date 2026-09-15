@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 - Isolate `clawbench-reproduce` downloads in a per-invocation cache directory so cleanup preserves existing work-directory files and removes only owned downloads, including on failure.
 - Align public discovery metadata with the canonical repository and shipping corpus, label historical V1 scores in both READMEs, and correct the v0.10.0 citation release date.
+- `clawbench-rescore` no longer silently reuses a cached judge verdict from a different judge model, config, rubric or instruction: a cache hit now requires an exact fingerprint match, and a batch that still rolls up verdicts from more than one judge (e.g. after `--limit`) is reported as `judge_model_mixed` instead of mislabeled with the newly requested judge.
 - Host-timeout container termination now uses the lazy container-engine resolver.
 - Added host-side container and batch-job timeouts so a wedged run cannot stall a batch indefinitely.
 - Fixed a judge-provider outage (or an unparseable judge reply) being recorded as an agent failure. `run.py` now exits 3 instead of 1 when the judge never renders a verdict, `batch.py` gives it its own `judge_inconclusive` bucket in `batch-summary.json` instead of folding it into `failed`, and `clawbench-rescore` now retries a cached `match: null` verdict even without `--force`.
