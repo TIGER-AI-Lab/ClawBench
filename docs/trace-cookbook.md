@@ -27,7 +27,7 @@ Each run directory contains:
 | `screenshots/*.png`    | Timestamped PNG per action                       | Vision grounding, GUI datasets              |
 | `recording.mp4`        | Full session video (H.264, 15 fps)               | Qualitative analysis, demos                 |
 | `interception.json`    | The final blocked request                        | Outcome labels (Stage-1)                    |
-| `run-meta.json`        | Model, harness, task, timing                     | Joins and filtering                         |
+| `run-meta.json`        | Model, harness, task, timing, provenance         | Joins and filtering                         |
 
 Pull a single model or task without downloading everything:
 
@@ -54,6 +54,65 @@ msgs = [json.loads(l) for l in (run / "agent-messages.jsonl").open()]
 acts = [json.loads(l) for l in (run / "actions.jsonl").open()]
 outcome = json.loads((run / "interception.json").read_text())
 print(meta["model"], len(msgs), "messages,", len(acts), "actions")
+```
+
+### Provenance
+
+`run-meta.json` carries a `provenance` block naming the exact revisions behind
+the names in the rest of the file, so a row on a leaderboard can be traced back
+to the code, corpus, and agent build that produced it:
+
+```json
+"provenance": {
+  "clawbench_version": "0.10.0",
+  "commit": "3f3599d...",
+  "branch": "main",
+  "dirty": false,
+  "corpus": {"suite": "v2", "path": "test-cases/v2", "revision": "62ee923..."},
+  "harness": {
+    "name": "openclaw",
+    "image_id": "sha256:...",
+    "agent_version": "2026.3.13",
+    "pinned_versions": {"openclaw": "2026.3.13"},
+    "pins_source": "dockerfile"
+  }
+}
+```
+
+`corpus.revision` is the last commit that touched that suite, so two runs with
+the same revision saw the same task text.
+
+`harness.pinned_versions` comes from the version pins in the harness Dockerfile
+— the agent and any plugins the image was built with. Both released versions
+(`opencode-ai@1.4.4`, `litellm[proxy]==1.77.3`) and pinned revisions
+(`pkg@github:owner/repo#<sha>`, `pkg @ git+https://…@<ref>`) count. A floating
+dist-tag like `@next` is deliberately **not** recorded: it names a moving
+target, so calling it a pin would be a false claim, and `agent_version` is
+`null` for a harness pinned that way.
+
+`pins_source` says whether those pins describe the image that actually ran:
+
+| Value | Meaning |
+|---|---|
+| `"dockerfile"` | The image was built from this checkout's Dockerfile during this run, so its pins are the versions that ran. |
+| `"unverified"` | The run reused an existing image (`--no-build`) that may predate the Dockerfile on disk. `pinned_versions` and `agent_version` are `null` — nothing is claimed. |
+
+`clawbench-batch` builds the image once and then runs every task with
+`--no-build`, so a batch run still reports `"dockerfile"`; a bare
+`clawbench-run --no-build` reports `"unverified"`.
+
+Every field is best-effort. A run from a PyPI install has no git checkout and
+reports `commit: null`; a task from an explicit `--cases-dir` reports its suite
+name but `revision: null`, because its history is not ClawBench's to claim.
+`dirty: null` means the lookup failed, which is not the same claim as `false`.
+Filter on these before comparing runs:
+
+```python
+same_code = {
+    run for run in runs
+    if run["provenance"]["commit"] == reference["provenance"]["commit"]
+    and run["provenance"]["dirty"] is False
+}
 ```
 
 ## Recipes

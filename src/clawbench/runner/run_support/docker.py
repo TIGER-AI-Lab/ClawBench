@@ -24,6 +24,7 @@ from clawbench.runner.run_support.config import (
     engine,
     harness_image,
 )
+from clawbench.runner.run_support.provenance import IMAGE_BUILT_ENV
 from clawbench.runner.run_support.usage import (
     fetch_openrouter_pricing,
     format_usage_status,
@@ -248,6 +249,11 @@ def docker_build(harness: str = DEFAULT_HARNESS) -> None:
 
     _build_one(BASE_DOCKERFILE, BASE_IMAGE)
     _build_one(_HARNESS_DOCKERFILES[harness], target_image)
+    # Record that this image really was built from the Dockerfile in this
+    # checkout, so run provenance can tell its version pins apart from a
+    # possibly-stale image reused via --no-build. clawbench-batch builds once
+    # here and its child runs inherit the environment.
+    os.environ[IMAGE_BUILT_ENV] = harness
     console.print(f"[green]✓[/] Container image ready ({target_image})")
 
 

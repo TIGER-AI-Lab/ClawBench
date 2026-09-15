@@ -258,3 +258,11 @@ def test_run_metadata_redacts_model_and_judge_secrets(
     assert meta["browser_runtime"]["cleanup_status"] == "released"
     assert meta["usage"]["estimated_cost_usd"] == 0.0042
     assert meta["run_metrics"]["usage"]["total_tokens"] == 123
+
+    provenance = meta["provenance"]
+    assert provenance["harness"]["name"] == "openclaw"
+    assert provenance["corpus"]["suite"] == "v1"
+    assert provenance["harness"]["image_id"] == meta["runtime"]["harness_image_id"]
+    # This run reused an existing image, so its pins are not claimed.
+    assert provenance["harness"]["pins_source"] == "unverified"
+    assert provenance["harness"]["agent_version"] is None

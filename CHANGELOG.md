@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- `run-meta.json` now carries a `provenance` block: the ClawBench version, commit, branch, and dirty state; the corpus suite and the revision of the commit that last touched it; and the agent and plugin versions pinned by the harness Dockerfile, with a `pins_source` saying whether those pins describe the image that actually ran. Every field is best-effort and null outside a git checkout, so a run never fails on a missing one. See [`docs/trace-cookbook.md`](docs/trace-cookbook.md#provenance).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 

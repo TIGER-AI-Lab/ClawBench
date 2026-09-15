@@ -17,6 +17,7 @@ from clawbench.runner.run_support.config import (
     harness_image,
 )
 from clawbench.runner.run_support.docker import container_engine_version, image_id
+from clawbench.runner.run_support.provenance import make_provenance
 from clawbench.runner.run_support.task import normalize_extra_info
 
 SECRET_CONFIG_RE = re.compile(
@@ -230,6 +231,7 @@ def make_run_meta(
         temperature = model_cfg.get("temperature") if model_cfg else None
         max_tokens = model_cfg.get("max_tokens") if model_cfg else None
 
+    runtime = _runtime_meta(harness)
     meta = {
         "test_case": case_name,
         **metadata,
@@ -252,7 +254,14 @@ def make_run_meta(
         "infra_flags": classification["infra_flags"],
         "run_metrics": classification["metrics"],
         "usage": classification["metrics"].get("usage"),
-        "runtime": _runtime_meta(harness),
+        "runtime": runtime,
+        # Which code, corpus, and agent build produced this trace — the part
+        # that makes a published row reproducible rather than merely labelled.
+        "provenance": make_provenance(
+            harness=harness,
+            harness_image_id=runtime.get("harness_image_id"),
+            task_dir=task_dir,
+        ),
         "browser_runtime": browser_runtime,
         "task": _task_meta(
             task=task,
