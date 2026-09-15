@@ -26,13 +26,13 @@
 
 <div align="center">
 
-**ClawBench 是一个开源基准，用于评测 AI browser agent 在日常在线任务上的表现 —— 订酒店、点外卖、投简历、管理邮件 —— 全部在真实网站上进行。V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。它通过 5 层录制管线和对照人工参考轨迹的 agentic evaluator 衡量端到端任务完成率。目前最高分：33.3%。**
+**ClawBench 是一个开源基准，用于评测 AI browser agent 在日常在线任务上的表现 —— 订酒店、点外卖、投简历、管理邮件 —— 全部在真实网站上进行。V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。它通过 5 层录制管线和对照人工参考轨迹的 agentic evaluator 衡量端到端任务完成率。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。**
 
 <img src="../assets/clawbench_logo.png" alt="ClawBench logo" width="320">
 
 我们让前沿 AI 智能体去做人们每天都在做的事 --<br/>
 点外卖、订酒店、投简历、写评价、管理项目。<br/>
-**即使最强的模型，也只能完成其中约三分之一。**
+**在历史 V1 论文评测中，表现最好的受测 agent 完成了约三分之一的任务。**
 
 ---
 
@@ -639,7 +639,7 @@ ClawBench 的定位：**真实消费级网站、日常任务、端到端录制**
 <details>
 <summary><b>目前最高分是多少？</b></summary>
 
-33.3% —— 大约三分之一的任务完成率 —— 来自我们在 V1 上评测过的最强前沿模型。大多数任务仍能击败我们测试过的每一个模型；提升空间真实存在，基准尚未饱和。
+请查看按语料、harness 和评分规则划分的[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。上文的 33.3% 属于历史 V1 论文评测，并非当前所有结果中的最高分。比较成绩时，请使用相同的语料版本、指标和分母。
 
 </details>
 

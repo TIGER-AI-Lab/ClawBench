@@ -78,13 +78,13 @@
 
 <div align="center">
 
-**ClawBench is an open-source benchmark that evaluates AI browser agents on everyday online tasks — booking travel, ordering food, applying for jobs, managing email — across live websites. V1 lives in `test-cases/v1/`, V2 in `test-cases/v2/`. It measures end-to-end task success with a 5-layer recording pipeline and an agentic evaluator that compares each run against human references. Top score to date: 33.3%.**
+**ClawBench is an open-source benchmark that evaluates AI browser agents on everyday online tasks — booking travel, ordering food, applying for jobs, managing email — across live websites. V1 lives in `test-cases/v1/`, V2 in `test-cases/v2/`. It measures end-to-end task success with a 5-layer recording pipeline and an agentic evaluator that compares each run against human references. See the [live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) for scores by corpus, harness, and scoring rubric.**
 
 <img src="assets/clawbench_logo.png" alt="ClawBench logo" width="320">
 
 We asked frontier AI agents to do what people do every day --<br/>
 order food, book travel, apply for jobs, write reviews, manage projects.<br/>
-**Even the best agent only completes about 1 in 3.**
+**In the historical V1 paper evaluation, the strongest evaluated agent completed about 1 in 3 tasks.**
 
 ---
 
@@ -746,7 +746,7 @@ Yes for a V1 benchmark signal: the tasks span 143 live websites and 15 life cate
 <details>
 <summary><b>What's the current top score?</b></summary>
 
-33.3% — roughly one task in three — from the strongest frontier model we evaluated on V1. The majority of tasks still defeat every model we've tested; the headroom is real, and the benchmark is not saturated.
+The [live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) reports scores by corpus, harness, and scoring rubric. The 33.3% result quoted above belongs to the historical V1 paper evaluation; it is not a current overall maximum. Compare results using the same corpus revision, metric, and denominator.
 
 </details>
 
