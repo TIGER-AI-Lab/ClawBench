@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
+- Added `docs/codebase-evaluation-2026-09.md`, a codebase assessment with the Harbor integration status, prioritized risks, GitHub-ready issue drafts, and a staged optimization roadmap.
 
 ### Changed
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
 - Changed the default Harbor version to `0.22.0`.
+- Changed Harbor task generation to emit task schema `1.4` and fail fast on unsafe or ambiguous `extra_info` staging.
 
 ### Fixed
 - Isolate `clawbench-reproduce` downloads in a per-invocation cache directory so cleanup preserves existing work-directory files and removes only owned downloads, including on failure.
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added host-side container and batch-job timeouts so a wedged run cannot stall a batch indefinitely.
 - Fixed a judge-provider outage (or an unparseable judge reply) being recorded as an agent failure. `run.py` now exits 3 instead of 1 when the judge never renders a verdict, `batch.py` gives it its own `judge_inconclusive` bucket in `batch-summary.json` instead of folding it into `failed`, and `clawbench-rescore` now retries a cached `match: null` verdict even without `--force`.
 - Fail task setup when PurelyMail returns an API error instead of emitting credentials for an account that was not created.
+- Fixed Harbor verifier results so missing, failed, or unparseable judge calls are marked `judge_inconclusive` instead of looking like ordinary agent mismatches.
 
 ## [0.10.0] - 2026-08-30
 ### Added

@@ -8,7 +8,11 @@ import textwrap
 import tomllib
 from pathlib import Path
 
+import pytest
+
 from clawbench.eval.harbor_adapter import (
+    HARBOR_SCHEMA_VERSION,
+    copy_extra_info,
     discover_cases,
     sanitize_task_name,
     unique_output_name,
@@ -105,7 +109,7 @@ def test_write_harbor_task_emits_expected_tree_and_extra_info(tmp_path: Path) ->
     assert (out / "steps" / "run" / "solution" / "solve.sh").is_file()
 
     config = tomllib.loads((out / "task.toml").read_text())
-    assert config["schema_version"] == "1.3"
+    assert config["schema_version"] == HARBOR_SCHEMA_VERSION
     assert (
         config["task"]["name"] == "clawbench/v2-047-daily-life-personal-care-taskrabbit"
     )
@@ -120,6 +124,49 @@ def test_write_harbor_task_emits_expected_tree_and_extra_info(tmp_path: Path) ->
         in (out / "steps" / "run" / "instruction.md").read_text()
     )
     assert "BROWSER_CDP_URL" in (out / "steps" / "run" / "instruction.md").read_text()
+
+
+def test_harbor_extra_info_rejects_path_escape(tmp_path: Path) -> None:
+    case = tmp_path / "case"
+    case.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_text("must not be copied")
+
+    with pytest.raises(ValueError, match="escapes"):
+        copy_extra_info(
+            {"extra_info": [{"path": "../outside.txt", "description": "secret"}]},
+            case,
+            tmp_path / "out",
+        )
+
+
+def test_harbor_extra_info_rejects_basename_collisions(tmp_path: Path) -> None:
+    case = tmp_path / "case"
+    (case / "one").mkdir(parents=True)
+    (case / "two").mkdir(parents=True)
+    (case / "one" / "payload.json").write_text("{}")
+    (case / "two" / "payload.json").write_text("{}")
+
+    with pytest.raises(ValueError, match="basename collision"):
+        copy_extra_info(
+            {
+                "extra_info": [
+                    {"path": "one/payload.json", "description": "one"},
+                    {"path": "two/payload.json", "description": "two"},
+                ]
+            },
+            case,
+            tmp_path / "out",
+        )
+
+
+def test_harbor_extra_info_rejects_missing_file(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="does not identify a file"):
+        copy_extra_info(
+            {"extra_info": [{"path": "missing.json", "description": "missing"}]},
+            tmp_path / "case",
+            tmp_path / "out",
+        )
 
 
 def test_harbor_adapter_cli_smoke(tmp_path: Path) -> None:
@@ -285,3 +332,35 @@ def test_harbor_verifier_omits_unknown_judge_match_metric(tmp_path: Path) -> Non
 
     reward = json.loads((tmp_path / "reward.json").read_text())
     assert reward == {"reward": 0.0, "intercepted": 0.0}
+
+
+def test_harbor_verifier_preserves_judge_inconclusive_status(tmp_path: Path) -> None:
+    write_reward(
+        0.0,
+        {
+            "intercepted": True,
+            "judge_match": None,
+            "judge_status": "inconclusive",
+            "judge_inconclusive": True,
+            "failure_category": "judge_inconclusive",
+            "reason": "judge_call_failed",
+        },
+        output_dir=tmp_path,
+    )
+
+    reward = json.loads((tmp_path / "reward.json").read_text())
+    detailed = json.loads((tmp_path / "clawbench-result.json").read_text())
+    assert reward["judge_inconclusive"] == 1.0
+    assert detailed["judge_status"] == "inconclusive"
+    assert detailed["failure_category"] == "judge_inconclusive"
+
+
+def test_harbor_verifier_summarizes_judge_results() -> None:
+    assert harbor_verify.summarize_judge_results({"match": True}, {"match": False}) == (
+        "ok",
+        False,
+    )
+    assert harbor_verify.summarize_judge_results({"match": True}, {"match": None}) == (
+        "inconclusive",
+        True,
+    )
