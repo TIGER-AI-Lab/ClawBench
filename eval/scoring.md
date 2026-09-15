@@ -121,6 +121,26 @@ Per-run record in `run-meta.json` gets:
 
 Empirically, requiring both moves headline scores down sharply (typical Stage-1-only is 1.5–2× Stage-2 numbers), surfacing models that "almost get there" vs. models that actually complete the task. The two-stage system also makes failure diagnosis cheap — the run-meta tells you which stage cut off.
 
+## Always report both stages
+
+Every published number carries **both** stages, side by side, with the judge model named. Neither stands alone:
+
+- **Stage 1 alone overcounts success by roughly 2x.** In V2, `gemini-3.1-pro-preview` intercepted 69 tasks and the judge confirmed 37 (54% precision); `gemini-3.5-flash` intercepted 66 and confirmed 33 (50%). Aggregate: 156 intercepted, 78 confirmed — **50%**. Quoting interception on its own makes an agent look about twice as good as it is, because "right request, wrong intent" reads as a pass.
+- **Stage 2 alone hides interception coverage.** Without the Stage-1 number there is no way to see how much of the corpus the interceptor reached, so a low judged rate is ambiguous between "the agent never got there" and "the agent got there with the wrong payload".
+
+The tooling reports both by construction:
+
+| Artifact | Stage 1 | Stage 2 |
+|---|---|---|
+| `batch-summary.json` | `stages.stage1_intercepted`, `stages.stage1_rate` | `stages.stage2_judged_match`, `stages.stage2_rate`, `stages.judge_models` |
+| `clawbench-batch` console output | `stage 1 (intercepted): n/N` | `stage 2 (judged, <model>): n/N` plus stage-1 precision |
+| `rescore-summary.json` | `n_intercepted`, `pass_rate_stage1_only` | `n_judge_match`, `pass_rate_with_judge` |
+| `clawbench-analyze` report | Stage-1 rate | Stage-2 rate |
+
+`stages.stage1_precision` is Stage 2 over Stage 1 — the share of intercepted runs that survived the judge, i.e. the size of the "right request, wrong intent" gap for that batch.
+
+With `--no-judge` there is no Stage-2 number to report, and the output says so explicitly rather than letting the interception count stand as the score. A run whose judge call failed after retries is counted in `stages.stage2_unjudged`, not as a Stage-2 failure — it needs re-judging.
+
 ## Aggregating to a leaderboard row
 
 Each (model × harness × corpus) batch produces one `rescore-summary.json`:

@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
+- `batch-summary.json` now carries a `stages` block with the Stage-1 (interception) and Stage-2 (judged) counts, rates, and the judge model, so both stages can be reported without re-walking every run directory.
 
 ### Changed
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
 - Changed the default Harbor version to `0.22.0`.
+- `clawbench-batch` per-run stats now show a `Stage1`/`Stage2` column pair and end with a line reporting both stages plus stage-1 precision, instead of the interception count alone.
 
 ### Fixed
 - Isolate `clawbench-reproduce` downloads in a per-invocation cache directory so cleanup preserves existing work-directory files and removes only owned downloads, including on failure.
