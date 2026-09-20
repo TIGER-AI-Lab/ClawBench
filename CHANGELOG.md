@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Changed the default Harbor version to `0.22.0`.
 
 ### Fixed
+- `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 - Isolate `clawbench-reproduce` downloads in a per-invocation cache directory so cleanup preserves existing work-directory files and removes only owned downloads, including on failure.
 - Align public discovery metadata with the canonical repository and shipping corpus, label historical V1 scores in both READMEs, and correct the v0.10.0 citation release date.
 - Host-timeout container termination now uses the lazy container-engine resolver.

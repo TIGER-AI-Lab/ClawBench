@@ -31,7 +31,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import sys
+import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
@@ -39,6 +41,46 @@ from typing import Any
 import yaml
 
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}
+
+
+def _read_cached_verdict(path: Path) -> dict[str, Any] | None:
+    """Return a scored verdict, or None if the cache needs another judge call."""
+    if not path.exists():
+        return None
+    try:
+        verdict = json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        print(f"  invalid judge cache {path}: {exc}; retrying", file=sys.stderr)
+        return None
+    if not isinstance(verdict, dict) or type(verdict.get("match")) is not bool:
+        print(
+            f"  invalid judge cache {path}: match must be a boolean; retrying",
+            file=sys.stderr,
+        )
+        return None
+    return verdict
+
+
+def _write_verdict(path: Path, verdict: dict[str, Any]) -> None:
+    """Replace a verdict only after the complete JSON has reached a temporary file."""
+    temporary: str | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as fp:
+            temporary = fp.name
+            json.dump(verdict, fp, indent=2, ensure_ascii=False)
+            fp.flush()
+            os.fsync(fp.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def find_run_dirs(root: Path) -> list[Path]:
@@ -72,21 +114,22 @@ def rescore_one(
     instruction = meta.get("instruction", "") or ""
     for rubric in rubrics:
         judge_p = run_dir / JUDGE_FILE[rubric]
-        if judge_p.exists() and not force:
-            try:
-                cached = json.loads(judge_p.read_text())
-                # A cached match=None is not a scored result: retry it.
-                if cached.get("match") is not None:
-                    out[rubric] = cached
-                    continue
-            except Exception:
-                pass
+        if not force:
+            cached = _read_cached_verdict(judge_p)
+            if cached is not None:
+                out[rubric] = cached
+                continue
         verdict = judge_funcs[rubric](model_cfg, judge_model, instruction, intercept)
+        if not isinstance(verdict, dict) or type(verdict.get("match")) not in (
+            bool,
+            type(None),
+        ):
+            raise ValueError(f"{rubric} judge returned an invalid verdict")
         verdict["task_id"] = meta.get("task_id")
         verdict["test_case"] = meta.get("test_case")
         verdict["original_intercepted"] = True
         verdict["rubric"] = rubric
-        judge_p.write_text(json.dumps(verdict, indent=2, ensure_ascii=False))
+        _write_verdict(judge_p, verdict)
         out[rubric] = verdict
     return out
 
@@ -121,13 +164,10 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
             judge_p = run_dir / JUDGE_FILE[r]
             match: Any = None
             reason = ""
-            if judge_p.exists():
-                try:
-                    jd = json.loads(judge_p.read_text())
-                    match = jd.get("match")
-                    reason = jd.get("reason", "")
-                except Exception:
-                    pass
+            jd = _read_cached_verdict(judge_p)
+            if jd is not None:
+                match = jd["match"]
+                reason = jd.get("reason", "")
             task_row[f"match_{r}"] = match
             task_row[f"reason_{r}"] = reason
             if intercepted:
@@ -277,21 +317,20 @@ def main() -> int:
     )
 
     pending = []
+    processing_errors = 0
     for rd in run_dirs:
         try:
             m = json.loads((rd / "run-meta.json").read_text())
             if not m.get("intercepted"):
                 continue
-            needs = any(
-                args.force
-                or not (rd / JUDGE_FILE[r]).exists()
-                or json.loads((rd / JUDGE_FILE[r]).read_text()).get("match") is None
-                for r in rubrics
+            needs = args.force or any(
+                _read_cached_verdict(rd / JUDGE_FILE[r]) is None for r in rubrics
             )
             if needs:
                 pending.append(rd)
-        except Exception:
-            continue
+        except Exception as exc:
+            processing_errors += 1
+            print(f"  err reading run metadata {rd}: {exc}", file=sys.stderr)
     if args.limit:
         pending = pending[: args.limit]
 
@@ -325,7 +364,8 @@ def main() -> int:
                 )
                 print(f"  [{judged}/{len(pending)}] {tags} {rd.name[:80]}")
             except Exception as e:
-                print(f"  err on {rd}: {e}")
+                processing_errors += 1
+                print(f"  err on {rd}: {e}", file=sys.stderr)
 
     if args.only_batch:
         batches = [args.only_batch]
@@ -347,8 +387,10 @@ def main() -> int:
         try:
             roll = aggregate_batch(bd, rubrics)
         except Exception as e:
-            print(f"  err rolling up {bd}: {e}")
+            processing_errors += 1
+            print(f"  err rolling up {bd}: {e}", file=sys.stderr)
             continue
+        processing_errors += sum(roll[f"n_judge_err_{r}"] for r in rubrics)
         roll["judge_model"] = args.judge_model
         roll["rubrics"] = rubrics
         (bd / "rescore-summary.json").write_text(
@@ -365,6 +407,12 @@ def main() -> int:
             model_label = bd.parent.name if bd.parent.name else "model"
             write_eval_results(bd, roll, rubrics, model_label, args.eval_results_dir)
 
+    if processing_errors:
+        print(
+            f"rescore incomplete: {processing_errors} processing/judge errors",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 
