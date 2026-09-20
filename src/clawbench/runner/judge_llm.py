@@ -17,6 +17,12 @@ the agent did the WRONG thing, not when the agent omitted a detail not
 constrained by the instruction. This pulls reported scores up by ~10-30pp
 and matches the public Sonnet 4.6 reference (Intercepted 58% / Reward 44%).
 
+The rubric prompt below is the only thing this module owns. Transport,
+api_type dispatch, retries, and verdict parsing are judge.py's, so the two
+rubrics cannot drift in the ways they had: this module used to lack
+judge_context, route openai-responses at /chat/completions, reject
+google-generative-ai outright, and cap max_tokens at 800.
+
 Usage (same interface as judge.py for drop-in replacement):
     from judge_llm import judge_request
     verdict = judge_request(model_cfg, judge_model, instruction, intercept)
@@ -24,13 +30,15 @@ Usage (same interface as judge.py for drop-in replacement):
 
 from __future__ import annotations
 
-import json
-import time
-import urllib.request
-import urllib.error
 from typing import Any
 
-from clawbench.runner.judge import _coerce_match
+from clawbench.runner.judge import (
+    _build_user_msg,
+    _parse_verdict,  # noqa: F401  — re-export: keeps the lenient path under test
+    _run_judge,
+)
+
+__all__ = ["JUDGE_SYSTEM", "judge_request"]
 
 
 JUDGE_SYSTEM = """You are a lenient evaluator for a web-agent benchmark.
@@ -77,148 +85,20 @@ field from the instruction that the request EXPLICITLY contradicts.
 """
 
 
-def _build_user_msg(instruction: str, intercept: dict[str, Any]) -> str:
-    req = intercept.get("request") or {}
-    body = req.get("body")
-    if isinstance(body, (dict, list)):
-        body_str = json.dumps(body, ensure_ascii=False, indent=2)[:6000]
-    else:
-        body_str = str(body)[:6000] if body is not None else "(empty)"
-    return (
-        f"INSTRUCTION:\n{instruction}\n\n"
-        f"INTERCEPTED REQUEST:\n"
-        f"  url: {req.get('url')}\n"
-        f"  method: {req.get('method')}\n"
-        f"  body:\n{body_str}\n"
-    )
-
-
-def _post_json(
-    url: str, headers: dict[str, str], payload: dict[str, Any], timeout: int = 60
-) -> dict[str, Any]:
-    data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(
-        url, data=data, headers={**headers, "Content-Type": "application/json"}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read())
-
-
-def _call_openai_chat(model_cfg: dict, model_name: str, system: str, user: str) -> str:
-    url = f"{model_cfg['base_url'].rstrip('/')}/chat/completions"
-    headers = {"Authorization": f"Bearer {model_cfg['api_key']}"}
-    payload = {
-        "model": model_name,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "max_tokens": 800,
-        "temperature": 0.0,
-    }
-    resp = _post_json(url, headers, payload)
-    return resp["choices"][0]["message"]["content"]
-
-
-def _call_anthropic_messages(
-    model_cfg: dict, model_name: str, system: str, user: str
-) -> str:
-    base = model_cfg.get("base_url", "https://api.anthropic.com").rstrip("/")
-    url = f"{base}/v1/messages"
-    headers = {
-        "x-api-key": model_cfg["api_key"],
-        "anthropic-version": model_cfg.get("anthropic_version", "2023-06-01"),
-    }
-    payload = {
-        "model": model_name,
-        "system": system,
-        "messages": [{"role": "user", "content": user}],
-        "max_tokens": 800,
-        "temperature": 0.0,
-    }
-    resp = _post_json(url, headers, payload)
-    content = resp.get("content", [])
-    return "".join(
-        b.get("text", "")
-        for b in content
-        if isinstance(b, dict) and b.get("type") == "text"
-    )
-
-
-def _parse_verdict(raw: str) -> tuple[bool | None, str]:
-    """Best-effort parse of the judge's reply into (match, reason).
-
-    Returns None when the reply carries no usable verdict, so an unparseable
-    judge response is reported as inconclusive instead of silently passing.
-    """
-    try:
-        # Strip markdown fences if any
-        s = raw.strip()
-        if s.startswith("```"):
-            s = s.split("\n", 1)[1] if "\n" in s else s
-            if s.endswith("```"):
-                s = s.rsplit("\n", 1)[0] if "\n" in s else s.rstrip("`")
-        obj = json.loads(s)
-        return _coerce_match(obj.get("match")), str(obj.get("reason", ""))
-    except Exception:
-        # Keyword fallback for replies that are not valid JSON. An unparseable
-        # reply is inconclusive (None), never an implicit pass.
-        low = raw.lower()
-        if "match" not in low:
-            return None, raw[:200] or "unparseable"
-        after = low.split("match", 1)[1][:80]
-        if "false" in after:
-            return False, raw[:200]
-        if "true" in after:
-            return True, raw[:200]
-        return None, raw[:200] or "unparseable"
-
-
 def judge_request(
-    model_cfg: dict, judge_model_name: str, instruction: str, intercept: dict[str, Any]
+    model_cfg: dict,
+    judge_model_name: str,
+    instruction: str,
+    intercept: dict[str, Any],
+    *,
+    judge_context: dict[str, Any] | None = None,
+    retries: int = 2,
 ) -> dict[str, Any]:
-    """Run a single lenient judge call. Returns dict with keys match/reason/judge_model/raw/error."""
-    system = JUDGE_SYSTEM
-    user = _build_user_msg(instruction, intercept)
-    api_type = model_cfg.get("api_type", "openai-completions")
-    raw = ""
-    err = None
-    for attempt in range(3):
-        try:
-            if api_type in ("openai-completions", "openai-responses"):
-                raw = _call_openai_chat(model_cfg, judge_model_name, system, user)
-            elif api_type == "anthropic-messages":
-                raw = _call_anthropic_messages(
-                    model_cfg, judge_model_name, system, user
-                )
-            else:
-                raise NotImplementedError(
-                    f"judge_llm: unsupported api_type {api_type!r}"
-                )
-            break
-        except urllib.error.HTTPError as e:
-            err = f"http_{e.code}"
-            if e.code in (429, 500, 502, 503):
-                time.sleep(2**attempt)
-                continue
-            break
-        except Exception as e:
-            err = f"err_{type(e).__name__}: {e}"
-            break
-    if not raw:
-        return {
-            "match": None,
-            "reason": "",
-            "judge_model": judge_model_name,
-            "raw": "",
-            "error": err,
-            "rubric": "lenient",
-        }
-    m, reason = _parse_verdict(raw)
-    return {
-        "match": m,
-        "reason": reason,
-        "judge_model": judge_model_name,
-        "raw": raw[:500],
-        "rubric": "lenient",
-    }
+    """Judge an intercepted HTTP request under the lenient rubric.
+
+    Same call signature and return shape as judge.judge_request, plus a
+    ``rubric`` key naming which rubric produced the verdict.
+    """
+    user = _build_user_msg(instruction, intercept, judge_context)
+    verdict = _run_judge(model_cfg, judge_model_name, JUDGE_SYSTEM, user, retries)
+    return {**verdict, "rubric": "lenient"}
