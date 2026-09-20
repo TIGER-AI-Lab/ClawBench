@@ -10,6 +10,7 @@ Every ClawBench command. From a PyPI install run them directly (`clawbench-run �
 | `clawbench-rescore` | Re-judge trajectories you already have, without re-running agents. |
 | `clawbench-reproduce` | Download published traces for one leaderboard row and check you reproduce it. |
 | `clawbench-harbor-adapt` | Convert V2 into a Harbor dataset — see [`harbor.md`](harbor.md). |
+| `clawbench-sources` | List and inspect task-source adapters — see [`task-sources.md`](task-sources.md). |
 | `clawbench-edgebench-adapt`, `clawbench-edgebench-judge` | EdgeBench/SForge export — see [`edgebench.md`](edgebench.md). |
 
 `./run.sh` from a source checkout is a shortcut for the TUI.

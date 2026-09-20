@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Added a `webvoyager` task-source adapter that loads [WebVoyager](https://github.com/MinorJerry/WebVoyager) tasks and their reference answers into ClawBench's answer-submit interception path, so they run through the standard two-stage scoring unchanged. See [`eval/adapters/webvoyager.md`](eval/adapters/webvoyager.md).
+- Added the task-source adapter foundation (`src/clawbench/adapters/`): a shared `ClawBenchTask` type, an adapter registry with declared scoring layers and field-mapping warnings, an identity adapter for the bundled corpora, and a `clawbench-sources` CLI to list and inspect them. No change to how bundled tasks run. See [`docs/task-sources.md`](docs/task-sources.md).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 
