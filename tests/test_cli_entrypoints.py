@@ -18,6 +18,8 @@ HELP_MODULES = (
     "clawbench.runner.run",
     "clawbench.runner.batch",
     "clawbench.eval.harbor_adapter",
+    "clawbench.eval.assistantbench_adapter",
+    "clawbench.eval.assistantbench_score",
 )
 
 

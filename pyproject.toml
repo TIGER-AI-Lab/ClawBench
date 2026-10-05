@@ -32,6 +32,8 @@ clawbench-reproduce = "clawbench.eval.reproduce:main"
 clawbench-harbor-adapt = "clawbench.eval.harbor_adapter:main"
 clawbench-edgebench-adapt = "clawbench.eval.edgebench_adapter:main"
 clawbench-edgebench-judge = "clawbench.eval.edgebench_judge:main"
+clawbench-assistantbench-adapt = "clawbench.eval.assistantbench_adapter:main"
+clawbench-assistantbench-score = "clawbench.eval.assistantbench_score:main"
 clawbench-prorl-submit = "clawbench.prorl.submit:main"
 clawbench-prorl-mock = "clawbench.prorl.mock_gateway:main"
 

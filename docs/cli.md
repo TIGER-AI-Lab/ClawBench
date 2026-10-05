@@ -11,6 +11,7 @@ Every ClawBench command. From a PyPI install run them directly (`clawbench-run �
 | `clawbench-reproduce` | Download published traces for one leaderboard row and check you reproduce it. |
 | `clawbench-harbor-adapt` | Convert V2 into a Harbor dataset — see [`harbor.md`](harbor.md). |
 | `clawbench-edgebench-adapt`, `clawbench-edgebench-judge` | EdgeBench/SForge export — see [`edgebench.md`](edgebench.md). |
+| `clawbench-assistantbench-adapt`, `clawbench-assistantbench-score` | Import AssistantBench and score answers with its own metric. See [`assistantbench.md`](assistantbench.md). |
 
 `./run.sh` from a source checkout is a shortcut for the TUI.
 
