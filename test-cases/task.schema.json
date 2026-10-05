@@ -134,6 +134,10 @@
           "type": "string",
           "description": "Reference solution or expected answer details"
         },
+        "gold_answer": {
+          "type": "string",
+          "description": "The expected final answer, for answer-submitting tasks. Read by the answer judge, which labels each context field by its key, so use this rather than reference_solution when the value is the answer itself and not the working that reaches it."
+        },
         "source_task_yaml": {
           "type": "string",
           "description": "Raw source task.yaml content, when converted from another corpus"

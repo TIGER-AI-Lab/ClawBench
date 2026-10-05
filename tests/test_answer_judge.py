@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
+import json
+
+import pytest
+from jsonschema import Draft202012Validator
+
 from clawbench.runner import judge
+from clawbench.utils.paths import asset_path
 
 CFG = {
     "base_url": "https://j.example/v1",
@@ -69,3 +75,60 @@ def test_run_judge_is_shared() -> None:
     # both judges route through it
     assert "_run_judge" in judge.judge_request.__code__.co_names
     assert "_run_judge" in judge.judge_answer.__code__.co_names
+
+
+def _judge_context_schema() -> dict:
+    path = asset_path("test-cases", "task.schema.json")
+    if not path.is_file():
+        pytest.skip("bundled task.schema.json not available")
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    return schema["properties"]["judge_context"]
+
+
+def test_schema_declares_every_key_the_answer_judge_reads() -> None:
+    """A key the judge reads but the schema omits is unreachable.
+
+    judge_context sets additionalProperties: false, so a task carrying an
+    undeclared key fails both validate-task in CI and any local validation.
+    gold_answer was in exactly that state: read here, documented in
+    docs/answer-mode-tasks.md, rejected by the schema.
+    """
+    declared = set(_judge_context_schema()["properties"])
+    missing = set(judge.ANSWER_CONTEXT_KEYS) - declared
+    assert missing == set(), (
+        f"judge_context keys read by the answer judge but not declared in "
+        f"task.schema.json: {sorted(missing)}"
+    )
+
+
+def test_schema_declares_no_judge_context_key_no_judge_reads() -> None:
+    """The reverse drift: a schema field nothing consumes is a promise we break."""
+    declared = set(_judge_context_schema()["properties"])
+    request_keys = {"rubric", "reference_solution", "source_task_yaml"}
+    consumed = set(judge.ANSWER_CONTEXT_KEYS) | request_keys
+    assert declared - consumed == set()
+    # The request judge's keys are a literal list in _context_text; if that
+    # changes, this constant has to change with it.
+    for key in request_keys:
+        assert key in judge._context_text.__code__.co_consts
+
+
+def test_a_task_carrying_a_gold_answer_validates() -> None:
+    validator = Draft202012Validator(
+        json.loads(
+            asset_path("test-cases", "task.schema.json").read_text(encoding="utf-8")
+        )
+    )
+    task = {
+        "instruction": "What is the capital of France?",
+        "eval_schema": {"url_pattern": "/api/task-submit", "method": "POST"},
+        "time_limit": 10,
+        "judge_context": {"gold_answer": "Paris", "rubric": "exact city name"},
+    }
+    assert list(validator.iter_errors(task)) == []
+
+
+def test_gold_answer_reaches_the_judge_labelled_by_its_key() -> None:
+    """The judge sees the key name, so gold_answer and reference_solution differ."""
+    msg = judge._build_answer_msg("q", "Lyon", {"gold_answer": "Paris"})
+    assert "gold_answer:\nParis" in msg
