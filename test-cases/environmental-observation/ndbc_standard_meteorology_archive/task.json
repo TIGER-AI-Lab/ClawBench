@@ -1,0 +1,12 @@
+{
+  "instruction": "Open https://www.ndbc.noaa.gov/station_history.php?station=44013. From Historical data, select the full 2025 Standard meteorological data for Boston buoy 44013, then use the uncompressed text-view option. Do not select spectral wave data, supplemental measurements, current-year monthly data, or recent real-time observations. Initiate the observation-text request; a separately saved file is not required.",
+  "eval_schema": {
+    "url_pattern": "^https://www\\.ndbc\\.noaa\\.gov/view_text_file\\.php\\?(?:filename=44013h2025\\.txt\\.gz&dir=data(?:/|%2[Ff])historical(?:/|%2[Ff])stdmet(?:/|%2[Ff])|dir=data(?:/|%2[Ff])historical(?:/|%2[Ff])stdmet(?:/|%2[Ff])&filename=44013h2025\\.txt\\.gz)$",
+    "method": "GET",
+    "params": {
+      "filename": "44013h2025.txt.gz",
+      "dir": "data/historical/stdmet/"
+    }
+  },
+  "time_limit": 10
+}

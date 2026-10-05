@@ -1,0 +1,18 @@
+{
+  "instruction": "Open https://tidesandcurrents.noaa.gov/waterlevels.html?id=8443970. Prepare and request Boston station 8443970 six-minute observed water levels for 2025-09-12 through 2025-09-13, in metres relative to MLLW and GMT. Use observed water levels, not predictions. The evaluated endpoint is initiation of the correctly configured data request; a saved file is not required. Use Data Only to initiate the JSON observation-data request.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)station=[^#]*&station=)(?![^#]*(?:\\?|&)product=[^#]*&product=)(?![^#]*(?:\\?|&)begin_date=[^#]*&begin_date=)(?![^#]*(?:\\?|&)end_date=[^#]*&end_date=)(?![^#]*(?:\\?|&)units=[^#]*&units=)(?![^#]*(?:\\?|&)datum=[^#]*&datum=)(?![^#]*(?:\\?|&)time_zone=[^#]*&time_zone=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)application=[^#]*&application=)https://api\\.tidesandcurrents\\.noaa\\.gov/api/prod/datagetter\\?(?:station|product|begin_date|end_date|units|datum|time_zone|format|application)=[^&#]+(?:&(?:station|product|begin_date|end_date|units|datum|time_zone|format|application)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "station": "8443970",
+      "product": "water_level",
+      "begin_date": "20250912",
+      "end_date": "20250913",
+      "units": "metric",
+      "datum": "MLLW",
+      "time_zone": "GMT",
+      "format": "json"
+    }
+  },
+  "time_limit": 10
+}

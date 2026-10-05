@@ -1,0 +1,15 @@
+{
+  "instruction": "Open https://waterdata.usgs.gov/monitoring-location/USGS-01104500/. Select Continuous data for gage height, feet, for both station-local dates September 12 and 13, 2025 (EDT, UTC-4). Select Continuous data in Download data and initiate the CSV request. Daily discharge, field measurements, and metadata alone do not satisfy this task. The outcome is initiation of the correct data request; a saved ZIP is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)time=[^#]*&time=)(?![^#]*(?:\\?|&)sortby=[^#]*&sortby=)(?![^#]*(?:\\?|&)limit=[^#]*&limit=)(?![^#]*(?:\\?|&)f=[^#]*&f=)(?![^#]*(?:\\?|&)time_series_id=[^#]*&time_series_id=)(?![^#]*(?:\\?|&)api_key=[^#]*&api_key=)https://api\\.waterdata\\.usgs\\.gov/ogcapi/v0/collections/continuous/items\\?(?:time|sortby|limit|f|time_series_id|api_key)=[^&#]+(?:&(?:time|sortby|limit|f|time_series_id|api_key)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "time": "2025-09-12T04:00:00.000Z/2025-09-14T03:59:59.999Z",
+      "sortby": "-time",
+      "limit": "50000",
+      "f": "csv",
+      "time_series_id": "2d1776aa1cac461e95c01f3c39d07bbd"
+    }
+  },
+  "time_limit": 10
+}

@@ -1,0 +1,18 @@
+{
+  "instruction": "Open https://tidesandcurrents.noaa.gov/met.html?id=8724580. Request hourly observed wind speed, direction and gust records at Key West for September 12-13 2025, metric units and GMT. Use the Meteorological Observations page, select 1 hr and Data Only. Other weather products may load alongside wind; an air-temperature or pressure request alone does not complete the task. The outcome is initiation of the correctly configured observation-data request; a saved file is not required. Use Data Only to initiate the JSON observation-data request.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)product=[^#]*&product=)(?![^#]*(?:\\?|&)begin_date=[^#]*&begin_date=)(?![^#]*(?:\\?|&)end_date=[^#]*&end_date=)(?![^#]*(?:\\?|&)station=[^#]*&station=)(?![^#]*(?:\\?|&)time_zone=[^#]*&time_zone=)(?![^#]*(?:\\?|&)units=[^#]*&units=)(?![^#]*(?:\\?|&)interval=[^#]*&interval=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)application=[^#]*&application=)https://api\\.tidesandcurrents\\.noaa\\.gov/api/prod/datagetter\\?(?:product|begin_date|end_date|station|time_zone|units|interval|format|application)=[^&#]+(?:&(?:product|begin_date|end_date|station|time_zone|units|interval|format|application)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "product": "wind",
+      "begin_date": "20250912",
+      "end_date": "20250913",
+      "station": "8724580",
+      "time_zone": "GMT",
+      "units": "metric",
+      "interval": "h",
+      "format": "json"
+    }
+  },
+  "time_limit": 10
+}

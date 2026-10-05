@@ -1,0 +1,9 @@
+{
+  "instruction": "Open https://aqs.epa.gov/aqsweb/airdata/download_files.html. In Daily Summary Data, Criteria Gases, locate the 2025 Ozone (44201) archive and initiate its zipped CSV download. Request the nationwide pre-generated daily concentration summary archive, not hourly or 8-hour sample data, an annual summary, or county/CBSA AQI. A saved file or extraction is not required; the outcome is initiation of the correct archive request.",
+  "eval_schema": {
+    "url_pattern": "^https://aqs\\.epa\\.gov/aqsweb/airdata/daily_44201_2025\\.zip$",
+    "method": "GET",
+    "params": {}
+  },
+  "time_limit": 10
+}

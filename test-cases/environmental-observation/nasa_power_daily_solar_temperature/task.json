@@ -1,0 +1,18 @@
+{
+  "instruction": "Open https://power.larc.nasa.gov/data-access-viewer/ and use Single Point with Standard Resolution, Renewable Energy community and Daily temporal level. Request only Temperature at 2 Meters and All Sky Surface Shortwave Downward Irradiance for latitude 42.36, longitude -71.1, from September 12 through September 13, 2025, in metric units and Local Solar Time (LST), as JSON. Leave optional custom site elevation unset; do not request adjusted pressure. Initiate the data request. A saved file is not required. These are NASA POWER environmental estimates, not a claim of direct station measurements.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)start=[^#]*&start=)(?![^#]*(?:\\?|&)end=[^#]*&end=)(?![^#]*(?:\\?|&)latitude=[^#]*&latitude=)(?![^#]*(?:\\?|&)longitude=[^#]*&longitude=)(?![^#]*(?:\\?|&)community=[^#]*&community=)(?![^#]*(?:\\?|&)units=[^#]*&units=)(?![^#]*(?:\\?|&)parameters=[^#]*&parameters=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)theme=[^#]*&theme=)(?![^#]*(?:\\?|&)user=[^#]*&user=)(?![^#]*(?:\\?|&)time\\-standard=[^#]*&time\\-standard=)(?=[^#]*(?:\\?|&)parameters=(?:T2M(?:,|%2[Cc])ALLSKY_SFC_SW_DWN|ALLSKY_SFC_SW_DWN(?:,|%2[Cc])T2M)(?:&|$))https://power\\.larc\\.nasa\\.gov/api/temporal/daily/point\\?(?:parameters=(?:T2M(?:,|%2[Cc])ALLSKY_SFC_SW_DWN|ALLSKY_SFC_SW_DWN(?:,|%2[Cc])T2M)|(?:start|end|latitude|longitude|community|units|format|theme|user|time\\-standard)=[^&#]+)(?:&(?:parameters=(?:T2M(?:,|%2[Cc])ALLSKY_SFC_SW_DWN|ALLSKY_SFC_SW_DWN(?:,|%2[Cc])T2M)|(?:start|end|latitude|longitude|community|units|format|theme|user|time\\-standard)=[^&#]+))*$",
+    "method": "GET",
+    "params": {
+      "start": "20250912",
+      "end": "20250913",
+      "latitude": "42.36",
+      "longitude": "-71.1",
+      "community": "RE",
+      "units": "metric",
+      "format": "JSON",
+      "time-standard": "LST"
+    }
+  },
+  "time_limit": 30
+}
