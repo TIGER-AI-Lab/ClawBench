@@ -89,6 +89,7 @@ def write_reward(
         "judge_match",
         "judge_match_lenient",
         "judge_match_strict",
+        "judge_inconclusive",
     ):
         value = payload.get(name)
         if isinstance(value, (bool, int, float)):
@@ -261,6 +262,15 @@ def call_judge_with_retries(
     }
 
 
+def summarize_judge_results(
+    *results: dict[str, Any],
+) -> tuple[str, bool]:
+    """Return a stable status for the lenient and strict judge calls."""
+    if any(result.get("match") is None for result in results):
+        return "inconclusive", True
+    return "ok", False
+
+
 def main() -> int:
     task_path = Path("/tests/task.json")
     intercept_path = Path("/data/interception.json")
@@ -283,6 +293,8 @@ def main() -> int:
                 "judge_match": None,
                 "judge_match_lenient": None,
                 "judge_match_strict": None,
+                "judge_status": "not_run",
+                "judge_inconclusive": False,
                 "reason": "missing /data/interception.json",
                 "task_id": task_id,
             },
@@ -300,6 +312,8 @@ def main() -> int:
                 "judge_match": None,
                 "judge_match_lenient": None,
                 "judge_match_strict": None,
+                "judge_status": "not_run",
+                "judge_inconclusive": False,
                 "reason": intercept.get("stop_description")
                 or intercept.get("stop_reason")
                 or "not intercepted",
@@ -324,6 +338,9 @@ def main() -> int:
                 "judge_match": None,
                 "judge_match_lenient": None,
                 "judge_match_strict": None,
+                "judge_status": "inconclusive",
+                "judge_inconclusive": True,
+                "failure_category": "judge_configuration",
                 "reason": "missing judge configuration",
                 "task_id": task_id,
             },
@@ -360,8 +377,12 @@ def main() -> int:
 
     match_lenient = lenient_result.get("match")
     match_strict = strict_result.get("match")
+    judge_status, judge_inconclusive = summarize_judge_results(
+        lenient_result, strict_result
+    )
     reward_lenient = 1.0 if match_lenient is True else 0.0
     reward_strict = 1.0 if match_strict is True else 0.0
+    failure_category = "judge_inconclusive" if judge_inconclusive else None
     write_reward(
         reward_lenient,
         {
@@ -371,6 +392,9 @@ def main() -> int:
             "judge_match": match_lenient,
             "judge_match_lenient": match_lenient,
             "judge_match_strict": match_strict,
+            "judge_status": judge_status,
+            "judge_inconclusive": judge_inconclusive,
+            "failure_category": failure_category,
             "reason": {
                 "lenient": lenient_result.get("reason")
                 or lenient_result.get("error")

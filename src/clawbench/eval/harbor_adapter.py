@@ -15,7 +15,12 @@ from clawbench.runner.run_support.browser_runtime.providers import (
     BrowserRuntimeError,
     _parse_options,
 )
-from clawbench.runner.run_support.task import build_instruction, validate_task_data
+from clawbench.runner.run_support.task import (
+    build_instruction,
+    normalize_extra_info,
+    validate_extra_info_path,
+    validate_task_data,
+)
 from clawbench.utils.paths import RUNTIME_ROOT, asset_path
 
 DEFAULT_CASES_DIR = asset_path("test-cases", "v2")
@@ -29,6 +34,7 @@ REMOTE_BRIDGE_CDP_URL = LOCAL_CDP_URL
 # use to drive the ClawBench browser through the CDP bridge.
 PLAYWRIGHT_MCP_PACKAGE = "@playwright/mcp"
 PLAYWRIGHT_MCP_VERSION = "0.0.79"
+HARBOR_SCHEMA_VERSION = "1.4"
 
 
 def sanitize_task_name(raw: str) -> str:
@@ -213,7 +219,7 @@ def task_toml(
         + f"' && curl -sf {cdp_url}/json/version >/dev/null"
     )
     return (
-        f"""schema_version = "1.3"
+        f"""schema_version = "{HARBOR_SCHEMA_VERSION}"
 source = "clawbench-v2"
 artifacts = ["/data"]
 
@@ -358,15 +364,38 @@ def write_text_executable(path: Path, text: str) -> None:
 
 
 def copy_extra_info(task: dict[str, Any], task_dir: Path, out_dir: Path) -> None:
-    entries = task.get("extra_info") or []
+    entries, warnings = normalize_extra_info(task.get("extra_info"))
+    if warnings:
+        raise ValueError("invalid extra_info: " + "; ".join(warnings))
+
+    copied_names: dict[str, str] = {}
     for item in entries:
-        if not isinstance(item, dict) or not item.get("path"):
+        rel_path = item.get("path")
+        if not rel_path:
             continue
-        rel = Path(item["path"])
-        src = task_dir / rel
-        if not src.is_file():
-            continue
-        dest = out_dir / rel.name
+        try:
+            src = validate_extra_info_path(task_dir, rel_path)
+        except (OSError, RuntimeError, ValueError) as exc:
+            raise ValueError(f"invalid extra_info path {rel_path!r}: {exc}") from exc
+        try:
+            is_file = src.is_file()
+        except OSError as exc:
+            raise ValueError(
+                f"cannot inspect extra_info path {rel_path!r}: {exc}"
+            ) from exc
+        if not is_file:
+            raise ValueError(f"extra_info path does not identify a file: {rel_path!r}")
+
+        dest_name = src.name
+        previous_path = copied_names.get(dest_name)
+        if previous_path is not None:
+            raise ValueError(
+                "extra_info basename collision: "
+                f"{previous_path!r} and {rel_path!r} both map to {dest_name!r}"
+            )
+        copied_names[dest_name] = rel_path
+
+        dest = out_dir / dest_name
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest)
 
