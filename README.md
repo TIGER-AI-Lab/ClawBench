@@ -2,24 +2,37 @@
   <a href="https://github.com/TIGER-AI-Lab/ClawBench">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/clawbench-logo-dark.svg">
-      <img src="assets/clawbench-logo.svg" alt="ClawBench" width="480">
+      <img src="assets/clawbench-logo.svg" alt="ClawBench" width="500">
     </picture>
   </a>
 </h1>
 
-<p align="center"><strong>Can AI agents complete everyday online tasks?</strong></p>
+<h3 align="center">Can AI agents complete everyday online tasks?</h3>
 
-<p align="center">An open-source benchmark for browser agents on live websites.<br/>Book travel, order food, apply for jobs, and manage email — with full execution traces and task-success evaluation.</p>
-
-<p align="center"><a href="https://claw-bench.com">Website</a> &nbsp;&middot;&nbsp; <a href="https://arxiv.org/abs/2604.08523">Paper</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench">Leaderboard</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/NAIL-Group/ClawBench">Dataset</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace">Traces</a> &nbsp;&middot;&nbsp; <a href="docs/README.zh-CN.md">中文</a></p>
+<p align="center">An open benchmark for browser agents, from booking travel to managing email.<br/>Real websites &nbsp;&middot;&nbsp; Full execution traces &nbsp;&middot;&nbsp; End-to-end task evaluation</p>
 
 <p align="center">
-  <a href="https://2026.emnlp.org/"><img alt="EMNLP 2026 Findings" src="https://img.shields.io/badge/%F0%9F%8F%86_EMNLP_2026-Findings-8C1D18?style=flat-square"></a>
-  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white"></a>
-  <a href="https://github.com/TIGER-AI-Lab/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300"></a>
+  <a href="#quick-start"><strong>Get started →</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench">Leaderboard</a> &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2604.08523">Paper</a> &nbsp;&middot;&nbsp;
+  <a href="https://claw-bench.com">Website</a> &nbsp;&middot;&nbsp;
+  <a href="https://huggingface.co/datasets/NAIL-Group/ClawBench">Data</a> &nbsp;&middot;&nbsp;
+  <a href="docs/README.zh-CN.md">中文</a>
 </p>
 
-<p align="center"><strong>281</strong> tasks &nbsp;&middot;&nbsp; <strong>163</strong> live websites &nbsp;&middot;&nbsp; <strong>15</strong> life categories</p>
+<p align="center">
+  <a href="https://2026.emnlp.org/"><img alt="EMNLP 2026 Findings" src="https://img.shields.io/badge/EMNLP_2026-Findings-B84A34?style=flat-square&labelColor=252A34"></a>
+  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=49515F&labelColor=252A34&logoColor=white"></a>
+  <a href="https://github.com/TIGER-AI-Lab/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=49515F&labelColor=252A34&cacheSeconds=300"></a>
+</p>
+
+<table align="center">
+<tr>
+<td width="180" align="center"><h3>281</h3><sub>Everyday tasks</sub></td>
+<td width="180" align="center"><h3>163</h3><sub>Live websites</sub></td>
+<td width="180" align="center"><h3>15</h3><sub>Life categories</sub></td>
+</tr>
+</table>
 
 <details>
 <summary><strong>Explore tasks, traces, and project details</strong></summary>
@@ -30,66 +43,48 @@
 
 <table>
 <tr>
-<td width="25%" align="center" valign="top">
-
-🏆 **See scores**<br/>
-[Live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
-<sub>Pick a corpus (v1 / v2)</sub>
-
+<td width="50%" valign="top">
+<a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench"><img src="assets/icons/chart-bar.svg" width="16" height="16" alt=""> <strong>Leaderboard</strong></a><br/>
+<sub>Compare models by corpus, harness, and rubric.</sub>
 </td>
-<td width="25%" align="center" valign="top">
-
-🚀 **Run it on your model**<br/>
-[Quick start ↓](#quick-start)<br/>
-<sub><code>pip install clawbench-eval</code></sub>
-
-</td>
-<td width="25%" align="center" valign="top">
-
-📊 **Browse 281 tasks**<br/>
-[Task explorer](https://claw-bench.com/tasks)<br/>
-<sub>Search · filter · category</sub>
-
-</td>
-<td width="25%" align="center" valign="top">
-
-📄 **Read the paper**<br/>
-[arXiv:2604.08523](https://arxiv.org/abs/2604.08523)<br/>
-<sub>Methodology · evaluator · results</sub>
-
+<td width="50%" valign="top">
+<a href="#quick-start"><img src="assets/icons/rocket.svg" width="16" height="16" alt=""> <strong>Run a benchmark</strong></a><br/>
+<sub>Configure a model and run your first task.</sub>
 </td>
 </tr>
 <tr>
-<td align="center" valign="top">
-
-🎬 **Re-grade old runs**<br/>
-[V1](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) · [V2](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) raw traces<br/>
-<sub>5 layers per (task × model)</sub>
-
+<td width="50%" valign="top">
+<a href="https://claw-bench.com/tasks"><img src="assets/icons/globe.svg" width="16" height="16" alt=""> <strong>Explore the tasks</strong></a><br/>
+<sub>Browse everyday tasks across live websites.</sub>
 </td>
-<td align="center" valign="top">
-
-📦 **Download the data**<br/>
-[`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
-<sub>Tasks · rubrics · metadata</sub>
-
+<td width="50%" valign="top">
+<a href="https://arxiv.org/abs/2604.08523"><img src="assets/icons/layer-group.svg" width="16" height="16" alt=""> <strong>Read the paper</strong></a><br/>
+<sub>Methodology, evaluation, and reported results.</sub>
 </td>
-<td align="center" valign="top">
-
-🌱 **Add a task / model**<br/>
-[How to contribute](#contributing)<br/>
-<sub>JSON spec + rubric</sub>
-
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace"><img src="assets/icons/video.svg" width="16" height="16" alt=""> <strong>Execution traces</strong></a><br/>
+<sub>Recordings, browser actions, requests, and messages.</sub>
 </td>
-<td align="center" valign="top">
-
-❓ **Have a question**<br/>
-[FAQ](#faq) · [Open an issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)<br/>
-<sub>Or ask on the HF dataset page</sub>
-
+<td width="50%" valign="top">
+<a href="https://huggingface.co/datasets/NAIL-Group/ClawBench"><img src="assets/icons/cube.svg" width="16" height="16" alt=""> <strong>Download the data</strong></a><br/>
+<sub>Task definitions, rubrics, and metadata.</sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="#contributing"><img src="assets/icons/person.svg" width="16" height="16" alt=""> <strong>Contribute</strong></a><br/>
+<sub>Add tasks, fix bugs, or submit model results.</sub>
+</td>
+<td width="50%" valign="top">
+<a href="#faq"><img src="assets/icons/circle-question.svg" width="16" height="16" alt=""> <strong>Questions & answers</strong></a><br/>
+<sub>Answers on setup, scoring, and benchmark coverage.</sub>
 </td>
 </tr>
 </table>
+
+<sub>Browse the original [V1 traces](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) or [open an issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose).</sub>
 
 **V1: 152** everyday tasks &middot; **143** live sites &nbsp;&nbsp;|&nbsp;&nbsp; **V2: 129** tasks &middot; **63** live sites &nbsp;&nbsp;|&nbsp;&nbsp; **281 total** across **163** live websites &middot; **15** life categories
 
@@ -351,26 +346,13 @@ This path gives you live-reload on `src/`, `src/clawbench/runtime/chrome-extensi
 
 ## <img src="assets/icons/screwdriver-wrench.svg" width="20" height="20"> How it works
 
-```
-   You pick a task            ClawBench spins up           Agent drives the         Interceptor captures
-   from V1 or V2              an isolated Docker           browser: navigates,      every action across
-   everyday scenarios         container + Chromium         fills forms, clicks      all 5 layers of data
-
-   ┌──────────────┐           ┌──────────────┐           ┌──────────────┐           ┌──────────────┐
-   │  "Book a pet │    ──►    │   Container  │    ──►    │   AI Agent   │    ──►    │   5 layers   │
-   │   sitter on  │           │  + Chromium  │           │  browses the │           │  intercepted │
-   │   Rover"     │           │  + Agent     │           │   live site  │           │  & recorded  │
-   └──────────────┘           └──────────────┘           └──────────────┘           └──────────────┘
-```
-
 <p align="center">
-<img src="assets/icons/globe.svg" width="24" height="24">&nbsp;<b>Live Websites</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="assets/icons/cube.svg" width="24" height="24">&nbsp;<b>Isolated Containers</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="assets/icons/shield-halved.svg" width="24" height="24">&nbsp;<b>Request Interceptor</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="assets/icons/layer-group.svg" width="24" height="24">&nbsp;<b>Five-Layer Recording</b>
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="assets/workflow-mobile-dark.svg">
+    <source media="(max-width: 600px)" srcset="assets/workflow-mobile-light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/workflow-dark.svg">
+    <img src="assets/workflow-light.svg" alt="Choose a task, prepare a runtime, run the agent, then record and evaluate task success." width="960">
+  </picture>
 </p>
 
 <details>
@@ -1016,8 +998,6 @@ Open to contributions — new test cases, bug fixes, or evaluation submissions f
 <img src="https://contrib.rocks/image?repo=TIGER-AI-Lab/ClawBench" alt="Contributors">
 </a>
 </p>
-
-## Star History
 
 ## Star History
 

@@ -13,9 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
 - Added transparent ClawBench SVG logos for light and dark backgrounds and a standalone paw, pointer, and bench mark.
+- Added workflow illustrations with light, dark, desktop, and mobile layouts to both READMEs.
 
 ### Changed
-- Simplified the English and Chinese README headers with the new logo, core project links, and expandable project details.
+- Redesigned the English and Chinese README headers with the new logo, prominent Quickstart links, a corpus overview, coordinated colors, and expandable project details; removed duplicate Star History headings.
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.

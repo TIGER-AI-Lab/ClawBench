@@ -2,24 +2,37 @@
   <a href="https://github.com/TIGER-AI-Lab/ClawBench">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="../assets/clawbench-logo-dark.svg">
-      <img src="../assets/clawbench-logo.svg" alt="ClawBench" width="480">
+      <img src="../assets/clawbench-logo.svg" alt="ClawBench" width="500">
     </picture>
   </a>
 </h1>
 
-<p align="center"><strong>AI 智能体能完成日常在线任务吗？</strong></p>
+<h3 align="center">AI 智能体能完成日常在线任务吗？</h3>
 
-<p align="center">一个在真实网站上评测 browser agent 的开源基准。<br/>订酒店、点外卖、投简历、管理邮件 —— 用完整执行轨迹和任务完成率检验智能体的能力。</p>
-
-<p align="center"><a href="https://claw-bench.com">项目主页</a> &nbsp;&middot;&nbsp; <a href="https://arxiv.org/abs/2604.08523">论文</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench">排行榜</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/NAIL-Group/ClawBench">数据集</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace">执行轨迹</a> &nbsp;&middot;&nbsp; <a href="../README.md">English</a></p>
+<p align="center">在真实网站上，评测 AI 智能体完成日常任务的能力。<br/>开源基准 &nbsp;&middot;&nbsp; 完整执行轨迹 &nbsp;&middot;&nbsp; 端到端任务评测</p>
 
 <p align="center">
-  <a href="https://2026.emnlp.org/"><img alt="EMNLP 2026 Findings" src="https://img.shields.io/badge/%F0%9F%8F%86_EMNLP_2026-Findings-8C1D18?style=flat-square"></a>
-  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white"></a>
-  <a href="https://github.com/TIGER-AI-Lab/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300"></a>
+  <a href="#快速开始"><strong>开始评测 →</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench">排行榜</a> &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2604.08523">论文</a> &nbsp;&middot;&nbsp;
+  <a href="https://claw-bench.com">项目主页</a> &nbsp;&middot;&nbsp;
+  <a href="https://huggingface.co/datasets/NAIL-Group/ClawBench">数据集</a> &nbsp;&middot;&nbsp;
+  <a href="../README.md">English</a>
 </p>
 
-<p align="center"><strong>281</strong> 个任务 &nbsp;&middot;&nbsp; <strong>163</strong> 个真实网站 &nbsp;&middot;&nbsp; <strong>15</strong> 个生活类别</p>
+<p align="center">
+  <a href="https://2026.emnlp.org/"><img alt="EMNLP 2026 Findings" src="https://img.shields.io/badge/EMNLP_2026-Findings-B84A34?style=flat-square&labelColor=252A34"></a>
+  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=49515F&labelColor=252A34&logoColor=white"></a>
+  <a href="https://github.com/TIGER-AI-Lab/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=49515F&labelColor=252A34&cacheSeconds=300"></a>
+</p>
+
+<table align="center">
+<tr>
+<td width="180" align="center"><h3>281</h3><sub>日常任务</sub></td>
+<td width="180" align="center"><h3>163</h3><sub>真实网站</sub></td>
+<td width="180" align="center"><h3>15</h3><sub>生活类别</sub></td>
+</tr>
+</table>
 
 <details>
 <summary><strong>浏览任务、执行轨迹与项目详情</strong></summary>
@@ -30,66 +43,48 @@
 
 <table>
 <tr>
-<td width="25%" align="center" valign="top">
-
-🏆 **查看分数**<br/>
-[实时排行榜](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
-<sub>选择语料 (v1 / v2)</sub>
-
+<td width="50%" valign="top">
+<a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench"><img src="../assets/icons/chart-bar.svg" width="16" height="16" alt=""> <strong>排行榜</strong></a><br/>
+<sub>按语料、harness 和评分规则比较模型。</sub>
 </td>
-<td width="25%" align="center" valign="top">
-
-🚀 **在你的模型上运行**<br/>
-[快速开始 ↓](#快速开始)<br/>
-<sub><code>pip install clawbench-eval</code></sub>
-
-</td>
-<td width="25%" align="center" valign="top">
-
-📊 **浏览 281 个任务**<br/>
-[任务浏览器](https://claw-bench.com/tasks)<br/>
-<sub>搜索 · 筛选 · 分类</sub>
-
-</td>
-<td width="25%" align="center" valign="top">
-
-📄 **阅读论文**<br/>
-[arXiv:2604.08523](https://arxiv.org/abs/2604.08523)<br/>
-<sub>方法 · 评测器 · 结果</sub>
-
+<td width="50%" valign="top">
+<a href="#快速开始"><img src="../assets/icons/rocket.svg" width="16" height="16" alt=""> <strong>开始评测</strong></a><br/>
+<sub>配置模型，跑通第一个任务。</sub>
 </td>
 </tr>
 <tr>
-<td align="center" valign="top">
-
-🎬 **重新评分旧运行**<br/>
-[V1](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) · [V2](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) 原始轨迹<br/>
-<sub>每个 (任务 × 模型) 都有 5 层数据</sub>
-
+<td width="50%" valign="top">
+<a href="https://claw-bench.com/tasks"><img src="../assets/icons/globe.svg" width="16" height="16" alt=""> <strong>浏览任务</strong></a><br/>
+<sub>浏览真实网站上的日常任务。</sub>
 </td>
-<td align="center" valign="top">
-
-📦 **下载数据**<br/>
-[`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
-<sub>任务 · rubric · 元数据</sub>
-
+<td width="50%" valign="top">
+<a href="https://arxiv.org/abs/2604.08523"><img src="../assets/icons/layer-group.svg" width="16" height="16" alt=""> <strong>阅读论文</strong></a><br/>
+<sub>了解方法、评测流程与论文结果。</sub>
 </td>
-<td align="center" valign="top">
-
-🌱 **添加任务 / 模型**<br/>
-[贡献指南](#贡献)<br/>
-<sub>JSON 规范 + rubric</sub>
-
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace"><img src="../assets/icons/video.svg" width="16" height="16" alt=""> <strong>执行轨迹</strong></a><br/>
+<sub>录屏、浏览器动作、请求和智能体消息。</sub>
 </td>
-<td align="center" valign="top">
-
-❓ **有问题**<br/>
-[FAQ](#faq) · [提 issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)<br/>
-<sub>也可在 HF 数据集页提问</sub>
-
+<td width="50%" valign="top">
+<a href="https://huggingface.co/datasets/NAIL-Group/ClawBench"><img src="../assets/icons/cube.svg" width="16" height="16" alt=""> <strong>下载数据</strong></a><br/>
+<sub>下载任务定义、评分规则和元数据。</sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="#贡献"><img src="../assets/icons/person.svg" width="16" height="16" alt=""> <strong>参与贡献</strong></a><br/>
+<sub>新增任务、修复问题或提交模型结果。</sub>
+</td>
+<td width="50%" valign="top">
+<a href="#faq"><img src="../assets/icons/circle-question.svg" width="16" height="16" alt=""> <strong>常见问题</strong></a><br/>
+<sub>了解配置、评分与基准覆盖范围。</sub>
 </td>
 </tr>
 </table>
+
+<sub>也可浏览原始 [V1 执行轨迹](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace)，或[提交 issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)。</sub>
 
 **V1：152** 个日常任务 &middot; **143** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; **V2：129** 个任务 &middot; **63** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; 合计 **281** 个任务，覆盖 **163** 个真实网站 &middot; **15** 个生活类别
 
@@ -308,26 +303,13 @@ uv run clawbench-run \
 
 ## <img src="../assets/icons/screwdriver-wrench.svg" width="20" height="20"> 工作流程
 
-```
-   你选择一个任务             ClawBench 启动一个          智能体驱动浏览器:          拦截器捕获所有操作
-   来自 V1 或 V2 的            隔离的 Docker 容器          导航、填表、点击            并录制完整五层数据
-   日常场景                    + Chromium
-
-   ┌──────────────┐           ┌──────────────┐           ┌──────────────┐           ┌──────────────┐
-   │ "在 Rover 上 │    ──►    │    容器      │    ──►    │   AI 智能体  │    ──►    │   五层数据   │
-   │  预订宠物    │           │  + Chromium  │           │  浏览真实    │           │   全部拦截   │
-   │  寄养"       │           │  + 智能体    │           │   网站       │           │   完整录制   │
-   └──────────────┘           └──────────────┘           └──────────────┘           └──────────────┘
-```
-
 <p align="center">
-<img src="../assets/icons/globe.svg" width="24" height="24">&nbsp;<b>真实网站</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="../assets/icons/cube.svg" width="24" height="24">&nbsp;<b>隔离容器</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="../assets/icons/shield-halved.svg" width="24" height="24">&nbsp;<b>请求拦截器</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="../assets/icons/layer-group.svg" width="24" height="24">&nbsp;<b>五层录制</b>
+  <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="../assets/workflow-zh-mobile-dark.svg">
+    <source media="(max-width: 600px)" srcset="../assets/workflow-zh-mobile-light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="../assets/workflow-zh-dark.svg">
+    <img src="../assets/workflow-zh-light.svg" alt="选择任务、准备浏览器环境、运行智能体、录制并评测任务完成情况。" width="960">
+  </picture>
 </p>
 
 <details>
@@ -968,8 +950,6 @@ Pi 的 `agent.log`、`proxy.log` 等 harness 诊断日志不会复制到最终�
 </p>
 
 ## Star 历史
-
-## Star History
 
 <a href="https://www.star-history.com/?type=date&repos=TIGER-AI-Lab%2FClawBench">
  <picture>
