@@ -1,50 +1,28 @@
-<div align="center">
+<h1 align="center">
+  <a href="https://github.com/TIGER-AI-Lab/ClawBench">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="../assets/clawbench-logo-dark.svg">
+      <img src="../assets/clawbench-logo.svg" alt="ClawBench" width="480">
+    </picture>
+  </a>
+</h1>
 
-<a href="https://github.com/TIGER-AI-Lab/ClawBench">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="../assets/hero-dark.svg">
-    <img alt="ClawBench" src="../assets/hero-light.svg" width="820">
-  </picture>
-</a>
+<p align="center"><strong>AI 智能体能完成日常在线任务吗？</strong></p>
 
-[![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
-[![Leaderboard](https://img.shields.io/badge/Leaderboard-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
-[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
-[![HF Traces](https://img.shields.io/badge/Traces-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace)
-[![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
-[![PyPI version](https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white)](https://pypi.org/project/clawbench-eval/)
-[![Ask a question](https://img.shields.io/badge/Ask%20a%20question-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)
-[![GitHub stars](https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300)](https://github.com/TIGER-AI-Lab/ClawBench)
-[![License](https://img.shields.io/github/license/TIGER-AI-Lab/ClawBench?style=flat-square&color=A42E2B)](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/LICENSE)
+<p align="center">一个在真实网站上评测 browser agent 的开源基准。<br/>订酒店、点外卖、投简历、管理邮件 —— 用完整执行轨迹和任务完成率检验智能体的能力。</p>
 
-<a href="https://huggingface.co/papers/2604.08523"><img src="https://img.shields.io/badge/%233_Paper_of_the_Day-FFD21E?style=flat-square&logo=huggingface&logoColor=000" alt="#3 Paper of the Day"></a>
-<a href="https://deepwiki.com/TIGER-AI-Lab/ClawBench"><img alt="Ask DeepWiki" src="https://img.shields.io/badge/Ask-DeepWiki-4F46E5?style=flat-square&logo=readthedocs&logoColor=white"></a>
+<p align="center"><a href="https://claw-bench.com">项目主页</a> &nbsp;&middot;&nbsp; <a href="https://arxiv.org/abs/2604.08523">论文</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/spaces/TIGER-Lab/ClawBench">排行榜</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/NAIL-Group/ClawBench">数据集</a> &nbsp;&middot;&nbsp; <a href="https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace">执行轨迹</a> &nbsp;&middot;&nbsp; <a href="../README.md">English</a></p>
 
-</div>
+<p align="center">
+  <a href="https://2026.emnlp.org/"><img alt="EMNLP 2026 Findings" src="https://img.shields.io/badge/%F0%9F%8F%86_EMNLP_2026-Findings-8C1D18?style=flat-square"></a>
+  <a href="https://pypi.org/project/clawbench-eval/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/clawbench-eval?style=flat-square&logo=pypi&color=3775A9&logoColor=white"></a>
+  <a href="https://github.com/TIGER-AI-Lab/ClawBench"><img alt="GitHub stars" src="https://img.shields.io/github/stars/TIGER-AI-Lab/ClawBench?style=flat-square&logo=github&color=181717&cacheSeconds=300"></a>
+</p>
 
-# ClawBench：AI 智能体能完成日常在线任务吗？
+<p align="center"><strong>281</strong> 个任务 &nbsp;&middot;&nbsp; <strong>163</strong> 个真实网站 &nbsp;&middot;&nbsp; <strong>15</strong> 个生活类别</p>
 
-<div align="center">
-
-**ClawBench 是一个开源基准，用于评测 AI browser agent 在日常在线任务上的表现 —— 订酒店、点外卖、投简历、管理邮件 —— 全部在真实网站上进行。V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。它通过 5 层录制管线和对照人工参考轨迹的 agentic evaluator 衡量端到端任务完成率。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。**
-
-<img src="../assets/clawbench_logo.png" alt="ClawBench logo" width="320">
-
-我们让前沿 AI 智能体去做人们每天都在做的事 --<br/>
-点外卖、订酒店、投简历、写评价、管理项目。<br/>
-**在历史 V1 论文评测中，表现最好的受测 agent 完成了约三分之一的任务。**
-
----
-
-**V1：152** 个日常任务 &middot; **143** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; **V2：129** 个任务 &middot; **63** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; 合计 **281** 个任务，覆盖 **163** 个真实网站 &middot; **15** 个生活类别
-
-<sub><i>论文中报告的是 V1 153 / V2 130；两个 ASPCA 相关任务在论文发表后被移除，因此当前发布的语料是 152 / 129。</i></sub>
-
-<sub><i>由 NAIL Group 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> —— 固定模型、比较 harness &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
-
-<a href="../README.md"><img src="../assets/icons/language.svg" width="16" height="16"> English</a>
-
-</div>
+<details>
+<summary><strong>浏览任务、执行轨迹与项目详情</strong></summary>
 
 <a id="你想找什么"></a>
 
@@ -113,7 +91,30 @@
 </tr>
 </table>
 
-<a id="快速开始"></a>
+**V1：152** 个日常任务 &middot; **143** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; **V2：129** 个任务 &middot; **63** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; 合计 **281** 个任务，覆盖 **163** 个真实网站 &middot; **15** 个生活类别
+
+<sub><i>论文中报告的是 V1 153 / V2 130；两个 ASPCA 相关任务在论文发表后被移除，因此当前发布的语料是 152 / 129。</i></sub>
+
+<sub><i>由 NAIL Group 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> —— 固定模型、比较 harness &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
+
+**在历史 V1 论文评测中，表现最好的受测 agent 完成了约三分之一的任务。**
+
+V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。基准通过 5 层录制管线和对照人工参考轨迹的 LLM evaluator 衡量端到端任务完成率。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。
+
+[![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
+[![Leaderboard](https://img.shields.io/badge/Leaderboard-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
+[![HF Dataset](https://img.shields.io/badge/Dataset-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
+[![HF Traces](https://img.shields.io/badge/Traces-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace)
+[![Project Page](https://img.shields.io/badge/claw--bench.com-4F46E5?style=flat-square&logo=googlechrome&logoColor=white)](https://claw-bench.com)
+[![Ask a question](https://img.shields.io/badge/Ask%20a%20question-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)
+[![License](https://img.shields.io/github/license/TIGER-AI-Lab/ClawBench?style=flat-square&color=A42E2B)](https://github.com/TIGER-AI-Lab/ClawBench/blob/main/LICENSE)
+
+<a href="https://huggingface.co/papers/2604.08523"><img src="https://img.shields.io/badge/%233_Paper_of_the_Day-FFD21E?style=flat-square&logo=huggingface&logoColor=000" alt="#3 Paper of the Day"></a>
+<a href="https://deepwiki.com/TIGER-AI-Lab/ClawBench"><img alt="Ask DeepWiki" src="https://img.shields.io/badge/Ask-DeepWiki-4F46E5?style=flat-square&logo=readthedocs&logoColor=white"></a>
+
+</details>
+
+<div><a id="快速开始"></a></div>
 
 ## <img src="../assets/icons/rocket.svg" width="24" height="24"> 快速开始
 

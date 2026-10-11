@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">ClawBench</title>
+  <desc id="description">A coral paw with a mouse-pointer cutout stands on a bench, representing browser agents put to the test.</desc>
+  <defs>
+    <mask id="cursor-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
+      <rect width="256" height="256" fill="#fff"/>
+      <path d="M111 119v42l12-12 9 20 10-5-9-20h17Z" fill="#000"/>
+    </mask>
+  </defs>
+  <g fill="#EF6548">
+    <ellipse cx="69" cy="87" rx="19" ry="26" transform="rotate(-27 69 87)"/>
+    <ellipse cx="109" cy="57" rx="19" ry="27" transform="rotate(-9 109 57)"/>
+    <ellipse cx="151" cy="57" rx="19" ry="27" transform="rotate(9 151 57)"/>
+    <ellipse cx="191" cy="87" rx="19" ry="26" transform="rotate(27 191 87)"/>
+    <path mask="url(#cursor-cutout)" d="M98 108c9-13 17-17 32-17s23 4 32 17c8 12 12 20 25 32 15 14 17 27 6 38-11 12-29 11-46 4-11-5-23-5-34 0-17 7-35 8-46-4-11-11-9-24 6-38 13-12 17-20 25-32Z"/>
+    <rect x="43" y="199" width="174" height="15" rx="7.5"/>
+    <path d="M75 219 67 235m118-16 8 16" fill="none" stroke="#EF6548" stroke-width="13" stroke-linecap="round"/>
+  </g>
+</svg>
