@@ -1,13 +1,13 @@
-<h1 align="center">
+<p align="center">
   <a href="https://github.com/TIGER-AI-Lab/ClawBench">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="../assets/clawbench-logo-dark.svg">
       <img src="../assets/clawbench-logo.svg" alt="ClawBench" width="500">
     </picture>
   </a>
-</h1>
+</p>
 
-<h3 align="center">AI 智能体能完成日常在线任务吗？</h3>
+<h1 align="center">AI 智能体能完成日常在线任务吗？</h1>
 
 <p align="center">在真实网站上，评测 AI 智能体完成日常任务的能力。<br/>开源基准 &nbsp;&middot;&nbsp; 完整执行轨迹 &nbsp;&middot;&nbsp; 端到端任务评测</p>
 
@@ -28,9 +28,9 @@
 
 <table align="center">
 <tr>
-<td width="180" align="center"><h3>281</h3><sub>日常任务</sub></td>
-<td width="180" align="center"><h3>163</h3><sub>真实网站</sub></td>
-<td width="180" align="center"><h3>15</h3><sub>生活类别</sub></td>
+<td width="180" align="center"><strong>281</strong><br/><sub>日常任务</sub></td>
+<td width="180" align="center"><strong>163</strong><br/><sub>真实网站</sub></td>
+<td width="180" align="center"><strong>15</strong><br/><sub>生活类别</sub></td>
 </tr>
 </table>
 
@@ -94,7 +94,7 @@
 
 **在历史 V1 论文评测中，表现最好的受测 agent 完成了约三分之一的任务。**
 
-V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。基准通过 5 层录制管线和对照人工参考轨迹的 LLM evaluator 衡量端到端任务完成率。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。
+V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。每次运行记录 5 层评测数据，自动评分由最终请求拦截和 LLM judge 两阶段组成。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。
 
 [![arXiv](https://img.shields.io/badge/arXiv-2604.08523-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08523)
 [![Leaderboard](https://img.shields.io/badge/Leaderboard-FFD21E?style=flat-square&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/TIGER-Lab/ClawBench)
@@ -113,27 +113,15 @@ V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。基准通过 5 层录�
 
 ## <img src="../assets/icons/rocket.svg" width="24" height="24"> 快速开始
 
-```bash
-git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
-```
-
-<sub><i>克隆 → 配置 → 运行。&nbsp; 根目录 uv 包。&nbsp; Docker 隔离 harness。</i></sub>
-
-**用编程智能体来跑？** 把它指向 [`AGENTS.md`](../AGENTS.md)，直接提问即可。
-
 ### 安装
 
 ```bash
 uv tool install clawbench-eval
 ```
 
-也可以用 `pipx install clawbench-eval` 或 `python -m pip install clawbench-eval`。安装后可用的命令是 `clawbench`、`clawbench-run`、`clawbench-batch`、`clawbench-rescore`、`clawbench-analyze`、`clawbench-reproduce`、`clawbench-harbor-adapt`。
+也可以用 `pipx install clawbench-eval` 或 `python -m pip install clawbench-eval`。安装后可用交互式 `clawbench` 启动器，以及运行、评分和分析命令；详见 [CLI 参考](cli.md)。
 
-如果你要改 driver、改内置测试用例或改容器构建，请克隆仓库并使用根目录的 `uv` 包入口：
-
-```bash
-git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
-```
+贡献者可使用下方的[源码开发说明](#develop-from-source)。**用编程智能体来跑？** 把它指向 [`AGENTS.md`](../AGENTS.md)。
 
 **前置条件：** [Python 3.11+](https://python.org)、[uv](https://docs.astral.sh/uv/)，以及一个容器引擎 —— [Docker](https://www.docker.com/) **或** [Podman](https://podman.io/)。ClawBench 会自动检测已安装的那个；也可用 `export CONTAINER_ENGINE=docker` / `export CONTAINER_ENGINE=podman` 强制指定。
 
@@ -228,8 +216,10 @@ deepseek-v4-pro:
 **单模型跑单任务：**
 
 ```bash
-uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats claude-sonnet-4-6
+clawbench-run test-cases/v2/v2-1033-education-learning-registration-khanacademy your-model
 ```
+
+将 `your-model` 替换成 `models/models.yaml` 中配置的 key。这个 V2 任务导航到 Khan Academy 课程页面，具有有效的 `GET` 拦截规则。从源码 checkout 运行时，在命令前加 `uv run`。
 
 容器启动后脚本会打印一个 **noVNC 地址**（例如 `http://localhost:6080/vnc.html`），打开即可实时观看智能体操作；6080 被占用时会自动换端口。结果输出在 `./test-output/<model>/<harness>-<case>-<model>-<timestamp>/`，包含完整五层录制。
 
@@ -283,7 +273,7 @@ harness 是驱动浏览器的智能体框架，和模型是两个独立维度。
 | 用 Harbor 框架跑 V2（并且跑得快） | [`docs/harbor.md`](harbor.md) —— 转换、judge 配置、并发、排错 |
 | 查所有 CLI 命令和参数 | [`docs/cli.md`](cli.md) |
 
-<details>
+<details id="develop-from-source">
 <summary><b>从源码开发</b> &nbsp;—— 克隆 + <code>./run.sh</code>，面向贡献者</summary>
 
 ```bash
@@ -305,8 +295,8 @@ uv run clawbench-run \
 
 <p align="center">
   <picture>
-    <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="../assets/workflow-zh-mobile-dark.svg">
-    <source media="(max-width: 600px)" srcset="../assets/workflow-zh-mobile-light.svg">
+    <source media="(max-width: 1200px) and (prefers-color-scheme: dark)" srcset="../assets/workflow-zh-mobile-dark.svg" width="460">
+    <source media="(max-width: 1200px)" srcset="../assets/workflow-zh-mobile-light.svg" width="460">
     <source media="(prefers-color-scheme: dark)" srcset="../assets/workflow-zh-dark.svg">
     <img src="../assets/workflow-zh-light.svg" alt="选择任务、准备浏览器环境、运行智能体、录制并评测任务完成情况。" width="960">
   </picture>
@@ -523,7 +513,9 @@ clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
 }
 ```
 
-智能体拿到的就是这段原文 `instruction`，另外有只读权限访问 `/my-info/alex_green_personal_info.json`（dummy user 的姓名、住址、电话、生日）和一个一次性邮箱账号（万一遇到强制登录）。它有 **30 分钟** 去触发一个 `POST` 请求，超时容器会被 kill。
+智能体拿到的就是这段原文 `instruction`，另外有只读权限访问 `/my-info/alex_green_personal_info.json`（dummy user 的姓名、住址、电话、生日）和一个一次性邮箱账号（万一遇到强制登录）。任务时限为 **30 分钟**。
+
+这是历史 V1 示例，其占位 URL 规则无法匹配最终请求，用于说明原始的人工参考轨迹评测。上方 Quickstart 使用具有有效拦截规则的 V2 任务。
 
 **智能体要做什么**（顺利路径下）：
 
@@ -535,32 +527,29 @@ clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
 6. 加一份到购物车，打开购物车，必要时用一次性邮箱凭据处理登录弹窗
 7. 进入 checkout，点 **Place Order**
 
-**拦截器抓到了什么** —— 最后的 *Place Order* 那一点会发起一个 `POST` 请求。ClawBench 的 request interceptor 架在浏览器和目标站之间，**会在请求到达 Uber Eats 服务器之前抓下来**，所以 dummy user 永远不会被真的扣款。拦截发生的那一瞬间，五层录制（MP4 视频、PNG 截图、HTTP 流量、浏览器动作、智能体消息）会被一起冻结到 `/data/`。
+**拦截如何工作** —— 当任务配置了有效的 URL 规则和 HTTP method 时，ClawBench 会在匹配的最终请求被转发到真实网站之前拦截它。001 号任务的占位规则没有配置这样的匹配，因此这个示例不能说明 checkout 会被自动拦截。每次运行记录五层数据：视频、截图、HTTP 流量、浏览器动作和智能体消息。
 
-**裁判怎么判 PASS / FAIL** —— 001 号任务的 `url_pattern` 是特意留的 sentinel `__PLACEHOLDER_WILL_NOT_MATCH__`，这意味着**没有任何请求路径能机械匹配**。判决完全由 [`eval/agentic_eval.md`](../eval/agentic_eval.md) 里的 agentic judge 给出 —— 它把智能体的五层录制和人工参考轨迹对照，检查四件事：
+**历史评测器怎么判 PASS / FAIL** —— [`eval/agentic_eval.md`](../eval/agentic_eval.md) 中的人工参考轨迹工作流对照五层录制与人工运行，检查四件事：
 
 - 智能体有没有真正走到最后的 checkout？
 - 购物车里是不是**正好一份** Pad Thai（不是两份、也不是套餐）？
 - 配送地址是不是 `alex_green_personal_info.json` 里的家庭住址？
 - 订单的特殊说明字段里有没有 **"no peanuts"**？
 
-四条全满足才算 **PASS**，任何一条没达到就是 **FAIL**，而且失败证据会被绑定到对应的判据上。正是这种 per-task rubric 让 ClawBench 对裁判敏感而不是对 URL 正则敏感 —— 完整 rubric 格式见 [`eval/README.md`](../eval/README.md)，judge prompt 见 [`eval/agentic_eval.md`](../eval/agentic_eval.md)。
+在这个人工参考评测中，四条全满足才算 **PASS**；任何一条没达到就是 **FAIL**，并给出对应证据。该工作流见 [`eval/README.md`](../eval/README.md)，当前自动评分流程见 [`eval/scoring.md`](../eval/scoring.md)。
 
 ## <img src="../assets/icons/video.svg" width="20" height="20"> 测评
 
-测评是**运行之后**的步骤 —— 先运行智能体收集轨迹，再将轨迹与人工参考运行对比评估。
+自动评分包含两个阶段：
 
-```
- 1. 运行智能体 (根 uv 包)            2. 测评 (eval/)
- ────────────────────────           ────────────────────────────────
- ./run.sh / clawbench-batch   ──►    Claude Code 子代理对比
- 生成 test-output/                  智能体 vs 人类轨迹
-   含五层录制数据                    按 eval/agentic_eval.md rubric 判定
-```
+| 阶段 | 检查内容 |
+| --- | --- |
+| **1. 请求拦截** | 运行是否触发了任务 URL 规则和 HTTP method 所配置的最终请求。 |
+| **2. LLM judge** | 被拦截的请求是否满足任务指令。成功拦截后自动执行；`--no-judge` 可跳过。 |
 
-测评器将智能体轨迹与人工参考轨迹在五层录制数据（视频、截图、HTTP 流量、浏览器动作、智能体消息）上逐步对比，输出 PASS/FAIL 及带证据的判定理由。
+评分公式和 lenient/strict 规则见 [`eval/scoring.md`](../eval/scoring.md)。`clawbench-rescore` 可重新评判已保存的运行，无需重跑智能体。
 
-完整测评指南和 Claude Code prompt 模板详见 [`eval/README.md`](../eval/README.md)。
+原始的人工参考轨迹工作流会对照录制与人工运行，输出带证据的 PASS/FAIL。该评测指南与 Claude Code prompt 模板仍可在 [`eval/README.md`](../eval/README.md) 中找到。
 
 ## <img src="../assets/icons/terminal.svg" width="20" height="20"> 命令行
 

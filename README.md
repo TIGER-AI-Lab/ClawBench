@@ -1,13 +1,13 @@
-<h1 align="center">
+<p align="center">
   <a href="https://github.com/TIGER-AI-Lab/ClawBench">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/clawbench-logo-dark.svg">
       <img src="assets/clawbench-logo.svg" alt="ClawBench" width="500">
     </picture>
   </a>
-</h1>
+</p>
 
-<h3 align="center">Can AI agents complete everyday online tasks?</h3>
+<h1 align="center">Can AI agents complete everyday online tasks?</h1>
 
 <p align="center">An open benchmark for browser agents, from booking travel to managing email.<br/>Real websites &nbsp;&middot;&nbsp; Full execution traces &nbsp;&middot;&nbsp; End-to-end task evaluation</p>
 
@@ -28,9 +28,9 @@
 
 <table align="center">
 <tr>
-<td width="180" align="center"><h3>281</h3><sub>Everyday tasks</sub></td>
-<td width="180" align="center"><h3>163</h3><sub>Live websites</sub></td>
-<td width="180" align="center"><h3>15</h3><sub>Life categories</sub></td>
+<td width="180" align="center"><strong>281</strong><br/><sub>Everyday tasks</sub></td>
+<td width="180" align="center"><strong>163</strong><br/><sub>Live websites</sub></td>
+<td width="180" align="center"><strong>15</strong><br/><sub>Life categories</sub></td>
 </tr>
 </table>
 
@@ -94,7 +94,7 @@
 
 **In the historical V1 paper evaluation, the strongest evaluated agent completed about 1 in 3 tasks.**
 
-V1 lives in `test-cases/v1/`, V2 in `test-cases/v2/`. End-to-end success is measured with a five-layer recording pipeline and an LLM evaluator that compares each run against human references. See the [live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) for results by corpus, harness, and scoring rubric.
+V1 lives in `test-cases/v1/`, V2 in `test-cases/v2/`. Runs record five layers of evidence; automatic scores combine final-request interception with an LLM judge. See the [live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) for results by corpus, harness, and scoring rubric.
 
 <details>
 <summary><sub><i>More badges &middot; featured in 37 curated lists</i></sub></summary>
@@ -154,27 +154,15 @@ V1 lives in `test-cases/v1/`, V2 in `test-cases/v2/`. End-to-end success is meas
 
 ## <img src="assets/icons/rocket.svg" width="24" height="24"> Quick start
 
-```bash
-git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
-```
-
-<sub><i>Clone → configure → run. &nbsp; Root uv package. &nbsp; Docker-isolated harnesses.</i></sub>
-
-**Driving a coding agent instead?** Point it at [`AGENTS.md`](AGENTS.md) and prompt away.
-
 ### Install
 
 ```bash
 uv tool install clawbench-eval
 ```
 
-`pipx install clawbench-eval` and `python -m pip install clawbench-eval` work too. The installed commands are `clawbench`, `clawbench-run`, `clawbench-batch`, `clawbench-rescore`, `clawbench-analyze`, `clawbench-reproduce`, and `clawbench-harbor-adapt`.
+`pipx install clawbench-eval` and `python -m pip install clawbench-eval` work too. This installs the interactive `clawbench` launcher and the runner, scoring, and analysis commands; see the [CLI reference](docs/cli.md).
 
-For more granular control — modifying the driver, the bundled test cases, or the container build — clone the repo and use the root `uv` package entrypoint instead:
-
-```bash
-git clone https://github.com/TIGER-AI-Lab/ClawBench.git && cd ClawBench && ./run.sh
-```
+Contributors can use the [source checkout instructions](#develop-from-source) below. **Driving a coding agent?** Point it at [`AGENTS.md`](AGENTS.md).
 
 **Prerequisites:** [Python 3.11+](https://python.org), [uv](https://docs.astral.sh/uv/), and a container engine — [Docker](https://www.docker.com/) **or** [Podman](https://podman.io/). ClawBench auto-detects whichever is installed; force one with `export CONTAINER_ENGINE=docker` or `export CONTAINER_ENGINE=podman`.
 
@@ -269,8 +257,10 @@ PurelyMail credentials for disposable run emails are provided in the committed `
 **One task against one model:**
 
 ```bash
-uv run clawbench-run test-cases/v1/001-daily-life-food-uber-eats claude-sonnet-4-6
+clawbench-run test-cases/v2/v2-1033-education-learning-registration-khanacademy your-model
 ```
+
+Replace `your-model` with a key from `models/models.yaml`. This V2 task navigates to a Khan Academy lesson and has an active `GET` interception schema. From a source checkout, prefix the command with `uv run`.
 
 Once the container starts, the script prints a **noVNC URL** (e.g. `http://localhost:6080/vnc.html`) — open it to watch the agent operate in real time. If port 6080 is taken, an alternative is chosen automatically. Results land in `./test-output/<model>/<harness>-<case>-<model>-<timestamp>/` with the full five-layer recording.
 
@@ -324,7 +314,7 @@ Full registry: [`src/clawbench/runtime/harnesses/harnesses.yaml`](src/clawbench/
 | Run V2 through the Harbor framework (and run it fast) | [`docs/harbor.md`](docs/harbor.md) — conversion, judge wiring, concurrency, troubleshooting |
 | See every CLI command and flag | [`docs/cli.md`](docs/cli.md) |
 
-<details>
+<details id="develop-from-source">
 <summary><b>Develop from source</b> &nbsp;— clone + <code>./run.sh</code> for contributors</summary>
 
 Prefer the repo checkout if you want to modify the driver, the bundled V1/V2 test cases, or the container build itself.
@@ -348,8 +338,8 @@ This path gives you live-reload on `src/`, `src/clawbench/runtime/chrome-extensi
 
 <p align="center">
   <picture>
-    <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="assets/workflow-mobile-dark.svg">
-    <source media="(max-width: 600px)" srcset="assets/workflow-mobile-light.svg">
+    <source media="(max-width: 1200px) and (prefers-color-scheme: dark)" srcset="assets/workflow-mobile-dark.svg" width="460">
+    <source media="(max-width: 1200px)" srcset="assets/workflow-mobile-light.svg" width="460">
     <source media="(prefers-color-scheme: dark)" srcset="assets/workflow-dark.svg">
     <img src="assets/workflow-light.svg" alt="Choose a task, prepare a runtime, run the agent, then record and evaluate task success." width="960">
   </picture>
@@ -413,8 +403,6 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 <sub>Earlier updates: [`docs/news.md`](docs/news.md) &middot; full change history: [`CHANGELOG.md`](CHANGELOG.md)</sub>
 
-<a id="results"></a>
-
 ## <a id="awesome-works-using-clawbench"></a>✨ Awesome Works using ClawBench
 
 **Authors from Google DeepMind, Stanford, UC Berkeley, Google, Microsoft Research, Harvard, ETH Zürich, Oxford, Northwestern, ByteDance Seed, and HKUST build on ClawBench** — and Li Auto's Mach-Mind-4-Flash technical report evaluates on it.
@@ -459,6 +447,8 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 </details>
 
 If we missed your work, please [open an issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) or submit a pull request.
+
+<a id="results"></a>
 
 ## <img src="assets/icons/chart-bar.svg" width="20" height="20"> Results
 
@@ -615,7 +605,9 @@ Curious what one task actually looks like, start to finish? Here's task **001** 
 }
 ```
 
-The agent gets this `instruction` verbatim, plus read-only access to `/my-info/alex_green_personal_info.json` (the dummy user's name, home address, phone, date of birth) and a disposable email account for any sign-in prompt. It has **30 minutes** to reach a `POST` request — any longer and the container is killed.
+The agent gets this `instruction` verbatim, plus read-only access to `/my-info/alex_green_personal_info.json` (the dummy user's name, home address, phone, date of birth) and a disposable email account for any sign-in prompt. The time limit is **30 minutes**.
+
+This is a historical V1 example: its placeholder URL pattern cannot match a final request. It illustrates the original human-reference evaluation; the Quickstart above uses a V2 task with an active interception schema.
 
 **What the agent does** (the happy path):
 
@@ -627,32 +619,29 @@ The agent gets this `instruction` verbatim, plus read-only access to `/my-info/a
 6. Adds one to cart, opens the cart, and handles any sign-in prompt using the disposable email credentials
 7. Reaches checkout, taps **Place Order**
 
-**What the interceptor catches** — that final *Place Order* tap fires a `POST` request. ClawBench's request interceptor sits in front of the browser and **captures the outbound request before it reaches Uber Eats's servers**, so the dummy user is never actually charged. At the exact moment of interception, all five recording layers (MP4 video, PNG screenshots, HTTP traffic, browser actions, agent messages) are frozen into `/data/`.
+**How interception works** — for a task with an active URL pattern and method, ClawBench intercepts the matching final request before forwarding it to the live website. Task 001's placeholder does not configure such a match, so this example does not demonstrate automatic checkout interception. Runs record five layers of evidence: video, screenshots, HTTP traffic, browser actions, and agent messages.
 
-**How the judge decides PASS / FAIL** — task 001's `url_pattern` is the intentional sentinel `__PLACEHOLDER_WILL_NOT_MATCH__`, which means **no request path can mechanically match**. The verdict comes from the agentic judge in [`eval/agentic_eval.md`](eval/agentic_eval.md), which replays the five-layer recording against a human reference run and checks four things:
+**How the historical evaluator decides PASS / FAIL** — the human-reference workflow in [`eval/agentic_eval.md`](eval/agentic_eval.md) compares the five-layer recording against a human reference run and checks four things:
 
 - Did the agent actually reach the final checkout step?
 - Is the cart exactly **one** Pad Thai (not two, not a combo)?
 - Is the delivery address the user's home address from `alex_green_personal_info.json`?
 - Does the order carry the **"no peanuts"** note in the instructions field?
 
-All four must hold for a **PASS**. Miss any one and it's a **FAIL** with evidence from the recording pinned to the failing criterion. This per-task rubric is what makes ClawBench judge-sensitive rather than URL-regex-sensitive — see [`eval/README.md`](eval/README.md) for the full rubric format and [`eval/agentic_eval.md`](eval/agentic_eval.md) for the judge prompt.
+All four must hold for a **PASS** in this human-reference evaluation. Missing a criterion produces a **FAIL** with supporting evidence. See [`eval/README.md`](eval/README.md) for this workflow and [`eval/scoring.md`](eval/scoring.md) for the current automatic scoring pipeline.
 
 ## <img src="assets/icons/video.svg" width="20" height="20"> Evaluation
 
-Evaluation is a **post-session** step — first run agents to collect trajectories, then evaluate them against human reference runs.
+Automatic scoring uses two stages:
 
-```
- 1. Run agents (root uv package)   2. Evaluate (eval/)
- ─────────────────────────         ────────────────────────────────
- ./run.sh / clawbench-batch ──►    Claude Code subagents compare
- produces test-output/             agent vs human trajectories
-   with 5-layer recordings         under eval/agentic_eval.md rubric
-```
+| Stage | What it checks |
+| --- | --- |
+| **1. Interception** | Whether the run reached the final request configured by the task's URL pattern and HTTP method. |
+| **2. LLM judge** | Whether the intercepted request meets the task instruction. This runs automatically after a successful interception; `--no-judge` skips it. |
 
-The evaluator compares each agent trajectory against a human reference trajectory across all five recording layers (video, screenshots, HTTP traffic, browser actions, agent messages), then outputs PASS/FAIL with evidence-backed justification.
+See [`eval/scoring.md`](eval/scoring.md) for the scoring formula and lenient/strict rubrics. `clawbench-rescore` can re-judge saved runs without rerunning the agent.
 
-See [`eval/README.md`](eval/README.md) for the full evaluation guide and Claude Code prompt template.
+The original human-reference workflow compares recordings against human runs and reports evidence-backed PASS/FAIL judgments. Its evaluation guide and Claude Code prompt template remain available in [`eval/README.md`](eval/README.md).
 
 To export a rescored batch as an OpenEval / EvalPort `ResultSet`, run `uv run python scripts/export_openeval.py` with your batch directory, run ID, and start timestamp. See [export instructions](eval/README.md#export-results-to-openeval--evalport) for an example and available options.
 

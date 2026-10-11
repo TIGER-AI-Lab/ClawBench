@@ -14,4 +14,11 @@ Colors: coral `#EB6449`, ink `#20242C`, ivory `#F3F1ED`. The README uses a darke
 
 The wordmark uses outlined [Manrope](https://github.com/googlefonts/manrope), weight 720, with optical spacing and kerning. Its [SIL Open Font License](Manrope-OFL.txt) is included here.
 
-The README heading icons share the coral accent. The workflow illustrations use separate desktop and mobile layouts, with light and dark versions of each; their text stays editable in the SVG source.
+The README heading icons share the coral accent. Workflow illustrations have English and Chinese text, wide and narrow layouts, and light and dark variants. The narrow version uses larger lettering and a fixed intrinsic width so GitHub's sidebar does not shrink the four-column diagram into unreadable text.
+
+Edit [generate_workflow.py](generate_workflow.py) to change labels, colors, or geometry. Regenerate all eight variants with no extra dependencies:
+
+```bash
+python3 assets/brand/generate_workflow.py
+python3 assets/brand/generate_workflow.py --check
+```
