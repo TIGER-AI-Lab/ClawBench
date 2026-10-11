@@ -376,6 +376,7 @@ ClawBench 提供 **三个** Hugging Face 数据集 —— 任务定义，以及 
 
 ## <img src="../assets/icons/bullhorn.svg" width="20" height="20"> 动态
 
+- **[2026.10.10]** —— 🎉 ClawBench 的 **[GitHub stars 突破 1,000](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**！感谢每一位关注、使用和贡献 ClawBench 的社区成员。
 - **[2026.08.20]** —— 🏆 论文被 [EMNLP 2026 Findings](https://2026.emnlp.org/) 接收。
 - **[2026.08.20]** —— 新增 [Kernel](https://www.kernel.sh) 作为支持的远程浏览器运行时。感谢 @[rgarcia](https://github.com/rgarcia)。
 - **[2026.08.18]** —— 新增 [WebBrain](https://github.com/webbrain-one/webbrain) 作为支持的 harness。感谢 @[alectimison-maker](https://github.com/alectimison-maker)。
