@@ -1,0 +1,22 @@
+{
+  "social-card.png": {
+    "source": "social-card.svg",
+    "source_sha256": "d4ac1194fd5f1e3c512753f03d5dc782bf2afcc502d2d112267ecbc45e9f9785",
+    "sha256": "f2109c3e4bee48fbc4b1756d6029a6dd54512fc545667a068888aa4c9fca7d13"
+  },
+  "favicon-16.png": {
+    "source": "favicon.svg",
+    "source_sha256": "73f9e88ccbe8bf823aed0c425004244a66e3676254161c21b7ea2689ebaaf730",
+    "sha256": "9772b25edd5406b495c5b307583fe693e281e06bb9690b58fbb9e85984a5ec28"
+  },
+  "favicon-32.png": {
+    "source": "favicon.svg",
+    "source_sha256": "73f9e88ccbe8bf823aed0c425004244a66e3676254161c21b7ea2689ebaaf730",
+    "sha256": "450c18434a21a1a0a700e686922c8ada71cc216a62776b41693c644284cb2e42"
+  },
+  "favicon.ico": {
+    "source": "favicon.svg",
+    "source_sha256": "73f9e88ccbe8bf823aed0c425004244a66e3676254161c21b7ea2689ebaaf730",
+    "sha256": "32fc03013bd06f33c2c992dd50776a4462b97ea8574bb609ceb77a4ab9879920"
+  }
+}

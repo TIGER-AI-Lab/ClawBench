@@ -1,0 +1,44 @@
+{
+  "dataset": "TIGER-Lab/ClawBenchV2Trace",
+  "revision": "bb88da2b8a94044df7888d79c1ad4c7e88949043",
+  "run": "batch-20260509-202734/claude-opus-4-7/hermes-v2-1122-education-course-khanacademy-claude-opus-4-7-20260509-233452",
+  "license": "Apache-2.0",
+  "model": "claude-opus-4-7",
+  "harness": "hermes",
+  "task_id": 1122,
+  "recorded_date": "2026-05-09",
+  "files": {
+    "recording.mp4": "23f9c7a33184378ac1b410a508428d5eaf0461f317ba5513c6472f93416bfda4",
+    "actions.jsonl": "65c72e322f87f40af41d0aca0a4a48f0e46ce14f88d3ba55fb1aae8e87e629cd",
+    "interception.json": "649ad2c3fb60726f9e4eb3fb87337eeb95f5ad9186a8bad23c36c60a9a5bc03b",
+    "judge.json": "3552351f293b5427b54147c4b824374d8494e662193959d0aac03f7053459734"
+  },
+  "edit": {
+    "start_seconds": 51,
+    "end_seconds": 68,
+    "playback_speed": 2,
+    "fps": 8,
+    "crop_xywh": [
+      500,
+      400,
+      1420,
+      680
+    ],
+    "interception_panel_seconds": 3,
+    "judge_panel_seconds": 4
+  },
+  "evidence": {
+    "intercepted": true,
+    "method": "POST",
+    "endpoint": "https://www.khanacademy.org/api/internal/graphql/attemptProblem",
+    "operation_name": "attemptProblem",
+    "problem_number": 1,
+    "judge_match": true,
+    "judge_model": "deepseek/deepseek-v4-pro"
+  },
+  "notes": [
+    "The browser excerpt is cropped and played at 2x speed.",
+    "The interception and judge panels are editorial annotations derived from the saved JSON files; they are not browser UI.",
+    "The saved judge verdict is reproduced as published, without assigning an unrecorded lenient/strict rubric."
+  ]
+}

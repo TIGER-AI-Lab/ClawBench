@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>ClawBench recorded task</title>
+<style>
+*{box-sizing:border-box}body{margin:0;width:960px;height:684px;background:#f5f3ef;color:#20242c;font-family:Arial,sans-serif}header{display:flex;align-items:center;justify-content:space-between;padding:18px 40px 0;height:61px}header img{width:165px}header span{font-size:11px;letter-spacing:1.5px;color:#67717c;font-weight:bold}h1{font-size:25px;letter-spacing:-.6px;margin:13px 40px 8px} .subtitle{margin:0 40px;font-size:14px;color:#67717c}main{position:absolute;left:40px;top:142px;width:880px;height:422px;border:1px solid #d9dde2;border-radius:12px;overflow:hidden;background:#fff}#recording{display:block;width:880px;height:422px}.panel{display:none;position:absolute;inset:0;background:#fff;padding:34px 40px}.eyebrow{color:#67717c;font-size:12px;font-weight:bold;letter-spacing:2px}.panel h2{font-size:30px;letter-spacing:-.7px;margin:17px 0 24px}.endpoint{font:18px/1.55 monospace;padding:17px 20px;border-radius:8px;background:#f5f6f8;border-left:4px solid #eb6449}.endpoint strong{color:#b84a34}.fields{display:flex;gap:45px;margin-top:24px;font:15px/1.6 monospace}.value{color:#1a6d4a;font-weight:bold}.match{display:inline-block;background:#e7f4ed;color:#196744;padding:11px 20px;border-radius:8px;font-size:31px;letter-spacing:1px;font-weight:bold;margin-bottom:15px}.reason{font-size:22px;line-height:1.45;max-width:700px;margin:0 0 19px}.judge-model{font:14px monospace;color:#67717c}.steps{position:absolute;top:585px;left:40px;width:880px;display:flex;gap:12px}.step{flex:1;border:1px solid #d9dde2;border-radius:8px;padding:12px 14px;color:#67717c;font-size:15px;background:#fff}.step b{margin-right:8px}.footer{position:absolute;left:40px;top:648px;font-size:12px;color:#67717c}.title{display:none}body[data-phase=action] .action-title,body[data-phase=overview] .overview-title,body[data-phase=interception] .interception-title,body[data-phase=judge] .judge-title{display:block}body[data-phase=action] .step:first-child{border-color:#eb6449;color:#b84a34;background:#fff5f0}body[data-phase=interception] #interception,body[data-phase=judge] #judge{display:block}body[data-phase=interception] .step:nth-child(2){border-color:#eb6449;color:#b84a34;background:#fff5f0}body[data-phase=judge] .step:last-child,body[data-phase=overview] .step{border-color:#6db48b;color:#196744;background:#edf7f1}
+</style></head>
+<body data-phase="action">
+<header><img src="LOGO_URL" alt="ClawBench"><span>REAL RUN · KHAN ACADEMY · V2 / 1122</span></header>
+<h1 class="title action-title">Select an answer, then click Check.</h1>
+<h1 class="title interception-title">Capture the final request.</h1>
+<h1 class="title judge-title">Evaluate the recorded task submission.</h1>
+<h1 class="title overview-title">One recorded run. Two stages of evidence.</h1>
+<p class="subtitle">Claude Opus 4.7 / Hermes · Answer the first “Solutions to 2-variable equations” question</p>
+<main>
+<img id="recording" alt="Cropped browser recording of the algebra exercise">
+<section class="panel" id="interception"><div class="eyebrow">EVIDENCE · INTERCEPTION.JSON</div><h2>The submission request matched.</h2><div class="endpoint" id="endpoint"><strong>POST</strong><br>khanacademy.org/api/internal/graphql/attemptProblem</div><div class="fields"><div>intercepted<br><span class="value">true</span></div><div>operationName<br>attemptProblem</div><div>problemNumber<br>1</div></div></section>
+<section class="panel" id="judge"><div class="eyebrow">EVIDENCE · JUDGE.JSON</div><h2>Saved judge verdict</h2><div class="match">MATCH</div><p class="reason">Submitted an answer to problem 1 of the requested practice exercise.</p><div class="judge-model">Judge: deepseek/deepseek-v4-pro · match: true</div></section>
+</main>
+<div class="steps"><div class="step"><b>01</b> Browser action</div><div class="step"><b>02</b> Request intercepted</div><div class="step"><b>03</b> Judge: match</div></div>
+<div class="footer">Recorded 09 May 2026 · 2× cropped excerpt · Evidence panels summarize the published JSON files</div>
+</body></html>

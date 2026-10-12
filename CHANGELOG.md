@@ -15,9 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added transparent ClawBench SVG logos for light and dark backgrounds and a standalone paw, pointer, and bench mark.
 - Added workflow illustrations with light, dark, desktop, and mobile layouts to both READMEs.
 - Added a dependency-free source generator and documentation CI check to keep all eight workflow SVG variants consistent.
+- Added a real-run GIF, pauseable MP4, reduced-motion poster, and pinned trace provenance showing browser action, interception, and the saved judge verdict.
+- Added monochrome and reversed logos, small favicons, and a reproducible 1200 × 630 social preview with source-hash checks.
 
 ### Changed
-- Redesigned the English and Chinese README headers with the new logo, prominent Quickstart links, a corpus overview, coordinated colors, and expandable project details; removed duplicate Star History headings.
+- Condensed the English and Chinese READMEs around a recorded demo, scoring evidence, and Quickstart; moved detailed setup, FAQs, historical results, reproduction, and community material into linked bilingual guides.
 - Improved README heading semantics, GitHub sidebar readability, and Quickstart ordering; clarified automatic scoring and the historical V1 walkthrough's placeholder interception schema.
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.

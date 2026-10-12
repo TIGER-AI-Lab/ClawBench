@@ -7,6 +7,11 @@ on:
       - ".github/workflows/validate-docs.yml"
       - "scripts/ci/check_markdown_links.py"
       - "assets/brand/generate_workflow.py"
+      - "assets/brand/generate_assets.py"
+      - "assets/brand/raster-sources.json"
+      - "assets/clawbench*.svg"
+      - "assets/favicon*"
+      - "assets/social-card.*"
       - "assets/workflow*.svg"
       - "docs/**"
       - "**/*.md"
@@ -17,6 +22,11 @@ on:
       - ".github/workflows/validate-docs.yml"
       - "scripts/ci/check_markdown_links.py"
       - "assets/brand/generate_workflow.py"
+      - "assets/brand/generate_assets.py"
+      - "assets/brand/raster-sources.json"
+      - "assets/clawbench*.svg"
+      - "assets/favicon*"
+      - "assets/social-card.*"
       - "assets/workflow*.svg"
       - "docs/**"
       - "**/*.md"
@@ -43,3 +53,6 @@ jobs:
 
       - name: Check generated workflow illustrations
         run: python assets/brand/generate_workflow.py --check
+
+      - name: Check generated brand assets
+        run: python assets/brand/generate_assets.py --check
