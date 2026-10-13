@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [v0.11.0]
 ### Added
 - Expand the isolated environmental-observation proposal to 12 public-data request workflows across NOAA, USGS, NDBC, NASA POWER, Open-Meteo and EPA, with explicit request-initiation outcomes and validation limits.
 - `run-meta.json` now carries a `provenance` block: the ClawBench version, commit, branch, and dirty state; the corpus suite and the revision of the commit that last touched it; and the agent and plugin versions pinned by the harness Dockerfile, with a `pins_source` saying whether those pins describe the image that actually ran. Every field is best-effort and null outside a git checkout, so a run never fails on a missing one. See [`docs/trace-cookbook.md`](docs/trace-cookbook.md#provenance).
