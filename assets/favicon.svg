@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">ClawBench</title>
+  <rect width="32" height="32" rx="7" fill="#EB6449"/>
+  <g fill="#fff">
+    <ellipse cx="7.7" cy="10.2" rx="2.2" ry="3.1" transform="rotate(-25 7.7 10.2)"/>
+    <ellipse cx="13.1" cy="6.9" rx="2.4" ry="3.3" transform="rotate(-10 13.1 6.9)"/>
+    <ellipse cx="18.9" cy="6.9" rx="2.4" ry="3.3" transform="rotate(10 18.9 6.9)"/>
+    <ellipse cx="24.3" cy="10.2" rx="2.2" ry="3.1" transform="rotate(25 24.3 10.2)"/>
+    <path fill-rule="evenodd" d="M11.5 13.3C13 11.2 14 11 16 11s3 .2 4.5 2.3c1.1 1.6 1.7 2.6 3.1 4 2.1 2.2 1.8 4.7-.2 5.7-2.2 1.1-4.1-.8-7.4-.8S10.8 24.1 8.6 23c-2-1-2.3-3.5-.2-5.7 1.4-1.4 2-2.4 3.1-4Zm2.5 1.1v6.1l1.9-1.8 1.5 3.1 1.6-.8-1.6-3.1H20Z"/>
+    <path d="M7.5 25h17a1 1 0 0 1 0 2H22l1.1 2a1 1 0 0 1-1.8.9L19.7 27h-7.4l-1.6 2.9a1 1 0 0 1-1.8-.9l1.1-2H7.5a1 1 0 0 1 0-2Z"/>
+  </g>
+</svg>

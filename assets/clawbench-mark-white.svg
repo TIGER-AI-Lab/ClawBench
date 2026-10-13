@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">ClawBench</title>
+  <desc id="description">A monochrome paw with a mouse-pointer cutout stands on a bench, representing browser agents put to the test.</desc>
+  <g fill="#FFFFFF">
+    <path d="M48 66c10-6 22 1 29 14 7 14 6 27-3 32-10 6-23-1-30-15-7-13-5-26 4-31Z"/>
+    <path d="M98 28c13-2 24 10 27 26 3 17-3 31-16 33-13 2-23-10-26-27-3-16 3-30 15-32Z"/>
+    <path d="M158 28c-13-2-24 10-27 26-3 17 3 31 16 33 13 2 23-10 26-27 3-16-3-30-15-32Z"/>
+    <path d="M208 66c-10-6-22 1-29 14-7 14-6 27 3 32 10 6 23-1 30-15 7-13 5-26-4-31Z"/>
+    <path fill-rule="evenodd" d="M94 112c10-14 19-19 34-19s24 5 34 19c9 13 14 20 26 31 16 15 19 30 9 41-11 12-28 13-47 6-15-6-29-6-44 0-19 7-36 6-47-6-10-11-7-26 9-41 12-11 17-18 26-31Zm17 10v45l13-13 10 21 10-5-10-22h19Z"/>
+    <path d="M58 207h140a7 7 0 0 1 0 14h-20l7 12a6 6 0 0 1-10 6l-11-18H92l-11 18a6 6 0 0 1-10-6l7-12H58a7 7 0 0 1 0-14Z"/>
+  </g>
+</svg>

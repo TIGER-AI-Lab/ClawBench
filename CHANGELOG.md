@@ -14,8 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `run-meta.json` now carries a `provenance` block: the ClawBench version, commit, branch, and dirty state; the corpus suite and the revision of the commit that last touched it; and the agent and plugin versions pinned by the harness Dockerfile, with a `pins_source` saying whether those pins describe the image that actually ran. Every field is best-effort and null outside a git checkout, so a run never fails on a missing one. See [`docs/trace-cookbook.md`](docs/trace-cookbook.md#provenance).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
+- Added transparent ClawBench SVG logos for light and dark backgrounds and a standalone paw, pointer, and bench mark.
+- Added workflow illustrations with light, dark, desktop, and mobile layouts to both READMEs.
+- Added a dependency-free source generator and documentation CI check to keep all eight workflow SVG variants consistent.
+- Added a real-run GIF, pauseable MP4, reduced-motion poster, and pinned trace provenance showing browser action, interception, and the saved judge verdict.
+- Added monochrome and reversed logos, small favicons, and a reproducible 1200 × 630 social preview with source-hash checks.
 
 ### Changed
+- Condensed the English and Chinese READMEs around a recorded demo, scoring evidence, and Quickstart; moved detailed setup, FAQs, historical results, reproduction, and community material into linked bilingual guides.
+- Improved README heading semantics, GitHub sidebar readability, and Quickstart ordering; clarified automatic scoring and the historical V1 walkthrough's placeholder interception schema.
 - Container-engine detection is now lazy: `run_support.config.engine()` probes PATH on first use instead of at import time, so importing the runner modules no longer requires Docker or Podman. `config.ENGINE` still resolves but is deprecated.
 - `runner/batch.py` now uses the shared `config.engine()` instead of its own copy of the PATH probe.
 - The `claw-eval` port now uses the same `test-cases/<suite>/<task-identifier>/task.json` layout as the native corpora, instead of flat `<task-identifier>.json` files. Case discovery in `clawbench-batch` and the TUI is a plain `*/task.json` search again, and the `validate-task` workflow covers the suite without special-casing.
