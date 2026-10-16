@@ -110,12 +110,46 @@ If the task requires additional context (e.g., a pre-filled profile, a specific 
 
 For changes to the framework itself (test driver, runtime server, Chrome extension, container):
 
-1. Read the relevant sub-README for component-specific documentation:
-   - [README.md#-cli](README.md#-cli)
-   - [src/clawbench/runtime/runtime-server/README.md](src/clawbench/runtime/runtime-server/README.md)
-   - [src/clawbench/runtime/chrome-extension/README.md](src/clawbench/runtime/chrome-extension/README.md)
+1. Read the [source map](src/README.md) to locate the component and its dependencies.
+   The [documentation index](docs/README.md) links to usage and integration guides.
 2. Open an issue first for anything beyond a small bug fix so we can align on approach before you spend time.
-3. Open a PR with a clear description of the change and how you tested it.
+3. Keep the change focused, run the relevant checks below, and open a PR describing
+   the resulting behavior and how you tested it. Add a [changelog entry](#changelog).
+
+From a checkout with [Python 3.11+ and uv installed](docs/getting-started.md):
+
+```bash
+uv sync --frozen
+uv run --frozen pre-commit install  # optional: run configured checks before commits
+```
+
+The root package contains the host CLI and development tools. The runtime server
+has a separate [uv project](src/clawbench/runtime/runtime-server/pyproject.toml);
+see its [README](src/clawbench/runtime/runtime-server/README.md) for local debugging.
+
+For Python changes, run the same lint, format, type, and host-test checks as CI:
+
+```bash
+uv run --frozen ruff check .
+uv run --frozen ruff format --check .
+uv run --frozen pyright src/clawbench tests
+uv run --frozen pytest
+```
+
+During development, target the affected tests, for example
+`uv run --frozen pytest tests/test_harness_registry.py`. Host tests run on Linux,
+macOS, and Windows in [CI](.github/workflows/run-test.yml).
+
+For documentation changes, check repository-relative links from the project root:
+
+```bash
+uv run --frozen python scripts/ci/check_markdown_links.py
+```
+
+This checks file destinations; review heading links and rendered Markdown too.
+For packaging changes, run `uv build` and review the distribution checks in
+[static-check](.github/workflows/static-check.yml). Container and harness changes
+also have a separate [image-build workflow](.github/workflows/check-harness-build.yml).
 
 ## Changelog
 
