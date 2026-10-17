@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 
 ## [v0.11.0]
 ### Added
