@@ -43,8 +43,10 @@ import yaml
 JUDGE_FILE = {"strict": "judge.json", "lenient": "judge_llm.json"}
 
 
-def _read_cached_verdict(path: Path) -> dict[str, Any] | None:
-    """Return a scored verdict, or None if the cache needs another judge call."""
+def _read_cached_verdict(
+    path: Path, *, allow_inconclusive: bool = False
+) -> dict[str, Any] | None:
+    """Read a scored verdict, optionally retaining inconclusive report details."""
     if not path.exists():
         return None
     try:
@@ -52,7 +54,10 @@ def _read_cached_verdict(path: Path) -> dict[str, Any] | None:
     except (OSError, ValueError) as exc:
         print(f"  invalid judge cache {path}: {exc}; retrying", file=sys.stderr)
         return None
-    if not isinstance(verdict, dict) or type(verdict.get("match")) is not bool:
+    if not isinstance(verdict, dict) or not (
+        type(verdict.get("match")) is bool
+        or (allow_inconclusive and "match" in verdict and verdict["match"] is None)
+    ):
         print(
             f"  invalid judge cache {path}: match must be a boolean; retrying",
             file=sys.stderr,
@@ -164,7 +169,7 @@ def aggregate_batch(batch_dir: Path, rubrics: list[str]) -> dict[str, Any]:
             judge_p = run_dir / JUDGE_FILE[r]
             match: Any = None
             reason = ""
-            jd = _read_cached_verdict(judge_p)
+            jd = _read_cached_verdict(judge_p, allow_inconclusive=True)
             if jd is not None:
                 match = jd["match"]
                 reason = jd.get("reason", "")
@@ -357,6 +362,11 @@ def main() -> int:
             rd = futs[fut]
             try:
                 vmap = fut.result()
+                # Only selected work affects the exit status; --limit may leave
+                # other tasks unscored in the full-batch summary.
+                processing_errors += sum(
+                    type(vmap.get(r, {}).get("match")) is not bool for r in rubrics
+                )
                 judged += 1
                 tags = " ".join(
                     f"{r}={ {True: 'M', False: '.', None: '?'}.get(vmap.get(r, {}).get('match'), '?') }"
@@ -390,7 +400,6 @@ def main() -> int:
             processing_errors += 1
             print(f"  err rolling up {bd}: {e}", file=sys.stderr)
             continue
-        processing_errors += sum(roll[f"n_judge_err_{r}"] for r in rubrics)
         roll["judge_model"] = args.judge_model
         roll["rubrics"] = rubrics
         (bd / "rescore-summary.json").write_text(
