@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from clawbench.eval.rescore import rescore_one
+from clawbench.eval.rescore import _cache_fingerprint, rescore_one
 
 
 def _make_run_dir(tmp_path: Path) -> Path:
@@ -52,8 +52,21 @@ def test_cached_inconclusive_verdict_is_retried_without_force(tmp_path: Path) ->
 
 def test_cached_scored_verdict_is_not_retried_without_force(tmp_path: Path) -> None:
     run_dir = _make_run_dir(tmp_path)
+    fingerprint = _cache_fingerprint(
+        "judge-a",
+        {},
+        "strict",
+        "do the task",
+        {"request": {"url": "https://example.test"}},
+    )
     (run_dir / "judge.json").write_text(
-        json.dumps({"match": False, "reason": "did not fulfill it"})
+        json.dumps(
+            {
+                "match": False,
+                "reason": "did not fulfill it",
+                "cache_fingerprint": fingerprint,
+            }
+        )
     )
 
     calls = []
