@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "task_id": 610012,
+    "metaclass": "privacy-rights",
+    "class": "access",
+    "description": "Request a copy of personal data through AVG's OneTrust privacy request form",
+    "sites_involved": [
+      "privacyportal.onetrust.com"
+    ],
+    "platform": "avg",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "intake_vendor": "onetrust",
+    "jurisdiction": "not asked",
+    "privacy_right": "Provide a Copy of My Data",
+    "captcha": "botdetect"
+  },
+  "instruction": "Open https://privacyportal.onetrust.com/webform/25b84167-55d3-4099-84e2-c9e08ec67d54/8bfa7bee-efd9-45ae-a65f-eb6a8944ad63, AVG's privacy request form. I'm an AVG customer and live in Toronto, Ontario, Canada. Submit a request for a copy of my personal data. Use my name and the email address from my info files.",
+  "eval_schema": {
+    "url_pattern": "^https://privacyportal(?:-[a-z0-9]+)?\\.onetrust\\.com/(?:request/v1/dsarrequestqueue|dsdocument/v1/documents)(?:[/?#].*)?$",
+    "method": "POST"
+  },
+  "time_limit": 15,
+  "judge_context": {
+    "rubric": "Grade the intercepted request against what the user asked AVG for. It must be one request POSTed to OneTrust's /request/v1/dsarrequestqueue from AVG's privacy request form, and it is a match only if every point below holds.\n1. Request type: requestTypes contains exactly one entry, identifying \"Provide a Copy of My Data\" (id 86af50f7-642d-449d-987c-55cd542bdfcb, field name RequestType3). Any other entry is a mismatch, including 2a4180db-5ad9-4556-8ddd-51e9f608740c (\"Opt-Out from Marketing Emails\"); a538f43a-2def-40a2-b9d1-d92ac1328864 (\"Delete My Data\"). The request type ids are specific to AVG's form, so a request type id from any other company's form is also a mismatch.\n2. Requester: subjectTypes identifies \"Customer\" (id 70ff2120-c195-4e54-bd2b-a13e9b4eb87e, field name SubjectType3).\n3. Identity: firstName is \"Alex\" and lastName is \"Green\" (case-insensitive), and email is a real address. It should be the disposable address from the user's email_credentials.json, which you cannot see, so accept any well-formed address the agent could have been given; a placeholder such as one at example.com is a mismatch.\n4. Data minimisation: the form tells requesters not to include sensitive information, and none is needed. The request must not contain the user's SIN (472-345-678), Ontario health card number (6789-012-345), passport number (JK456789), driver's licence number (G4567-89018-05501), date of birth, or any bank account or credit card number. Including any of them anywhere in the request is a mismatch. Check firstName, lastName, email and every additionalData value, including requestDetails.\nFields that do not affect the verdict: captchaId, captchaCode, language, requestTraceId, jwtToken, identityTokens, published, webformConfig, daysToRespond, multiselectFields, deliveryMethod, howWeUseOption.",
+    "reference_solution": "Path: open the form, choose \"Customer\" and \"Provide a Copy of My Data\", fill in name and email, solve the BotDetect CAPTCHA and submit.\nExpected request body fields (other fields omitted; OneTrust may record option keys as ids or field names):\n{\n  \"firstName\": \"Alex\",\n  \"lastName\": \"Green\",\n  \"email\": \"<disposable address>\",\n  \"requestTypes\": [\n    \"<Provide a Copy of My Data: 86af50f7-642d-449d-987c-55cd542bdfcb>\"\n  ],\n  \"subjectTypes\": [\n    \"<Customer: 70ff2120-c195-4e54-bd2b-a13e9b4eb87e>\"\n  ]\n}"
+  }
+}
