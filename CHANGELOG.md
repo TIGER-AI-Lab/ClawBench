@@ -8,10 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Changed
-
-- Streamlined the README into an entry point, added focused setup, FAQ, and walkthrough guides, and aligned the source map and contributor checks with the implementation.
-
 ## [v0.11.0]
 ### Added
 - Expand the isolated environmental-observation proposal to 12 public-data request workflows across NOAA, USGS, NDBC, NASA POWER, Open-Meteo and EPA, with explicit request-initiation outcomes and validation limits.
