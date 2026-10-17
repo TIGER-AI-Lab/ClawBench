@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "task_id": 610009,
+    "metaclass": "privacy-rights",
+    "class": "limit-or-object-to-processing",
+    "description": "File a PIPEDA objection to direct-marketing processing with e.l.f. Beauty",
+    "sites_involved": [
+      "preferences.elfcosmetics.com"
+    ],
+    "platform": "e-l-f-beauty",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "intake_vendor": "datagrail",
+    "jurisdiction": "CA-ON (PIPEDA)",
+    "privacy_right": "pause_processing",
+    "captcha": "hcaptcha"
+  },
+  "instruction": "Open https://preferences.elfcosmetics.com/, e.l.f. Beauty's privacy request center. I've bought from e.l.f. Beauty and live in Toronto, Ontario, Canada. Submit a request objecting to e.l.f. Beauty processing my personal information for direct marketing, and say that direct marketing is what I object to. Use my name and the email address from my info files.",
+  "eval_schema": {
+    "url_pattern": "^https://preferences\\.elfcosmetics\\.com/api/v2/(?:privacy_requests|opt_outs)(?:[/?#].*)?$",
+    "method": "POST"
+  },
+  "time_limit": 15,
+  "judge_context": {
+    "rubric": "Grade the intercepted request against what the user asked e.l.f. Beauty for. It must be one request POSTed to https://preferences.elfcosmetics.com/api/v2/privacy_requests, e.l.f. Beauty's DataGrail privacy request center, and it is a match only if every point below holds.\n1. Request type: privacy_right_id is 0353ef85-527b-4da0-a89c-1d0ef331f520, the \"Object to Processing Request\" right (pause_processing). Any other privacy_right_id is a mismatch. A request to /api/v2/opt_outs is an opt-out and is a mismatch.\n2. Jurisdiction: the user lives in Toronto, Ontario, Canada. location is \"CA-ON\", country_code is \"CA\", state_code is \"ON\", and privacy_request_policy_id is 12a3cef9-3857-4a08-9fc0-7824c00cda27, e.l.f. Beauty's PIPEDA policy for Ontario. The page pre-selects whatever location it detects from the network, usually a US state; a request filed under that location, or under any policy id other than the one above, is a mismatch.\n3. Identity: answers.first_name is \"Alex\" and answers.last_name is \"Green\" (case-insensitive), and the email address (answers.email_address, which the client also copies to a top-level email_address) is a real address. It should be the disposable address from the user's email_credentials.json, which you cannot see, so accept any well-formed address the agent could have been given; a placeholder such as one at example.com is a mismatch.\n4. answers.additional_info must state that the objection is to direct marketing. A request with no stated purpose is a mismatch, because the user asked for it to be stated. e.l.f.'s form has no relationship question and offers no opt-out right for Ontario, so the objection right is the only correct choice.\n5. Data minimisation: the form tells requesters not to include sensitive information, and none is needed. The request must not contain the user's SIN (472-345-678), Ontario health card number (6789-012-345), passport number (JK456789), driver's licence number (G4567-89018-05501), date of birth, or any bank account or credit card number. Including any of them anywhere in the request is a mismatch.\nFields that do not affect the verdict: h-captcha-response, locale, source, detected_location, detected_country_code, detected_state_code. The agent being shown a different detected location is expected; only the submitted location matters.",
+    "reference_solution": "Path: open the privacy request center, change Country of residence from the detected location to Canada and the province to Ontario, start the \"Object to Processing Request\" request, fill in the form, review, pass the hCaptcha, and submit.\nEndpoint: POST https://preferences.elfcosmetics.com/api/v2/privacy_requests\nExpected request body fields (other fields omitted):\n{\n  \"location\": \"CA-ON\",\n  \"privacy_right_id\": \"0353ef85-527b-4da0-a89c-1d0ef331f520\",\n  \"privacy_request_policy_id\": \"12a3cef9-3857-4a08-9fc0-7824c00cda27\",\n  \"country_code\": \"CA\",\n  \"state_code\": \"ON\",\n  \"answers\": {\n    \"first_name\": \"Alex\",\n    \"last_name\": \"Green\",\n    \"email_address\": \"<disposable address>\"\n  }\n}"
+  }
+}

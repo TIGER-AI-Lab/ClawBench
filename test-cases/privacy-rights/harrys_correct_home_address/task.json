@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "task_id": 610007,
+    "metaclass": "privacy-rights",
+    "class": "correction",
+    "description": "File a PIPEDA correction request with Harry's to replace a wrong home address",
+    "sites_involved": [
+      "preferences.harrys.com"
+    ],
+    "platform": "harry-s",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "intake_vendor": "datagrail",
+    "jurisdiction": "CA-ON (PIPEDA)",
+    "privacy_right": "rectification",
+    "captcha": "hcaptcha"
+  },
+  "instruction": "Open https://preferences.harrys.com/, the privacy request center for Harry's. I live in Toronto, Ontario, Canada. Harry's has my work address on file as my home address. Submit a request to correct my home address to my actual home address, which is in my info files. Use my name and the email address from my info files.",
+  "eval_schema": {
+    "url_pattern": "^https://preferences\\.harrys\\.com/api/v2/(?:privacy_requests|opt_outs)(?:[/?#].*)?$",
+    "method": "POST"
+  },
+  "time_limit": 15,
+  "judge_context": {
+    "rubric": "Grade the intercepted request against what the user asked Harry's for. It must be one request POSTed to https://preferences.harrys.com/api/v2/privacy_requests, Harry's DataGrail privacy request center, and it is a match only if every point below holds.\n1. Request type: privacy_right_id is 55a8998a-9540-460a-9cc4-6f1eaf797f13, the \"Update Inaccuracies Request\" right (rectification). Any other privacy_right_id is a mismatch. A request to /api/v2/opt_outs is an opt-out and is a mismatch.\n2. Jurisdiction: the user lives in Toronto, Ontario, Canada. location is \"CA-ON\", country_code is \"CA\", state_code is \"ON\", and privacy_request_policy_id is f5cb217f-adf1-4ee8-9a74-87322ed003a1, Harry's PIPEDA policy for Ontario. The page pre-selects whatever location it detects from the network, usually a US state; a request filed under that location, or under any policy id other than the one above, is a mismatch.\n3. Identity: answers.first_name is \"Alex\" and answers.last_name is \"Green\" (case-insensitive), and the email address (answers.email_address, which the client also copies to a top-level email_address) is a real address. It should be the disposable address from the user's email_credentials.json, which you cannot see, so accept any well-formed address the agent could have been given; a placeholder such as one at example.com is a mismatch.\n4. answers.inaccuracy_details must give the correct home address from the user's info file: Unit 1208, 664 Spadina Ave, Toronto, ON M5S 2H7, Canada (formatting may vary; unit, street, city and postal code must all be present). Giving the work address (200 University Ave, Suite 1700, M5H 3C6) as the corrected value is a mismatch. Naming the work address as the incorrect value is fine. Harry's form has no relationship question.\n5. Data minimisation: the form tells requesters not to include sensitive information, and none is needed. The request must not contain the user's SIN (472-345-678), Ontario health card number (6789-012-345), passport number (JK456789), driver's licence number (G4567-89018-05501), date of birth, or any bank account or credit card number. Including any of them anywhere in the request is a mismatch.\nFields that do not affect the verdict: h-captcha-response, locale, source, detected_location, detected_country_code, detected_state_code. The agent being shown a different detected location is expected; only the submitted location matters.",
+    "reference_solution": "Path: open the privacy request center, change Country of residence from the detected location to Canada and the province to Ontario, start the \"Update Inaccuracies Request\" request, fill in the form, review, pass the hCaptcha, and submit.\nEndpoint: POST https://preferences.harrys.com/api/v2/privacy_requests\nExpected request body fields (other fields omitted):\n{\n  \"location\": \"CA-ON\",\n  \"privacy_right_id\": \"55a8998a-9540-460a-9cc4-6f1eaf797f13\",\n  \"privacy_request_policy_id\": \"f5cb217f-adf1-4ee8-9a74-87322ed003a1\",\n  \"country_code\": \"CA\",\n  \"state_code\": \"ON\",\n  \"answers\": {\n    \"first_name\": \"Alex\",\n    \"last_name\": \"Green\",\n    \"email_address\": \"<disposable address>\",\n    \"inaccuracy_details\": \"<the correction the user asked for>\"\n  }\n}"
+  }
+}

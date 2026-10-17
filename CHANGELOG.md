@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added the `privacy-rights` category: 12 tasks in `test-cases/privacy-rights/` in which the agent files privacy requests (deletion, access, portability, correction, opt-out, objection to processing) on live DataGrail and OneTrust request forms for ten companies, as an Ontario resident. Interception is URL-only, so every submission is blocked; the right, jurisdiction, relationship and data minimisation are graded by the judge. See [`test-cases/privacy-rights/README.md`](test-cases/privacy-rights/README.md).
+
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 

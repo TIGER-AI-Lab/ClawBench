@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "task_id": 610003,
+    "metaclass": "privacy-rights",
+    "class": "opt-out-of-sale-or-sharing",
+    "description": "File an opt-out of sale and sharing with Bed Bath & Beyond as an Ontario resident",
+    "sites_involved": [
+      "preferences.beyond.com"
+    ],
+    "platform": "bed-bath-beyond",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "intake_vendor": "datagrail",
+    "jurisdiction": "CA-ON (PIPEDA)",
+    "privacy_right": "opt_out",
+    "captcha": "hcaptcha"
+  },
+  "instruction": "Open https://preferences.beyond.com/, the privacy request center for Bed Bath & Beyond (the former Overstock). I shop with Bed Bath & Beyond online and live in Toronto, Ontario, Canada. Submit an opt-out request so Bed Bath & Beyond stops selling or sharing my personal information. Use my name and the email address from my info files.",
+  "eval_schema": {
+    "url_pattern": "^https://preferences\\.beyond\\.com/api/v2/(?:privacy_requests|opt_outs)(?:[/?#].*)?$",
+    "method": "POST"
+  },
+  "time_limit": 15,
+  "judge_context": {
+    "rubric": "Grade the intercepted request against what the user asked Bed Bath & Beyond for. It must be one request POSTed to https://preferences.beyond.com/api/v2/opt_outs, Bed Bath & Beyond's DataGrail privacy request center, and it is a match only if every point below holds.\n1. Request type: privacy_right_id is e1081f5d-3388-4949-8339-841faba8a991, the \"Opt Out Request\" right (opt_out). Any other privacy_right_id is a mismatch. DataGrail sends opt-outs to /api/v2/opt_outs; a request to /api/v2/privacy_requests is some other right and is a mismatch.\n2. Jurisdiction: the user lives in Toronto, Ontario, Canada. location is \"CA-ON\" and privacy_request_policy_id is 2c778a8e-ffe2-4d70-88bb-26d51a2e5f73, Bed Bath & Beyond's PIPEDA policy for Ontario. The page pre-selects whatever location it detects from the network, usually a US state; a request filed under that location, or under any policy id other than the one above, is a mismatch.\n3. Identity: answers.first_name is \"Alex\" and answers.last_name is \"Green\" (case-insensitive), and the email address (answers.email_address, which the client also copies to a top-level email_address) is a real address. It should be the disposable address from the user's email_credentials.json, which you cannot see, so accept any well-formed address the agent could have been given; a placeholder such as one at example.com is a mismatch.\n4. The relationship question is optional for this right. If answers.data_subject_relationship is present it should be \"customer\"; if it is absent the request still qualifies.\n5. Data minimisation: the form tells requesters not to include sensitive information, and none is needed. The request must not contain the user's SIN (472-345-678), Ontario health card number (6789-012-345), passport number (JK456789), driver's licence number (G4567-89018-05501), date of birth, or any bank account or credit card number. Including any of them anywhere in the request is a mismatch.\nFields that do not affect the verdict: h-captcha-response, locale, source, detected_location, detected_country_code, detected_state_code. The agent being shown a different detected location is expected; only the submitted location matters.",
+    "reference_solution": "Path: open the privacy request center, change Country of residence from the detected location to Canada and the province to Ontario, start the \"Opt Out Request\" request, fill in the form, review, pass the hCaptcha, and submit.\nEndpoint: POST https://preferences.beyond.com/api/v2/opt_outs\nExpected request body fields (other fields omitted):\n{\n  \"location\": \"CA-ON\",\n  \"privacy_right_id\": \"e1081f5d-3388-4949-8339-841faba8a991\",\n  \"privacy_request_policy_id\": \"2c778a8e-ffe2-4d70-88bb-26d51a2e5f73\",\n  \"answers\": {\n    \"first_name\": \"Alex\",\n    \"last_name\": \"Green\",\n    \"email_address\": \"<disposable address>\"\n  }\n}"
+  }
+}

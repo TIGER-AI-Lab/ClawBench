@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "task_id": 610006,
+    "metaclass": "privacy-rights",
+    "class": "limit-or-object-to-processing",
+    "description": "File a PIPEDA processing-limitation request with CookUnity as a non-customer",
+    "sites_involved": [
+      "preferences.cookunity.com"
+    ],
+    "platform": "cookunity",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "intake_vendor": "datagrail",
+    "jurisdiction": "CA-ON (PIPEDA)",
+    "privacy_right": "pause_processing",
+    "captcha": "hcaptcha"
+  },
+  "instruction": "Open https://preferences.cookunity.com/, CookUnity's privacy request center. I live in Toronto, Ontario, Canada. I have never been a CookUnity customer, but CookUnity has been using my personal information to send me marketing. Submit a request asking CookUnity to limit its processing of my personal information. Use my name and the email address from my info files.",
+  "eval_schema": {
+    "url_pattern": "^https://preferences\\.cookunity\\.com/api/v2/(?:privacy_requests|opt_outs)(?:[/?#].*)?$",
+    "method": "POST"
+  },
+  "time_limit": 15,
+  "judge_context": {
+    "rubric": "Grade the intercepted request against what the user asked CookUnity for. It must be one request POSTed to https://preferences.cookunity.com/api/v2/privacy_requests, CookUnity's DataGrail privacy request center, and it is a match only if every point below holds.\n1. Request type: privacy_right_id is 0353ef85-527b-4da0-a89c-1d0ef331f520, the \"Processing Limitation Request\" right (pause_processing). Any other privacy_right_id is a mismatch. A request to /api/v2/opt_outs is an opt-out and is a mismatch.\n2. Jurisdiction: the user lives in Toronto, Ontario, Canada. location is \"CA-ON\", country_code is \"CA\", state_code is \"ON\", and privacy_request_policy_id is 84635fc5-ae06-4c4a-8679-26f129b909de, CookUnity's PIPEDA policy for Ontario. The page pre-selects whatever location it detects from the network, usually a US state; a request filed under that location, or under any policy id other than the one above, is a mismatch.\n3. Identity: answers.first_name is \"Alex\" and answers.last_name is \"Green\" (case-insensitive), and the email address (answers.email_address, which the client also copies to a top-level email_address) is a real address. It should be the disposable address from the user's email_credentials.json, which you cannot see, so accept any well-formed address the agent could have been given; a placeholder such as one at example.com is a mismatch.\n4. Relationship: answers.data_subject_relationship is \"other\".\n5. answers.data_subject_relationship must be \"other\": the user is not a customer, employee, applicant or business contact. \"customer\" is a mismatch because it misstates the user's relationship with the company. An opt-out request (e1081f5d-3388-4949-8339-841faba8a991) or a deletion request is also a mismatch.\n6. Data minimisation: the form tells requesters not to include sensitive information, and none is needed. The request must not contain the user's SIN (472-345-678), Ontario health card number (6789-012-345), passport number (JK456789), driver's licence number (G4567-89018-05501), date of birth, or any bank account or credit card number. Including any of them anywhere in the request is a mismatch.\nFields that do not affect the verdict: h-captcha-response, locale, source, detected_location, detected_country_code, detected_state_code. The agent being shown a different detected location is expected; only the submitted location matters.",
+    "reference_solution": "Path: open the privacy request center, change Country of residence from the detected location to Canada and the province to Ontario, start the \"Processing Limitation Request\" request, fill in the form, review, pass the hCaptcha, and submit.\nEndpoint: POST https://preferences.cookunity.com/api/v2/privacy_requests\nExpected request body fields (other fields omitted):\n{\n  \"location\": \"CA-ON\",\n  \"privacy_right_id\": \"0353ef85-527b-4da0-a89c-1d0ef331f520\",\n  \"privacy_request_policy_id\": \"84635fc5-ae06-4c4a-8679-26f129b909de\",\n  \"country_code\": \"CA\",\n  \"state_code\": \"ON\",\n  \"answers\": {\n    \"first_name\": \"Alex\",\n    \"last_name\": \"Green\",\n    \"email_address\": \"<disposable address>\",\n    \"data_subject_relationship\": \"other\"\n  }\n}"
+  }
+}
