@@ -77,7 +77,7 @@ Execution:
 | `--dry-run` | off | Print the job matrix without running anything |
 | `--output-dir <path>` | `test-output` | Base output directory |
 
-`--harness`, `--judge`, `--no-judge`, `--no-upload`, and the `--browser-*` flags behave as in `clawbench-run`. A `batch-summary.json` is written alongside the per-run directories.
+`--harness`, `--judge`, `--no-judge`, `--no-upload`, and the `--browser-*` flags behave as in `clawbench-run`. A `batch-summary.json` is written alongside the per-run directories; its `stages` block carries the Stage-1 (interception) and Stage-2 (judged) counts separately, which is also what the end-of-batch console line prints. See [`eval/scoring.md`](../eval/scoring.md#always-report-both-stages) for why both are always reported together.
 
 ## `clawbench-rescore`
 
