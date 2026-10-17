@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "task_id": 630006,
+    "metaclass": "shipping-quotes",
+    "class": "unit-conversion",
+    "description": "Get Canada Post rates for a package going from postal code M5S 2H7 in Canada to ZIP code 10001 in the United States",
+    "sites_involved": [
+      "www.canadapost-postescanada.ca"
+    ],
+    "platform": "canada-post",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Canada Post",
+    "skills": [
+      "cross-border destination",
+      "pound/inch to gram/centimetre conversion"
+    ]
+  },
+  "instruction": "Open https://www.canadapost-postescanada.ca/cpc/en/tools/find-a-rate.page. Get Canada Post rates for a package going from postal code M5S 2H7 in Canada to ZIP code 10001 in the United States. It weighs 4.5 lb and measures 12 in long, 10 in wide and 8 in high. Enter it in pounds and inches or convert it correctly to metric. The outcome is the request for the list of rates; paying is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]originPostalCode=[^#]*&originPostalCode=)(?![^#]*[?&]destnZipCode=[^#]*&destnZipCode=)(?![^#]*[?&]destnType=[^#]*&destnType=)(?![^#]*[?&]weight=[^#]*&weight=)(?![^#]*[?&]length=[^#]*&length=)(?![^#]*[?&]width=[^#]*&width=)(?![^#]*[?&]height=[^#]*&height=)(?=[^#]*[?&]originPostalCode=M5S2H7(?:&|#|$))(?=[^#]*[?&]destnZipCode=10001(?:&|#|$))(?=[^#]*[?&]destnType=AMERICAN(?:&|#|$))(?=[^#]*[?&]weight=20(?:3\\d|4\\d|5[0-2])(?:\\.\\d+)?(?:&|#|$))(?=[^#]*[?&]length=30(?:\\.\\d+)?(?:&|#|$))(?=[^#]*[?&]width=25(?:\\.\\d+)?(?:&|#|$))(?=[^#]*[?&]height=20(?:\\.\\d+)?(?:&|#|$))https://www\\.canadapost-postescanada\\.ca/find-a-rate/price\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

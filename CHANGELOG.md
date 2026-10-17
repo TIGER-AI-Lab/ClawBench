@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added the `shipping-quotes` category: 12 tasks in `test-cases/shipping-quotes/` that get price quotes for letters and packages on the public rate tools of USPS, Canada Post, UPS and Purolator, covering unit conversion, item classification, dimensions, destination types and multi-step forms. Every task was verified live in the runtime (12/12 intercepted); `tests/test_shipping_quotes_suite.py` checks each matcher against the captured requests and near misses. See [`test-cases/shipping-quotes/README.md`](test-cases/shipping-quotes/README.md).
+
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 

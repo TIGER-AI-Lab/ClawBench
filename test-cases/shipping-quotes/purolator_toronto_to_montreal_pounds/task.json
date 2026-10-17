@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "task_id": 630011,
+    "metaclass": "shipping-quotes",
+    "class": "domestic-package",
+    "description": "Get an estimate for one piece in your own packaging weighing 5 lb, shipped from postal code M5S 2H7 to postal code H3B 4W8 in Canada",
+    "sites_involved": [
+      "public.purolator.com"
+    ],
+    "platform": "purolator",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Purolator",
+    "skills": [
+      "postal-code lookup",
+      "pound weight"
+    ]
+  },
+  "instruction": "Open https://public.purolator.com/estimate?lang=en, Purolator's Estimate Time & Cost tool. Get an estimate for one piece in your own packaging weighing 5 lb, shipped from postal code M5S 2H7 to postal code H3B 4W8 in Canada. Leave dimensions, protection and other options unset. The outcome is the request for the estimate; shipping is not required.",
+  "eval_schema": {
+    "url_pattern": "^https://public\\.purolator\\.com/estimate/api/estimate(?:[?#].*)?$",
+    "method": "POST",
+    "body": {
+      "senderInformation": {
+        "city": "TORONTO",
+        "provinceCode": "ON",
+        "postalCode": "M5S2H7",
+        "countryCode": "CA"
+      },
+      "receiverInformation": {
+        "city": "MONTREAL",
+        "provinceStateCode": "QC",
+        "postalZipCode": "H3B4W8",
+        "countryCode": "CA"
+      },
+      "shipmentInformation": {
+        "packageType": "3",
+        "unitOfMeasurement": "Imperial",
+        "totalWeight": 5,
+        "totalPackages": 1,
+        "shipmentLevelOptions": [],
+        "packageInformation": [
+          {
+            "packageWeight": 5,
+            "packageLevelOptions": []
+          }
+        ]
+      }
+    }
+  },
+  "time_limit": 10
+}

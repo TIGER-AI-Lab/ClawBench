@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "task_id": 630007,
+    "metaclass": "shipping-quotes",
+    "class": "international-package",
+    "description": "Get Canada Post rates for a package sent from postal code M5S 2H7 to London, United Kingdom (postcode SW1A 1AA)",
+    "sites_involved": [
+      "www.canadapost-postescanada.ca"
+    ],
+    "platform": "canada-post",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Canada Post",
+    "skills": [
+      "international destination selection"
+    ]
+  },
+  "instruction": "Open https://www.canadapost-postescanada.ca/cpc/en/tools/find-a-rate.page. Get Canada Post rates for a package sent from postal code M5S 2H7 to London, United Kingdom (postcode SW1A 1AA). It weighs 1.5 kg and is 30 cm long, 20 cm wide and 10 cm high. The outcome is the request for the list of rates; paying is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]originPostalCode=[^#]*&originPostalCode=)(?![^#]*[?&]destnCountryCode=[^#]*&destnCountryCode=)(?![^#]*[?&]destnType=[^#]*&destnType=)(?![^#]*[?&]weight=[^#]*&weight=)(?![^#]*[?&]length=[^#]*&length=)(?![^#]*[?&]width=[^#]*&width=)(?![^#]*[?&]height=[^#]*&height=)(?=[^#]*[?&]originPostalCode=M5S2H7(?:&|#|$))(?=[^#]*[?&]destnCountryCode=GB(?:&|#|$))(?=[^#]*[?&]destnType=INTERNATIONAL(?:&|#|$))(?=[^#]*[?&]weight=1500(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]length=30(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]width=20(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]height=10(?:\\.0+)?(?:&|#|$))https://www\\.canadapost-postescanada\\.ca/find-a-rate/price\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

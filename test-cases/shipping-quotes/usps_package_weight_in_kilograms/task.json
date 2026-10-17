@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "task_id": 630003,
+    "metaclass": "shipping-quotes",
+    "class": "unit-conversion",
+    "description": "Get USPS retail postage prices for a package that weighs 2.5 kg, mailed from ZIP code 92093 to ZIP code 02139",
+    "sites_involved": [
+      "postcalc.usps.com"
+    ],
+    "platform": "usps",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "USPS",
+    "skills": [
+      "kilogram to pound/ounce conversion"
+    ]
+  },
+  "instruction": "Open https://postcalc.usps.com/. Get USPS retail postage prices for a package that weighs 2.5 kg, mailed from ZIP code 92093 to ZIP code 02139. Use the Package shape. The weight is given in kilograms, so either use the calculator's metric option or convert it correctly to pounds and ounces. The outcome is the request for the list of mail services and prices; buying postage is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]country=[^#]*&country=)(?![^#]*[?&]oz=[^#]*&oz=)(?![^#]*[?&]dz=[^#]*&dz=)(?![^#]*[?&]m=[^#]*&m=)(?=[^#]*[?&]country=0(?:&|#|$))(?=[^#]*[?&]oz=92093(?:&|#|$))(?=[^#]*[?&]dz=02139(?:&|#|$))(?=[^#]*[?&]m=6(?:&|#|$))(?:(?=[^#]*[?&]p=5(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]o=8(?:\\.\\d+)?(?:&|#|$))|(?=[^#]*[?&]p=(?:0(?:\\.0+)?)?(?:&|#|$))(?=[^#]*[?&]o=88(?:\\.\\d+)?(?:&|#|$)))https://postcalc\\.usps\\.com/Calculator/MailServices\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

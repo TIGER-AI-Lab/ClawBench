@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "task_id": 630008,
+    "metaclass": "shipping-quotes",
+    "class": "letter",
+    "description": "Get the Canada Post rate for a letter in a standard envelope weighing 80 g, sent from postal code M5S 2H7 to postal code V6B 1A1 in Canada",
+    "sites_involved": [
+      "www.canadapost-postescanada.ca"
+    ],
+    "platform": "canada-post",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Canada Post",
+    "skills": [
+      "letter vs package",
+      "gram weight"
+    ]
+  },
+  "instruction": "Open https://www.canadapost-postescanada.ca/cpc/en/tools/find-a-rate.page. Get the Canada Post rate for a letter in a standard envelope weighing 80 g, sent from postal code M5S 2H7 to postal code V6B 1A1 in Canada. Choose the letter or document option, not a package. The outcome is the request for the letter rate; buying stamps is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]depositPostalCode=[^#]*&depositPostalCode=)(?![^#]*[?&]weight=[^#]*&weight=)(?=[^#]*[?&]depositPostalCode=M5S2H7(?:&|#|$))(?=[^#]*[?&]weight=80(?:\\.0+)?(?:&|#|$))https://www\\.canadapost-postescanada\\.ca/find-a-rate/lm/price\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}
