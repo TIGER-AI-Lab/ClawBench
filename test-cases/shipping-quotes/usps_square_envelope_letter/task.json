@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "task_id": 630004,
+    "metaclass": "shipping-quotes",
+    "class": "nonmachinable-letter",
+    "description": "Get USPS retail postage prices for a square greeting-card envelope weighing 2 oz, mailed from ZIP code 98101 to ZIP code 10001",
+    "sites_involved": [
+      "postcalc.usps.com"
+    ],
+    "platform": "usps",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "USPS",
+    "skills": [
+      "letter vs flat vs parcel",
+      "nonmachinable surcharge"
+    ]
+  },
+  "instruction": "Open https://postcalc.usps.com/. Get USPS retail postage prices for a square greeting-card envelope weighing 2 oz, mailed from ZIP code 98101 to ZIP code 10001. It is a letter, not a postcard or large envelope, and its square shape matters for the price, so describe it as a square envelope. The outcome is the request for the list of mail services and prices; buying postage is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]country=[^#]*&country=)(?![^#]*[?&]oz=[^#]*&oz=)(?![^#]*[?&]dz=[^#]*&dz=)(?![^#]*[?&]m=[^#]*&m=)(?![^#]*[?&]o=[^#]*&o=)(?![^#]*[?&]ct4=[^#]*&ct4=)(?=[^#]*[?&]country=0(?:&|#|$))(?=[^#]*[?&]oz=98101(?:&|#|$))(?=[^#]*[?&]dz=10001(?:&|#|$))(?=[^#]*[?&]m=1(?:&|#|$))(?=[^#]*[?&]o=2(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]ct4=True(?:&|#|$))(?=[^#]*[?&]p=(?:0(?:\\.0+)?)?(?:&|#|$))https://postcalc\\.usps\\.com/Calculator/MailServices\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

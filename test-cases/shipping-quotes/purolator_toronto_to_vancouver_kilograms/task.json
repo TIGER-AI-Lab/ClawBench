@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "task_id": 630012,
+    "metaclass": "shipping-quotes",
+    "class": "unit-selection",
+    "description": "Get an estimate for one piece in your own packaging weighing 2 kg, shipped from postal code M5S 2H7 to postal code V6B 1A1 in Canada",
+    "sites_involved": [
+      "public.purolator.com"
+    ],
+    "platform": "purolator",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Purolator",
+    "skills": [
+      "non-default unit",
+      "postal-code lookup"
+    ]
+  },
+  "instruction": "Open https://public.purolator.com/estimate?lang=en, Purolator's Estimate Time & Cost tool. Get an estimate for one piece in your own packaging weighing 2 kg, shipped from postal code M5S 2H7 to postal code V6B 1A1 in Canada. The tool defaults to pounds, so set the weight unit to kilograms. Leave dimensions, protection and other options unset. The outcome is the request for the estimate; shipping is not required.",
+  "eval_schema": {
+    "url_pattern": "^https://public\\.purolator\\.com/estimate/api/estimate(?:[?#].*)?$",
+    "method": "POST",
+    "body": {
+      "senderInformation": {
+        "city": "TORONTO",
+        "provinceCode": "ON",
+        "postalCode": "M5S2H7",
+        "countryCode": "CA"
+      },
+      "receiverInformation": {
+        "city": "VANCOUVER",
+        "provinceStateCode": "BC",
+        "postalZipCode": "V6B1A1",
+        "countryCode": "CA"
+      },
+      "shipmentInformation": {
+        "packageType": "3",
+        "unitOfMeasurement": "Metric",
+        "totalWeight": 2,
+        "totalPackages": 1,
+        "shipmentLevelOptions": [],
+        "packageInformation": [
+          {
+            "packageWeight": 2,
+            "packageLevelOptions": []
+          }
+        ]
+      }
+    }
+  },
+  "time_limit": 10
+}

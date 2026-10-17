@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "task_id": 630002,
+    "metaclass": "shipping-quotes",
+    "class": "large-package",
+    "description": "Get USPS retail postage prices for a rectangular box weighing 12 lb that measures 24 inches long, 16 inches wide and 12 inches high, mailed from ZIP code 60601 ",
+    "sites_involved": [
+      "postcalc.usps.com"
+    ],
+    "platform": "usps",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "USPS",
+    "skills": [
+      "large-package rule",
+      "rectangular dimensions",
+      "length is the longest side"
+    ]
+  },
+  "instruction": "Open https://postcalc.usps.com/. Get USPS retail postage prices for a rectangular box weighing 12 lb that measures 24 inches long, 16 inches wide and 12 inches high, mailed from ZIP code 60601 to ZIP code 94103. Because one side is over 12 inches it is a Large Package; enter its dimensions in inches. The outcome is the request for the list of mail services and prices; buying postage is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]country=[^#]*&country=)(?![^#]*[?&]oz=[^#]*&oz=)(?![^#]*[?&]dz=[^#]*&dz=)(?![^#]*[?&]m=[^#]*&m=)(?![^#]*[?&]p=[^#]*&p=)(?![^#]*[?&]rect=[^#]*&rect=)(?![^#]*[?&]l=[^#]*&l=)(?=[^#]*[?&]country=0(?:&|#|$))(?=[^#]*[?&]oz=60601(?:&|#|$))(?=[^#]*[?&]dz=94103(?:&|#|$))(?=[^#]*[?&]m=7(?:&|#|$))(?=[^#]*[?&]p=12(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]rect=True(?:&|#|$))(?=[^#]*[?&]l=24(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]o=(?:0(?:\\.0+)?)?(?:&|#|$))(?:(?=[^#]*[?&]w=16(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]h=12(?:\\.0+)?(?:&|#|$))|(?=[^#]*[?&]w=12(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]h=16(?:\\.0+)?(?:&|#|$)))https://postcalc\\.usps\\.com/Calculator/MailServices\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

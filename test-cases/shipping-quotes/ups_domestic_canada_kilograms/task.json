@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "task_id": 630010,
+    "metaclass": "shipping-quotes",
+    "class": "domestic-package",
+    "description": "Get UPS shipping times and costs for one 2 kg package in your own packaging, sent within Canada from Toronto, postal code M5S 2H7, to Calgary, postal code T2P 1",
+    "sites_involved": [
+      "wwwapps.ups.com"
+    ],
+    "platform": "ups",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "UPS",
+    "skills": [
+      "unit selector",
+      "domestic Canada"
+    ]
+  },
+  "instruction": "Open https://wwwapps.ups.com/ctc/request?loc=en_CA, UPS's Calculate Time and Cost tool. Get UPS shipping times and costs for one 2 kg package in your own packaging, sent within Canada from Toronto, postal code M5S 2H7, to Calgary, postal code T2P 1J9. Enter the weight in kilograms and enter both postal codes exactly as written, with the space. No dimensions are needed. The outcome is the request for times and costs; shipping or paying is not required.",
+  "eval_schema": {
+    "url_pattern": "^https://wwwapps\\.ups\\.com/ctc/results(?:[?#].*)?$",
+    "method": "POST",
+    "body": {
+      "origCountry": "CA",
+      "origPostalCode": "M5S 2H7",
+      "destCountry": "CA",
+      "destPostalCode": "T2P 1J9",
+      "container": "02",
+      "packages": "1",
+      "weight1": "2",
+      "shipWeightUnit": "KGS"
+    }
+  },
+  "time_limit": 10
+}

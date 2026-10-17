@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "task_id": 630005,
+    "metaclass": "shipping-quotes",
+    "class": "domestic-package",
+    "description": "Get Canada Post rates for a package weighing 3.2 kg that is 40 cm long, 30 cm wide and 20 cm high, sent from postal code M5S 2H7 to postal code V6B 1A1 in Canad",
+    "sites_involved": [
+      "www.canadapost-postescanada.ca"
+    ],
+    "platform": "canada-post",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "Canada Post",
+    "skills": [
+      "postal-code entry",
+      "metric weight and dimensions"
+    ]
+  },
+  "instruction": "Open https://www.canadapost-postescanada.ca/cpc/en/tools/find-a-rate.page. Get Canada Post rates for a package weighing 3.2 kg that is 40 cm long, 30 cm wide and 20 cm high, sent from postal code M5S 2H7 to postal code V6B 1A1 in Canada. The outcome is the request for the list of rates; paying or creating a label is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]originPostalCode=[^#]*&originPostalCode=)(?![^#]*[?&]destnPostalCode=[^#]*&destnPostalCode=)(?![^#]*[?&]destnType=[^#]*&destnType=)(?![^#]*[?&]weight=[^#]*&weight=)(?![^#]*[?&]length=[^#]*&length=)(?![^#]*[?&]width=[^#]*&width=)(?![^#]*[?&]height=[^#]*&height=)(?=[^#]*[?&]originPostalCode=M5S2H7(?:&|#|$))(?=[^#]*[?&]destnPostalCode=V6B1A1(?:&|#|$))(?=[^#]*[?&]destnType=DOMESTIC(?:&|#|$))(?=[^#]*[?&]weight=3200(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]length=40(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]width=30(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]height=20(?:\\.0+)?(?:&|#|$))https://www\\.canadapost-postescanada\\.ca/find-a-rate/price\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

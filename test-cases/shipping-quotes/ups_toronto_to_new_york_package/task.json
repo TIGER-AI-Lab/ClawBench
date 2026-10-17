@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "task_id": 630009,
+    "metaclass": "shipping-quotes",
+    "class": "international-package",
+    "description": "Get UPS shipping times and costs for one package in your own packaging, sent from Toronto, Canada, postal code M5S 2H7, to New York, United States, ZIP code 100",
+    "sites_involved": [
+      "wwwapps.ups.com"
+    ],
+    "platform": "ups",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "UPS",
+    "skills": [
+      "two-step form",
+      "customs value",
+      "imperial package spec"
+    ]
+  },
+  "instruction": "Open https://wwwapps.ups.com/ctc/request?loc=en_CA, UPS's Calculate Time and Cost tool. Get UPS shipping times and costs for one package in your own packaging, sent from Toronto, Canada, postal code M5S 2H7, to New York, United States, ZIP code 10001. The contents have a customs value of 80 CAD. The package weighs 6 lb and measures 14 x 10 x 6 inches (length x width x height). Enter the postal code exactly as M5S 2H7. The outcome is the request for times and costs; shipping or paying is not required.",
+  "eval_schema": {
+    "url_pattern": "^https://wwwapps\\.ups\\.com/ctc/results(?:[?#].*)?$",
+    "method": "POST",
+    "body": {
+      "origCountry": "CA",
+      "origPostalCode": "M5S 2H7",
+      "destCountry": "US",
+      "destPostalCode": "10001",
+      "currencyScalar": "80",
+      "currencyUnits": "CAD",
+      "container": "02",
+      "packages": "1",
+      "weight1": "6",
+      "shipWeightUnit": "LBS",
+      "length1": "14",
+      "width1": "10",
+      "height1": "6"
+    }
+  },
+  "time_limit": 10
+}

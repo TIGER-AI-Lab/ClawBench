@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "task_id": 630001,
+    "metaclass": "shipping-quotes",
+    "class": "domestic-package",
+    "description": "Get USPS retail postage prices for a package weighing 3 lb 4 oz, mailed from ZIP code 98101 to ZIP code 10001",
+    "sites_involved": [
+      "postcalc.usps.com"
+    ],
+    "platform": "usps",
+    "common_info": {
+      "email_credentials": "credentials to use the assigned disposable email account",
+      "user_info": "alex_green_personal_info.json; the dummy user's personal information",
+      "user_resume": "PDF resume with disposable email account injected"
+    },
+    "carrier": "USPS",
+    "skills": [
+      "shape selection",
+      "split pound and ounce weight entry"
+    ]
+  },
+  "instruction": "Open https://postcalc.usps.com/. Get USPS retail postage prices for a package weighing 3 lb 4 oz, mailed from ZIP code 98101 to ZIP code 10001. Choose the Package shape, not a letter, large envelope or large package, and enter the weight as 3 pounds and 4 ounces. The outcome is the request for the list of mail services and prices; buying postage or printing a label is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]country=[^#]*&country=)(?![^#]*[?&]oz=[^#]*&oz=)(?![^#]*[?&]dz=[^#]*&dz=)(?![^#]*[?&]m=[^#]*&m=)(?![^#]*[?&]p=[^#]*&p=)(?![^#]*[?&]o=[^#]*&o=)(?=[^#]*[?&]country=0(?:&|#|$))(?=[^#]*[?&]oz=98101(?:&|#|$))(?=[^#]*[?&]dz=10001(?:&|#|$))(?=[^#]*[?&]m=6(?:&|#|$))(?=[^#]*[?&]p=3(?:\\.0+)?(?:&|#|$))(?=[^#]*[?&]o=4(?:\\.0+)?(?:&|#|$))https://postcalc\\.usps\\.com/Calculator/MailServices\\?",
+    "method": "GET"
+  },
+  "time_limit": 10
+}
