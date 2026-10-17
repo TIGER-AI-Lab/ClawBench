@@ -4,10 +4,12 @@ Workflow:
   1. Download a model's V2 trace subset from TIGER-Lab/ClawBenchV2Trace.
   2. Re-judge it using `deepseek-v4-pro` under the lenient + strict rubrics
      (default; configurable via --rubric).
-  3. Compare your local Intercept%, Reward(lenient)%, Reward(strict)% against
-     the published row.
-  4. Print PASS if all metrics land within --tolerance pp of ours, else FAIL
-     with the per-metric delta.
+  3. Compare your local Intercept% and the requested Reward(lenient)% /
+     Reward(strict)% columns against the published row.
+  4. Print PASS (exit 0) if every compared metric lands within --tolerance pp
+     of ours, FAIL (exit 1) with the per-metric delta if one does not, or
+     INVALID (exit 3) if the evidence is incomplete: a different task count,
+     a requested metric that was never computed, or judge-inconclusive results.
 
 Example:
   clawbench-reproduce --model deepseek-v4-flash
@@ -40,6 +42,13 @@ PUBLISHED_V2_HERMES: dict[str, tuple[float, float, float, int]] = {
     # Aliases for common short names
     "deepseek-v4-flash": (3.1, 2.3, 0.0, 129),
     "glm-4.5-air": (4.6, 2.3, 0.8, 130),
+}
+
+# Reward columns each --rubric choice asks for; the others are not evaluated.
+RUBRIC_COLUMNS: dict[str, tuple[str, ...]] = {
+    "lenient": ("lenient",),
+    "strict": ("strict",),
+    "both": ("lenient", "strict"),
 }
 
 REPO_ID = "TIGER-Lab/ClawBenchV2Trace"
@@ -97,21 +106,64 @@ def rescore(batch_dir: Path, judge_model: str, rubric: str) -> dict[str, Any]:
     return json.loads(summary_p.read_text())
 
 
+def observed_metrics(
+    summary: dict[str, Any],
+) -> tuple[float, float | None, float | None, int]:
+    """Observed row from a rescore summary. None marks a rubric that did not run."""
+    n = summary["n_total"]
+
+    def pct(key: str) -> float | None:
+        return 100.0 * summary[key] if key in summary else None
+
+    intercepted = 100.0 * summary["n_intercepted"] / n if n else 0.0
+    return (intercepted, pct("reward_pct_lenient"), pct("reward_pct_strict"), n)
+
+
+def inconclusive_count(summary: dict[str, Any], rubric: str) -> int:
+    """Judge results without a verdict, counted for the requested rubrics only."""
+    return sum(summary.get(f"n_judge_err_{r}", 0) for r in RUBRIC_COLUMNS[rubric])
+
+
 def verdict(
-    observed: tuple[float, float, float, int],
+    observed: tuple[float, float | None, float | None, int],
     published: tuple[float, float, float, int],
     tolerance: float,
-) -> tuple[bool, str]:
+    rubric: str = "both",
+    inconclusive: int = 0,
+) -> tuple[str, str]:
+    """Return "pass", "fail" or "invalid" (incomplete evidence) and the table."""
+    requested = RUBRIC_COLUMNS[rubric]
     labels = ["Intercepted%", "Reward(lenient)%", "Reward(strict)%"]
+    wanted = [True, "lenient" in requested, "strict" in requested]
     lines = [f"  {'metric':<20} {'observed':>10} {'published':>10} {'delta':>10}"]
-    ok = True
-    for lbl, obs, pub in zip(labels, observed[:3], published[:3]):
+    outcome = "pass"
+    n_observed, n_published = observed[3], published[3]
+    if n_observed == 0 or n_observed != n_published:
+        outcome = "invalid"
+        lines.append(
+            f"  {'tasks':<20} {n_observed:>10} {n_published:>10} "
+            f"{n_observed - n_published:>+10} [INVALID]"
+        )
+    if inconclusive:
+        outcome = "invalid"
+        lines.append(
+            f"  {'judge inconclusive':<20} {inconclusive:>10} {'':>21} [INVALID]"
+        )
+    for lbl, want, obs, pub in zip(labels, wanted, observed[:3], published[:3]):
+        if not want:
+            lines.append(f"  {lbl:<20} {'not evaluated':>25}")
+            continue
+        if obs is None:
+            outcome = "invalid"
+            lines.append(f"  {lbl:<20} {'missing':>10} {pub:>9.1f}% {'':>10} [INVALID]")
+            continue
         d = obs - pub
         flag = "OK" if abs(d) <= tolerance else "FAIL"
-        if flag == "FAIL":
-            ok = False
+        # A mismatch measured on incomplete evidence stays invalid.
+        if flag == "FAIL" and outcome == "pass":
+            outcome = "fail"
         lines.append(f"  {lbl:<20} {obs:>9.1f}% {pub:>9.1f}% {d:>+8.1f}pp [{flag}]")
-    return ok, "\n".join(lines)
+    return outcome, "\n".join(lines)
 
 
 @contextmanager
@@ -206,20 +258,28 @@ def main() -> int:
         print(f"\n[2/3] Re-judge with {args.judge_model} (rubric={args.rubric}) ...")
         summary = rescore(inner_batch, args.judge_model, args.rubric)
 
-        n = summary["n_total"]
-        observed_icpt = 100.0 * summary["n_intercepted"] / n if n else 0.0
-        observed_lenient = 100.0 * summary.get("reward_pct_lenient", 0)
-        observed_strict = 100.0 * summary.get("reward_pct_strict", 0)
-        observed = (observed_icpt, observed_lenient, observed_strict, n)
-
         print("\n[3/3] Compare to published row ...")
-        ok, table = verdict(observed, published, args.tolerance)
+        outcome, table = verdict(
+            observed_metrics(summary),
+            published,
+            args.tolerance,
+            rubric=args.rubric,
+            inconclusive=inconclusive_count(summary, args.rubric),
+        )
         print(table)
         print()
-        if ok:
+        if outcome == "pass":
             print(
                 f"✓ PASS — reproduction within ±{args.tolerance} pp of published numbers."
             )
+        elif outcome == "invalid":
+            print(
+                "! INVALID — the evidence cannot confirm or refute the published row."
+            )
+            print("  Possible causes:")
+            print("  - Partial download: the task count differs from the published n.")
+            print("  - A requested rubric was never judged (check --rubric).")
+            print("  - The judge returned no verdict for some runs; rescore and retry.")
         else:
             print(
                 f"✗ FAIL — at least one metric deviates more than ±{args.tolerance} pp."
@@ -231,7 +291,8 @@ def main() -> int:
             )
             print("  - HF dataset rev drift — try `hf download --revision <commit>`.")
 
-        return 0 if ok else 1
+        # 3 is also run.py's exit code for "judge never rendered a verdict".
+        return {"pass": 0, "fail": 1, "invalid": 3}[outcome]
 
 
 if __name__ == "__main__":
