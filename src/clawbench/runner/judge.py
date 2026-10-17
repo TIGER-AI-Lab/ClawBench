@@ -313,13 +313,26 @@ Reply with ONLY a single-line JSON object, no markdown fences, no extra prose:
 """
 
 
+# judge_context keys the answer judge reads, labelled to the judge by key.
+# Every one of these must be a declared property of judge_context in
+# test-cases/task.schema.json, which sets additionalProperties: false: a key
+# only listed here is unreachable, because no schema-valid task can set it.
+# tests/test_answer_judge.py holds the two lists together.
+ANSWER_CONTEXT_KEYS = (
+    "rubric",
+    "reference_solution",
+    "gold_answer",
+    "source_task_yaml",
+)
+
+
 def _build_answer_msg(
     instruction: str, answer: str, judge_context: dict[str, Any] | None
 ) -> str:
     rubric = ""
     if isinstance(judge_context, dict):
         pieces = []
-        for key in ("rubric", "reference_solution", "gold_answer", "source_task_yaml"):
+        for key in ANSWER_CONTEXT_KEYS:
             value = judge_context.get(key)
             if isinstance(value, str) and value.strip():
                 pieces.append(f"{key}:\n{value.strip()[:6000]}")
