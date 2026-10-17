@@ -1,6 +1,8 @@
 # CLI reference
 
-Every ClawBench command. From a PyPI install run them directly (`clawbench-run …`); from a source checkout prefix with `uv run` (`uv run clawbench-run …`).
+[Documentation index](README.md) · [Getting started](getting-started.md)
+
+Command overview and commonly used options. From a PyPI install run commands directly (`clawbench-run …`); from a source checkout prefix with `uv run` (`uv run clawbench-run …`). Run any command with `--help` for its complete option list.
 
 | Command | What it does |
 | --- | --- |
@@ -8,9 +10,11 @@ Every ClawBench command. From a PyPI install run them directly (`clawbench-run �
 | `clawbench-run` | One task, one model (or human mode). |
 | `clawbench-batch` | A matrix of models × cases. |
 | `clawbench-rescore` | Re-judge trajectories you already have, without re-running agents. |
+| `clawbench-analyze` | Summarize batch success rates and failure categories. |
 | `clawbench-reproduce` | Download published traces for one leaderboard row and check you reproduce it. |
 | `clawbench-harbor-adapt` | Convert V2 into a Harbor dataset — see [`harbor.md`](harbor.md). |
 | `clawbench-edgebench-adapt`, `clawbench-edgebench-judge` | EdgeBench/SForge export — see [`edgebench.md`](edgebench.md). |
+| `clawbench-prorl-submit`, `clawbench-prorl-mock` | Submit RL rollouts or run an offline gateway mock — see [`prorl-rl-env.md`](prorl-rl-env.md). |
 
 `./run.sh` from a source checkout is a shortcut for the TUI.
 
@@ -18,8 +22,8 @@ Every ClawBench command. From a PyPI install run them directly (`clawbench-run �
 
 | Suite | Path | Tasks | Selector |
 | --- | --- | ---: | --- |
-| V1 | [`test-cases/v1/`](../test-cases/v1/) | 152 | *(default)* |
-| V2 | [`test-cases/v2/`](../test-cases/v2/) | 129 | `--cases-suite v2` |
+| V1 | [`test-cases/v1/`](../test-cases/v1/) | 152 | `--cases-suite v1` |
+| V2 | [`test-cases/v2/`](../test-cases/v2/) | 129 | `--cases-suite v2` *(default)* |
 | Lite | [`test-cases/v1-lite/`](../test-cases/v1-lite/) | 20 | `--cases-suite v1-lite` |
 | Claw-Eval | [`test-cases/claw-eval/`](../test-cases/claw-eval/) | 19 | `--cases-suite claw-eval` |
 | Your own | anywhere | — | `--cases-dir <path>` |
@@ -36,7 +40,7 @@ clawbench-run <case-dir> --human      # human reference run
 | Flag | Default | What it does |
 | --- | --- | --- |
 | `--human` | off | Expose Chrome via noVNC instead of running an agent |
-| `--harness <name>` | `openclaw` | Agent scaffold; see the harness table in the [README](../README.md#quick-start) |
+| `--harness <name>` | `openclaw` | Agent scaffold; see [harness selection](getting-started.md#choose-a-harness) |
 | `--judge <model>` | `deepseek-v4-pro` | Model key in `models/models.yaml` used as the LLM judge |
 | `--no-judge` | off | Skip the judge stage — pass = intercepted (stage 1 only) |
 | `--output-dir <path>` | `<project>/test-output` | Where run directories are written |
@@ -73,7 +77,8 @@ Execution:
 | --- | --- | --- |
 | `--max-concurrent <n>` | 2 local, 1 Kernel/Browserbase | Parallel jobs |
 | `--stagger-delay <s>` | 15 | Minimum seconds between consecutive container starts (rolling start) |
-| `--resume <dir>` | — | Reuse a previous batch's output directory and skip finished runs |
+| `--job-timeout <minutes>` | Task limit plus setup/collection allowance | Per-job wall-clock limit; `0` disables the bound |
+| `--resume <dir>` | — | Reuse a previous batch's output directory; skip jobs with an existing batch log, including failed or timed-out attempts |
 | `--dry-run` | off | Print the job matrix without running anything |
 | `--output-dir <path>` | `test-output` | Base output directory |
 
@@ -99,6 +104,19 @@ clawbench-rescore <run-or-batch-dir> --judge-model deepseek-v4-pro --rubric both
 | `--no-eval-results` | off | Skip writing the `eval_results/` artifact |
 | `--models-yaml <path>`, `--sweep-root <path>` | — | Override config / sweep locations |
 
+## `clawbench-analyze`
+
+Summarize a completed batch's interception and judge rates, failure categories,
+and agent self-report gap. This reads existing artifacts without calling a judge.
+
+```bash
+clawbench-analyze --runs-dir test-output/batch-<timestamp> --out report.md
+clawbench-analyze --runs-dir test-output/batch-<timestamp> --json
+```
+
+`--runs-dir` is required. With no `--out`, the report is printed to stdout;
+`--json` selects JSON instead of Markdown.
+
 ## `clawbench-reproduce`
 
 Download the published traces for one leaderboard row, re-judge them, and compare.
@@ -123,7 +141,9 @@ See [Reproduce the leaderboard](../README.md#reproduce-the-leaderboard) for the 
 | Variable | Used for |
 | --- | --- |
 | `CONTAINER_ENGINE` | Force `docker` or `podman` |
+| `CLAWBENCH_WORKSPACE` | Override the mutable workspace for model configuration and default single-run outputs; batch output defaults to `test-output` under the invocation directory |
 | `HF_TOKEN` | Optional upload of runs to HuggingFace |
+| `HF_REPO_ID` | Target HuggingFace dataset repository; required together with `HF_TOKEN` for uploads |
 | `BROWSERBASE_API_KEY` | Browserbase runtime (from `.env.local`) |
 | `KERNEL_API_KEY` | Kernel runtime (from `.env.local`) |
 | `KERNEL_BASE_URL` | Optional Kernel API base URL override |

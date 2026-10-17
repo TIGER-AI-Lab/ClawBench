@@ -192,7 +192,7 @@ def task_toml(
     escaped_package = json.dumps(package_name)
     cdp_url = REMOTE_BRIDGE_CDP_URL if browser_runtime == "kernel" else LOCAL_CDP_URL
     kernel_env = ""
-    mcp_servers = ""
+    mcp_servers = mcp_servers_toml([playwright_mcp_server(cdp_url)])
     if browser_runtime == "kernel":
         runtime_options_line = (
             f"\nCLAWBENCH_BROWSER_RUNTIME_OPTIONS = {json.dumps(browser_runtime_options)}"
@@ -206,7 +206,6 @@ def task_toml(
             + runtime_options_line
             + '\nCLAWBENCH_RECORDING_MODE = "provider-download"'
         )
-        mcp_servers = mcp_servers_toml([playwright_mcp_server(REMOTE_BRIDGE_CDP_URL)])
     healthcheck_command = (
         "curl -sf http://127.0.0.1:7878/api/status | grep -q '"
         + '\\"eval_interceptor_ready\\":true'

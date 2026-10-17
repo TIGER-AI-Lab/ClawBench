@@ -1,0 +1,15 @@
+{
+  "instruction": "Open https://waterdata.usgs.gov/monitoring-location/USGS-01646500/. Select Daily data for water temperature in degrees Celsius from the active multiparameter sonde (not discontinued depth-specific sensors), for September 12-13, 2025. In Download data select Daily data - Mean and initiate its CSV request. A Maximum or Minimum request alone does not satisfy this task. The outcome is initiation of the correct data request; a saved ZIP is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)time_series_id=[^#]*&time_series_id=)(?![^#]*(?:\\?|&)time=[^#]*&time=)(?![^#]*(?:\\?|&)sortby=[^#]*&sortby=)(?![^#]*(?:\\?|&)limit=[^#]*&limit=)(?![^#]*(?:\\?|&)f=[^#]*&f=)(?![^#]*(?:\\?|&)api_key=[^#]*&api_key=)https://api\\.waterdata\\.usgs\\.gov/ogcapi/v0/collections/daily/items\\?(?:time_series_id|time|sortby|limit|f|api_key)=[^&#]+(?:&(?:time_series_id|time|sortby|limit|f|api_key)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "time_series_id": "40bfcf380ef240e18699ee4875350640",
+      "time": "2025-09-12T00:00:00.000Z/2025-09-13T00:00:00.000Z",
+      "sortby": "-time",
+      "limit": "50000",
+      "f": "csv"
+    }
+  },
+  "time_limit": 10
+}

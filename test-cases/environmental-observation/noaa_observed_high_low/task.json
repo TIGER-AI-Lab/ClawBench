@@ -1,0 +1,18 @@
+{
+  "instruction": "Open https://tidesandcurrents.noaa.gov/waterlevels.html?id=9414290. Request verified observed high and low water events at San Francisco for September 12-13 2025 in metres relative to MLLW and GMT. Choose H/L and apply it with Data Only. Request observed tide extrema, not predicted tides or an hourly/six-minute series. The outcome is initiation of the correctly configured observation-data request; a saved file is not required. Use Data Only to initiate the JSON observation-data request.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)product=[^#]*&product=)(?![^#]*(?:\\?|&)begin_date=[^#]*&begin_date=)(?![^#]*(?:\\?|&)end_date=[^#]*&end_date=)(?![^#]*(?:\\?|&)datum=[^#]*&datum=)(?![^#]*(?:\\?|&)station=[^#]*&station=)(?![^#]*(?:\\?|&)time_zone=[^#]*&time_zone=)(?![^#]*(?:\\?|&)units=[^#]*&units=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)application=[^#]*&application=)https://api\\.tidesandcurrents\\.noaa\\.gov/api/prod/datagetter\\?(?:product|begin_date|end_date|datum|station|time_zone|units|format|application)=[^&#]+(?:&(?:product|begin_date|end_date|datum|station|time_zone|units|format|application)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "product": "high_low",
+      "begin_date": "20250912",
+      "end_date": "20250913",
+      "datum": "MLLW",
+      "station": "9414290",
+      "time_zone": "GMT",
+      "units": "metric",
+      "format": "json"
+    }
+  },
+  "time_limit": 10
+}

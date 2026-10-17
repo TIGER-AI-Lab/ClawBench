@@ -149,7 +149,19 @@ def test_local_runtime_default_has_no_kernel_hooks(tmp_path: Path) -> None:
 
     config = tomllib.loads((out / "task.toml").read_text())
     assert config["metadata"]["browser_runtime"] == "local"
-    assert "mcp_servers" not in config["environment"]
+    assert config["environment"]["mcp_servers"] == [
+        {
+            "name": "playwright",
+            "transport": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                f"{PLAYWRIGHT_MCP_PACKAGE}@{PLAYWRIGHT_MCP_VERSION}",
+                "--cdp-endpoint",
+                "http://127.0.0.1:9223",
+            ],
+        }
+    ]
     assert config["environment"]["env"]["PLAYWRIGHT_CDP_URL"] == "http://127.0.0.1:9223"
     assert config["environment"]["env"].get("CLAWBENCH_HARBOR_BROWSER_RUNTIME") is None
 

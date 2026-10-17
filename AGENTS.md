@@ -71,7 +71,7 @@ uv run clawbench-run test-cases/v1/<case-dir> <model-name> --harness claude-code
 
 # Batch run V1 (model x case cross-product):
 uv run clawbench-batch \
-  --models <model-name> --all-cases --max-concurrent 3 --harness openclaw
+  --models <model-name> --cases-suite v1 --all-cases --max-concurrent 3 --harness openclaw
 
 # Batch run V2:
 uv run clawbench-batch \
@@ -142,7 +142,9 @@ Every pull request must add a concise bullet for its change under `## [Unrelease
 
 ## Key Documentation
 
-- [README.md#-cli](README.md#-cli) -- CLI usage, batch runner flags, output format
+- [docs/README.md](docs/README.md) -- documentation index by workflow
+- [docs/cli.md](docs/cli.md) -- CLI usage and batch runner flags
+- [src/README.md](src/README.md) -- source layout and module responsibilities
 - [src/clawbench/runtime/runtime-server/README.md](src/clawbench/runtime/runtime-server/README.md) -- FastAPI server, endpoints, screen recording
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- how to add new test cases
 - [eval/README.md](eval/README.md) -- evaluation guide and Claude Code prompt template

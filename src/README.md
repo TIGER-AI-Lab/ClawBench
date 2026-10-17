@@ -1,329 +1,117 @@
 # ClawBench Source Layout
 
-This directory contains the implementation for ClawBench.
-
-## Entry Points
-
-From the project root:
-
-```bash
-# Interactive TUI
-./run.sh
-# or
-uv run clawbench
-
-# Single run
-uv run clawbench-run test-cases/v1/886-entertainment-hobbies-experience-topgolf qwen3.5-397b-a17b
-
-# Human reference run
-uv run clawbench-run test-cases/v1/886-entertainment-hobbies-experience-topgolf --human
-
-# Batch run
-uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
-
-# Harbor V2 dataset adapter
-uv run clawbench-harbor-adapt --output-dir ./harbor-datasets/clawbench-v2 --overwrite
-
-# Example Harbor runs after adaptation:
-# OpenClaw via OpenRouter/OpenAI-compatible API:
-uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2 -a openclaw -m openai/deepseek/deepseek-v4-flash --ak thinking=off --env-file .env
-
-# Hermes via OpenRouter:
-uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2 -a hermes -m deepseek/deepseek-v4-flash --env-file .env
-```
-
-The console scripts are defined in the root `pyproject.toml`:
-
-| Script                    | Module                                | Purpose                              |
-| ------------------------- | ------------------------------------- | ------------------------------------ |
-| `clawbench`               | `clawbench.tui:main`                  | Interactive terminal UI              |
-| `clawbench-run`           | `clawbench.runner.run:main`           | Single test-case runner              |
-| `clawbench-batch`         | `clawbench.runner.batch:main`         | Model x test-case batch runner       |
-| `clawbench-harbor-adapt`  | `clawbench.eval.harbor_adapter:main`  | Convert V2 tasks into Harbor dataset |
-
-The Harbor adapter emits task environments with the ClawBench browser runtime,
-CDP recorder/interceptor, noVNC, and verifier helpers. It does not package a
-ClawBench-native harness; Harbor installs and runs the selected `-a` agent
-inside the task container.
+Start here when changing the framework. For running benchmarks, see the
+[setup guide](../docs/getting-started.md) and [CLI reference](../docs/cli.md).
+[CONTRIBUTING.md](../CONTRIBUTING.md#code-changes) covers development setup and checks.
 
 ## Directory Map
 
 ```text
-src/
-  clawbench/
-    tui.py                       # Interactive menu for configuring and launching runs
-    runner/
-      run.py                     # Single test-case driver
-      batch.py                   # Concurrent batch runner
-      run_support/
-        resume.py                # Runner-private resume PDF renderer
-        resume_template.json     # Synthetic resume source template
-    utils/
-      paths.py                   # Shared PROJECT_ROOT / HARNESS_ROOT discovery
-      hf_upload.py               # Optional HuggingFace upload helpers
-  runtime-server/
-    server.py                    # CDP instrumentation server for actions, screenshots, requests, recording
-    pyproject.toml               # Container-only uv project
-    uv.lock
-    README.md
-  chrome-extension/
-    manifest.json
-    stealth.js                   # Browser fingerprint hardening patches
-    setup.sh                     # Local extension launch helper
-    README.md
-  harnesses/
-    harnesses.yaml              # Central harness registry: images, scripts, usage emitters
-    harness.schema.json         # JSON Schema for harnesses.yaml
-    base/
-      Dockerfile.base            # Shared Chromium, Xvfb, noVNC, server, extension image
-      entrypoint.sh              # Shared container startup logic
-    openclaw/
-      usage-emitter.py           # Harness-local JSONL usage artifact emitter
-    ...                          # other harnesses
+src/clawbench/
+  tui.py                         # Interactive configuration and launch menus
+  runner/
+    run.py                       # Single-run lifecycle
+    batch.py                     # Model × task scheduling, resume, batch summaries
+    judge.py                     # Request and answer judging
+    run_support/
+      config.py                  # Model config, environment, task-path resolution
+      api_preflight.py           # Model API checks before a run
+      harness_registry.py        # Load and validate the harness registry
+      docker.py                  # Container build, execution, collection, cleanup
+      browser_runtime/           # Local, remote CDP, Kernel, Browserbase providers
+      email.py                   # Disposable email lifecycle
+      task.py                    # Task validation, prompt and /my-info/ preparation
+      resume.py                  # Render the synthetic resume template
+      results.py                 # Artifact metrics and outcome classification
+      metadata.py                # run-meta.json construction and redaction
+      usage.py                   # Token usage and cost summaries
+  eval/                          # Rescoring, analysis, reproduction, dataset adapters
+  prorl/                         # ProRL submission client, payloads, mock, image assets
+  utils/
+    paths.py                     # Workspace, bundled asset, and runtime paths
+    timeouts.py                  # Shared timeout calculations
+    hf_upload.py                 # Optional output uploads
+  runtime/
+    runtime-server/              # CDP capture/interception; separate container uv project
+    chrome-extension/            # Browser stealth patches
+    harnesses/                   # Registry, base image, per-harness images and scripts
+    harbor/                      # Harbor environment, preparation, verifier, cleanup
+    shared/                      # Synthetic personal-info source
 ```
 
-## Configuration
+The root [pyproject.toml](../pyproject.toml) defines the host Python package.
+The runtime server has its own [dependency project](clawbench/runtime/runtime-server/pyproject.toml).
+Container builds use `src/clawbench/runtime/` as their build context.
 
-### Infrastructure (`.env`)
+## Entry Points
 
-Infrastructure secrets are read from `.env` at the project root:
+Console scripts are declared in [pyproject.toml](../pyproject.toml).
+Use `uv run <command> --help` from a checkout for current arguments.
 
-```dotenv
-PURELY_MAIL_API_KEY=pm-live-...
-PURELY_MAIL_DOMAIN=clawbench.example.com
-
-# Optional: upload run outputs to a HuggingFace dataset repo
-HF_TOKEN=hf_...
-HF_REPO_ID=your-org/your-dataset-name
-```
-
-Purely mail is used to generate a disposable email for each run, so each agent will get its own working email for things like account creation or verification.
-
-
-When `HF_TOKEN` and `HF_REPO_ID` are set,
-completed runs are uploaded after local collection unless `--no-upload` is
-passed.
-
-### Model Configuration (`models/`)
-
-Model configs live in `models/models.yaml` in the mutable workspace. In a
-source checkout this is the project root; in an installed PyPI package this is
-the directory where you launch the CLI.
-
-```bash
-cp models/models.example.yaml models/models.yaml
-$EDITOR models/models.yaml
-```
-
-Each top-level YAML key is the model name passed to the runner and into the
-container as `MODEL_NAME`:
-
-```yaml
-qwen3.5-397b-a17b:
-  api_key: "sk-or-v1-..."
-  base_url: https://openrouter.ai/api/v1
-  api_type: openai-completions
-  thinking_level: medium
-```
-
-Model entries are validated against `models/model.schema.json`.
-
-| Field            | Required | Description                                                                               |
-| ---------------- | -------- | ----------------------------------------------------------------------------------------- |
-| `base_url`       | yes      | API base URL, for example `https://api.openai.com/v1`                                     |
-| `api_type`       | yes      | `openai-completions`, `openai-responses`, `anthropic-messages`, or `google-generative-ai` |
-| `api_key`        | no       | Single API key                                                                            |
-| `api_keys`       | no       | Multiple API keys; on supported harnesses the traffic is distributed among them           |
-| `thinking_level` | no       | `off`, `low`, `medium`, `high`  or `adaptive` (if model & harness support it)             |
-| `temperature`    | no       | Sampling temperature                                                                      |
-| `max_tokens`     | no       | Maximum output tokens                                                                     |
+| Command | Implementation |
+| --- | --- |
+| `clawbench` (also `./run.sh`) | [tui.py](clawbench/tui.py) |
+| `clawbench-run` | [runner/run.py](clawbench/runner/run.py) |
+| `clawbench-batch` | [runner/batch.py](clawbench/runner/batch.py) |
+| `clawbench-rescore`, `clawbench-analyze`, `clawbench-reproduce` | [eval/rescore.py](clawbench/eval/rescore.py), [analyze.py](clawbench/eval/analyze.py), [reproduce.py](clawbench/eval/reproduce.py) |
+| `clawbench-harbor-adapt` | [eval/harbor_adapter.py](clawbench/eval/harbor_adapter.py) |
+| `clawbench-edgebench-adapt`, `clawbench-edgebench-judge` | [eval/edgebench_adapter.py](clawbench/eval/edgebench_adapter.py), [edgebench_judge.py](clawbench/eval/edgebench_judge.py) |
+| `clawbench-prorl-submit`, `clawbench-prorl-mock` | [prorl/submit.py](clawbench/prorl/submit.py), [mock_gateway.py](clawbench/prorl/mock_gateway.py) |
 
 ## Single-Run Workflow
 
-`clawbench/runner/run.py` is the authoritative single test-case driver. For each run it:
+[run.py](clawbench/runner/run.py) owns the native run lifecycle:
 
-1. Loads bundled `.env`, workspace `.env` overrides, and `models/models.yaml`.
-2. Reads the selected `test-cases/<suite>/<case>/task.json`.
-3. Builds `clawbench-base` and the selected harness image.
-4. Creates a disposable PurelyMail account.
-5. Prepares a temporary `/my-info/` mount with personal info, email credentials, resume PDF, and any task `extra_info` files.
-6. Writes the task `eval_schema` to the output directory and mounts it read-only as `/eval-schema.json`.
-7. Builds the agent instruction from the task prompt, browser-only rules, `/my-info/` file list, and any extra task context.
-8. Starts the container with the chosen harness, model config, eval schema, personal info mount, and noVNC port mapping.
-9. Waits for the container to exit by interception, watchdog stop, agent exit, human VNC disconnect, or timeout.
-10. Copies `/data` from the container to the output directory.
-11. Ensures `data/interception.json` exists, creating a stop-reason record if no request was intercepted.
-12. Writes `run-meta.json`.
-13. Optionally uploads the run to HuggingFace.
-14. Removes the container, deletes the disposable email, and removes the temporary personal info directory.
+1. Resolve the task, model, judge, environment, and browser runtime; validate inputs.
+2. Build images when needed, create a disposable email, and prepare `/my-info/`
+   from the synthetic profile, resume template, and task attachments.
+3. Start the browser session and harness container. The runtime server captures
+   browser evidence and blocks requests matching the task's interception schema.
+4. Wait for completion or timeout, collect container artifacts, and finalize
+   provider recordings and browser cleanup.
+5. Judge intercepted requests when enabled, write `judge.json` and
+   `run-meta.json`, and optionally upload the output.
+6. Clean up the container, email, temporary files, and browser session on exit.
 
-Check `clawbench/runtime/harnesses/harnesses.yaml` for the supported harnesses
-and their Dockerfile, setup script, run script, `usage_emitter`, helper-file,
-and agent-message source mappings. `usage_emitter` is a dedicated registry
-field pointing to a harness-local emitter; `extra_files` is only for other
-harness-specific support files.
+[batch.py](clawbench/runner/batch.py) builds images once and launches single-run
+subprocesses with `--no-build`, applying concurrency, startup staggering, and
+timeouts. The TUI assembles commands for these runners.
 
-Use `--harness <name>` to select one. The default is `openclaw`.
+The [runtime server](clawbench/runtime/runtime-server/README.md) owns CDP capture,
+interception, the remote CDP bridge, and local screen recording. A managed browser
+still uses the ClawBench harness container; provider lifecycle code lives in
+[`run_support/browser_runtime/`](clawbench/runner/run_support/browser_runtime/).
 
-## Batch Runner
+## Configuration and Paths
 
-`clawbench/runner/batch.py` runs the model x test-case cross-product concurrently. It
-builds the chosen image once, then invokes `clawbench-run` for each job with
-`--no-build`.
+Use [utils/paths.py](clawbench/utils/paths.py) to distinguish three locations:
 
-```bash
-# All configured models x cases 1-50, 3 concurrent
-uv run clawbench-batch --all-models --case-range 1-50 --max-concurrent 3
+| Root | Purpose |
+| --- | --- |
+| `WORKSPACE_ROOT` | Mutable model config, environment overrides, and default single-run outputs. `CLAWBENCH_WORKSPACE` overrides discovery; otherwise the nearest ancestor containing `.env` or `models/models.yaml` wins, with checkout/current-directory fallbacks. Batch output defaults to `test-output` under the invocation directory. |
+| `ASSET_ROOT` | Task suites and config templates: the source checkout, or `_bundled/` in an installed package. |
+| `RUNTIME_ROOT` | Packaged container assets under `clawbench/runtime/`, independent of the workspace. |
 
-# Specific model patterns x specific case globs
-uv run clawbench-batch \
-  --models "qwen*" "claude*" \
-  --cases "test-cases/v1/886-*" "test-cases/v1/872-*" \
-  --max-concurrent 2
+[config.py](clawbench/runner/run_support/config.py) loads environment settings in
+increasing precedence: bundled `.env`, workspace `.env`, workspace `.env.local`,
+then process environment variables. Editable model definitions live in the
+workspace's `models/models.yaml`.
 
-# Preview the job matrix without running
-uv run clawbench-batch --all-models --all-cases --dry-run
-```
+The [harness registry](clawbench/runtime/harnesses/harnesses.yaml) maps each
+harness to its image, build/setup/run files, usage emitter, and transcript
+sources. Update this registry when adding a harness; its
+[loader](clawbench/runner/run_support/harness_registry.py) validates referenced
+files and mappings.
 
-A stagger delay is applied between job starts since during container startup it is taking significantly more resources than during the run, so starting multiple containers at the same time can lead to random pod crashes. The default stagger delay is 15 seconds, which can be adjusted with `--stagger-delay`.
+## Related Guides
 
-| Flag                      | Description                                               | Default                                          |
-| ------------------------- | --------------------------------------------------------- | ------------------------------------------------ |
-| `--models PATTERN...`     | Model name patterns matched against `models/models.yaml`  | required, unless `--all-models`                  |
-| `--all-models`            | Use all configured models                                 | false                                            |
-| `--cases PATTERN...`      | Glob patterns for case directories                        | required, unless `--all-cases` or `--case-range` |
-| `--cases-suite NAME`      | Built-in suite: `v1`, `v2`, or `v1-lite`                  | `v1`                                            |
-| `--cases-dir PATH`        | Custom case directory                                     | none                                            |
-| `--all-cases`             | Use all task directories in the selected suite/dir        | false                                            |
-| `--case-range START-END`  | Filter by numeric case ID prefix                          | none                                             |
-| `--max-concurrent N`      | Max parallel jobs; managed runtimes default to 1            | 2 locally, 1 with Kernel/Browserbase             |
-| `--output-dir PATH`       | Base output directory                                     | `test-output`                                    |
-| `--stagger-delay SECONDS` | Minimum gap between consecutive container starts          | 15                                               |
-| `--dry-run`               | Print job matrix without running                          | false                                            |
-| `--no-upload`             | Skip HuggingFace upload for all runs                      | false                                            |
-| `--harness NAME`          | Harness image to use                                      | `openclaw`                                       |
-| `--browser-runtime NAME`  | Browser runtime (`local`, `remote-cdp`, `kernel`, or `browserbase`) | `local`                                  |
-| `--browser-cdp-url URL`   | CDP endpoint used with `--browser-runtime remote-cdp`      | none                                             |
-| `--browser-runtime-options JSON` | Provider options such as Browserbase region or proxies | none                                          |
+| Working on | Read |
+| --- | --- |
+| Task definitions and attachments | [Contributing](../CONTRIBUTING.md#adding-a-new-test-case), [task schema](../test-cases/task.schema.json) |
+| Runtime capture and browser providers | [Runtime server](clawbench/runtime/runtime-server/README.md), [browser runtimes](../docs/browser-runtimes.md) |
+| Output artifacts and evaluation | [Evaluation guide](../eval/README.md), [trace cookbook](../docs/trace-cookbook.md) |
+| Dataset and RL integrations | [Harbor](../docs/harbor.md), [EdgeBench](../docs/edgebench.md), [ProRL](../docs/prorl-rl-env.md) |
 
-Kernel reads `KERNEL_API_KEY`; Browserbase reads `BROWSERBASE_API_KEY`. Both
-can be set in `.env.local` or the process environment. Kernel replay video is
-downloaded to `data/recording.mp4`; Browserbase's provider-hosted Session
-Inspector URL is stored in `browser_runtime.recording_url` in `run-meta.json`.
-Signed provider CDP URLs are mounted into the runtime container through a
-temporary read-only secret file and redacted from saved metadata.
-
-Signal handling:
-
-- First Ctrl+C stops new jobs from starting; running jobs continue so their
-  subprocesses can clean up containers and disposable emails.
-- Second Ctrl+C force-kills running subprocesses.
-
-## Test Case Format
-
-Each test case is a directory under `test-cases/<suite>/` with a `task.json`
-validated by `test-cases/task.schema.json`.
-
-```json
-{
-  "$schema": "../../task.schema.json",
-  "instruction": "Task prompt for the agent",
-  "eval_schema": {
-    "url_pattern": "example\\.com/api/submit",
-    "method": "POST"
-  },
-  "time_limit": 5,
-  "extra_info": [
-    {
-      "path": "extra_info/profile.json",
-      "description": "Description injected into the agent prompt"
-    }
-  ]
-}
-```
-
-| Field         | Description                                                          |
-| ------------- | -------------------------------------------------------------------- |
-| `instruction` | Task prompt sent to the agent                                        |
-| `eval_schema` | Request interceptor config                                           |
-| `time_limit`  | Maximum run time in minutes                                          |
-| `extra_info`  | Additional files copied into `/my-info/` and described in the prompt |
-
-`eval_schema` supports:
-
-| Field         | Required | Description                                           |
-| ------------- | -------- | ----------------------------------------------------- |
-| `url_pattern` | yes      | Regex matched against request URLs with `re.search()` |
-| `method`      | yes      | HTTP method to match                                  |
-| `body`        | no       | Exact key-value filters for parsed request bodies     |
-| `params`      | no       | Exact key-value filters for URL query parameters      |
-
-When URL, method, and any body/params filters all match, the interceptor blocks
-the request, records it in `data/interception.json`, and asks the container to
-stop. For tasks where no irreversible request needs to be intercepted, use
-`__PLACEHOLDER_WILL_NOT_MATCH__`; the session will run until another stop
-condition occurs.
-
-## Output
-
-Single-run outputs are written under:
-
-```text
-test-output/<model>/<harness>-<case>-<model>-<YYYYMMDD-HHMMSS>/
-  run-meta.json
-  eval-schema.json
-  data/
-    actions.jsonl
-    requests.jsonl
-    agent-messages.jsonl
-    screenshots/
-    recording.mp4
-    interception.json
-```
-
-Batch outputs are written under:
-
-```text
-test-output/batch-<YYYYMMDD-HHMMSS>/
-  batch-logs/
-    <case>-<model>.log
-  batch-summary.json
-  <model>/
-    <harness>-<case>-<model>-<YYYYMMDD-HHMMSS>/
-```
-
-`agent-messages.jsonl` is harness-specific at this stage.
-
-If the interceptor matched a request, `interception.json` contains
-`"intercepted": true` and the blocked request. Otherwise the driver writes
-`"intercepted": false`, a `stop_reason`, and a human-readable
-`stop_description`.
-
-## Personal Info
-
-Each run mounts `/my-info/` into the container:
-
-| File                            | Source                                 | Dynamic fields                                  |
-| ------------------------------- | -------------------------------------- | ----------------------------------------------- |
-| `alex_green_personal_info.json` | `src/clawbench/runtime/shared/alex_green_personal_info.json` | `contact.email` becomes the generated email     |
-| `email_credentials.json`        | Generated by `clawbench/runner/run.py` | disposable email, password, login URL, provider |
-| `alex_green_resume.pdf`         | `src/clawbench/runner/run_support/resume_template.json` | resume header email becomes the generated email |
-| extra info files                | `test-cases/<suite>/<case>/extra_info/...` | copied by basename into `/my-info/`             |
-
-The `online_accounts` section is removed from the personal info JSON before it
-is mounted, so agents use only the disposable account and task-provided files.
-
-## Disposable Email
-
-The single-run driver creates a disposable email for each run through the
-PurelyMail API:
-
-- Username format: `cb<12-hex-chars>`
-- Domain: `PURELY_MAIL_DOMAIN` from `.env`
-- Password: generated with `secrets.token_urlsafe(16)`
-- Cleanup: deleted in the `finally` block even when a run fails
-
-The generated email is written to `/my-info/email_credentials.json`, injected
-into the personal info JSON, and injected into the generated resume PDF.
-
-We're providing purely-mail API key and domain in `.env` for ease of setup, the cost is on us, though please use them responsibly. If you want to use your own purely-mail account, sign up at https://purelymail.com/, follow their instructions to setup the domain and create an API key, and set `PURELY_MAIL_API_KEY` and `PURELY_MAIL_DOMAIN` in your `.env`.
+Host-side tests live in [`tests/`](../tests/). Validation and build workflows live
+in [`.github/workflows/`](../.github/workflows/); use the
+[contributor checks](../CONTRIBUTING.md#code-changes) before opening a PR.

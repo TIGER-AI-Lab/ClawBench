@@ -1,0 +1,18 @@
+{
+  "instruction": "Open https://tidesandcurrents.noaa.gov/waterlevels.html?id=8518750. Request verified hourly observed water levels at The Battery, New York, for September 12-13 2025 in metres relative to MLLW and GMT. Choose the 1 hr interval and apply it with Data Only; six-minute observations or predictions are not the requested product. The outcome is initiation of the correctly configured observation-data request; a saved file is not required. Use Data Only to initiate the JSON observation-data request.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)product=[^#]*&product=)(?![^#]*(?:\\?|&)begin_date=[^#]*&begin_date=)(?![^#]*(?:\\?|&)end_date=[^#]*&end_date=)(?![^#]*(?:\\?|&)datum=[^#]*&datum=)(?![^#]*(?:\\?|&)station=[^#]*&station=)(?![^#]*(?:\\?|&)time_zone=[^#]*&time_zone=)(?![^#]*(?:\\?|&)units=[^#]*&units=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)application=[^#]*&application=)https://api\\.tidesandcurrents\\.noaa\\.gov/api/prod/datagetter\\?(?:product|begin_date|end_date|datum|station|time_zone|units|format|application)=[^&#]+(?:&(?:product|begin_date|end_date|datum|station|time_zone|units|format|application)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "product": "hourly_height",
+      "begin_date": "20250912",
+      "end_date": "20250913",
+      "datum": "MLLW",
+      "station": "8518750",
+      "time_zone": "GMT",
+      "units": "metric",
+      "format": "json"
+    }
+  },
+  "time_limit": 10
+}

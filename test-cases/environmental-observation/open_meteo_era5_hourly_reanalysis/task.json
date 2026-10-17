@@ -1,0 +1,16 @@
+{
+  "instruction": "Open https://open-meteo.com/en/docs/historical-weather-api and use its request builder to request a CSV of hourly Temperature (2 m) and Precipitation (rain + snow), and no other variables, for latitude 51.5, longitude -0.12, September 12 through September 13, 2025. Select ERA5 alone rather than Best Match or ERA5-Land. Use GMT, Celsius, millimetres, ISO 8601 timestamps, and the default land grid-cell selection and elevation. Initiate Download CSV. These are reanalysis estimates, not direct station observations. The outcome is the correctly configured CSV request; a saved file is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)latitude=[^#]*&latitude=)(?![^#]*(?:\\?|&)longitude=[^#]*&longitude=)(?![^#]*(?:\\?|&)start_date=[^#]*&start_date=)(?![^#]*(?:\\?|&)end_date=[^#]*&end_date=)(?![^#]*(?:\\?|&)hourly=[^#]*&hourly=)(?![^#]*(?:\\?|&)models=[^#]*&models=)(?![^#]*(?:\\?|&)format=[^#]*&format=)(?![^#]*(?:\\?|&)timezone=[^#]*&timezone=)(?![^#]*(?:\\?|&)temperature_unit=[^#]*&temperature_unit=)(?![^#]*(?:\\?|&)precipitation_unit=[^#]*&precipitation_unit=)(?![^#]*(?:\\?|&)timeformat=[^#]*&timeformat=)(?![^#]*(?:\\?|&)cell_selection=[^#]*&cell_selection=)(?=[^#]*(?:\\?|&)hourly=(?:temperature_2m(?:,|%2[Cc])precipitation|precipitation(?:,|%2[Cc])temperature_2m)(?:&|$))https://archive\\-api\\.open\\-meteo\\.com/v1/archive\\?(?:hourly=(?:temperature_2m(?:,|%2[Cc])precipitation|precipitation(?:,|%2[Cc])temperature_2m)|latitude=[^&#]+|longitude=[^&#]+|start_date=[^&#]+|end_date=[^&#]+|models=[^&#]+|format=[^&#]+|timezone=GMT|temperature_unit=celsius|precipitation_unit=mm|timeformat=iso8601|cell_selection=land)(?:&(?:hourly=(?:temperature_2m(?:,|%2[Cc])precipitation|precipitation(?:,|%2[Cc])temperature_2m)|latitude=[^&#]+|longitude=[^&#]+|start_date=[^&#]+|end_date=[^&#]+|models=[^&#]+|format=[^&#]+|timezone=GMT|temperature_unit=celsius|precipitation_unit=mm|timeformat=iso8601|cell_selection=land))*$",
+    "method": "GET",
+    "params": {
+      "latitude": "51.5",
+      "longitude": "-0.12",
+      "start_date": "2025-09-12",
+      "end_date": "2025-09-13",
+      "models": "era5",
+      "format": "csv"
+    }
+  },
+  "time_limit": 10
+}
