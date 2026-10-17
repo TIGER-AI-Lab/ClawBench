@@ -24,6 +24,8 @@
 
 # ClawBench：AI 智能体能完成日常在线任务吗？
 
+运行与开发指南：[文档索引](README.md) · [安装和配置](getting-started.md) · [CLI 参考](cli.md) · [源码结构](../src/README.md)（英文）。
+
 <div align="center">
 
 **ClawBench 是一个开源基准，用于评测 AI browser agent 在日常在线任务上的表现 —— 订酒店、点外卖、投简历、管理邮件 —— 全部在真实网站上进行。V1 位于 `test-cases/v1/`，V2 位于 `test-cases/v2/`。它通过 5 层录制管线和对照人工参考轨迹的 agentic evaluator 衡量端到端任务完成率。按语料、harness 和评分规则划分的结果请见[实时榜单](https://huggingface.co/spaces/TIGER-Lab/ClawBench)。**
@@ -376,6 +378,7 @@ ClawBench 提供 **三个** Hugging Face 数据集 —— 任务定义，以及 
 
 ## <img src="../assets/icons/bullhorn.svg" width="20" height="20"> 动态
 
+- **[2026.10.10]** —— 🎉 ClawBench 的 **[GitHub stars 突破 1,000](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**！感谢每一位关注、使用和贡献 ClawBench 的社区成员。
 - **[2026.08.20]** —— 🏆 论文被 [EMNLP 2026 Findings](https://2026.emnlp.org/) 接收。
 - **[2026.08.20]** —— 新增 [Kernel](https://www.kernel.sh) 作为支持的远程浏览器运行时。感谢 @[rgarcia](https://github.com/rgarcia)。
 - **[2026.08.18]** —— 新增 [WebBrain](https://github.com/webbrain-one/webbrain) 作为支持的 harness。感谢 @[alectimison-maker](https://github.com/alectimison-maker)。

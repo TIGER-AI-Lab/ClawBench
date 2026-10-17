@@ -1,0 +1,15 @@
+{
+  "instruction": "Open https://waterdata.usgs.gov/monitoring-location/USGS-01104500/. Prepare and request Charles River at Waltham station USGS-01104500 daily mean discharge for water year 2025 (2024-10-01 through 2025-09-30), in cubic feet per second. Request the daily mean discharge as CSV. Continuous gage height or field measurements alone do not satisfy this task. The evaluated endpoint is initiation of the correctly configured data request; a saved file is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)time_series_id=[^#]*&time_series_id=)(?![^#]*(?:\\?|&)time=[^#]*&time=)(?![^#]*(?:\\?|&)sortby=[^#]*&sortby=)(?![^#]*(?:\\?|&)limit=[^#]*&limit=)(?![^#]*(?:\\?|&)f=[^#]*&f=)(?![^#]*(?:\\?|&)api_key=[^#]*&api_key=)https://api\\.waterdata\\.usgs\\.gov/ogcapi/v0/collections/daily/items\\?(?:time_series_id|time|sortby|limit|f|api_key)=[^&#]+(?:&(?:time_series_id|time|sortby|limit|f|api_key)=[^&#]+)*$",
+    "method": "GET",
+    "params": {
+      "time_series_id": "301611ad3d594c9586727791c3257c16",
+      "time": "2024-10-01T00:00:00.000Z/2025-09-30T00:00:00.000Z",
+      "sortby": "-time",
+      "limit": "50000",
+      "f": "csv"
+    }
+  },
+  "time_limit": 10
+}

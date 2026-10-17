@@ -1,0 +1,17 @@
+{
+  "instruction": "Open https://earthquake.usgs.gov/earthquakes/search/ and configure a catalog search for events from 2025-09-01 00:00:00 through 2025-09-30 23:59:59 UTC, minimum magnitude 3.0, latitude 32 to 42 and longitude -125 to -114. Include all event types and review statuses. Choose CSV output ordered newest first, with no extra depth, count or offset restrictions, and initiate the search. The evaluated endpoint is the correctly configured CSV data request; a saved file is not required.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*(?:\\?|&)starttime=[^#]*&starttime=)(?![^#]*(?:\\?|&)endtime=[^#]*&endtime=)(?![^#]*(?:\\?|&)maxlatitude=[^#]*&maxlatitude=)(?![^#]*(?:\\?|&)minlatitude=[^#]*&minlatitude=)(?![^#]*(?:\\?|&)maxlongitude=[^#]*&maxlongitude=)(?![^#]*(?:\\?|&)minlongitude=[^#]*&minlongitude=)(?![^#]*(?:\\?|&)orderby=[^#]*&orderby=)(?![^#]*(?:\\?|&)minmagnitude=[^#]*&minmagnitude=)(?=[^#]*(?:\\?|&)minmagnitude=3(?:\\.0+)?(?:&|$))https://earthquake\\.usgs\\.gov/fdsnws/event/1/query\\.csv\\?(?:minmagnitude=3(?:\\.0+)?|(?:starttime|endtime|maxlatitude|minlatitude|maxlongitude|minlongitude|orderby)=[^&#]+)(?:&(?:minmagnitude=3(?:\\.0+)?|(?:starttime|endtime|maxlatitude|minlatitude|maxlongitude|minlongitude|orderby)=[^&#]+))*$",
+    "method": "GET",
+    "params": {
+      "starttime": "2025-09-01 00:00:00",
+      "endtime": "2025-09-30 23:59:59",
+      "maxlatitude": "42",
+      "minlatitude": "32",
+      "maxlongitude": "-114",
+      "minlongitude": "-125",
+      "orderby": "time"
+    }
+  },
+  "time_limit": 10
+}

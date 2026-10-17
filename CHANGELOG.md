@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
+
+## [v0.11.0]
 ### Added
+- Expand the isolated environmental-observation proposal to 12 public-data request workflows across NOAA, USGS, NDBC, NASA POWER, Open-Meteo and EPA, with explicit request-initiation outcomes and validation limits.
 - `run-meta.json` now carries a `provenance` block: the ClawBench version, commit, branch, and dirty state; the corpus suite and the revision of the commit that last touched it; and the agent and plugin versions pinned by the harness Dockerfile, with a `pins_source` saying whether those pins describe the image that actually ran. Every field is best-effort and null outside a git checkout, so a run never fails on a missing one. See [`docs/trace-cookbook.md`](docs/trace-cookbook.md#provenance).
 - Added `scripts/export_openeval.py`, an additive script exporting a batch's `rescore-summary.json` as an [EvalPort](https://github.com/adhabnr-ux/evalport) `ResultSet` Thanks to [@adhabnr-ux](https://github.com/adhabnr-ux).
 - Added a `--browser-runtime kernel` mode to the Harbor adapter that runs each task against one Kernel cloud browser, exposing only a credential-free CDP bridge to the agent, and finalizes the replay and deletes the browser during verification.
@@ -19,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Changed the default Harbor version to `0.22.0`.
 
 ### Fixed
-- `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
+- Declared `judge_context.gold_answer` in `test-cases/task.schema.json`. The answer judge reads it and [`docs/answer-mode-tasks.md`](docs/answer-mode-tasks.md) documents it, but `judge_context` sets `additionalProperties: false`, so no schema-valid task could ever set it and the branch was unreachable. `tests/test_answer_judge.py` now holds the schema's declared keys and the keys the judges read together, in both directions.
 - Isolate `clawbench-reproduce` downloads in a per-invocation cache directory so cleanup preserves existing work-directory files and removes only owned downloads, including on failure.
 - Align public discovery metadata with the canonical repository and shipping corpus, label historical V1 scores in both READMEs, and correct the v0.10.0 citation release date.
 - Host-timeout container termination now uses the lazy container-engine resolver.
