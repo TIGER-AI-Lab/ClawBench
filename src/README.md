@@ -18,7 +18,7 @@ src/clawbench/
       api_preflight.py           # Model API checks before a run
       harness_registry.py        # Load and validate the harness registry
       docker.py                  # Container build, execution, collection, cleanup
-      browser_runtime/           # Local, remote CDP, Kernel, Browserbase providers
+      browser_runtime/           # Local, remote CDP, Kernel, Browserbase, Browser Use providers
       email.py                   # Disposable email lifecycle
       task.py                    # Task validation, prompt and /my-info/ preparation
       resume.py                  # Render the synthetic resume template

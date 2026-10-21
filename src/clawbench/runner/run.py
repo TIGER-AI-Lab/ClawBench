@@ -128,7 +128,8 @@ def main():
         choices=BROWSER_RUNTIME_CHOICES,
         default=None,
         help=(
-            "Browser runtime provider: local, remote-cdp, steel, browserbase, or kernel "
+            "Browser runtime provider: local, remote-cdp, steel, browserbase, kernel, "
+            "or browser-use "
             "(default: CLAWBENCH_BROWSER_RUNTIME or local)"
         ),
     )
@@ -194,7 +195,7 @@ def main():
     if args.human and browser_runtime_provider.name != "local":
         parser.error("human mode currently supports only --browser-runtime local")
     if (
-        browser_runtime_provider.name in {"browserbase", "kernel"}
+        browser_runtime_provider.name in {"browserbase", "kernel", "browser-use"}
         and args.harness == "claude-code-chrome-extension"
     ):
         parser.error(

@@ -18,6 +18,7 @@ from clawbench.runner.run_support.browser_runtime import (
 from clawbench.runner.run_support.browser_runtime.providers import (
     BrowserbaseRuntimeProvider,
     BrowserSession,
+    BrowserUseRuntimeProvider,
     KernelRuntimeProvider,
     RemoteCdpBrowserRuntimeProvider,
     SteelBrowserRuntimeProvider,
@@ -71,6 +72,8 @@ def _clear_browser_runtime_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "BROWSERBASE_API_KEY",
         "KERNEL_API_KEY",
         "KERNEL_BASE_URL",
+        "BROWSER_USE_API_KEY",
+        "BROWSER_USE_BASE_URL",
     ):
         monkeypatch.delenv(key, raising=False)
 
@@ -467,6 +470,188 @@ def test_kernel_http_errors_do_not_expose_api_key(
 
     assert "authentication failed" in str(exc_info.value)
     assert "kernel-secret" not in str(exc_info.value)
+
+
+def test_browser_use_requires_api_key() -> None:
+    provider = BrowserUseRuntimeProvider(api_key=None, options={})
+
+    with pytest.raises(BrowserRuntimeError, match="BROWSER_USE_API_KEY"):
+        provider.start({}, 60)
+    with pytest.raises(BrowserRuntimeError, match="BROWSER_USE_API_KEY"):
+        make_browser_runtime_provider(_args(browser_runtime="browser-use"), {})
+
+
+def test_browser_use_rejects_reserved_options() -> None:
+    with pytest.raises(BrowserRuntimeError, match="enableRecording"):
+        BrowserUseRuntimeProvider(
+            api_key="bu-secret",
+            options={"enableRecording": False},
+        )
+
+
+def test_browser_use_session_recording_and_cleanup(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    calls: list[tuple[str, str, object, str | None]] = []
+    browser_reads = 0
+
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        nonlocal browser_reads
+        assert timeout == 30
+        payload = json.loads(request.data) if isinstance(request.data, bytes) else None
+        api_key = request.headers.get("X-browser-use-api-key")
+        calls.append((request.get_method(), request.full_url, payload, api_key))
+        base = "https://api.browser-use.com/api/v4/browsers"
+        if request.full_url == base:
+            return _FakeResponse(
+                {
+                    "id": "browser_123",
+                    "status": "active",
+                    "cdpUrl": "https://browser_123.cdp.browser-use.test",
+                    "liveUrl": (
+                        "https://live.browser-use.test/?wss="
+                        "https://browser_123.cdp.browser-use.test"
+                    ),
+                    "timeoutAt": "2026-10-20T12:32:00Z",
+                    "startedAt": "2026-10-20T12:00:00Z",
+                },
+                status=201,
+            )
+        if request.full_url.endswith("/json/version"):
+            return _FakeResponse(
+                {
+                    "webSocketDebuggerUrl": (
+                        "wss://browser_123.cdp.browser-use.test/devtools/browser/abc"
+                    )
+                }
+            )
+        if request.full_url == f"{base}/browser_123":
+            if request.get_method() == "PATCH":
+                return _FakeResponse({"id": "browser_123", "status": "stopped"})
+            browser_reads += 1
+            return _FakeResponse(
+                {
+                    "id": "browser_123",
+                    "status": "stopped",
+                    "recordingAvailable": True,
+                    "recordingUrl": (
+                        None
+                        if browser_reads == 1
+                        else "https://storage.browser-use.test/rec.mp4?X-Amz-Signature=s"
+                    ),
+                }
+            )
+        if request.full_url.startswith("https://storage.browser-use.test/"):
+            return _FakeResponse(b"mp4-data")
+        raise AssertionError(f"unexpected request: {request.full_url}")
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = BrowserUseRuntimeProvider(
+        api_key="bu-secret",
+        options={"proxyCountryCode": "de"},
+        recording_poll_interval_s=0,
+        recording_poll_timeout_s=1,
+    )
+
+    session = provider.start({}, 1800)
+    provider.finalize(session, tmp_path)
+    provider.cleanup(session)
+
+    assert calls[0][2] == {
+        "proxyCountryCode": "de",
+        "browserScreenWidth": 1920,
+        "browserScreenHeight": 1080,
+        "enableRecording": True,
+        "timeout": 32,
+    }
+    assert all(call[3] == "bu-secret" for call in calls if "api.browser-use" in call[1])
+    assert all(call[3] is None for call in calls if "api.browser-use" not in call[1])
+    assert session.provider == "browser-use"
+    assert session.cdp_url.startswith("wss://browser_123.cdp.browser-use.test/")
+    assert session.recording_mode == "provider-download"
+    assert session.cleanup_status == "stopped"
+    assert browser_reads == 2
+    assert (tmp_path / "data" / "recording.mp4").read_bytes() == b"mp4-data"
+    assert session.to_metadata()["viewer_url"] == "[REDACTED]"
+    assert "bu-secret" not in json.dumps(session.to_metadata())
+    stops = [call for call in calls if call[0] == "PATCH"]
+    assert stops == [
+        (
+            "PATCH",
+            "https://api.browser-use.com/api/v4/browsers/browser_123",
+            {"action": "stop"},
+            "bu-secret",
+        )
+    ]
+
+
+def test_browser_use_unavailable_recording_is_artifact_failure(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(
+        urllib.request,
+        "urlopen",
+        lambda request, timeout: _FakeResponse(
+            {"id": "browser_123", "recordingAvailable": False, "recordingUrl": None}
+        ),
+    )
+    provider = BrowserUseRuntimeProvider(api_key="bu-secret", options={})
+    session = BrowserSession(
+        provider="browser-use",
+        cdp_url="wss://browser_123.cdp.browser-use.test/devtools/browser/abc",
+        mode="remote",
+        session_id="browser_123",
+        recording_mode="provider-download",
+    )
+
+    with pytest.raises(BrowserRuntimeError, match="not available") as exc_info:
+        provider.finalize(session, tmp_path)
+
+    assert exc_info.value.category == "browser_runtime_artifact_failed"
+    assert session.metadata["stop_status"] == "stopped"
+
+
+def test_browser_use_factory_honors_base_url() -> None:
+    provider = make_browser_runtime_provider(
+        _args(browser_runtime="browser-use"),
+        {
+            "BROWSER_USE_API_KEY": "bu-secret",
+            "BROWSER_USE_BASE_URL": "https://api.eu.browser-use.com/api/v4/",
+        },
+    )
+
+    assert isinstance(provider, BrowserUseRuntimeProvider)
+    assert provider.api_url == "https://api.eu.browser-use.com/api/v4"
+
+
+def test_browser_use_http_errors_do_not_expose_api_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_urlopen(
+        request: urllib.request.Request,
+        timeout: int,
+    ) -> _FakeResponse:
+        raise urllib.error.HTTPError(
+            request.full_url,
+            401,
+            "bu-secret",
+            hdrs=Message(),
+            fp=None,
+        )
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    provider = BrowserUseRuntimeProvider(api_key="bu-secret", options={})
+
+    with pytest.raises(BrowserRuntimeError) as exc_info:
+        provider.start({}, 60)
+
+    assert "authentication failed" in str(exc_info.value)
+    assert "bu-secret" not in str(exc_info.value)
 
 
 def test_redact_cdp_url_masks_common_secret_query_params() -> None:

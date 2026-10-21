@@ -44,7 +44,7 @@ CASE_SUITES = {
     "claw-eval": "test-cases/claw-eval",
 }
 DEFAULT_CASES_SUITE = "v2"
-MANAGED_BROWSER_RUNTIMES = frozenset({"browserbase", "kernel"})
+MANAGED_BROWSER_RUNTIMES = frozenset({"browserbase", "kernel", "browser-use"})
 
 
 def load_models_yaml() -> dict:
@@ -964,7 +964,8 @@ def main() -> None:
         choices=BROWSER_RUNTIME_CHOICES,
         default=None,
         help=(
-            "Browser runtime provider: local, remote-cdp, steel, browserbase, or kernel "
+            "Browser runtime provider: local, remote-cdp, steel, browserbase, kernel, "
+            "or browser-use "
             "(default: local)"
         ),
     )

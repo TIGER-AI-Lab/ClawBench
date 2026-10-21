@@ -529,6 +529,10 @@ def _pick_browser_runtime(harness: str) -> str | None:
                     "Browserbase cloud browser",
                     value="browserbase",
                 ),
+                questionary.Choice(
+                    "Browser Use cloud browser",
+                    value="browser-use",
+                ),
             ]
         )
     return questionary.select(
@@ -684,6 +688,9 @@ def mode_single(
             else "  [dim]Tip: open the Kernel live-view URL printed below\n"
             "  to watch the cloud browser in real time.[/]"
             if browser_runtime == "kernel"
+            else "  [dim]Tip: open the Browser Use live URL printed below\n"
+            "  to watch the cloud browser in real time.[/]"
+            if browser_runtime == "browser-use"
             else "  [dim]Tip: once the container starts, open the noVNC URL\n"
             "  printed below to watch the agent operate the browser\n"
             "  in real-time.[/]"
@@ -782,10 +789,13 @@ def mode_batch(
         case_args = ["--cases"] + [f"{cases_dir_name}/{c}" for c in selected_cases]
         case_summary = f"{len(selected_cases)} selected"
 
-    if browser_runtime in {"browserbase", "kernel"}:
+    if browser_runtime in {"browserbase", "kernel", "browser-use"}:
         recommended = 1
+        runtime_label = {"browser-use": "Browser Use"}.get(
+            browser_runtime, browser_runtime.capitalize()
+        )
         console.print(
-            f"  {browser_runtime.capitalize()} concurrency depends on the account limit; "
+            f"  {runtime_label} concurrency depends on the account limit; "
             "defaulting to [green bold]1[/]."
         )
     else:
