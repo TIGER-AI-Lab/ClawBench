@@ -14,7 +14,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
 
-BROWSER_RUNTIME_CHOICES = ("local", "remote-cdp", "steel", "browserbase", "kernel")
+BROWSER_RUNTIME_CHOICES = (
+    "local",
+    "remote-cdp",
+    "steel",
+    "browserbase",
+    "kernel",
+    "browser-use",
+)
 _BROWSERBASE_API_URL = "https://api.browserbase.com/v1"
 _BROWSERBASE_ALLOWED_OPTIONS = {
     "browserSettings",
@@ -30,6 +37,15 @@ _KERNEL_ALLOWED_OPTIONS = {
     "region",
     "stealth",
     "tags",
+}
+_BROWSER_USE_API_URL = "https://api.browser-use.com/api/v4"
+_BROWSER_USE_ALLOWED_OPTIONS = {
+    "customProxy",
+    "extensionIds",
+    "metadata",
+    "profileId",
+    "proxyCountryCode",
+    "solveCaptchas",
 }
 DEFAULT_BROWSER_CDP_URL = os.environ.get(
     "CLAWBENCH_BROWSER_CDP_URL",
@@ -151,6 +167,12 @@ class _BrowserbaseApiError(RuntimeError):
 
 
 class _KernelApiError(RuntimeError):
+    def __init__(self, message: str, *, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
+
+class _BrowserUseApiError(RuntimeError):
     def __init__(self, message: str, *, status: int | None = None) -> None:
         super().__init__(message)
         self.status = status
@@ -752,6 +774,267 @@ class KernelRuntimeProvider:
             raise BrowserRuntimeError(str(e)) from None
 
 
+class BrowserUseRuntimeProvider:
+    name = "browser-use"
+    default_recording_mode = "provider-download"
+
+    def __init__(
+        self,
+        *,
+        api_key: str | None,
+        options: dict[str, Any],
+        api_url: str = _BROWSER_USE_API_URL,
+        recording_poll_interval_s: float = 2,
+        recording_poll_timeout_s: float = 300,
+    ) -> None:
+        unknown = sorted(set(options) - _BROWSER_USE_ALLOWED_OPTIONS)
+        if unknown:
+            allowed = ", ".join(sorted(_BROWSER_USE_ALLOWED_OPTIONS))
+            raise BrowserRuntimeError(
+                "browser-use runtime options contain unsupported field(s): "
+                f"{', '.join(unknown)}; allowed fields: {allowed}"
+            )
+        for key in ("customProxy", "metadata"):
+            value = options.get(key)
+            if value is not None and not isinstance(value, dict):
+                raise BrowserRuntimeError(
+                    f"browser-use {key} option must be a JSON object"
+                )
+        profile_id = options.get("profileId")
+        if profile_id is not None and not isinstance(profile_id, str):
+            raise BrowserRuntimeError("browser-use profileId option must be a string")
+        country = options.get("proxyCountryCode")
+        if country is not None and not isinstance(country, str):
+            raise BrowserRuntimeError(
+                "browser-use proxyCountryCode option must be a string or null"
+            )
+        extension_ids = options.get("extensionIds")
+        if extension_ids is not None and not isinstance(extension_ids, list):
+            raise BrowserRuntimeError(
+                "browser-use extensionIds option must be a JSON array"
+            )
+        solve_captchas = options.get("solveCaptchas")
+        if solve_captchas is not None and not isinstance(solve_captchas, bool):
+            raise BrowserRuntimeError(
+                "browser-use solveCaptchas option must be a boolean"
+            )
+        self.api_key = api_key
+        self.options = options
+        self.api_url = api_url.rstrip("/")
+        self.recording_poll_interval_s = recording_poll_interval_s
+        self.recording_poll_timeout_s = recording_poll_timeout_s
+
+    def _redact(self, text: str) -> str:
+        assert self.api_key is not None
+        for secret in (
+            self.api_key,
+            urllib.parse.quote(self.api_key, safe=""),
+            urllib.parse.quote_plus(self.api_key, safe=""),
+        ):
+            if secret:
+                text = text.replace(secret, "[REDACTED]")
+        return text
+
+    def _fetch(
+        self,
+        request: urllib.request.Request,
+        *,
+        what: str,
+    ) -> bytes:
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return response.read()
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                message = "Browser Use authentication failed"
+            elif e.code in {402, 429}:
+                message = "Browser Use credit, spend, or concurrency limit was exceeded"
+            else:
+                message = f"Browser Use {what} returned HTTP {e.code}"
+            raise _BrowserUseApiError(message, status=e.code) from None
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            reason = self._redact(str(getattr(e, "reason", e)))
+            raise _BrowserUseApiError(
+                f"Browser Use {what} request failed: {reason}"
+            ) from None
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        assert self.api_key is not None
+        data = (
+            json.dumps(payload, separators=(",", ":")).encode()
+            if payload is not None
+            else None
+        )
+        request = urllib.request.Request(
+            f"{self.api_url}{path}",
+            data=data,
+            method=method,
+            headers={
+                "Accept": "application/json",
+                "X-Browser-Use-API-Key": self.api_key,
+                **({"Content-Type": "application/json"} if data is not None else {}),
+            },
+        )
+        raw = self._fetch(request, what="API")
+        try:
+            result = json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise _BrowserUseApiError(
+                "Browser Use API returned malformed JSON"
+            ) from None
+        if not isinstance(result, dict):
+            raise _BrowserUseApiError("Browser Use API returned non-object JSON")
+        return result
+
+    def _stop(self, session_id: str) -> str:
+        try:
+            self._request("PATCH", f"/browsers/{session_id}", {"action": "stop"})
+        except _BrowserUseApiError as e:
+            if e.status == 404:
+                return "already_closed"
+            raise
+        return "stopped"
+
+    def _websocket_url(self, cdp_url: str) -> str:
+        """Resolve an HTTP DevTools endpoint to its browser WebSocket URL."""
+        if cdp_url.startswith(("ws://", "wss://")):
+            return cdp_url
+        raw = self._fetch(
+            urllib.request.Request(f"{cdp_url.rstrip('/')}/json/version"),
+            what="CDP endpoint",
+        )
+        try:
+            version = json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            version = None
+        ws_url = (
+            version.get("webSocketDebuggerUrl") if isinstance(version, dict) else None
+        )
+        if not isinstance(ws_url, str) or not ws_url.startswith(("ws://", "wss://")):
+            raise _BrowserUseApiError(
+                "Browser Use CDP endpoint did not report a webSocketDebuggerUrl"
+            )
+        return ws_url
+
+    def start(self, task: dict[str, Any], time_limit_s: int) -> BrowserSession:
+        if not self.api_key:
+            raise BrowserRuntimeError(
+                "browser-use browser runtime requires BROWSER_USE_API_KEY"
+            )
+
+        payload = {
+            **self.options,
+            "browserScreenWidth": 1920,
+            "browserScreenHeight": 1080,
+            "enableRecording": True,
+            # Minutes; Browser Use refunds unused time when the session stops.
+            "timeout": min(240, max(1, -(-(time_limit_s + 120) // 60))),
+        }
+        try:
+            result = self._request("POST", "/browsers", payload)
+        except _BrowserUseApiError as e:
+            raise BrowserRuntimeError(str(e)) from None
+
+        session_id = result.get("id")
+        cdp_url = result.get("cdpUrl")
+        viewer_url = result.get("liveUrl")
+        if not isinstance(session_id, str) or not session_id:
+            raise BrowserRuntimeError(
+                "Browser Use browser response did not include a valid id"
+            )
+        try:
+            if not isinstance(cdp_url, str) or not cdp_url.startswith(
+                ("ws://", "wss://", "http://", "https://")
+            ):
+                raise _BrowserUseApiError(
+                    "Browser Use browser response did not include a valid cdpUrl"
+                )
+            ws_url = self._websocket_url(cdp_url)
+        except _BrowserUseApiError as e:
+            try:
+                self._stop(session_id)
+            except _BrowserUseApiError:
+                pass
+            raise BrowserRuntimeError(str(e)) from None
+        if not isinstance(viewer_url, str) or not viewer_url.startswith(
+            ("http://", "https://")
+        ):
+            viewer_url = None
+
+        return BrowserSession(
+            provider=self.name,
+            mode="remote",
+            session_id=session_id,
+            cdp_url=ws_url,
+            # The live URL embeds the CDP endpoint, so it grants browser control.
+            viewer_url=viewer_url,
+            viewer_url_sensitive=viewer_url is not None,
+            metadata={
+                "timeout_at": result.get("timeoutAt"),
+                "proxy_country_code": self.options.get("proxyCountryCode", "us"),
+            },
+            recording_mode="provider-download",
+        )
+
+    def finalize(self, session: BrowserSession, output_dir: Path) -> None:
+        if not session.session_id:
+            return
+        try:
+            # The recording is uploaded only after the browser stops.
+            session.metadata["stop_status"] = self._stop(session.session_id)
+            deadline = time.monotonic() + self.recording_poll_timeout_s
+            while True:
+                browser = self._request("GET", f"/browsers/{session.session_id}")
+                recording_url = browser.get("recordingUrl")
+                if isinstance(recording_url, str) and recording_url.startswith(
+                    ("http://", "https://")
+                ):
+                    break
+                if browser.get("recordingAvailable") is False:
+                    raise _BrowserUseApiError(
+                        "Browser Use recording is not available for this browser"
+                    )
+                if time.monotonic() >= deadline:
+                    raise _BrowserUseApiError(
+                        "Browser Use recording was not ready before timeout"
+                    )
+                time.sleep(self.recording_poll_interval_s)
+
+            # Presigned storage URL: never send the API key with it.
+            recording = self._fetch(
+                urllib.request.Request(recording_url),
+                what="recording download",
+            )
+            if not recording:
+                raise _BrowserUseApiError("Browser Use recording download was empty")
+            recording_path = output_dir / "data" / "recording.mp4"
+            recording_path.parent.mkdir(parents=True, exist_ok=True)
+            recording_path.write_bytes(recording)
+            session.metadata["recording_bytes"] = len(recording)
+        except (_BrowserUseApiError, OSError) as e:
+            raise BrowserRuntimeError(
+                str(e), category="browser_runtime_artifact_failed"
+            ) from None
+
+    def cleanup(self, session: BrowserSession) -> None:
+        if not session.session_id:
+            session.cleanup_status = "not_required"
+            return
+        stop_status = session.metadata.get("stop_status")
+        if isinstance(stop_status, str):
+            session.cleanup_status = stop_status
+            return
+        try:
+            session.cleanup_status = self._stop(session.session_id)
+        except _BrowserUseApiError as e:
+            raise BrowserRuntimeError(str(e)) from None
+
+
 def make_browser_runtime_provider(
     args: argparse.Namespace,
     env: dict[str, str],
@@ -799,6 +1082,17 @@ def make_browser_runtime_provider(
             api_key=api_key,
             options=options,
             api_url=_env_value(env, "KERNEL_BASE_URL") or _KERNEL_API_URL,
+        )
+    if runtime == "browser-use":
+        api_key = _env_value(env, "BROWSER_USE_API_KEY")
+        if not api_key:
+            raise BrowserRuntimeError(
+                "browser-use browser runtime requires BROWSER_USE_API_KEY"
+            )
+        return BrowserUseRuntimeProvider(
+            api_key=api_key,
+            options=options,
+            api_url=_env_value(env, "BROWSER_USE_BASE_URL") or _BROWSER_USE_API_URL,
         )
     raise BrowserRuntimeError(
         f"unknown browser runtime {runtime!r}; expected one of {BROWSER_RUNTIME_CHOICES}"

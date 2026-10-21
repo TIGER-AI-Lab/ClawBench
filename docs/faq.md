@@ -43,7 +43,7 @@ artifact schemas and download examples.
 
 Agent message formats depend on the harness. For example, Pi preserves complete
 messages and tool events but omits streaming message fragments. Replay storage
-also depends on the [browser runtime](browser-runtimes.md): Kernel provides a
+also depends on the [browser runtime](browser-runtimes.md): Kernel and Browser Use provide a
 downloaded video, while Browserbase stores a provider replay URL in metadata.
 
 ## How do identity, login, and starting state work?
@@ -75,7 +75,7 @@ to select Podman explicitly; macOS and Windows also require a running Podman
 machine. See [getting started](getting-started.md) for setup.
 
 [Remote browser runtimes](browser-runtimes.md) include Kernel, Browserbase,
-and an existing CDP endpoint. [Harbor](harbor.md) runs use Harbor's Docker
+Browser Use, and an existing CDP endpoint. [Harbor](harbor.md) runs use Harbor's Docker
 provider.
 
 ## How is a task judged successful?

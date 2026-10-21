@@ -197,7 +197,7 @@ Full registry: [`src/clawbench/runtime/harnesses/harnesses.yaml`](../src/clawben
 
 ## Other execution options
 
-- [Browser runtimes](browser-runtimes.md): remote CDP, Kernel, and Browserbase.
+- [Browser runtimes](browser-runtimes.md): remote CDP, Kernel, Browserbase, and Browser Use.
 - [Harbor](harbor.md): convert tasks and run them with Harbor's agents.
 - [EdgeBench / SForge](edgebench.md): export tasks and score results.
 - [ProRL](prorl-rl-env.md): submit RL rollouts through ProRL-Agent-Server.

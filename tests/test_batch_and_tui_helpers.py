@@ -111,7 +111,9 @@ def test_browserbase_batch_defaults_to_one_concurrent_session(
     assert args.max_concurrent == 1
 
 
+@pytest.mark.parametrize("browser_runtime", ["kernel", "browser-use"])
 def test_kernel_batch_defaults_to_one_concurrent_session(
+    browser_runtime: str,
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
@@ -140,7 +142,7 @@ def test_kernel_batch_defaults_to_one_concurrent_session(
         resume=None,
         no_upload=True,
         harness="openclaw",
-        browser_runtime="kernel",
+        browser_runtime=browser_runtime,
         browser_cdp_url=None,
         browser_runtime_options=None,
         judge="judge-model",
@@ -194,4 +196,4 @@ def test_tui_lists_kernel_for_remote_capable_harness(
     selected = tui._pick_browser_runtime("openclaw")
 
     assert selected == "kernel"
-    assert captured_values == ["local", "kernel", "browserbase"]
+    assert captured_values == ["local", "kernel", "browserbase", "browser-use"]

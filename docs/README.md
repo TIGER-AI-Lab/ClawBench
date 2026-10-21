@@ -8,7 +8,7 @@
 | --- | --- |
 | [Getting started](getting-started.md) | Install, configure a model and judge, choose a harness, and run your first task |
 | [CLI reference](cli.md) | Find commands, suite selectors, and common options |
-| [Browser runtimes](browser-runtimes.md) | Configure local browsers, remote CDP, Kernel, or Browserbase |
+| [Browser runtimes](browser-runtimes.md) | Configure local browsers, remote CDP, Kernel, Browserbase, or Browser Use |
 | [V1 vs V2](v1-vs-v2.md) | Understand corpus design and choose a suite |
 | [Task walkthrough](walkthrough.md) | Follow a task specification through recording and evaluation |
 | [FAQ](faq.md) | Understand account setup, task state, artifacts, and live-site behavior |
