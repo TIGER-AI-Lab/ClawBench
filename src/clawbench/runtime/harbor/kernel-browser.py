@@ -224,6 +224,7 @@ def cmd_finalize() -> int:
         _record(state, "finalize_failed", error=str(e))
         _save_state(state)
         _write_metadata(state)
+        _write_lifecycle(state)
         return 1
 
     _verify_deletion(provider, state)
@@ -255,7 +256,9 @@ def cmd_cleanup() -> int:
     except BrowserRuntimeError as e:
         state["cleanup_error"] = str(e)
         _record(state, "cleanup_failed", error=str(e))
+        _save_state(state)
         _write_metadata(state)
+        _write_lifecycle(state)
         return 1
 
     _verify_deletion(provider, state)

@@ -327,11 +327,23 @@ def test_script(browser_runtime: str = "local") -> str:
     if browser_runtime == "kernel":
         kernel_finalize = (
             "# Stop the provider replay, download the recording, delete the browser.\n"
+            "# A provider deletion outage must not discard verifier evidence, so the\n"
+            "# exit status is recorded and only reported, never used to skip scoring.\n"
+            "set +e\n"
             "/app/src/runtime-server/.venv/bin/python /app/src/harbor/kernel-browser.py finalize\n"
+            'kernel_finalize_status="$?"\n'
+            "set -e\n"
+            'printf \'{"exit_code": %s}\\n\' "$kernel_finalize_status"'
+            " > /logs/verifier/kernel-finalize-status.json\n"
+            'if [ "$kernel_finalize_status" -ne 0 ]; then\n'
+            '  echo "Kernel browser finalize exited $kernel_finalize_status;'
+            ' verifier evidence is kept" >&2\n'
+            "fi\n"
         )
     return f"""#!/bin/bash
 set -euo pipefail
 
+mkdir -p /logs/verifier
 curl -sf -X POST http://127.0.0.1:7878/api/stop || true
 curl -sf -X POST http://127.0.0.1:7878/api/stop-recording || true
 sleep 2
