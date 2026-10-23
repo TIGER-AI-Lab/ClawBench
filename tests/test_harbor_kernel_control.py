@@ -119,6 +119,13 @@ def test_kernel_setup_and_test_scripts_wire_lifecycle(
 
     test = (tests / "test.sh").read_text()
     assert "kernel-browser.py finalize" in test
+    # A provider delete outage must not short-circuit verification: finalize runs
+    # guarded, its status is persisted, and the rest of the script still runs.
+    finalize_at = test.index("kernel-browser.py finalize")
+    assert test.index("set +e") < finalize_at < test.index("set -e\n", finalize_at)
+    assert test.index("kernel-finalize-status.json") > finalize_at
+    assert test.index("/logs/verifier/data") > finalize_at
+    assert test.index("verify.py") > finalize_at
 
     env_dir = adapted_kernel_task / "environment"
     assert (env_dir / "harbor" / "kernel-browser.py").is_file()
@@ -393,6 +400,12 @@ def test_finalize_reports_failure_when_cleanup_fails(
     assert module.cmd_finalize() == 1
     state = json.loads(module.STATE_FILE.read_text())
     assert state["cleanup_error"] == "delete failed"
+    # Harbor collects /data as verifier evidence, so a failed delete still has
+    # to leave a public lifecycle artifact behind.
+    lifecycle = json.loads(module.LIFECYCLE_FILE.read_text())
+    assert lifecycle["cleanup_error"] == "delete failed"
+    assert lifecycle["status"] == "finalized"
+    assert "REDACTED" in lifecycle["cdp_url"]
 
 
 def test_cleanup_recovers_from_agent_visible_metadata_alone(

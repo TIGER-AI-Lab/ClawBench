@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
 ### Fixed
+- Harbor's Kernel control arm no longer loses verifier evidence when the provider refuses to delete the browser: `test.sh` records the finalize exit status and continues to score, and `kernel-browser.py` writes the public lifecycle artifact on both the `finalize` and `cleanup` provider-error paths.
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 
 ## [v0.11.0]
