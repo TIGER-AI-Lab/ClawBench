@@ -4,6 +4,12 @@ This document describes how ClawBench V2 tasks are exposed as RL rollouts for
 [NVIDIA-NeMo/ProRL-Agent-Server](https://github.com/NVIDIA-NeMo/ProRL-Agent-Server)
 ("Polar"), closing #219.
 
+For a code-audited assessment of evaluation validity, current staging and
+concurrency risks, and the experiments needed to validate learning, see
+[CUA evaluation and post-training](cua-evaluation-post-training.md).
+The hardware and live-model results below are historical reports; the offline
+tests do not reproduce them or demonstrate optimizer updates.
+
 ## Why this is thin
 
 Polar uses a **"Harness as Environment"** model. A Rollout Server (`:8080`)
@@ -17,9 +23,10 @@ expands a task into `num_samples` sessions; each runs on a Gateway node that:
 
 Two facts make the ClawBench integration almost entirely reuse:
 
-- **Reward is done.** Polar ships a built-in **`harbor` evaluator** that runs a
+- **Reward transport exists.** Polar ships a built-in **`harbor` evaluator** that runs a
   `tests/test.sh` and reads `/logs/verifier/reward.json` (or `reward.txt`) —
-  exactly what `clawbench-harbor-adapt` already produces. No new reward code.
+  exactly what `clawbench-harbor-adapt` already produces. This reuses the reward
+  interface; reward validity and failure semantics still need calibration.
 - **Token capture is Polar's job**, not ClawBench's. Because the gateway proxy
   captures tokens, ClawBench does **not** need to emit token IDs (unlike a
   Harbor-native RL rollout, which needs a vLLM/Tinker-served policy to recover
@@ -46,7 +53,7 @@ clawbench-prorl-submit --task v2-047-... --rollout-url http://host:8080 \
 
 The concrete browser harness is **baked into the runtime image** (its Dockerfile
 layer installs the env-driven `/run-harness.sh`); pick it with `--image`
-(defaults to `clawbench-<harness>:latest`). `run-prorl.sh` exports the policy
+(defaults to the combined `clawbench-prorl:latest`). `run-prorl.sh` exports the policy
 endpoint as `BASE_URL`/`API_KEY`/`API_TYPE`/`MODEL_NAME` + `INSTRUCTION` — the
 vars the harness runners read — then hands off. The `--judge-*` flags populate
 the evaluator env (`CLAWBENCH_JUDGE_*`) so Stage-2 judging runs during rollouts;
@@ -140,18 +147,17 @@ verify.py reads the instruction from `/tests/task.json` (Polar's `harbor`
 evaluator uploads `tests_dir` there), and the Stage-2 judge must be configured
 via `CLAWBENCH_JUDGE_*` / `--judge-*` or it fail-closes to 0.0.
 
-Other sampled tasks scored `0.0`: glm-5.1 browses extensively but does
-not complete the target actions (the credential/auth-wall — the dominant failure
-mode ClawBench measures; even gemini scored only ~29%). This is a
-model-capability result, not a pipeline defect, and `0.0` is a valid negative RL
-signal. A *passing* reward needs a stronger policy (frontier keys) or a training
-loop — the runbook below.
+Other sampled tasks were reported with `0.0`. Interpret a zero as a policy
+failure only after confirming setup, capture and judging completed successfully:
+the current verifier can also emit zero when judge configuration is missing or
+no verdict is available. These rollout reports do not establish held-out
+training performance.
 
-Not validated here (needs a live *acting* model + a GPU/vLLM/trainer fleet): a
-*task-completing* rollout (non-zero reward) and GRPO training. In the dev-box run
-the reward was `0.0` because the only live key (glm-5.1) is incompatible with the
-hermes harness (#241) — a model issue, not a pipeline defect. That is the
-runbook above.
+The reported positive-reward rollout above demonstrates an episode and grading,
+not model improvement. GRPO optimizer updates, checkpoint refresh, training
+throughput and held-out gains have not been validated by this runbook. They
+require an inference/trainer fleet and the experiments in the
+[assessment](cua-evaluation-post-training.md#experiments-and-acceptance-criteria).
 
 ## Real training runbook (GPU box, e.g. `nick@ubuntu`)
 

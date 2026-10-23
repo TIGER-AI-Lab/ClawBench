@@ -287,6 +287,7 @@ harness 是驱动浏览器的智能体框架，和模型是两个独立维度。
 | --- | --- |
 | 用托管的远程浏览器代替本地容器 | [`docs/browser-runtimes.md`](browser-runtimes.md) —— Kernel 和 Browserbase 配置、参数与录制 |
 | 用 Harbor 框架跑 V2（并且跑得快） | [`docs/harbor.md`](harbor.md) —— 转换、judge 配置、并发、排错 |
+| 研究 ClawBench 的 CUA 评测与 post-training 能力 | [研究报告（英文）](cua-evaluation-post-training.md) —— 现有能力、奖励可信度、训练缺口与验证方案 |
 | 查所有 CLI 命令和参数 | [`docs/cli.md`](cli.md) |
 
 <details>
