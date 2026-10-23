@@ -117,17 +117,22 @@ same_code = {
 
 ## Recipes
 
-**1. Agent SFT / distillation data.** `agent-messages.jsonl` from passing runs
-is on-policy expert data for browser agents — real sites, real DOM, real
-recoveries from pop-ups and consent walls. Filter by `interception.json`
-outcome for success-only trajectories, or keep failures for contrastive
-training. TurnOPD used exactly this shape of data for turn-aware on-policy
-distillation.
+**1. Agent SFT / distillation data.** `agent-messages.jsonl` provides candidate
+demonstrations from real sites, including recoveries from pop-ups and consent
+walls. Interception alone is not a success label: verify the task's required
+outcome and judge validity before selecting demonstrations. A teacher's trace
+is not automatically on-policy for a different student. Export the actual
+policy-visible observations, tool calls and training masks, and keep evaluation
+tasks and their derived traces outside training. See the
+[CUA/post-training assessment](cua-evaluation-post-training.md) for the data and
+validation requirements.
 
-**2. Process reward models.** Join `actions.jsonl` timestamps against the
-final outcome to get step-level credit assignment targets. RedundancyBench
-built a redundant-step detection benchmark this way — best method only reaches
-24.9%, so the problem is open.
+**2. Process reward models.** Actions, screenshots and final outcomes can support
+process-label annotation and redundant-step analysis. Timestamp joins and a
+terminal outcome do not establish step-level correctness or credit assignment;
+validate observation/action alignment and obtain independent process labels.
+RedundancyBench studies redundant-step detection on these traces — best method
+only reaches 24.9%, so the problem is open.
 
 **3. Failure taxonomies.** For every failed run you have the agent's own
 reasoning at the moment things went wrong. Cluster failure modes across

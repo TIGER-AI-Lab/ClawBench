@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
+
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 

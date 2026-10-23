@@ -23,6 +23,7 @@
 | [Human-reference evaluation](../eval/README.md) | Compare full trajectories under the original V1 rubric |
 | [Answer-mode tasks](answer-mode-tasks.md) | Define and judge tasks that produce an answer |
 | [OpenEval / EvalPort export](../eval/README.md#export-results-to-openeval--evalport) | Share a rescored batch as a ResultSet |
+| [CUA evaluation and post-training assessment](cua-evaluation-post-training.md) | Assess current capabilities, reward validity, training gaps, and proposed experiments |
 
 Native request scoring and human-reference trajectory evaluation are distinct
 workflows. Compare results with the same corpus revision, harness, and rubric.
