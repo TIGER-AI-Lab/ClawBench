@@ -1,0 +1,11 @@
+{
+  "instruction": "Open https://chaldal.com/. Switch the site language to বাংলা (the বাং button) and search the products for ডিম. The evaluated endpoint is the product search request for ডিম; nothing needs to be added to the bag, submitted, or bought.",
+  "eval_schema": {
+    "url_pattern": "^https://catalog\\.chaldal\\.com/searchPersonalized$",
+    "method": "POST",
+    "body": {
+      "query": "%E0%A6%A1%E0%A6%BF%E0%A6%AE"
+    }
+  },
+  "time_limit": 10
+}

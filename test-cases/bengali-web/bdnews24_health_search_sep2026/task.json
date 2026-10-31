@@ -1,0 +1,14 @@
+{
+  "instruction": "Open https://bangla.bdnews24.com/. Use the site search to look for ডেঙ্গু. On the archive search form (খবর অনুসন্ধান ও আর্কাইভ), keep ডেঙ্গু as the search word, change সকল ক্যাটাগরি to স্বাস্থ্য, set শুরু তারিখ to 1 September 2026 and শেষ তারিখ to 30 September 2026, and click খুঁজুন. The evaluated endpoint is the correctly configured archive search request; nothing needs to be submitted or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://bangla\\.bdnews24\\.com/archive/fetch\\?",
+    "method": "GET",
+    "params": {
+      "q": "ডেঙ্গু",
+      "section_id": "39146",
+      "published_after": "2026-09-01",
+      "published_before": "2026-09-30"
+    }
+  },
+  "time_limit": 10
+}

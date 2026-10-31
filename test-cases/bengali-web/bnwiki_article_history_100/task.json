@@ -1,0 +1,12 @@
+{
+  "instruction": "Open https://bn.wikipedia.org/. Find the Bengali Wikipedia article রবীন্দ্রনাথ ঠাকুর, open its revision history, and set the history list to show 100 revisions per page. The evaluated endpoint is the request for that article's history with 100 revisions per page; nothing needs to be edited or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://bn\\.wikipedia\\.org/w/index\\.php\\?(?:[^#]*&)?title=(?:%E0%A6%B0%E0%A6%AC%E0%A7%80%E0%A6%A8%E0%A7%8D%E0%A6%A6%E0%A7%8D%E0%A6%B0%E0%A6%A8%E0%A6%BE%E0%A6%A5|রবীন্দ্রনাথ)(?:_|%20|\\+)(?:%E0%A6%A0%E0%A6%BE%E0%A6%95%E0%A7%81%E0%A6%B0|ঠাকুর)(?:&|#|$)",
+    "method": "GET",
+    "params": {
+      "action": "history",
+      "limit": "100"
+    }
+  },
+  "time_limit": 10
+}

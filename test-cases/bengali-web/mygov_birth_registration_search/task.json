@@ -1,0 +1,11 @@
+{
+  "instruction": "Open https://www.mygov.bd/. Close the notice popup if it covers the page. In the service search box (সেবা অনুসন্ধান করুন), search for জন্ম নিবন্ধন and click অনুসন্ধান. The evaluated endpoint is the service search results request for জন্ম নিবন্ধন; nothing needs to be submitted or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://www\\.mygov\\.bd/search-result\\?",
+    "method": "GET",
+    "params": {
+      "search_text_box": "জন্ম নিবন্ধন"
+    }
+  },
+  "time_limit": 10
+}

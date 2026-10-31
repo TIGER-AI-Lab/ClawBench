@@ -1,0 +1,13 @@
+{
+  "instruction": "Open https://bdjobs.com/. Switch the site to বাংলা and search for jobs with the keyword শিক্ষক. On the results page, set প্রতি পৃষ্ঠায় চাকরি to ২০, and under কর্মস্থান choose চট্টগ্রাম বিভাগ (the whole division, not the district চট্টগ্রাম). The evaluated endpoint is the correctly configured job search request; nothing needs to be submitted or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://api\\.bdjobs\\.com/Jobs/api/JobSearch/GetJobSearch\\?",
+    "method": "GET",
+    "params": {
+      "keyword": "শিক্ষক",
+      "location": "1002",
+      "rpp": "20"
+    }
+  },
+  "time_limit": 10
+}

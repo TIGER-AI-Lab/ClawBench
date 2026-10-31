@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add the isolated `bengali-web` category: 12 read-only tasks on Bengali-language websites that require reading a Bengali interface and typing Bengali text, with live interception and offline matcher validation described in its README.
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
 ### Fixed

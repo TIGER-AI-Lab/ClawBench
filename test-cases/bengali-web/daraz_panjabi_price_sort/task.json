@@ -1,0 +1,14 @@
+{
+  "instruction": "Open https://www.daraz.com.bd/. Switch the site language to Bengali (ভাষা > BN / Bengali). Search for পাঞ্জাবি. On the results page, set ক্রমানুসারসাজান to দাম কম থেকে বেশি, and in the মূল্য filter enter নূন্যতম 500 and সর্বাধিক 1500, then apply the price filter. The evaluated endpoint is the correctly configured product search request; nothing needs to be submitted, saved, or bought.",
+  "eval_schema": {
+    "url_pattern": "^https://www\\.daraz\\.com\\.bd/catalog/\\?",
+    "method": "GET",
+    "params": {
+      "ajax": "true",
+      "q": "পাঞ্জাবি",
+      "sort": "priceasc",
+      "price": "500-1500"
+    }
+  },
+  "time_limit": 10
+}
