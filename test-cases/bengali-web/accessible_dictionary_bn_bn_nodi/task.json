@@ -1,0 +1,11 @@
+{
+  "instruction": "Open https://accessibledictionary.gov.bd/. Look up the Bengali word নদী in the Bengali to Bengali dictionary (বাংলা থেকে বাংলা), so that the result shows a Bengali definition, not an English one. The evaluated endpoint is the Bengali to Bengali dictionary lookup request for নদী; nothing needs to be submitted or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://accessibledictionary\\.gov\\.bd/bengali-to-bengali\\.php\\?",
+    "method": "GET",
+    "params": {
+      "q": "নদী"
+    }
+  },
+  "time_limit": 10
+}

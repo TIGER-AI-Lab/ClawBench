@@ -1,0 +1,14 @@
+{
+  "instruction": "Open https://bn.wikisource.org/. Go to the special page নির্ঘণ্ট পাতার তালিকা (বিশেষ:IndexPages), which lists the scanned books. Find scanned books by রবীন্দ্রনাথ that still need proofreading, shortest first: in its form, enter রবীন্দ্রনাথ in অনুসন্ধান, set ছাঁকুন to অসম্পূর্ণ, set সাজান to পাতার সংখ্যা, tick ঊর্দ্ধানুক্রমে সাজান, and click অনুসন্ধান. The evaluated endpoint is the correctly configured index list request; nothing needs to be edited or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://bn\\.wikisource\\.org/wiki/(?:%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%87%E0%A6%B7|বিশেষ|Special)(?::|%3A|%3a)IndexPages\\?",
+    "method": "GET",
+    "params": {
+      "key": "রবীন্দ্রনাথ",
+      "filter": "incomplete",
+      "order": "size",
+      "sortascending": "1"
+    }
+  },
+  "time_limit": 10
+}

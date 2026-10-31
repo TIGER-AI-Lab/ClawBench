@@ -1,0 +1,13 @@
+{
+  "instruction": "Open https://bangladesh.gov.bd/. Use the site search box (এখানে খুঁজুন...) to search for পাসপোর্ট. On the search results page, set ক্রম to শিরোনাম (উর্ধ্বগামী) and set পৃষ্ঠা আইটেম to ৫০. Do not add any content type, office type or date filter. The evaluated endpoint is the correctly configured search results request; nothing needs to be submitted or saved.",
+  "eval_schema": {
+    "url_pattern": "^https://bangladesh\\.gov\\.bd/views/search\\?(?:search|sort|page|page_size)=[^&#]*(?:&(?:search|sort|page|page_size)=[^&#]*)*$",
+    "method": "GET",
+    "params": {
+      "search": "পাসপোর্ট",
+      "sort": "title_asc",
+      "page_size": "50"
+    }
+  },
+  "time_limit": 10
+}

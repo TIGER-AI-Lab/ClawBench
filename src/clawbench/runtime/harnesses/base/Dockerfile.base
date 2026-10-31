@@ -11,7 +11,7 @@ RUN echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/01disable-sandbox \
     && apt-get update && apt-get install -y --no-install-recommends \
     chromium xvfb ffmpeg socat curl git x11vnc xclip \
     libegl1 libgbm1 \
-    fonts-noto-color-emoji fonts-noto-cjk \
+    fonts-noto-color-emoji fonts-noto-cjk fonts-noto-core \
     && mv /usr/bin/dpkg-statoverride.real /usr/bin/dpkg-statoverride \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

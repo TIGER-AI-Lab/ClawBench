@@ -1,0 +1,11 @@
+{
+  "instruction": "Open https://bn.banglapedia.org/. Use the site search box to go to the Banglapedia article whose exact title is পদ্মা নদী (search for পদ্মা নদী; do not use full-text search). The evaluated endpoint is the site search request for পদ্মা নদী; nothing needs to be edited or saved.",
+  "eval_schema": {
+    "url_pattern": "^(?![^#]*[?&]fulltext=)(?![^#]*[?&]title=[^#]*&title=)(?=[^#]*[?&]title=(?:%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%87%E0%A6%B7|বিশেষ|Special)(?::|%3A|%3a)(?:%E0%A6%85%E0%A6%A8%E0%A7%81%E0%A6%B8%E0%A6%A8%E0%A7%8D%E0%A6%A7%E0%A6%BE%E0%A6%A8|অনুসন্ধান|Search)(?:&|#|$))https://bn\\.banglapedia\\.org/index\\.php\\?",
+    "method": "GET",
+    "params": {
+      "search": "পদ্মা নদী"
+    }
+  },
+  "time_limit": 10
+}
