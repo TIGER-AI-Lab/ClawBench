@@ -8,6 +8,8 @@ import urllib.parse
 import urllib.request
 from typing import Any
 
+from clawbench.runner.model_sampling import chat_sampling_fields
+
 
 class ModelApiPreflightError(RuntimeError):
     """Raised when a configured model API cannot satisfy a tiny test call."""
@@ -124,8 +126,7 @@ def preflight_model_api(model_cfg: dict[str, Any], timeout: int = 20) -> None:
             {
                 "model": model,
                 "messages": [{"role": "user", "content": test_content}],
-                "max_tokens": 4,
-                "temperature": 0,
+                **chat_sampling_fields(model, 4),
             },
             timeout=timeout,
             secrets=secrets,

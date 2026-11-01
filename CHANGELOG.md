@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
+- The model API preflight and the LLM judges no longer send `max_tokens` plus an explicit `temperature` to OpenAI reasoning models (o-series, GPT-5) or Kimi K2.x/K3, which reject those fields with a 400: they now send `max_completion_tokens` and omit `temperature` where the model requires it.
 
 ## [v0.11.0]
 ### Added
