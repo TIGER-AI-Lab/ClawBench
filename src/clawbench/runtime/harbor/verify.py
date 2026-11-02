@@ -9,6 +9,13 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
+try:
+    from clawbench.runtime.harbor.body import RenderedBody, render_body
+except ModuleNotFoundError:
+    # The Harbor image copies this directory to /app/src/harbor and runs this
+    # file directly, so the installed clawbench package is not available there.
+    from body import RenderedBody, render_body
+
 JUDGE_SYSTEM_STRICT = """You are a strict evaluator for a web-agent benchmark.
 
 A user gave a natural-language INSTRUCTION to an autonomous browser agent.
@@ -89,6 +96,8 @@ def write_reward(
         "judge_match",
         "judge_match_lenient",
         "judge_match_strict",
+        "body_truncated",
+        "body_length",
     ):
         value = payload.get(name)
         if isinstance(value, (bool, int, float)):
@@ -115,14 +124,13 @@ def post_json(
 
 
 def build_user_msg(
-    instruction: str, intercept: dict[str, Any], judge_context: dict[str, Any] | None
+    instruction: str,
+    intercept: dict[str, Any],
+    judge_context: dict[str, Any] | None,
+    rendered_body: RenderedBody | None = None,
 ) -> str:
     req = intercept.get("request") or {}
-    body = req.get("body")
-    if isinstance(body, (dict, list)):
-        body_text = json.dumps(body, ensure_ascii=False, indent=2)[:6000]
-    else:
-        body_text = str(body)[:6000] if body is not None else "(empty)"
+    body_text = (rendered_body or render_body(req.get("body"))).prompt_text()
     context = ""
     if isinstance(judge_context, dict):
         pieces = []
@@ -169,7 +177,9 @@ def call_judge(
     api_type = model_cfg["api_type"]
     model = model_cfg["model"]
     base_url = model_cfg["base_url"].rstrip("/")
-    user = build_user_msg(instruction, intercept, judge_context)
+    req = intercept.get("request") or {}
+    rendered_body = render_body(req.get("body"))
+    user = build_user_msg(instruction, intercept, judge_context, rendered_body)
     if api_type == "openai-completions":
         resp = post_json(
             f"{base_url}/chat/completions",
@@ -220,14 +230,27 @@ def call_judge(
         )
         raw = resp["content"][0]["text"]
     else:
-        return {
+        verdict = {
             "match": None,
             "reason": f"unsupported judge api_type {api_type!r}",
             "raw": None,
             "error": "unsupported_api_type",
         }
+        verdict.update(rendered_body.verdict_metadata())
+        return verdict
     match, reason = parse_verdict(raw)
-    return {"match": match, "reason": reason, "raw": raw, "error": None}
+    if (
+        rendered_body.truncated
+        and system_prompt == JUDGE_SYSTEM_LENIENT
+        and match is True
+    ):
+        match = False
+        reason = (
+            "body was truncated; a positive lenient match requires the complete body"
+        )
+    verdict = {"match": match, "reason": reason, "raw": raw, "error": None}
+    verdict.update(rendered_body.verdict_metadata())
+    return verdict
 
 
 def call_judge_with_retries(
@@ -258,6 +281,7 @@ def call_judge_with_retries(
         "reason": f"judge_call_failed: {last_error}",
         "raw": None,
         "error": last_error,
+        **render_body((intercept.get("request") or {}).get("body")).verdict_metadata(),
     }
 
 
@@ -326,6 +350,9 @@ def main() -> int:
                 "judge_match_strict": None,
                 "reason": "missing judge configuration",
                 "task_id": task_id,
+                **render_body(
+                    (intercept.get("request") or {}).get("body")
+                ).verdict_metadata(),
             },
         )
         return 0
@@ -381,6 +408,8 @@ def main() -> int:
             },
             "judge_model": cfg["model"],
             "task_id": task_id,
+            "body_truncated": lenient_result.get("body_truncated"),
+            "body_length": lenient_result.get("body_length"),
         },
     )
     return 0

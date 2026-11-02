@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
+- Judges now share request-body rendering, report truncation metadata, and prevent truncated bodies from producing a lenient positive match.
 
 ## [v0.11.0]
 ### Added
