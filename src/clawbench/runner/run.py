@@ -744,6 +744,8 @@ def main():
             category = "build_instruction"
         elif phase == "writing_eval_schema":
             category = "task_data"
+        elif phase == "preparing_personal_info" and isinstance(e, ValueError):
+            category = "task_data"
         try:
             if (output_dir / "data").exists():
                 ensure_interception(output_dir)

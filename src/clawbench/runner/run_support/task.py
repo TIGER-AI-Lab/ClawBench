@@ -10,6 +10,13 @@ from typing import Any
 from clawbench.runner.run_support.resume import generate_resume_pdf
 
 RESUME_TEMPLATE = Path(__file__).resolve().parent / "resume_template.json"
+RESERVED_PERSONAL_INFO_FILES: frozenset[str] = frozenset(
+    {
+        "alex_green_personal_info.json",
+        "email_credentials.json",
+        "alex_green_resume.pdf",
+    }
+)
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -153,9 +160,57 @@ def validate_extra_info_path(task_dir: Path, rel_path: str) -> Path:
     return src
 
 
+def validate_extra_info_entries(
+    task: dict[str, Any],
+    *,
+    task_dir: Path | None = None,
+    personal_info_dir: Path | None = None,
+) -> tuple[list[dict[str, str]], list[str]]:
+    """Preflight extra_info entries for path safety and destination collisions."""
+    entries, warnings = normalize_extra_info(task.get("extra_info"))
+    seen_names: dict[str, str] = {}
+    for info in entries:
+        rel_path = info.get("path")
+        if not rel_path:
+            continue
+        if task_dir is not None:
+            src = validate_extra_info_path(task_dir, rel_path)
+            dest_name = src.name
+        else:
+            path_obj = Path(rel_path)
+            if path_obj.is_absolute() or ".." in path_obj.parts:
+                raise ValueError(
+                    "extra_info path must be a relative path within the task "
+                    f"directory: {rel_path!r}"
+                )
+            dest_name = path_obj.name
+        if not dest_name or dest_name in {".", ".."}:
+            raise ValueError(f"extra_info path must name a file: {rel_path!r}")
+        if dest_name in RESERVED_PERSONAL_INFO_FILES:
+            raise ValueError(
+                f"extra_info path {rel_path!r} collides with reserved "
+                f"personal-info file {dest_name!r}"
+            )
+        previous_path = seen_names.get(dest_name)
+        if previous_path is not None:
+            raise ValueError(
+                "extra_info basename collision: "
+                f"{previous_path!r} and {rel_path!r} both map to {dest_name!r}"
+            )
+        if personal_info_dir is not None and (personal_info_dir / dest_name).exists():
+            raise ValueError(
+                f"extra_info path {rel_path!r} collides with existing "
+                f"personal-info file {dest_name!r}"
+            )
+        seen_names[dest_name] = rel_path
+    return entries, warnings
+
+
 def copy_extra_info(task: dict, task_dir: Path, personal_info_dir: Path) -> list[str]:
     """Copy extra_info files from the test case into the my-info dir."""
-    entries, warnings = normalize_extra_info(task.get("extra_info"))
+    entries, warnings = validate_extra_info_entries(
+        task, task_dir=task_dir, personal_info_dir=personal_info_dir
+    )
     for warning in warnings:
         print(f"  WARNING: {warning}")
     for info in entries:
@@ -223,7 +278,7 @@ def build_instruction(task: dict) -> str:
         "If an account registration is required, you can use the email and password provided, and you can receive emails at that address if needed. "
         "---"
     )
-    normalized_extras, _ = normalize_extra_info(task.get("extra_info"))
+    normalized_extras, _ = validate_extra_info_entries(task)
     file_extras = [
         (Path(info["path"]).name, info["description"])
         for info in normalized_extras
@@ -262,4 +317,5 @@ def validate_task_data(task: Any, task_file: Path) -> dict:
     time_limit = float(raw_time_limit)
     if time_limit <= 0:
         raise ValueError("task time_limit must be greater than 0")
+    validate_extra_info_entries(task)
     return task
