@@ -109,7 +109,7 @@ def _prepare_run(
                 cdp_url="http://127.0.0.1:9222",
                 mode="local",
                 recording_mode="x11",
-                local_viewer_port=6080,
+                local_viewer_port=None,
             )
 
         def finalize(self, session, output_dir):
@@ -151,9 +151,13 @@ def _prepare_run(
     monkeypatch.setattr(run_mod, "copy_extra_info", lambda task, task_dir, dest: [])
     monkeypatch.setattr(run_mod, "build_instruction", lambda task: "Do the task")
     docker_calls: list[str] = []
-    monkeypatch.setattr(
-        run_mod, "docker_run", lambda *args, **kwargs: docker_calls.append("run")
-    )
+
+    def fake_docker_run(*args: Any, **kwargs: Any) -> int:
+        docker_calls.append("run")
+        return 49153
+
+    monkeypatch.setattr(run_mod, "docker_run", fake_docker_run)
+    monkeypatch.setattr(run_mod, "docker_run_human", fake_docker_run)
     monkeypatch.setattr(run_mod, "docker_wait", lambda *args, **kwargs: None)
     monkeypatch.setattr(run_mod, "docker_logs", lambda *args, **kwargs: None)
     monkeypatch.setattr(run_mod, "docker_copy", lambda *args, **kwargs: None)
@@ -192,6 +196,36 @@ def _prepare_run(
     )
 
     return run_mod, written, docker_calls
+
+
+@pytest.mark.parametrize("human", [False, True])
+def test_viewer_url_and_metadata_use_engine_allocated_port(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    human: bool,
+) -> None:
+    run_mod, written, docker_calls = _prepare_run(monkeypatch, tmp_path, "model-a")
+    argv = [
+        "clawbench-run",
+        str(tmp_path / "case"),
+        *(["--human"] if human else ["model-a"]),
+        "--no-judge",
+        "--output-dir",
+        str(tmp_path / "out"),
+        "--no-build",
+        "--no-upload",
+    ]
+    monkeypatch.setattr(run_mod.sys, "argv", argv)
+    monkeypatch.setattr(run_mod.signal, "signal", lambda *args: None)
+    monkeypatch.setattr(run_mod, "make_run_meta", lambda **kwargs: kwargs)
+
+    assert run_mod.main() is None
+    assert docker_calls == ["run"]
+    assert len(written) == 1
+    assert written[0][1]["host_port"] == 49153
+    assert written[0][1]["browser_runtime"]["local_viewer_port"] == 49153
+    assert "http://localhost:49153/vnc.html" in capsys.readouterr().out
 
 
 def test_bad_judge_model_is_rejected_before_the_agent_runs(

@@ -492,14 +492,9 @@ def main():
             phase = "starting_browser_runtime"
             browser_session = browser_runtime_provider.start(task, time_limit_s)
             host_port = browser_session.local_viewer_port
-            if host_port is None:
-                raise RuntimeError(
-                    "local browser runtime did not allocate a viewer port"
-                )
-
             phase = "starting_container"
             step("Starting container (human mode)")
-            docker_run_human(
+            host_port = docker_run_human(
                 container,
                 instruction,
                 schema_path,
@@ -510,6 +505,7 @@ def main():
                 browser_mode=browser_session.mode,
                 recording_mode=browser_session.recording_mode,
             )
+            browser_session.local_viewer_port = host_port
 
             # Graceful stop on Ctrl+C: give container time to flush recording
             def handle_sigint(sig, frame):
@@ -523,9 +519,7 @@ def main():
             vnc_url = f"http://localhost:{host_port}/vnc.html"
             console.print(f"\n  noVNC: [link={vnc_url}]{vnc_url}[/link]")
             if host_port != 6080:
-                console.print(
-                    f"  [dim](port 6080 was busy, auto-picked {host_port})[/dim]"
-                )
+                console.print(f"  [dim](viewer port: {host_port})[/dim]")
             console.print(f"  Task:  {task['instruction'][:200]}")
             console.print(f"  Email: {email}  Password: {email_pw}")
             console.print(f"  Time limit: {task['time_limit']} minutes")
@@ -541,7 +535,7 @@ def main():
 
             phase = "starting_container"
             step("Starting container")
-            docker_run(
+            host_port = docker_run(
                 container,
                 instruction,
                 schema_path,
@@ -555,14 +549,13 @@ def main():
                 browser_mode=browser_session.mode,
                 recording_mode=browser_session.recording_mode,
             )
+            browser_session.local_viewer_port = host_port
 
             if browser_session.mode == "local" and host_port is not None:
                 vnc_url = f"http://localhost:{host_port}/vnc.html"
                 console.print(f"\n  noVNC: [link={vnc_url}]{vnc_url}[/link]")
                 if host_port != 6080:
-                    console.print(
-                        f"  [dim](port 6080 was busy, auto-picked {host_port})[/dim]"
-                    )
+                    console.print(f"  [dim](viewer port: {host_port})[/dim]")
                 console.print("  Open the URL above to watch the agent in real-time.\n")
             elif browser_session.viewer_url:
                 if args.hide_browser_viewer:

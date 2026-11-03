@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import socket
 import time
 import urllib.error
 import urllib.parse
@@ -173,13 +172,6 @@ def _env_value(env: dict[str, str], key: str) -> str | None:
     return value if value else None
 
 
-def _pick_free_port() -> int:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(("127.0.0.1", 0))
-        return int(s.getsockname()[1])
-
-
 class LocalBrowserRuntimeProvider:
     name = "local"
     default_recording_mode = "x11"
@@ -190,7 +182,8 @@ class LocalBrowserRuntimeProvider:
             mode="local",
             cdp_url=DEFAULT_BROWSER_CDP_URL,
             recording_mode="x11",
-            local_viewer_port=_pick_free_port(),
+            # The container engine allocates and holds the port at startup.
+            local_viewer_port=None,
         )
 
     def finalize(self, session: BrowserSession, output_dir: Path) -> None:

@@ -4,7 +4,6 @@ import json
 import os
 import re
 import shlex
-import socket
 import subprocess
 import sys
 import time
@@ -104,14 +103,6 @@ def container_engine_version() -> str | None:
     if r.returncode != 0:
         return None
     return r.stdout.strip() or None
-
-
-def pick_free_port(preferred: int = 6080) -> int:
-    """Return an OS-assigned ephemeral port on 127.0.0.1."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(("127.0.0.1", 0))
-        return s.getsockname()[1]
 
 
 _STEP_RE = re.compile(r"^(?:STEP|Step)\s+(\d+)(?:/(\d+))?", re.IGNORECASE)
@@ -334,17 +325,61 @@ def _proxy_env_flags() -> list[str]:
     return flags
 
 
+def _viewer_port_flags(host_port: int | None, browser_mode: str) -> list[str]:
+    if host_port is not None:
+        return ["-p", f"{host_port}:6080"]
+    if browser_mode == "local":
+        return ["-p", "127.0.0.1::6080"]
+    return []
+
+
+def _resolve_viewer_port(
+    name: str, host_port: int | None, browser_mode: str
+) -> int | None:
+    if host_port is not None or browser_mode != "local":
+        return host_port
+    try:
+        result = subprocess.run(
+            [engine(), "port", name, "6080/tcp"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        match = re.fullmatch(r"127\.0\.0\.1:([0-9]+)", result.stdout.strip())
+        if match is None or not 1 <= int(match[1]) <= 65535:
+            raise ValueError("expected one loopback viewer port")
+        return int(match[1])
+    except (OSError, subprocess.SubprocessError, ValueError) as error:
+        # Called only after run succeeded: never remove an existing container
+        # when startup itself failed (for example, a container-name collision).
+        try:
+            subprocess.run(
+                [engine(), "rm", "-f", name],
+                check=True,
+                capture_output=True,
+                timeout=10,
+            )
+        except (OSError, subprocess.SubprocessError):
+            error.add_note(
+                f"Could not remove container {name} after port lookup failed"
+            )
+        raise RuntimeError(
+            "Could not determine the local browser viewer port"
+        ) from error
+
+
 def docker_run_human(
     name: str,
     instruction: str,
     schema_path: Path,
     personal_info_dir: Path,
     time_limit_s: int = 1800,
-    host_port: int = 6080,
+    host_port: int | None = 6080,
     browser_cdp_url: str = DEFAULT_BROWSER_CDP_URL,
     browser_mode: str = "local",
     recording_mode: str = "x11",
-) -> None:
+) -> int | None:
     cmd = [
         engine(),
         "run",
@@ -365,8 +400,7 @@ def docker_run_human(
         f"CLAWBENCH_BROWSER_MODE={browser_mode}",
         "-e",
         f"CLAWBENCH_RECORDING_MODE={recording_mode}",
-        "-p",
-        f"{host_port}:6080",
+        *_viewer_port_flags(host_port, browser_mode),
         "-v",
         f"{schema_path.resolve()}:/eval-schema.json:ro",
         "-v",
@@ -374,6 +408,7 @@ def docker_run_human(
         BASE_IMAGE,
     ]
     run(cmd)
+    return _resolve_viewer_port(name, host_port, browser_mode)
 
 
 def docker_run(
@@ -389,7 +424,7 @@ def docker_run(
     browser_cdp_url_file: Path | None = None,
     browser_mode: str = "local",
     recording_mode: str = "x11",
-) -> None:
+) -> int | None:
     env_flags = [
         engine(),
         "run",
@@ -433,8 +468,7 @@ def docker_run(
         ]
     else:
         env_flags += ["-e", f"CLAWBENCH_BROWSER_CDP_URL={browser_cdp_url}"]
-    if host_port is not None:
-        env_flags += ["-p", f"{host_port}:6080"]
+    env_flags += _viewer_port_flags(host_port, browser_mode)
     if "host.docker.internal" in model_cfg["base_url"]:
         env_flags += ["--add-host=host.docker.internal:host-gateway"]
     if model_cfg.get("thinking_level"):
@@ -444,6 +478,7 @@ def docker_run(
     if model_cfg.get("max_tokens") is not None:
         env_flags += ["-e", f"MAX_TOKENS={model_cfg['max_tokens']}"]
     run([*env_flags, harness_image(harness)])
+    return _resolve_viewer_port(name, host_port, browser_mode)
 
 
 def _agent_message_sources_for(harness: str | None) -> list[AgentMessageSource]:
