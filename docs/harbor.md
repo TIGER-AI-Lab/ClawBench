@@ -178,6 +178,6 @@ Scoring uses the same two-stage rule as the native runner: the interceptor must 
 | `Cannot connect to the Docker daemon` | Harbor's provider is Docker-only | Start Docker Desktop / `dockerd`; Podman is not a substitute here |
 | Sign-in tasks fail immediately | PurelyMail credentials missing | Add `--env-file .env` |
 | Many trials die at once under high `-n` | Host CPU/RAM exhaustion, or provider rate limits | Lower `-n`; see [Making it fast](#making-it-fast) |
-| Reward differs from the leaderboard | Different judge model or rubric | Use `deepseek-v4-pro`; see [Reproduce the leaderboard](../README.md#reproduce-the-leaderboard) |
+| Reward differs from the leaderboard | Different judge model or rubric | Use `deepseek-v4-pro`; see [Reproduce the leaderboard](reproduce.md) |
 
 Related: [`docs/cli.md`](cli.md) · [`docs/browser-runtimes.md`](browser-runtimes.md) · [`eval/scoring.md`](../eval/scoring.md)

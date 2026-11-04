@@ -19,7 +19,8 @@
 | --- | --- |
 | [Trace cookbook](trace-cookbook.md) | Locate recordings, messages, request logs, and provenance |
 | [Rescore and analyze](cli.md#clawbench-rescore) | Judge saved requests or report on a completed batch |
-| [Reproduce the leaderboard](../README.md#reproduce-the-leaderboard) | Re-run agents or re-judge published traces |
+| [Results archive](results.md) | Read the V2 OpenClaw, V1 paper, and per-category tables |
+| [Reproduce the leaderboard](reproduce.md) | Re-run agents or re-judge published traces |
 | [Human-reference evaluation](../eval/README.md) | Compare full trajectories under the original V1 rubric |
 | [Answer-mode tasks](answer-mode-tasks.md) | Define and judge tasks that produce an answer |
 | [OpenEval / EvalPort export](../eval/README.md#export-results-to-openeval--evalport) | Share a rescored batch as a ResultSet |
@@ -44,6 +45,12 @@ workflows. Compare results with the same corpus revision, harness, and rubric.
 - [Agent context](../AGENTS.md): repository instructions for coding agents.
 - [Changelog](../CHANGELOG.md) and [news archive](news.md): engineering changes
   and project announcements.
+
+## About the benchmark
+
+- [How ClawBench compares](comparison.md): WebArena, GAIA, Mind2Web, and other benchmarks side by side.
+- [Works using ClawBench](awesome-works.md): papers and reports that build on the benchmark.
+- [Featured in](featured.md): curated lists and community recognition.
 
 Keep installation steps in Getting started, command options in the CLI
 reference, and code ownership in Source layout. Link to these guides when

@@ -118,7 +118,7 @@ from the particular runs being compared.
 
 ## How do I reproduce or contribute a result?
 
-[Reproduce the leaderboard](../README.md#reproduce-the-leaderboard) describes
+[Reproduce the leaderboard](reproduce.md) describes
 re-running agents and re-judging published traces. Use the same judge, rubric,
 corpus revision, and harness when comparing outcomes.
 
