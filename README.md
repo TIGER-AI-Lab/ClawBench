@@ -30,6 +30,8 @@ ClawBench is an open-source benchmark, published in Findings of EMNLP 2026, that
 
 <sub>Built by NAIL Group · Sister project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites · Runs on any Chrome.</sub>
 
+<sub>Featured in 37 curated lists and #3 Paper of the Day on Hugging Face: [`docs/featured.md`](docs/featured.md).</sub>
+
 <br clear="right">
 
 <a id="what-are-you-looking-for"></a>
@@ -173,13 +175,39 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 - **[2026.10.10]** — ClawBench has surpassed **[1,000 GitHub stars](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**! Thank you to everyone who has starred, used, and contributed to the benchmark.
 - **[2026.08.20]** — Our paper has been accepted to [EMNLP 2026 Findings](https://2026.emnlp.org/).
 
-<sub>Earlier updates: [`docs/news.md`](docs/news.md) &middot; full change history: [`CHANGELOG.md`](CHANGELOG.md)</sub>
+Earlier updates are in [`docs/news.md`](docs/news.md); the full change history is in [`CHANGELOG.md`](CHANGELOG.md).
 
 <a id="awesome-works-using-clawbench"></a>
 
-## Works using ClawBench
+## Awesome Works using ClawBench
 
-**Authors from Google DeepMind, Stanford, UC Berkeley, Google, Microsoft Research, Harvard, ETH Zürich, Oxford, Northwestern, ByteDance Seed, and HKUST build on ClawBench** — and Li Auto's Mach-Mind-4-Flash technical report evaluates on it. See the [full list](docs/awesome-works.md); to add yours, open an issue or a pull request.
+**Authors from Google DeepMind, Stanford, UC Berkeley, Google, Microsoft Research, Harvard, ETH Zürich, Oxford, Northwestern, ByteDance Seed, and HKUST build on ClawBench** — and Li Auto's Mach-Mind-4-Flash technical report evaluates on it.
+
+- **Google DeepMind, University of Oxford & Columbia University**, [The Recipe for Intelligence in Natural and Artificial Systems](https://osf.io/preprints/psyarxiv/x9ktv_v1/) ([DOI](https://doi.org/10.31234/osf.io/x9ktv_v1))
+- **Stanford, UC Berkeley, Microsoft Research & UCSB**, [Auditing Agent Harness Safety](https://arxiv.org/abs/2605.14271) ([Code](https://github.com/UCSB-AI/HarnessAudit), [Project](https://harnessaudit.github.io/))
+- **Google**, [Agentic Coding Needs Proactivity, Not Just Autonomy](https://arxiv.org/abs/2605.06717) ([Google Research Blog](https://developers.googleblog.com/en/measuring-what-matters-with-jules/))
+- **Harvard Kempner Institute, Massachusetts General Hospital & CUHK**, [NeuroClaw Technical Report](https://arxiv.org/abs/2604.24696) ([Code](https://github.com/CUHK-AIM-Group/NeuroClaw), [Project](https://cuhk-aim-group.github.io/NeuroClaw/))
+- **ETH Zürich & Handshake AI Research**, [Verifying Agents in Rubric-Graded Environments](https://openreview.net/pdf?id=ayA2tJNDET) ([Code](https://github.com/Handshake-AI-Research/gandalf-the-grader), [Workshop](https://rl-eval.github.io/))
+- **University of Oxford, NUS & Peking University**, [OpenClaw Research: A Systematic Survey of Large Language Model Agents in Open Deployment](https://openreview.net/forum?id=5PMzjzEy6J) ([Project](https://ykc1.github.io/OpenClaw_Survey_Web/), [Resources](https://github.com/shuolucs/Awesome-OpenClaw-Research))
+- **Northwestern University**, [A Survey of the OpenClaw Ecosystem: From Platform Extensibility to Constraint Design](https://openreview.net/pdf/eab5a52b7bba57e22707282587f78e482b44d9b0.pdf) ([Project & Resources](https://github.com/REAL-Lab-NU/Awesome-OpenClaw-Papers))
+- **UC Davis & UT Dallas**, [Toward Trustworthy Computer-Use Agents: Risk Propagation, Evaluation Gaps, and Human Governance](https://www.researchgate.net/publication/405422774_Toward_Trustworthy_Computer-Use_Agents_Risk_Propagation_Evaluation_Gaps_and_Human_Governance) ([Code & Project](https://github.com/xu-hu-2002/Toward-Trustworthy-Computer-Use-Agent-A-Survey), [Resources](https://huggingface.co/datasets/Xu-Hu-2002/Toward-Thustworthy-Computer-Use-Agent))
+
+<details>
+<summary><b>9 more works</b></summary>
+
+- **ByteDance Seed & HKUST**, [Training Long-Context Vision-Language Models Effectively with Generalization Beyond 128K Context](https://arxiv.org/abs/2605.13831) ([Models](https://huggingface.co/collections/ZhaoweiWang/mmprolong))
+- **Tencent Hunyuan & Fudan University**, [TurnOPD: Making On-Policy Distillation Turn-Aware for Efficient Long-Horizon Agent Training](https://arxiv.org/abs/2607.05804)
+- **Unipat AI**, [VibeSearchBench: Benchmarking Long-horizon Proactive Search in the Wild](https://arxiv.org/abs/2605.27882) ([Code](https://github.com/VibeBench/VibeSearchBench), [Project](https://vibebench.github.io/VibeSearchBench.github.io/))
+- **Tsinghua University & CUHK**, [WildClawBench: A Benchmark for Real-World, Long-Horizon Agent Evaluation](https://arxiv.org/abs/2605.10912) ([Code](https://github.com/InternLM/WildClawBench), [Project](https://internlm.github.io/WildClawBench/))
+- **NUS, HKUST, Tsinghua University & Peking University**, [Towards Long-Horizon Agents: A Survey](https://openreview.net/forum?id=HyhfhlbWGh) ([Project](https://long-horizon-agents.github.io/), [Resources](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents))
+- **HKU MMLab**, [UniClawBench: A Universal Benchmark for Proactive Agents on Real-World Tasks](https://arxiv.org/abs/2607.08768) ([Code](https://github.com/HKU-MMLab/UniClawBench), [Project](https://uniclawbench.github.io/))
+- **Tsinghua University & SJTU**, [MacAgentBench: Benchmarking AI Agents on Real-World macOS Desktop](https://arxiv.org/abs/2606.22557) ([Code](https://github.com/JetAstra/MacAgentBench), [Project](https://jetastra.github.io/MacAgentBench/))
+- **Peking University & CUHK**, [π-Bench: Evaluating Proactive Personal Assistant Agents in Long-Horizon Workflows](https://arxiv.org/abs/2605.14678) ([Code](https://github.com/Simplified-Reasoning/Pi-Bench), [Project](https://simplified-reasoning.github.io/Pi-Bench/))
+- **SJTU**, [AcademiClaw: When Students Set Challenges for AI Agents](https://arxiv.org/abs/2605.02661) ([Code](https://github.com/GAIR-NLP/AcademiClaw), [Project](https://gair-nlp.github.io/AcademiClaw/))
+
+</details>
+
+If we missed your work, please [open an issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) or submit a pull request.
 
 <a id="results"></a>
 
@@ -200,7 +228,7 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 **Intercepted** = final HTTP request matched the task's URL/method (Stage 1, deterministic). **Reward (lenient)** = additionally judged by `deepseek/deepseek-v4-pro` to fulfill the instruction under the "no contradiction → match" rubric (Stage 2). **Reward (strict)** = same judge, strict rubric ("ambiguous → mismatch"). Ranked by Intercepted; Reward as tiebreak. Totals reflect the corpus size at run time.
 
-The [results archive](docs/results.md) has V2 under OpenClaw, the original V1 paper results with a per-category breakdown, and the V1 task categories. Codex and Claude Code runs on V2, and the V1 OpenClaw aggregate, are still in flight — they land on the [live leaderboard](https://claw-bench.com/leaderboard) first.
+More results are in [`docs/results.md`](docs/results.md): V2 under OpenClaw, the original V1 paper results with a per-category breakdown, and the V1 task categories. Codex and Claude Code runs on V2, and the V1 OpenClaw aggregate, are still in flight — they land on the [live leaderboard](https://claw-bench.com/leaderboard) first.
 
 <a id="reproduce-the-leaderboard"></a>
 <a id="-reproduce-the-leaderboard"></a>
@@ -213,7 +241,7 @@ Two independent runs of the same model under the same judge reproduce Intercepte
 clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
 ```
 
-The [reproduction guide](docs/reproduce.md) covers re-running the agent, re-judging published traces, and the pass criterion.
+Re-running the agent, re-judging published traces, and the pass criterion are in [`docs/reproduce.md`](docs/reproduce.md).
 
 ## ClawBench-Lite
 
@@ -260,6 +288,10 @@ Command overview and commonly used flags: **[CLI reference](docs/cli.md)**.
 Run any command with `--help` for its complete option list.
 
 V1 tasks are in [`test-cases/v1/`](test-cases/v1/) (152 tasks), V2 in `test-cases/v2/` (129), Lite in `test-cases/v1-lite/` (20), and converted Claw-Eval tasks in `test-cases/claw-eval/` (19). All suites use [`test-cases/task.schema.json`](test-cases/task.schema.json). For test case authoring, see [CONTRIBUTING.md](CONTRIBUTING.md); for output structure and evaluation guidance, see [`eval/README.md`](eval/README.md).
+
+## How ClawBench compares
+
+ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recording**. If you want a controlled sandbox or replayed traces, benchmarks such as WebArena and Mind2Web are excellent. If you want to know whether your agent can actually order food or book a flight *today*, this is the benchmark for that. The side-by-side table with WebArena, GAIA, SWE-bench, Mind2Web and five other benchmarks is in [`docs/comparison.md`](docs/comparison.md).
 
 <a id="faq"></a>
 <a id="frequently-asked-questions"></a>

@@ -49,7 +49,7 @@ workflows. Compare results with the same corpus revision, harness, and rubric.
 ## About the benchmark
 
 - [How ClawBench compares](comparison.md): WebArena, GAIA, Mind2Web, and other benchmarks side by side.
-- [Works using ClawBench](awesome-works.md): papers and reports that build on the benchmark.
+- [Awesome Works using ClawBench](../README.md#awesome-works-using-clawbench): papers and reports that build on the benchmark.
 - [Featured in](featured.md): curated lists and community recognition.
 
 Keep installation steps in Getting started, command options in the CLI

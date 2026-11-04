@@ -157,4 +157,4 @@ sandbox benchmark can produce.
 
 If you build on the traces, please cite the benchmark (see
 [Citation](../README.md#citation)) — and open an issue so we can feature your
-work in [Works using ClawBench](awesome-works.md).
+work in [Awesome Works using ClawBench](../README.md#awesome-works-using-clawbench).
