@@ -92,7 +92,7 @@ order food, book travel, apply for jobs, write reviews, manage projects.<br/>
 
 <sub><i>The paper reports 153 (V1) and 130 (V2); two ASPCA tasks were removed after publication, so the shipping corpus is 152 and 129.</i></sub>
 
-<sub><i>Built by NAIL Group &nbsp;·&nbsp; Sister project: <a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> — fixes the base model, varies the harness &nbsp;·&nbsp; Runs on any Chrome.</i></sub>
+<sub><i>Built by NAIL Group &nbsp;·&nbsp; Sister project: <a href="https://github.com/TIGER-AI-Lab/WebsiteBench">WebsiteBench</a> — Evaluation of agents' ability in reverse-engineering websites &nbsp;·&nbsp; Runs on any Chrome.</i></sub>
 
 <a href="docs/README.zh-CN.md"><img src="assets/icons/language.svg" width="16" height="16"> 中文</a>
 
@@ -241,6 +241,7 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 ## <img src="assets/icons/bullhorn.svg" width="20" height="20"> News
 
+- **[2026.11.05]** — Check out our new project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites.
 - **[2026.10.10]** — 🎉 ClawBench has surpassed **[1,000 GitHub stars](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**! Thank you to everyone who has starred, used, and contributed to the benchmark.
 - **[2026.08.20]** — 🏆 Our paper has been accepted to [EMNLP 2026 Findings](https://2026.emnlp.org/).
 - **[2026.08.20]** - Added [Kernel](https://www.kernel.sh) as a supported remote browser runtime. Thanks to @[rgarcia](https://github.com/rgarcia).
