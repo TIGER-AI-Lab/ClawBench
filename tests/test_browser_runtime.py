@@ -110,7 +110,8 @@ def test_local_browser_runtime_defaults_to_local_mode() -> None:
     assert session.mode == "local"
     assert session.cdp_url == "http://127.0.0.1:9222"
     assert session.recording_mode == "x11"
-    assert isinstance(session.local_viewer_port, int)
+    # No bind-and-close reservation: allocation belongs to container startup.
+    assert session.local_viewer_port is None
 
 
 def test_steel_provider_is_reserved_not_implemented() -> None:

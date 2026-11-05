@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
 ### Fixed
+- Local browser viewer ports are allocated and held by the container engine, avoiding a port-selection race during concurrent runs.
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
 
 ## [v0.11.0]
