@@ -51,14 +51,16 @@ All guides and integrations: **[Documentation index](docs/README.md)**.
 <a id="-human-quick-start"></a>
 <a id="human-quick-start"></a>
 
-## Quick start
+## <img src="assets/icons/rocket.svg" width="20" height="20" alt=""> Quick start
 
 **Prerequisites:** Python 3.11+, [uv](https://docs.astral.sh/uv/), and a running
 Docker or Podman engine. See [platform setup](docs/getting-started.md#prerequisites).
 
 <a id="install"></a>
 
-### Installed package
+<a id="installed-package"></a>
+
+### <img src="assets/icons/cube.svg" width="16" height="16" alt=""> Installed package
 
 Install [`clawbench-eval`](https://pypi.org/project/clawbench-eval/) from PyPI:
 
@@ -73,7 +75,9 @@ Configure the default judge, `deepseek-v4-pro`, as well; the
 [model setup guide](docs/getting-started.md#configure-models) explains judge
 selection and how to run without scoring.
 
-### Source checkout
+<a id="source-checkout"></a>
+
+### <img src="assets/icons/terminal.svg" width="16" height="16" alt=""> Source checkout
 
 ```bash
 git clone https://github.com/TIGER-AI-Lab/ClawBench.git
@@ -104,7 +108,9 @@ batch and human runs, [harness selection](docs/getting-started.md#choose-a-harne
 and remote browser options. The **[CLI reference](docs/cli.md)** covers
 non-interactive commands. Coding agents can start with [`AGENTS.md`](AGENTS.md).
 
-## How it works
+<a id="how-it-works"></a>
+
+## <img src="assets/icons/screwdriver-wrench.svg" width="20" height="20" alt=""> How it works
 
 ```
    You pick a task            ClawBench spins up           Agent drives the         Interceptor captures
@@ -151,7 +157,7 @@ Live websites · isolated containers · request interception · five-layer recor
 
 <a id="datasets"></a>
 
-## Datasets
+## <img src="assets/icons/layer-group.svg" width="20" height="20" alt=""> Datasets
 
 ClawBench ships **three** Hugging Face datasets — task definitions plus full execution traces for V1 and V2. All open, downloadable in one command.
 
@@ -167,7 +173,9 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 > **Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv).
 
-## News
+<a id="news"></a>
+
+## <img src="assets/icons/bullhorn.svg" width="20" height="20" alt=""> News
 
 - **[2026.11.05]** — Check out our new project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites.
 - **[2026.10.10]** — ClawBench has surpassed **[1,000 GitHub stars](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**! Thank you to everyone who has starred, used, and contributed to the benchmark.
@@ -177,7 +185,7 @@ Earlier updates are in [`docs/news.md`](docs/news.md); the full change history i
 
 <a id="awesome-works-using-clawbench"></a>
 
-## Awesome Works using ClawBench
+## <img src="assets/icons/bolt.svg" width="20" height="20" alt=""> Awesome Works using ClawBench
 
 **Authors from Google DeepMind, Stanford, UC Berkeley, Google, Microsoft Research, Harvard, ETH Zürich, Oxford, Northwestern, ByteDance Seed, and HKUST build on ClawBench** — and Li Auto's Mach-Mind-4-Flash technical report evaluates on it.
 
@@ -209,7 +217,7 @@ If we missed your work, please [open an issue](https://github.com/TIGER-AI-Lab/C
 
 <a id="results"></a>
 
-## Results
+## <img src="assets/icons/chart-bar.svg" width="20" height="20" alt=""> Results
 
 **V2 · Hermes harness** · 8 models · `deepseek-v4-pro` judge, lenient and strict rubrics · live at [claw-bench.com](https://claw-bench.com/)
 
@@ -242,7 +250,7 @@ More results are in [`docs/results.md`](docs/results.md): the per-category break
 <a id="reproduce-the-leaderboard"></a>
 <a id="-reproduce-the-leaderboard"></a>
 
-## Reproduce the leaderboard
+## <img src="assets/icons/check-double.svg" width="20" height="20" alt=""> Reproduce the leaderboard
 
 Two independent runs of the same model under the same judge reproduce Intercepted and Reward within ±2 pp on V2. To check a published row against our traces:
 
@@ -252,7 +260,9 @@ clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
 
 Re-running the agent, re-judging published traces, and the pass criterion are in [`docs/reproduce.md`](docs/reproduce.md).
 
-## ClawBench-Lite
+<a id="clawbench-lite"></a>
+
+## <img src="assets/icons/bolt.svg" width="20" height="20" alt=""> ClawBench-Lite
 
 **New here? Run this first.** [`test-cases/v1-lite/`](test-cases/v1-lite/) is a **20-task curated subset** of V1, selected for household-name sites, real-world relevance, difficulty, and category diversity. It matches the 20-tasks-per-source convention of [browser-use/benchmark](https://github.com/browser-use/benchmark) and gives you a credible signal at a fraction of the full-benchmark cost.
 
@@ -260,14 +270,18 @@ Tier distribution: **flagship 9 / core 8 / wildcard 3** — spanning daily life 
 
 Run it with `--cases-suite v1-lite`, or inspect the link-backed task files in [`test-cases/v1-lite/`](test-cases/v1-lite/).
 
-## Example walkthrough
+<a id="example-walkthrough"></a>
+
+## <img src="assets/icons/play.svg" width="20" height="20" alt=""> Example walkthrough
 
 The [task walkthrough](docs/walkthrough.md) follows a V1 task from its JSON
 specification through the recorded browser session and human-reference
 assessment. It also explains why a placeholder interception rule needs
 trajectory evaluation.
 
-## Evaluation
+<a id="evaluation"></a>
+
+## <img src="assets/icons/video.svg" width="20" height="20" alt=""> Evaluation
 
 The native runner scores intercepted requests with an LLM judge by default:
 a pass requires both an interception and a matching judge verdict.
@@ -284,7 +298,9 @@ To share rescored results, see the
 
 <a id="-cli"></a>
 
-## CLI
+<a id="cli"></a>
+
+## <img src="assets/icons/terminal.svg" width="20" height="20" alt=""> CLI
 
 ```bash
 ./run.sh                                                                   # interactive TUI
@@ -298,14 +314,16 @@ Run any command with `--help` for its complete option list.
 
 V1 tasks are in [`test-cases/v1/`](test-cases/v1/) (152 tasks), V2 in `test-cases/v2/` (129), Lite in `test-cases/v1-lite/` (20), and converted Claw-Eval tasks in `test-cases/claw-eval/` (19). All suites use [`test-cases/task.schema.json`](test-cases/task.schema.json). For test case authoring, see [CONTRIBUTING.md](CONTRIBUTING.md); for output structure and evaluation guidance, see [`eval/README.md`](eval/README.md).
 
-## How ClawBench compares
+<a id="how-clawbench-compares"></a>
+
+## <img src="assets/icons/chart-bar.svg" width="20" height="20" alt=""> How ClawBench compares
 
 ClawBench's niche: **live consumer websites, everyday tasks, end-to-end recording**. If you want a controlled sandbox or replayed traces, benchmarks such as WebArena and Mind2Web are excellent. If you want to know whether your agent can actually order food or book a flight *today*, this is the benchmark for that. The side-by-side table with WebArena, GAIA, SWE-bench, Mind2Web and five other benchmarks is in [`docs/comparison.md`](docs/comparison.md).
 
 <a id="faq"></a>
 <a id="frequently-asked-questions"></a>
 
-## FAQ
+## <img src="assets/icons/circle-question.svg" width="20" height="20" alt=""> FAQ
 
 <a id="what-it-is"></a>
 <a id="running-it"></a>
@@ -316,7 +334,9 @@ See the **[FAQ](docs/faq.md)** for task coverage, account setup, recording
 artifacts, scoring, and live-site limitations. For installation and model
 configuration, use [Getting started](docs/getting-started.md).
 
-## Contributing
+<a id="contributing"></a>
+
+## <img src="assets/icons/screwdriver-wrench.svg" width="20" height="20" alt=""> Contributing
 
 We welcome contributions -- especially new test cases. If you've ever ordered groceries, booked an appointment, or filed a form online, you already know how to write one. Most PRs are a single JSON file and land in under a day.
 
@@ -329,13 +349,17 @@ We welcome contributions -- especially new test cases. If you've ever ordered gr
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and contributor recognition policy.
 
-## Community
+<a id="community"></a>
+
+## <img src="assets/icons/globe.svg" width="20" height="20" alt=""> Community
 
 - **Questions and bugs:** [GitHub issues](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose), the fastest route to a maintainer.
 - **中文社区：**[微信群](assets/community/wechat_grp_422.jpg)，研究者、开发者、贡献者交流。
 - **Dataset and leaderboard:** [Hugging Face discussions](https://huggingface.co/datasets/NAIL-Group/ClawBench/discussions), next to the data.
 
-## Citation
+<a id="citation"></a>
+
+## <img src="assets/icons/layer-group.svg" width="20" height="20" alt=""> Citation
 
 If you use ClawBench in your research, please cite:
 
@@ -349,11 +373,15 @@ If you use ClawBench in your research, please cite:
 }
 ```
 
-## Contact
+<a id="contact"></a>
+
+## <img src="assets/icons/bullhorn.svg" width="20" height="20" alt=""> Contact
 
 For questions, suggestions, bug reports, or feature requests, please [open a GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose).
 
-## Core Contributors
+<a id="core-contributors"></a>
+
+## <img src="assets/icons/person.svg" width="20" height="20" alt=""> Core Contributors
 
 <table>
 <tr>
@@ -390,7 +418,9 @@ For questions, suggestions, bug reports, or feature requests, please [open a Git
 </tr>
 </table>
 
-## Advisors
+<a id="advisors"></a>
+
+## <img src="assets/icons/person.svg" width="20" height="20" alt=""> Advisors
 
 <table>
 <tr>
@@ -421,7 +451,9 @@ For questions, suggestions, bug reports, or feature requests, please [open a Git
 </tr>
 </table>
 
-## Support ClawBench
+<a id="support-clawbench"></a>
+
+## <img src="assets/icons/bolt.svg" width="20" height="20" alt=""> Support ClawBench
 
 If ClawBench is useful for your research or product work, the single most helpful thing you can do is **[star the repo](https://github.com/TIGER-AI-Lab/ClawBench)** — it surfaces the benchmark to other AI-agent researchers and helps us justify continued dataset curation.
 
@@ -433,7 +465,9 @@ Open to contributions — new test cases, bug fixes, or evaluation submissions f
 </a>
 </p>
 
-## Star History
+<a id="star-history"></a>
+
+## <img src="assets/icons/chart-bar.svg" width="20" height="20" alt=""> Star History
 
 <a href="https://www.star-history.com/?type=date&repos=TIGER-AI-Lab%2FClawBench">
  <picture>
@@ -443,7 +477,9 @@ Open to contributions — new test cases, bug fixes, or evaluation submissions f
  </picture>
 </a>
 
-## License & Acknowledgments
+<a id="license--acknowledgments"></a>
+
+## <img src="assets/icons/shield-halved.svg" width="20" height="20" alt=""> License & Acknowledgments
 
 Apache 2.0 -- see [LICENSE](LICENSE).
 
