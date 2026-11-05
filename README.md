@@ -28,7 +28,7 @@ ClawBench is an open-source benchmark, published in Findings of EMNLP 2026, that
 
 <sub>The paper reports 153 (V1) and 130 (V2); two ASPCA tasks were removed after publication, so the shipping corpus is 152 and 129.</sub>
 
-<sub>Built by NAIL Group · Sister project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites · Runs on any Chrome.</sub>
+<sub><i>Built by NAIL Group &nbsp;·&nbsp; Sister project: <a href="https://github.com/TIGER-AI-Lab/WebsiteBench">WebsiteBench</a> — Evaluation of agents' ability in reverse-engineering websites &nbsp;·&nbsp; Runs on any Chrome.</i></sub>
 
 <sub>Featured in 37 curated lists and #3 Paper of the Day on Hugging Face: [`docs/featured.md`](docs/featured.md).</sub>
 
@@ -167,7 +167,23 @@ ClawBench ships **three** Hugging Face datasets — task definitions plus full e
 
 > The trace datasets are large; use `hf download --include "<pattern>"` to pull a single model or a single task.
 
-> **Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv).
+> **🏆 Live leaderboard:** [`claw-bench.com/leaderboard`](https://claw-bench.com/leaderboard) (V2 default, two-stage scoring — interception + LLM judge). Full scoring formula in [`eval/scoring.md`](eval/scoring.md). Add your run: PR to [`leaderboard/results.csv`](https://huggingface.co/datasets/TIGER-Lab/ClawBench/blob/main/leaderboard/results.csv).
+
+## <img src="assets/icons/bullhorn.svg" width="20" height="20"> News
+
+- **[2026.11.05]** — Check out our new project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites.
+- **[2026.10.10]** — 🎉 ClawBench has surpassed **[1,000 GitHub stars](https://github.com/TIGER-AI-Lab/ClawBench/stargazers)**! Thank you to everyone who has starred, used, and contributed to the benchmark.
+- **[2026.08.20]** — 🏆 Our paper has been accepted to [EMNLP 2026 Findings](https://2026.emnlp.org/).
+- **[2026.08.20]** - Added [Kernel](https://www.kernel.sh) as a supported remote browser runtime. Thanks to @[rgarcia](https://github.com/rgarcia).
+- **[2026.08.18]** — Added [WebBrain](https://github.com/webbrain-one/webbrain) as a supported harness. Thanks to @[alectimison-maker](https://github.com/alectimison-maker).
+- **[2026.08.16]** — Released **[RewardHarness](https://github.com/TIGER-AI-Lab/RewardHarness)**, our self-evolving agentic reward framework: 47.4% on EditReward-Bench from just 100 preference demos, with no reward-model training. [Details →](https://arxiv.org/abs/2605.08703)
+- **[2026.08.03]** — Added [Browserbase](https://www.browserbase.com) as a remote browser runtime. [Details →](docs/browser-runtimes.md)
+- **[2026.07.30]** — v0.8.0: Gemini-as-judge, random-click baseline harness, EdgeBench/SForge adapter, remote-browser CDP support. [Details →](CHANGELOG.md)
+- **[2026.07.25]** — 🏆 Our paper has been accepted by [COLM 2026 WAB](https://www.aiagentbehavior.com/).
+
+<sub>Earlier updates: [`docs/news.md`](docs/news.md) &middot; full change history: [`CHANGELOG.md`](CHANGELOG.md)</sub>
+
+## <a id="awesome-works-using-clawbench"></a>✨ Awesome Works using ClawBench
 
 ## News
 
