@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
 ### Changed
-- Restyle the README header: a typeset wordmark and tagline replace the gradient banner, four palette badges replace the badge wall, and the logo is shown at 160 px from a 30 KB copy. The results archive, reproduction steps, benchmark comparison, and curated-list mentions move to [`docs/`](docs/README.md), with a pointer left in the README where each used to be; the news archive in [`docs/news.md`](docs/news.md) now holds every announcement.
+- Restyle the README header: a typeset wordmark and tagline replace the gradient banner, four palette badges replace the badge wall, and the logo is shown at 160 px from a 30 KB copy. The results archive, reproduction steps, benchmark comparison, and curated-list mentions move to [`docs/`](docs/README.md), with a pointer left in the README where each used to be; the news archive in [`docs/news.md`](docs/news.md) now holds every announcement. The README keeps the V2 leaderboard and the overall paper results, and the citation in the README and the Chinese README now points to the EMNLP 2026 Findings paper.
 
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
