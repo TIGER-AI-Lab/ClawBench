@@ -1,0 +1,45 @@
+# Featured in
+
+ClawBench was the [#3 Paper of the Day](https://huggingface.co/papers/2604.08523) on Hugging Face. [DeepWiki](https://deepwiki.com/TIGER-AI-Lab/ClawBench) has an AI-generated walkthrough of the codebase.
+
+## Curated lists
+
+ClawBench appears in 37 community-maintained lists:
+
+- [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering)
+- [awesome-agent-harness](https://github.com/Picrew/awesome-agent-harness)
+- [OpenHands open-operator](https://github.com/OpenHands/open-operator)
+- [Awesome-AI-Agents](https://github.com/Jenqyang/Awesome-AI-Agents)
+- [awesome-computer-use](https://github.com/ranpox/awesome-computer-use)
+- [awesome-computer-use (philfung)](https://github.com/philfung/awesome-computer-use)
+- [Awesome-GUI-Agents](https://github.com/ZJU-REAL/Awesome-GUI-Agents)
+- [GUI-Agents-Paper-List](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List)
+- [LLM-Agent-Benchmark-List](https://github.com/zhangxjohn/LLM-Agent-Benchmark-List)
+- [Awesome-AgenticLLM-RL-Papers](https://github.com/HHHHHejia/Awesome-AgenticLLM-RL-Papers)
+- [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents)
+- [awesome-ai-agent-evaluation](https://github.com/Lhy723/awesome-ai-agent-evaluation)
+- [LLM-eval-survey](https://github.com/MLGroupJLU/LLM-eval-survey)
+- [awesome-ai-leaderboard](https://github.com/SAILResearch/awesome-ai-leaderboard)
+- [awesome-agentic-engineering-resources](https://github.com/EthicalML/awesome-agentic-engineering-resources)
+- [agentic-web](https://github.com/SafeRL-Lab/agentic-web)
+- [awesome-ai-agent-papers](https://github.com/VoltAgent/awesome-ai-agent-papers)
+- [awesome-llm-agent-papers](https://github.com/js-lee-AI/awesome-llm-agent-papers)
+- [Multimodal-AND-Large-Language-Models](https://github.com/Yangyi-Chen/Multimodal-AND-Large-Language-Models)
+- [awesome-computer-use-agents](https://github.com/cdxeve/awesome-computer-use-agents)
+- [Awesome-AI-Benchmarking](https://github.com/ishandutta2007/Awesome-AI-Benchmarking)
+- [awesome-ai-benchmarks-evaluation](https://github.com/brandonhimpfen/awesome-ai-benchmarks-evaluation)
+- [awesome-agentic-evaluation](https://github.com/pauldebdeep9/awesome-agentic-evaluation)
+- [awesome-ai-agent](https://github.com/skyming/awesome-ai-agent)
+- [awesome-web-agents](https://github.com/steel-dev/awesome-web-agents)
+- [Awesome-LLM-Long-Context-Modeling](https://github.com/Xnhyacinth/Awesome-LLM-Long-Context-Modeling)
+- [awesome-agent-trajectory](https://github.com/YintongHuo/awesome-agent-trajectory)
+- [awesome-ai-agents-2026](https://github.com/ARUNAGIRINATHAN-K/awesome-ai-agents-2026)
+- [Awesome-RL-GUI-Agents](https://github.com/Steve2457/Awesome-RL-GUI-Agents)
+- [awesome-ai-agents](https://github.com/aloth/awesome-ai-agents)
+- [Awesome-Self-Improving-Agents](https://github.com/FrontisAI/Awesome-Self-Improving-Agents)
+- [LLMAgentPapers](https://github.com/zjunlp/LLMAgentPapers)
+- [llm_agents_devtools](https://github.com/M1n9X/llm_agents_devtools)
+- [ai-agent-book](https://github.com/bojieli/ai-agent-book)
+- [Awesome-LLM-Agent-Trajectory-Analysis](https://github.com/IcyFeather233/Awesome-LLM-Agent-Trajectory-Analysis)
+- [llm-systems-engineering-roadmap](https://github.com/h9-tec/llm-systems-engineering-roadmap)
+- [awesome-rl-for-agents](https://github.com/Necolizer/awesome-rl-for-agents)

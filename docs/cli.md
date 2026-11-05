@@ -134,7 +134,7 @@ clawbench-reproduce --model deepseek-v4-flash --tolerance 2.0
 | `--work-dir <path>` | `./reproduce-cache` | Local download directory |
 | `--keep-cache` | off | Keep downloaded traces instead of deleting them |
 
-See [Reproduce the leaderboard](../README.md#reproduce-the-leaderboard) for the full workflow and pass criterion.
+See [Reproduce the leaderboard](reproduce.md) for the full workflow and pass criterion.
 
 ## Environment variables
 

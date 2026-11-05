@@ -866,14 +866,12 @@ Pi 的 `agent.log`、`proxy.log` 等 harness 诊断日志不会复制到最终�
 如果 ClawBench 对你的研究有帮助，请引用：
 
 ```bibtex
-@misc{zhang2026clawbenchaiagentscomplete,
-  title         = {ClawBench: Can AI Agents Complete Everyday Online Tasks?},
-  author        = {Yuxuan Zhang and Yubo Wang and Yipeng Zhu and Penghui Du and Junwen Miao and Xuan Lu and Wendong Xu and Yunzhuo Hao and Songcheng Cai and Xiaochen Wang and Huaisong Zhang and Xian Wu and Yi Lu and Minyi Lei and Kai Zou and Huifeng Yin and Ping Nie and Liang Chen and Dongfu Jiang and Wenhu Chen and Kelsey R. Allen},
-  year          = {2026},
-  eprint        = {2604.08523},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CL},
-  url           = {https://arxiv.org/abs/2604.08523}
+@inproceedings{zhang2026clawbench,
+  title={Clawbench: Can ai agents complete everyday online tasks?},
+  author={Zhang, Yuxuan and Wang, Yubo and Zhu, Yipeng and Du, Penghui and Miao, Junwen and Lu, Xuan and Li, Zhuofeng and Qu, Xingwei and Guo, Zhengkang and Shen, Yuanzhe and others},
+  booktitle={Findings of the Association for Computational Linguistics: EMNLP 2026},
+  pages={9386--9408},
+  year={2026}
 }
 ```
 
