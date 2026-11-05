@@ -16,7 +16,7 @@
 
 [![Project Page](assets/brand/badges/project-page.svg)](https://claw-bench.com) [![Paper](assets/brand/badges/paper.svg)](https://arxiv.org/abs/2604.08523) [![Leaderboard](assets/brand/badges/leaderboard.svg)](https://huggingface.co/spaces/TIGER-Lab/ClawBench) [![Dataset](assets/brand/badges/dataset.svg)](https://huggingface.co/datasets/NAIL-Group/ClawBench)
 
-[Quick start](#quick-start) · [Results](#results) · [Docs](docs/README.md) · [Citation](#citation) · [中文](docs/README.zh-CN.md)
+[Quick start](#quick-start) · [Results](#results) · [Docs](docs/README.md) · [Citation](#citation) · [中文](docs/README.zh-CN.md) · [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench)
 
 </div>
 
@@ -26,8 +26,6 @@ ClawBench is an open-source benchmark, published in Findings of EMNLP 2026, that
 
 **V1:** 152 tasks · 143 live sites &nbsp;|&nbsp; **V2:** 129 tasks · 63 live sites &nbsp;|&nbsp; **281** tasks across **163** live websites · **15** life categories
 
-<sub>The paper reports 153 (V1) and 130 (V2); two ASPCA tasks were removed after publication, so the shipping corpus is 152 and 129.</sub>
-
 <sub>Built by NAIL Group · Sister project: [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) — Evaluation of agents' ability in reverse-engineering websites · Runs on any Chrome.</sub>
 
 <sub>Featured in 37 curated lists and #3 Paper of the Day on Hugging Face: [`docs/featured.md`](docs/featured.md).</sub>
@@ -36,16 +34,16 @@ ClawBench is an open-source benchmark, published in Findings of EMNLP 2026, that
 
 <a id="what-are-you-looking-for"></a>
 
-## What are you looking for?
+## <img src="assets/icons/circle-question.svg" width="20" height="20" alt=""> What are you looking for?
 
 | I want to… | Start here |
 | --- | --- |
-| Run my model | [Quick start](#quick-start) |
-| See scores | [Live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) · [Results](#results) |
-| Browse the tasks | [Task explorer](https://claw-bench.com/tasks) · [Datasets](#datasets) |
-| Reproduce a score | [Reproduction workflow](docs/reproduce.md) · [Trace cookbook](docs/trace-cookbook.md) |
-| Understand the benchmark | [Paper](https://arxiv.org/abs/2604.08523) · [FAQ](docs/faq.md) · [How ClawBench compares](docs/comparison.md) |
-| Change the framework or add tasks | [Source layout](src/README.md) · [Contributing](CONTRIBUTING.md) |
+| <img src="assets/icons/rocket.svg" width="16" height="16" alt=""> Run my model | [Quick start](#quick-start) |
+| <img src="assets/icons/chart-bar.svg" width="16" height="16" alt=""> See scores | [Live leaderboard](https://huggingface.co/spaces/TIGER-Lab/ClawBench) · [Results](#results) |
+| <img src="assets/icons/globe.svg" width="16" height="16" alt=""> Browse the tasks | [Task explorer](https://claw-bench.com/tasks) · [Datasets](#datasets) |
+| <img src="assets/icons/check-double.svg" width="16" height="16" alt=""> Reproduce a score | [Reproduction workflow](docs/reproduce.md) · [Trace cookbook](docs/trace-cookbook.md) |
+| <img src="assets/icons/layer-group.svg" width="16" height="16" alt=""> Understand the benchmark | [Paper](https://arxiv.org/abs/2604.08523) · [FAQ](docs/faq.md) · [How ClawBench compares](docs/comparison.md) |
+| <img src="assets/icons/screwdriver-wrench.svg" width="16" height="16" alt=""> Change the framework or add tasks | [Source layout](src/README.md) · [Contributing](CONTRIBUTING.md) |
 
 All guides and integrations: **[Documentation index](docs/README.md)**.
 
@@ -353,10 +351,7 @@ If you use ClawBench in your research, please cite:
 
 ## Contact
 
-Questions, suggestions, or research collaboration? Reach the maintainer:
-
-- **Yuxuan Zhang** &mdash; `reacher` &lbrack;at&rbrack; `cs.ubc.ca` (UBC, NAIL Group) &middot; [Homepage &#8599;](https://reacher-z.github.io)
-- For bug reports or feature requests, please [open a GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) &mdash; it's faster than email and gets seen by all maintainers.
+For questions, suggestions, bug reports, or feature requests, please [open a GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose).
 
 ## Core Contributors
 
