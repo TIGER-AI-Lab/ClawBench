@@ -102,6 +102,12 @@
         "entrypoint_script": {
           "$ref": "#/$defs/relativePath"
         },
+        "extra_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
         "agent_message_sources": {
           "$ref": "#/$defs/agentMessageSources"
         }

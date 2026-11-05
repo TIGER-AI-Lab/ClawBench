@@ -33,7 +33,8 @@ COPY runtime-server/server.py ./src/runtime-server/server.py
 COPY chrome-extension/ ./src/chrome-extension/
 
 COPY harnesses/base/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY harnesses/base/agent-status.sh /agent-status.sh
+RUN chmod +x /entrypoint.sh /agent-status.sh
 
 EXPOSE 6080 7878 9223
 

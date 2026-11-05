@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+
+source /agent-status.sh
 #
 # Null baseline harness — the benchmark FLOOR.
 #
@@ -11,5 +13,6 @@ set -e
 /setup-null.sh
 mkdir -p /data
 : > /data/agent-messages.jsonl
+write_agent_status 0 self_exit
 echo "null baseline agent: taking no action for this task"
 exit 0

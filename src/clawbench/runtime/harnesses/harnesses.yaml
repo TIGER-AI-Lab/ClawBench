@@ -3,6 +3,8 @@ base:
   image: clawbench-base
   dockerfile: base/Dockerfile.base
   entrypoint_script: base/entrypoint.sh
+  extra_files:
+    - base/agent-status.sh
   agent_message_sources:
     - type: file
       path: /data/agent-messages.jsonl

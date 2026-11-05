@@ -19,6 +19,7 @@ INFRA_STOP_REASONS = {
     "hermes_failed",
     "pi_failed",
     "webbrain_failed",
+    "agent_failed",
     "proxy_failed",
     "missing_harness",
 }
@@ -113,6 +114,8 @@ def collect_run_metrics(
         ),
         "api_calls": 0,
         "stop_reason": None,
+        "agent_exit_code": None,
+        "agent_exit_reason": None,
         "missing_files": [],
         "api_or_credit_evidence": None,
     }
@@ -133,6 +136,17 @@ def collect_run_metrics(
     interception = _read_json(interception_file)
     if isinstance(interception, dict):
         metrics["stop_reason"] = interception.get("stop_reason")
+
+    agent_status = _read_json(data_dir / "agent-status.json")
+    if isinstance(agent_status, dict):
+        exit_code = agent_status.get("agent_exit_code")
+        if exit_code is None or (
+            isinstance(exit_code, int) and not isinstance(exit_code, bool)
+        ):
+            metrics["agent_exit_code"] = exit_code
+        exit_reason = agent_status.get("agent_exit_reason")
+        if isinstance(exit_reason, str):
+            metrics["agent_exit_reason"] = exit_reason
 
     explicit_api_calls: int | None = None
     derived_api_call_keys: set[str] = set()
@@ -310,6 +324,7 @@ def ensure_interception(output_dir: Path):
         "time_limit_exceeded": "Session stopped: time limit exceeded before the interceptor was triggered.",
         "agent_idle": "Session stopped: agent went idle (300s no actions) before triggering the interceptor.",
         "agent_exited": "Session stopped: agent process exited before triggering the interceptor.",
+        "agent_failed": "Session stopped: agent process exited with a nonzero status before triggering the interceptor.",
         "vnc_disconnected": "Session stopped: human disconnected from VNC without triggering the interceptor.",
         "chrome_cdp_timeout": "Session stopped: Chrome CDP was not ready after 30s (browser failed to start).",
         "gateway_failed": "Session stopped: OpenClaw gateway died on startup.",
