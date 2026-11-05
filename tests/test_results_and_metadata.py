@@ -115,6 +115,45 @@ def test_classify_run_treats_webbrain_failure_as_infrastructure(tmp_path: Path) 
     assert result["infra_failure"] is True
 
 
+@pytest.mark.parametrize(
+    ("stop_reason", "exit_code", "exit_reason"),
+    [
+        ("agent_exited", 0, "self_exit"),
+        ("agent_failed", 17, "self_exit"),
+        ("time_limit_exceeded", None, "watchdog"),
+    ],
+)
+def test_classify_run_records_agent_exit_status(
+    tmp_path: Path,
+    stop_reason: str,
+    exit_code: int | None,
+    exit_reason: str,
+) -> None:
+    data = tmp_path / "data"
+    data.mkdir()
+    _write_jsonl(data / "actions.jsonl", [{"type": "click"}])
+    _write_jsonl(data / "requests.jsonl", [{"url": "https://example.test"}])
+    _write_jsonl(data / "agent-messages.jsonl", [{"type": "assistant"}])
+    (data / "recording.mp4").write_bytes(b"recording")
+    (data / "interception.json").write_text(
+        json.dumps({"intercepted": False, "stop_reason": stop_reason})
+    )
+    (data / "agent-status.json").write_text(
+        json.dumps({"agent_exit_code": exit_code, "agent_exit_reason": exit_reason})
+    )
+
+    result = classify_run(tmp_path, intercepted=False)
+
+    assert result["metrics"]["agent_exit_code"] == exit_code
+    assert result["metrics"]["agent_exit_reason"] == exit_reason
+    if stop_reason == "agent_failed":
+        assert result["result_category"] == "infra_failure"
+        assert result["failure_category"] == "infra_failure"
+    elif stop_reason == "agent_exited":
+        assert result["result_category"] == "model_not_intercepted"
+        assert result["failure_category"] == "model_not_intercepted"
+
+
 def test_print_results_includes_usage_summary(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -194,12 +233,14 @@ def test_run_metadata_redacts_model_and_judge_secrets(
         "adjusted_eligible": True,
         "infra_flags": [],
         "metrics": {
+            "agent_exit_code": 17,
+            "agent_exit_reason": "self_exit",
             "usage": {
                 "status": "estimated",
                 "total_tokens": 123,
                 "estimated_cost_usd": 0.0042,
                 "matched_openrouter_model_id": "provider/model",
-            }
+            },
         },
     }
     model_cfg = {
@@ -258,6 +299,8 @@ def test_run_metadata_redacts_model_and_judge_secrets(
     assert meta["browser_runtime"]["cleanup_status"] == "released"
     assert meta["usage"]["estimated_cost_usd"] == 0.0042
     assert meta["run_metrics"]["usage"]["total_tokens"] == 123
+    assert meta["agent_exit_code"] == 17
+    assert meta["agent_exit_reason"] == "self_exit"
 
     provenance = meta["provenance"]
     assert provenance["harness"]["name"] == "openclaw"

@@ -252,6 +252,8 @@ def make_run_meta(
         "infra_failure": classification["infra_failure"],
         "adjusted_eligible": classification["adjusted_eligible"],
         "infra_flags": classification["infra_flags"],
+        "agent_exit_code": classification["metrics"].get("agent_exit_code"),
+        "agent_exit_reason": classification["metrics"].get("agent_exit_reason"),
         "run_metrics": classification["metrics"],
         "usage": classification["metrics"].get("usage"),
         "runtime": runtime,

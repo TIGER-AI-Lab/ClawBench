@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source /agent-status.sh
+
 # Run-time harness script for the browser-use Python framework.
 /setup-browser-use.sh
 
@@ -78,6 +80,7 @@ ELAPSED=0
 LAST_SIZE=0
 IDLE=0
 STOP_REASON=""
+AGENT_EXIT_CODE=""
 
 while kill -0 $AGENT_PID 2>/dev/null && [ "$ELAPSED" -lt "$MAX_WAIT" ]; do
   sleep 5
@@ -108,11 +111,19 @@ done
 # Determine stop reason if not set (loop exited without breaking)
 if [ -z "$STOP_REASON" ]; then
   if ! kill -0 $AGENT_PID 2>/dev/null; then
-    STOP_REASON="agent_exited"
+    capture_agent_exit "$AGENT_PID"
+    if [ "$AGENT_EXIT_CODE" -eq 0 ]; then
+      STOP_REASON="agent_exited"
+    else
+      STOP_REASON="agent_failed"
+    fi
   else
     echo "Time limit (${MAX_WAIT}s) exceeded, killing agent."
     STOP_REASON="time_limit_exceeded"
+    capture_watchdog_stop
   fi
+else
+  capture_watchdog_stop
 fi
 
 echo "$STOP_REASON" > /data/.stop-reason

@@ -25,6 +25,7 @@ class HarnessRegistry:
     base_image: str
     base_dockerfile: Path
     base_entrypoint_script: Path
+    base_extra_files: tuple[Path, ...]
     base_agent_message_sources: tuple[AgentMessageSource, ...]
     harnesses: tuple[str, ...]
     harness_images: dict[str, str]
@@ -170,6 +171,10 @@ def load_harness_registry(path: Path = HARNESS_REGISTRY_YAML) -> HarnessRegistry
         path,
         "entrypoint_script",
     )
+    base_extra_files = tuple(
+        _resolve_registry_file(root, rel_path, path, "extra_files")
+        for rel_path in _optional_str_list(base, "extra_files", path)
+    )
     base_agent_message_sources = _optional_agent_message_sources(base, path)
 
     entries = raw.get("harnesses")
@@ -229,6 +234,7 @@ def load_harness_registry(path: Path = HARNESS_REGISTRY_YAML) -> HarnessRegistry
         base_image=base_image,
         base_dockerfile=base_dockerfile,
         base_entrypoint_script=base_entrypoint_script,
+        base_extra_files=base_extra_files,
         base_agent_message_sources=base_agent_message_sources,
         harnesses=tuple(names),
         harness_images=images,

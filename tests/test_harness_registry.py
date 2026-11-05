@@ -55,6 +55,7 @@ EXPECTED_EXTRA_FILES = {
     "harbor": ("harbor/harbor_driver.py",),
     "random-click": ("random-click/random_clicker.py",),
 }
+EXPECTED_BASE_EXTRA_FILES = ("base/agent-status.sh",)
 
 EXPECTED_USAGE_EMITTERS = {
     harness: f"{harness}/usage-emitter.py" for harness in EXPECTED_HARNESSES
@@ -122,6 +123,14 @@ def test_harness_registry_matches_current_harness_contract() -> None:
 
     assert HARNESS_REGISTRY.base_dockerfile.is_file()
     assert HARNESS_REGISTRY.base_entrypoint_script.is_file()
+    assert all(path.is_file() for path in HARNESS_REGISTRY.base_extra_files)
+    assert (
+        tuple(
+            path.relative_to(HARNESS_REGISTRY.base_dockerfile.parents[1]).as_posix()
+            for path in HARNESS_REGISTRY.base_extra_files
+        )
+        == EXPECTED_BASE_EXTRA_FILES
+    )
     for harness in EXPECTED_HARNESSES:
         assert HARNESS_REGISTRY.harness_images[harness] == f"clawbench-{harness}"
         assert HARNESS_REGISTRY.harness_dockerfiles[harness].is_file()
@@ -178,6 +187,7 @@ def test_harness_registry_tracks_all_dockerfile_harness_copies() -> None:
     copied_sources = {
         HARNESS_REGISTRY.base_dockerfile: {
             HARNESS_REGISTRY.base_entrypoint_script,
+            *HARNESS_REGISTRY.base_extra_files,
         }
     }
     for harness in EXPECTED_HARNESSES:
@@ -203,6 +213,7 @@ def _write_registry_fixture(tmp_path: Path, harnesses_yaml: str) -> Path:
     for rel_path in (
         "base/Dockerfile.base",
         "base/entrypoint.sh",
+        "base/agent-status.sh",
         "alpha/Dockerfile.alpha",
         "alpha/setup-alpha.sh",
         "alpha/run-alpha.sh",
@@ -299,6 +310,31 @@ harnesses:
     usage_emitter: alpha/usage-emitter.py
     extra_files:
       - alpha/missing-helper.py
+""",
+    )
+
+    with pytest.raises(ValueError, match="extra_files does not exist"):
+        load_harness_registry(registry_path)
+
+
+def test_load_harness_registry_validates_base_extra_files_exist(tmp_path: Path) -> None:
+    registry_path = _write_registry_fixture(
+        tmp_path,
+        """
+default: alpha
+base:
+  image: clawbench-base
+  dockerfile: base/Dockerfile.base
+  entrypoint_script: base/entrypoint.sh
+  extra_files:
+    - base/missing-helper.sh
+harnesses:
+  - name: alpha
+    image: clawbench-alpha
+    dockerfile: alpha/Dockerfile.alpha
+    setup_script: alpha/setup-alpha.sh
+    run_script: alpha/run-alpha.sh
+    usage_emitter: alpha/usage-emitter.py
 """,
     )
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source /agent-status.sh
+
 /setup-webbrain.sh
 mkdir -p /data
 : > /data/agent-messages.jsonl
@@ -60,19 +62,24 @@ while kill -0 "$AGENT_PID" 2>/dev/null && [ "$ELAPSED" -lt "$MAX_WAIT" ]; do
 done
 
 AGENT_STATUS=0
+AGENT_EXIT_CODE=""
 if [ -z "$STOP_REASON" ]; then
   if kill -0 "$AGENT_PID" 2>/dev/null; then
     echo "Time limit (${MAX_WAIT}s) exceeded, stopping WebBrain."
     STOP_REASON="time_limit_exceeded"
+    capture_watchdog_stop
   else
-    wait "$AGENT_PID" || AGENT_STATUS=$?
-    if [ "$AGENT_STATUS" -eq 0 ]; then
+    capture_agent_exit "$AGENT_PID"
+    AGENT_STATUS="$AGENT_EXIT_CODE"
+    if [ "$AGENT_EXIT_CODE" -eq 0 ]; then
       STOP_REASON="agent_exited"
     else
       STOP_REASON="webbrain_failed"
-      echo "WebBrain driver exited with status ${AGENT_STATUS}; see captured agent messages."
+      echo "WebBrain driver exited with status ${AGENT_EXIT_CODE}; see captured agent messages."
     fi
   fi
+else
+  capture_watchdog_stop
 fi
 
 CAPTURE_INTERRUPTED=0
