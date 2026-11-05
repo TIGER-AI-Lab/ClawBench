@@ -40,11 +40,9 @@
 
 **V1：152** 个日常任务 &middot; **143** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; **V2：129** 个任务 &middot; **63** 个真实站点 &nbsp;&nbsp;|&nbsp;&nbsp; 合计 **281** 个任务，覆盖 **163** 个真实网站 &middot; **15** 个生活类别
 
-<sub><i>论文中报告的是 V1 153 / V2 130；两个 ASPCA 相关任务在论文发表后被移除，因此当前发布的语料是 152 / 129。</i></sub>
-
 <sub><i>由 NAIL Group 出品 &nbsp;·&nbsp; 姊妹项目：<a href="https://github.com/reacher-z/HarnessBench">HarnessBench</a> —— 固定模型、比较 harness &nbsp;·&nbsp; 任意 Chrome 上即可运行。</i></sub>
 
-<a href="../README.md"><img src="../assets/icons/language.svg" width="16" height="16"> English</a>
+<a href="#快速开始">快速开始</a> &middot; <a href="#实验结果">实验结果</a> &middot; <a href="README.md">文档</a> &middot; <a href="#引用">引用</a> &middot; <a href="../README.md"><img src="../assets/icons/language.svg" width="16" height="16" alt=""> English</a> &middot; <a href="https://github.com/TIGER-AI-Lab/WebsiteBench">WebsiteBench</a>
 
 </div>
 
@@ -56,28 +54,28 @@
 <tr>
 <td width="25%" align="center" valign="top">
 
-🏆 **查看分数**<br/>
+<img src="../assets/icons/chart-bar.svg" width="16" height="16" alt=""> **查看分数**<br/>
 [实时排行榜](https://huggingface.co/spaces/TIGER-Lab/ClawBench)<br/>
 <sub>选择语料 (v1 / v2)</sub>
 
 </td>
 <td width="25%" align="center" valign="top">
 
-🚀 **在你的模型上运行**<br/>
+<img src="../assets/icons/rocket.svg" width="16" height="16" alt=""> **在你的模型上运行**<br/>
 [快速开始 ↓](#快速开始)<br/>
 <sub><code>pip install clawbench-eval</code></sub>
 
 </td>
 <td width="25%" align="center" valign="top">
 
-📊 **浏览 281 个任务**<br/>
+<img src="../assets/icons/globe.svg" width="16" height="16" alt=""> **浏览 281 个任务**<br/>
 [任务浏览器](https://claw-bench.com/tasks)<br/>
 <sub>搜索 · 筛选 · 分类</sub>
 
 </td>
 <td width="25%" align="center" valign="top">
 
-📄 **阅读论文**<br/>
+<img src="../assets/icons/layer-group.svg" width="16" height="16" alt=""> **阅读论文**<br/>
 [arXiv:2604.08523](https://arxiv.org/abs/2604.08523)<br/>
 <sub>方法 · 评测器 · 结果</sub>
 
@@ -86,28 +84,28 @@
 <tr>
 <td align="center" valign="top">
 
-🎬 **重新评分旧运行**<br/>
+<img src="../assets/icons/video.svg" width="16" height="16" alt=""> **重新评分旧运行**<br/>
 [V1](https://huggingface.co/datasets/NAIL-Group/ClawBenchV1Trace) · [V2](https://huggingface.co/datasets/TIGER-Lab/ClawBenchV2Trace) 原始轨迹<br/>
 <sub>每个 (任务 × 模型) 都有 5 层数据</sub>
 
 </td>
 <td align="center" valign="top">
 
-📦 **下载数据**<br/>
+<img src="../assets/icons/cube.svg" width="16" height="16" alt=""> **下载数据**<br/>
 [`hf download NAIL-Group/ClawBench`](https://huggingface.co/datasets/NAIL-Group/ClawBench)<br/>
 <sub>任务 · rubric · 元数据</sub>
 
 </td>
 <td align="center" valign="top">
 
-🌱 **添加任务 / 模型**<br/>
+<img src="../assets/icons/screwdriver-wrench.svg" width="16" height="16" alt=""> **添加任务 / 模型**<br/>
 [贡献指南](#贡献)<br/>
 <sub>JSON 规范 + rubric</sub>
 
 </td>
 <td align="center" valign="top">
 
-❓ **有问题**<br/>
+<img src="../assets/icons/circle-question.svg" width="16" height="16" alt=""> **有问题**<br/>
 [FAQ](#faq) · [提 issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)<br/>
 <sub>也可在 HF 数据集页提问</sub>
 
@@ -877,10 +875,7 @@ Pi 的 `agent.log`、`proxy.log` 等 harness 诊断日志不会复制到最终�
 
 ## 联系方式
 
-有问题、建议或希望开展研究合作？请联系维护者：
-
-- **Yuxuan Zhang** &mdash; `reacher` &lbrack;at&rbrack; `cs.ubc.ca`（UBC, NAIL Group）&middot; [个人主页 &#8599;](https://reacher-z.github.io)
-- Bug 反馈或功能请求请[提 GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose) —— 比邮件更快，且所有维护者都能看到。
+问题、建议、Bug 反馈或功能请求请[提 GitHub issue](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose)。
 
 ## 核心贡献者
 
