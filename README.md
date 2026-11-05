@@ -228,7 +228,18 @@ If we missed your work, please [open an issue](https://github.com/TIGER-AI-Lab/C
 
 **Intercepted** = final HTTP request matched the task's URL/method (Stage 1, deterministic). **Reward (lenient)** = additionally judged by `deepseek/deepseek-v4-pro` to fulfill the instruction under the "no contradiction → match" rubric (Stage 2). **Reward (strict)** = same judge, strict rubric ("ambiguous → mismatch"). Ranked by Intercepted; Reward as tiebreak. Totals reflect the corpus size at run time.
 
-More results are in [`docs/results.md`](docs/results.md): V2 under OpenClaw, the original V1 paper results with a per-category breakdown, and the V1 task categories. Codex and Claude Code runs on V2, and the V1 OpenClaw aggregate, are still in flight — they land on the [live leaderboard](https://claw-bench.com/leaderboard) first.
+**Paper results** · V1 · trajectory evaluation against human references · [Findings of EMNLP 2026](#citation)
+
+| Rank  | Model                 | Overall  |
+| :---: | --------------------- | -------: |
+|   1   | **Claude Sonnet 4.6** | **33.3%** |
+|   2   | GLM-5                 |    24.2% |
+|   3   | Gemini 3 Flash        |    19.0% |
+|   4   | Claude Haiku 4.5      |    18.3% |
+|   5   | GPT-5.4               |     6.5% |
+|   6   | Gemini 3.1 Flash Lite |     3.3% |
+
+More results are in [`docs/results.md`](docs/results.md): the per-category breakdown of the paper results, V2 under OpenClaw, a V1 run under the Hermes harness, and the V1 task categories. Codex and Claude Code runs on V2, and the V1 OpenClaw aggregate, are still in flight — they land on the [live leaderboard](https://claw-bench.com/leaderboard) first.
 
 <a id="reproduce-the-leaderboard"></a>
 <a id="-reproduce-the-leaderboard"></a>
@@ -331,14 +342,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and contributor recogn
 If you use ClawBench in your research, please cite:
 
 ```bibtex
-@misc{zhang2026clawbenchaiagentscomplete,
-  title         = {ClawBench: Can AI Agents Complete Everyday Online Tasks?},
-  author        = {Yuxuan Zhang and Yubo Wang and Yipeng Zhu and Penghui Du and Junwen Miao and Xuan Lu and Wendong Xu and Yunzhuo Hao and Songcheng Cai and Xiaochen Wang and Huaisong Zhang and Xian Wu and Yi Lu and Minyi Lei and Kai Zou and Huifeng Yin and Ping Nie and Liang Chen and Dongfu Jiang and Wenhu Chen and Kelsey R. Allen},
-  year          = {2026},
-  eprint        = {2604.08523},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CL},
-  url           = {https://arxiv.org/abs/2604.08523}
+@inproceedings{zhang2026clawbench,
+  title={Clawbench: Can ai agents complete everyday online tasks?},
+  author={Zhang, Yuxuan and Wang, Yubo and Zhu, Yipeng and Du, Penghui and Miao, Junwen and Lu, Xuan and Li, Zhuofeng and Qu, Xingwei and Guo, Zhengkang and Shen, Yuanzhe and others},
+  booktitle={Findings of the Association for Computational Linguistics: EMNLP 2026},
+  pages={9386--9408},
+  year={2026}
 }
 ```
 

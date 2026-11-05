@@ -1,6 +1,6 @@
 # Results archive
 
-The README shows the current V2 leaderboard under the Hermes harness. This page keeps the other published tables: V2 under OpenClaw, the original V1 paper results, and the V1 task categories. The [live leaderboard](https://claw-bench.com/leaderboard) has the newest runs.
+The README shows the current V2 leaderboard under the Hermes harness and the overall paper results. This page keeps the other published tables: V2 under OpenClaw, V1 under the Hermes harness, the per-category breakdown of the paper results, and the V1 task categories. The [live leaderboard](https://claw-bench.com/leaderboard) has the newest runs.
 
 Compare scores only within the same corpus revision, harness, and rubric. The scoring formula is in [`eval/scoring.md`](../eval/scoring.md).
 
