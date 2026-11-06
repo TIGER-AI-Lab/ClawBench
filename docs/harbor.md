@@ -18,15 +18,15 @@
 
 ## Prerequisites
 
-- **Harbor 0.22.0.** Every command below pins `harbor==0.22.0`, which is the version the generated dataset is verified against — see [Harbor versions](#harbor-versions).
+- **Harbor 0.22.0.** Every command below pins `harbor==0.22.0`, which is the version the generated dataset is verified against — see [Harbor versions](#harbor-versions). Generated task files use Harbor task schema `1.4`.
 - **Docker.** Harbor runs use Harbor's Docker provider, so Docker must be available even if you normally use Podman for native ClawBench runs.
 - **ClawBench installed** (`uv tool install clawbench-eval`, or a source checkout with `uv run` prefixes).
-- **Judge credentials.** Scoring requires both an intercepted request *and* a judge verdict; without judge credentials every intercepted task scores `0`.
+- **Judge credentials.** Scoring requires both an intercepted request *and* a judge verdict; without judge credentials every intercepted task gets reward `0` and is marked `judge_inconclusive`.
 - **PurelyMail credentials** from `.env`, passed through with `--env-file .env`.
 
 ## Harbor versions
 
-The commands here pin **`harbor==0.22.0`**, the current release at the time of writing. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install.
+The commands here pin **`harbor==0.22.0`**, the current release at the time of writing. The previous pin, `0.15.0`, was six releases stale: anyone following these docs installed an old Harbor, and anyone who already had a current Harbor found the pin fighting their install. The adapter emits `schema_version = "1.4"` to match Harbor's current task template.
 
 ## 1. Convert V2 into a Harbor dataset
 
@@ -168,13 +168,13 @@ uvx --from harbor==0.22.0 harbor run -p ./harbor-datasets/clawbench-v2-smoke \
 
 Each converted task directory carries its own `environment/` (Chromium, the ClawBench recorder/interceptor, noVNC, runtime helper scripts), a `run/` step with `instruction.md`, the original `task.json`, the `eval-schema.json`, and a verifier under `tests/`. It deliberately contains **no ClawBench-native harness** — Harbor installs and runs whatever agent you pass to `-a` inside the task container.
 
-Scoring uses the same two-stage rule as the native runner: the interceptor must catch a request matching the task schema, then the verifier emits both the public lenient reward and the conservative strict reward. Harbor uses the lenient result as the primary `reward` metric and retains both verdicts and reasons in `clawbench-result.json`.
+Scoring uses the same two-stage rule as the native runner: the interceptor must catch a request matching the task schema, then the verifier emits both the public lenient reward and the conservative strict reward. Harbor uses the lenient result as the primary `reward` metric and retains both verdicts and reasons in `clawbench-result.json`. When either judge call is unavailable or unparseable, `reward.json` includes numeric `judge_inconclusive: 1`; the detailed result records `judge_status = "inconclusive"` and a failure category so infrastructure problems are not silently counted as ordinary agent failures.
 
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| Every intercepted task scores `0` with `missing judge configuration` | Judge base URL or API key not reaching the verifier | Pass all four `--ve CLAWBENCH_JUDGE_*` values on the `harbor run` command |
+| Every intercepted task is marked `judge_inconclusive` with `missing judge configuration` | Judge base URL or API key not reaching the verifier | Pass all four `--ve CLAWBENCH_JUDGE_*` values on the `harbor run` command; exclude inconclusive trials from agent-failure counts |
 | `Cannot connect to the Docker daemon` | Harbor's provider is Docker-only | Start Docker Desktop / `dockerd`; Podman is not a substitute here |
 | Sign-in tasks fail immediately | PurelyMail credentials missing | Add `--env-file .env` |
 | Many trials die at once under high `-n` | Host CPU/RAM exhaustion, or provider rate limits | Lower `-n`; see [Making it fast](#making-it-fast) |
