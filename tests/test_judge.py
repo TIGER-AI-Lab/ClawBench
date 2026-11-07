@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from clawbench.runner import judge, judge_llm
+from clawbench.runtime.harbor.body import render_body
 
 
 def test_gemini_openai_cfg_normalizes_native_root() -> None:
@@ -108,3 +109,77 @@ def test_lenient_judge_parse_verdict_is_tri_state(
 def test_coerce_match_rejects_non_verdict_types() -> None:
     for value in (1, 0, [], {}, None, "  "):
         assert judge._coerce_match(value) is None
+
+
+def test_shared_body_renderer_reports_truncation() -> None:
+    assert render_body(None).prompt_text() == "(empty)"
+    assert render_body("").prompt_text() == ""
+
+    complete = render_body("x" * 6000)
+    assert complete.truncated is False
+    assert complete.original_length == 6000
+    assert complete.prompt_text() == "x" * 6000
+
+    rendered = render_body("x" * 6000 + "tail")
+
+    assert rendered.text == "x" * 6000
+    assert rendered.original_length == 6004
+    assert rendered.omitted_length == 4
+    assert rendered.truncated is True
+    prompt = rendered.prompt_text().lower()
+    assert "body was truncated" in prompt
+    assert "original body length was 6004" in prompt
+    assert "4 characters were omitted" in prompt
+    assert "insufficient evidence for a positive lenient match" in prompt
+
+
+def test_lenient_judge_rejects_positive_match_for_truncated_body(monkeypatch) -> None:
+    body = "x" * 6000 + '{"color":"blue"}'
+    seen = {}
+
+    def fake_call(model_cfg, model_name, system, user):
+        seen["user"] = user
+        return '{"match": true, "reason": "no contradiction visible"}'
+
+    monkeypatch.setattr(judge_llm, "_call_openai_chat", fake_call)
+    verdict = judge_llm.judge_request(
+        {"base_url": "https://judge.example/v1", "api_key": "key"},
+        "judge",
+        "Choose a red shirt",
+        {
+            "request": {
+                "url": "https://example.test/submit",
+                "method": "POST",
+                "body": body,
+            }
+        },
+    )
+
+    assert verdict["match"] is False
+    assert verdict["body_truncated"] is True
+    assert verdict["body_length"] == len(body)
+    prompt = seen["user"].lower()
+    assert "body was truncated" in prompt
+    assert "insufficient evidence for a positive lenient match" in prompt
+
+
+def test_strict_judge_records_body_metadata_and_notice(monkeypatch) -> None:
+    body = "x" * 6000 + "tail"
+    seen = {}
+
+    def fake_call(model_cfg, model_name, system, user):
+        seen["user"] = user
+        return '{"match": false, "reason": "incomplete evidence"}'
+
+    monkeypatch.setattr(judge, "_call_openai_chat", fake_call)
+    verdict = judge.judge_request(
+        {"base_url": "https://judge.example/v1", "api_key": "key"},
+        "judge",
+        "Do the task",
+        {"request": {"body": body}},
+    )
+
+    assert verdict["match"] is False
+    assert verdict["body_truncated"] is True
+    assert verdict["body_length"] == len(body)
+    assert "body was truncated" in seen["user"].lower()

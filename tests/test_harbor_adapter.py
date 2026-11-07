@@ -88,7 +88,22 @@ def test_write_harbor_task_emits_expected_tree_and_extra_info(tmp_path: Path) ->
     assert (out / "task.toml").is_file()
     assert (out / "environment" / "Dockerfile").is_file()
     assert not (out / "environment" / "harbor" / "Dockerfile").exists()
-    assert (out / "environment" / "harbor" / "verify.py").is_file()
+    harbor_dir = out / "environment" / "harbor"
+    assert (harbor_dir / "verify.py").is_file()
+    assert (harbor_dir / "body.py").is_file()
+    verifier_import = subprocess.run(
+        [
+            sys.executable,
+            "-S",
+            "-c",
+            "import sys; sys.path.insert(0, sys.argv[1]); import verify",
+            str(harbor_dir),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert verifier_import.returncode == 0, verifier_import.stderr
     assert (
         "+frag_keyframe+empty_moov+default_base_moof"
         in (out / "environment" / "runtime-server" / "server.py").read_text()
@@ -241,6 +256,62 @@ def test_harbor_judge_supports_lenient_and_strict_prompts(monkeypatch) -> None:
     assert requests[1]["messages"][0]["content"] == harbor_verify.JUDGE_SYSTEM_STRICT
     assert requests[1]["max_tokens"] == 4096
     assert "all fields are required" in requests[1]["messages"][1]["content"]
+
+
+def test_harbor_judge_records_truncation_and_rejects_lenient_positive(
+    monkeypatch,
+) -> None:
+    requests = []
+
+    def fake_post_json(url, headers, payload, timeout=60):
+        requests.append(payload)
+        return {"choices": [{"message": {"content": '{"match": true}'}}]}
+
+    monkeypatch.setattr(harbor_verify, "post_json", fake_post_json)
+    config = {
+        "api_type": "openai-completions",
+        "model": "judge",
+        "base_url": "https://judge.example/v1",
+        "api_key": "key",
+    }
+    body = "x" * 6000 + '{"color":"blue"}'
+    intercept = {"request": {"body": body}}
+
+    verdict = harbor_verify.call_judge(
+        config,
+        "choose a red shirt",
+        intercept,
+        None,
+        harbor_verify.JUDGE_SYSTEM_LENIENT,
+        800,
+    )
+
+    assert verdict["match"] is False
+    assert verdict["body_truncated"] is True
+    assert verdict["body_length"] == len(body)
+    prompt = requests[0]["messages"][1]["content"].lower()
+    assert "body was truncated" in prompt
+    assert "insufficient evidence for a positive lenient match" in prompt
+
+
+def test_harbor_reward_keeps_body_metadata(tmp_path: Path) -> None:
+    write_reward(
+        0.0,
+        {
+            "intercepted": True,
+            "judge_match": False,
+            "body_truncated": True,
+            "body_length": 6016,
+        },
+        output_dir=tmp_path,
+    )
+
+    reward = json.loads((tmp_path / "reward.json").read_text())
+    detailed = json.loads((tmp_path / "clawbench-result.json").read_text())
+    assert reward["body_truncated"] == 1.0
+    assert reward["body_length"] == 6016.0
+    assert detailed["body_truncated"] is True
+    assert detailed["body_length"] == 6016
 
 
 def test_harbor_verifier_emits_both_reward_rubrics(tmp_path: Path) -> None:

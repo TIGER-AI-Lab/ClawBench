@@ -31,6 +31,7 @@ import urllib.error
 from typing import Any
 
 from clawbench.runner.judge import _coerce_match
+from clawbench.runtime.harbor.body import RenderedBody, render_body
 
 
 JUDGE_SYSTEM = """You are a lenient evaluator for a web-agent benchmark.
@@ -77,13 +78,13 @@ field from the instruction that the request EXPLICITLY contradicts.
 """
 
 
-def _build_user_msg(instruction: str, intercept: dict[str, Any]) -> str:
+def _build_user_msg(
+    instruction: str,
+    intercept: dict[str, Any],
+    rendered_body: RenderedBody | None = None,
+) -> str:
     req = intercept.get("request") or {}
-    body = req.get("body")
-    if isinstance(body, (dict, list)):
-        body_str = json.dumps(body, ensure_ascii=False, indent=2)[:6000]
-    else:
-        body_str = str(body)[:6000] if body is not None else "(empty)"
+    body_str = (rendered_body or render_body(req.get("body"))).prompt_text()
     return (
         f"INSTRUCTION:\n{instruction}\n\n"
         f"INTERCEPTED REQUEST:\n"
@@ -179,7 +180,9 @@ def judge_request(
 ) -> dict[str, Any]:
     """Run a single lenient judge call. Returns dict with keys match/reason/judge_model/raw/error."""
     system = JUDGE_SYSTEM
-    user = _build_user_msg(instruction, intercept)
+    req = intercept.get("request") or {}
+    rendered_body = render_body(req.get("body"))
+    user = _build_user_msg(instruction, intercept, rendered_body)
     api_type = model_cfg.get("api_type", "openai-completions")
     raw = ""
     err = None
@@ -206,7 +209,7 @@ def judge_request(
             err = f"err_{type(e).__name__}: {e}"
             break
     if not raw:
-        return {
+        verdict = {
             "match": None,
             "reason": "",
             "judge_model": judge_model_name,
@@ -214,11 +217,20 @@ def judge_request(
             "error": err,
             "rubric": "lenient",
         }
+        verdict.update(rendered_body.verdict_metadata())
+        return verdict
     m, reason = _parse_verdict(raw)
-    return {
+    if rendered_body.truncated and m is True:
+        m = False
+        reason = (
+            "body was truncated; a positive lenient match requires the complete body"
+        )
+    verdict = {
         "match": m,
         "reason": reason,
         "judge_model": judge_model_name,
         "raw": raw[:500],
         "rubric": "lenient",
     }
+    verdict.update(rendered_body.verdict_metadata())
+    return verdict
