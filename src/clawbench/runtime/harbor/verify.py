@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -158,6 +159,27 @@ def parse_verdict(text: str) -> tuple[bool | None, str]:
         return None, text[:200] or "unparseable judge response"
 
 
+def _chat_sampling_fields(model: str, max_tokens: int) -> dict[str, Any]:
+    """Sampling fields for one Chat Completions request to ``model``.
+
+    Local copy of ``clawbench.runner.model_sampling.chat_sampling_fields``:
+    this file is copied into the Harbor container and runs without the
+    package. OpenAI reasoning models (o-series, GPT-5) reject
+    ``max_tokens`` (use ``max_completion_tokens``) and an explicit
+    ``temperature``; Kimi K2.x / K3 reject an explicit ``temperature``.
+    """
+    name = model.rsplit("/", 1)[-1].strip().lower()
+    completion_tokens = name.startswith("gpt-5") or re.match(r"o\d", name)
+    fields: dict[str, Any] = {}
+    if completion_tokens:
+        fields["max_completion_tokens"] = max_tokens
+    else:
+        fields["max_tokens"] = max_tokens
+    if not (completion_tokens or "kimi-k2" in name or "kimi-k3" in name):
+        fields["temperature"] = 0
+    return fields
+
+
 def call_judge(
     model_cfg: dict[str, str],
     instruction: str,
@@ -180,8 +202,7 @@ def call_judge(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user},
                 ],
-                "max_tokens": max_tokens,
-                "temperature": 0,
+                **_chat_sampling_fields(model, max_tokens),
             },
         )
         raw = resp["choices"][0]["message"].get("content") or ""

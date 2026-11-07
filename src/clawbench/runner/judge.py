@@ -20,6 +20,8 @@ import urllib.request
 import urllib.error
 from typing import Any
 
+from clawbench.runner.model_sampling import chat_sampling_fields
+
 
 JUDGE_SYSTEM = """You are a strict evaluator for a web-agent benchmark.
 
@@ -120,8 +122,7 @@ def _call_openai_chat(model_cfg: dict, model_name: str, system: str, user: str) 
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-        "max_tokens": 4096,
-        "temperature": 0,
+        **chat_sampling_fields(model_name, 4096),
     }
     headers = {"Authorization": f"Bearer {model_cfg['api_key']}"}
     resp = _post_json(url, headers, payload)
