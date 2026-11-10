@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Document a proposed public-transit-planning category with 12 candidate workflows, two pilot specifications, and a validation plan for maintainer review.
 - Update the README sister project to [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) and add a News entry announcing it.
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
