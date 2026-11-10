@@ -40,6 +40,8 @@ workflows. Compare results with the same corpus revision, harness, and rubric.
 - [Source layout](../src/README.md): entry points, module responsibilities, and
   workspace versus package paths.
 - [Contributing](../CONTRIBUTING.md): add tasks, set up development, and run checks.
+- [Public transit planning proposal](proposals/public-transit-planning.md):
+  proposed category, pilot specifications, and validation work pending review.
 - [Runtime server](../src/clawbench/runtime/runtime-server/README.md): browser
   instrumentation, request interception, and recording.
 - [Agent context](../AGENTS.md): repository instructions for coding agents.
