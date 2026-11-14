@@ -1,0 +1,8 @@
+{
+  "instruction": "In the NeurIPS 2023 proceedings at proceedings.neurips.cc, find the paper \"QLoRA: Efficient Finetuning of Quantized LLMs\" and download its supplemental material. The main paper PDF and the BibTeX do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://proceedings\\.neurips\\.cc/paper_files/paper/2023/file/1feb87871436031bdc0f2beaa62a049b-Supplemental-Conference\\.pdf$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

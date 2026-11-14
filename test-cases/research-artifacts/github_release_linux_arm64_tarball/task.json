@@ -1,0 +1,8 @@
+{
+  "instruction": "On GitHub, open the releases of the jgm/pandoc repository and find the pandoc 3.1.11 release. Download its prebuilt binary tarball for 64-bit ARM Linux. Choose the .tar.gz archive, not the Debian package, the macOS build or a release other than 3.1.11. A saved file is not required; the outcome is initiation of the correct asset download.",
+  "eval_schema": {
+    "url_pattern": "^https://github\\.com/jgm/pandoc/releases/download/3\\.1\\.11/pandoc-3\\.1\\.11-linux-arm64\\.tar\\.gz$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

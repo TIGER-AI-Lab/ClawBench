@@ -1,0 +1,8 @@
+{
+  "instruction": "On dblp, find the NeurIPS 2023 conference paper \"Toolformer: Language Models Can Teach Themselves to Use Tools\". dblp also lists its CoRR preprint, which does not qualify. Download the paper's BibTeX record as a .bib file in dblp's standard BibTeX format; the condensed format and the format with crossref do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://dblp\\.(?:org|uni-trier\\.de|dagstuhl\\.de)/rec/conf/nips/SchickDDRLHZCS23\\.bib(?:\\?param=1)?$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

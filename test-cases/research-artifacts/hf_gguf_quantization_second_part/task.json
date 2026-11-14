@@ -1,0 +1,8 @@
+{
+  "instruction": "On Hugging Face, open the Qwen/Qwen2.5-7B-Instruct-GGUF model repository. The Q4_K_M quantization is split across several files. Download the second part of the Q4_K_M quantization. The first part and the parts of any other quantization, such as Q5_K_M, do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://huggingface\\.co/Qwen/Qwen2\\.5-7B-Instruct-GGUF/resolve/(?:main|[0-9a-f]{40})/qwen2\\.5-7b-instruct-q4_k_m-00002-of-00002\\.gguf(?:\\?download=true)?$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

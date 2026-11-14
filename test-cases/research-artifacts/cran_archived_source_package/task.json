@@ -1,0 +1,8 @@
+{
+  "instruction": "On CRAN, download the source package of ggplot2 version 3.4.2, an older release that CRAN keeps in the package archive. The current release, binary packages and other versions do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://(?:cran|cloud)\\.r-project\\.org/src/contrib/Archive/ggplot2/ggplot2_3\\.4\\.2\\.tar\\.gz$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

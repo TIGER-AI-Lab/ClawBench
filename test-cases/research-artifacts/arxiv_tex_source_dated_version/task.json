@@ -1,0 +1,8 @@
+{
+  "instruction": "On arXiv, find the paper \"Direct Preference Optimization: Your Language Model is Secretly a Reward Model\". Download the TeX source of the version that was the newest version on 1 January 2024. Do not download a PDF, the HTML view, or the source of any other version. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://(?:www\\.)?arxiv\\.org/src/2305\\.18290v2/?$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

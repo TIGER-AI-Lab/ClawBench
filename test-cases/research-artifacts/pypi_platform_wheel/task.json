@@ -1,0 +1,8 @@
+{
+  "instruction": "On PyPI, open the download files of numpy version 2.1.3. Download the wheel that pip would install for CPython 3.12 on a standard glibc-based 64-bit x86 Linux machine. musllinux, aarch64, macOS and Windows wheels, wheels for other Python versions, and the source distribution do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://files\\.pythonhosted\\.org/packages/9e/3e/3757f304c704f2f0294a6b8340fcf2be244038be07da4cccf390fa678a9f/numpy-2\\.1\\.3-cp312-cp312-manylinux_2_17_x86_64\\.manylinux2014_x86_64\\.whl$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

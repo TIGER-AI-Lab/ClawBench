@@ -1,0 +1,74 @@
+{
+  "arxiv_first_version_pdf": {
+    "url": "https://arxiv.org/pdf/1706.03762v1",
+    "method": "GET",
+    "run_started_local": "20261114T020257",
+    "task_json_sha256": "f6352e17b5346be38e5b581144e61e6d51ccfc79d1c96a888abbb069588132c6"
+  },
+  "arxiv_tex_source_dated_version": {
+    "url": "https://arxiv.org/src/2305.18290v2",
+    "method": "GET",
+    "run_started_local": "20261114T020325",
+    "task_json_sha256": "b4f1e9938aed93a4d650b5f1881ee3e3e7cb617fd880b56f717184fc8c2c0f08"
+  },
+  "cran_archived_source_package": {
+    "url": "https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_3.4.2.tar.gz",
+    "method": "GET",
+    "run_started_local": "20261114T020350",
+    "task_json_sha256": "834ae311ce203b7806e3f87b8c78c653aeba32a7121d627592e5e481441631a7"
+  },
+  "dblp_standard_bibtex_export": {
+    "url": "https://dblp.org/rec/conf/nips/SchickDDRLHZCS23.bib?param=1",
+    "method": "GET",
+    "run_started_local": "20261114T020415",
+    "task_json_sha256": "d4102f8d937d26bb4a8c1a0585db3633cadfe91db3557d39ea023597c22eb317"
+  },
+  "github_release_linux_arm64_tarball": {
+    "url": "https://github.com/jgm/pandoc/releases/download/3.1.11/pandoc-3.1.11-linux-arm64.tar.gz",
+    "method": "GET",
+    "run_started_local": "20261114T020443",
+    "task_json_sha256": "0281d77626731ef4d59aa537b97029f4dbcd40e94090b32a72ae15ee032538cd"
+  },
+  "hf_dataset_config_split_parquet": {
+    "url": "https://huggingface.co/datasets/openai/gsm8k/resolve/main/socratic/test-00000-of-00001.parquet?download=true",
+    "method": "GET",
+    "run_started_local": "20261114T020507",
+    "task_json_sha256": "59d7995dc5991f97cfc4d96bcaa7ac2a46f54cb076b73dc448437f97e788edd8"
+  },
+  "hf_gguf_quantization_second_part": {
+    "url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m-00002-of-00002.gguf?download=true",
+    "method": "GET",
+    "run_started_local": "20261114T020534",
+    "task_json_sha256": "2b0720763518f86b9343be990e0fa6050611a5d0a3cfbe4a52a7c05126952357"
+  },
+  "hf_model_file_parent_revision": {
+    "url": "https://huggingface.co/Qwen/Qwen3-1.7B/resolve/d3e258980a49b060055ea9038dad99d75923f7c4/tokenizer_config.json?download=true",
+    "method": "GET",
+    "run_started_local": "20261114T020601",
+    "task_json_sha256": "f9b18ad7ba461f723817b50fdbc72c52516073198c912209e2c0bf7066705ab4"
+  },
+  "neurips_supplemental_material": {
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2023/file/1feb87871436031bdc0f2beaa62a049b-Supplemental-Conference.pdf",
+    "method": "GET",
+    "run_started_local": "20261114T020630",
+    "task_json_sha256": "eb6da91f622c5954e3f61dd246b7585d0290e03f78bca07c0e1bba32921bff97"
+  },
+  "pypi_platform_wheel": {
+    "url": "https://files.pythonhosted.org/packages/9e/3e/3757f304c704f2f0294a6b8340fcf2be244038be07da4cccf390fa678a9f/numpy-2.1.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "method": "GET",
+    "run_started_local": "20261114T020658",
+    "task_json_sha256": "d0078c023272d2d7605ddb81dc9736acf053fae747c2847a4e07ca415596c814"
+  },
+  "pytorch_cuda_wheel": {
+    "url": "https://download-r2.pytorch.org/whl/cu121/torch-2.2.1%2Bcu121-cp311-cp311-linux_x86_64.whl",
+    "method": "GET",
+    "run_started_local": "20261114T020721",
+    "task_json_sha256": "80fb0a2106f6427e7471f178da49fa8414f168d94a7505f39d12d485fe53b572"
+  },
+  "zenodo_versioned_software_archive": {
+    "url": "https://zenodo.org/records/8098905/files/scikit-learn/scikit-learn-1.3.0.zip?download=1",
+    "method": "GET",
+    "run_started_local": "20261114T020743",
+    "task_json_sha256": "0884e810d83ae1cc92b79ba8620021690f6dc872947862861c043a602bf76c6e"
+  }
+}

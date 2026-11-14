@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add an isolated research-artifacts proposal: 12 request-initiation workflows that fetch one exact paper version, supplement, citation record, model or dataset file, or software build from arXiv, NeurIPS proceedings, dblp, Hugging Face, PyPI, the PyTorch wheel index, GitHub Releases, Zenodo and CRAN, with offline accept/reject tests and live interception captures.
 - Update the README sister project to [WebsiteBench](https://github.com/TIGER-AI-Lab/WebsiteBench) and add a News entry announcing it.
 - Add a code-audited CUA evaluation and post-training assessment with corpus overlap counts, reward and rollout integration gaps, and a staged validation plan; clarify training-data and ProRL validation claims.
 
