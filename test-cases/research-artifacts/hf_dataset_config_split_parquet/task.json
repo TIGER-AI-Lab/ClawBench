@@ -1,0 +1,8 @@
+{
+  "instruction": "On Hugging Face, open the openai/gsm8k dataset repository. From its files, download the Parquet file that holds the test split of the \"socratic\" configuration. The \"main\" configuration, the train split and the automatically converted Parquet branch do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://huggingface\\.co/datasets/openai/gsm8k/resolve/(?:main|[0-9a-f]{40})/socratic/test-00000-of-00001\\.parquet(?:\\?download=true)?$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

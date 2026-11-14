@@ -1,0 +1,8 @@
+{
+  "instruction": "On arXiv, find the paper \"Attention Is All You Need\" and download the PDF of its first version (v1). The abstract page shows the latest version by default; a PDF of any later version does not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://(?:www\\.)?arxiv\\.org/pdf/1706\\.03762v1(?:\\.pdf)?/?$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}

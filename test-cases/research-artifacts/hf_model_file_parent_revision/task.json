@@ -1,0 +1,8 @@
+{
+  "instruction": "On Hugging Face, open the Qwen/Qwen3-1.7B model repository. Its commit history contains a commit titled \"update tokenizer_config.json\". Download tokenizer_config.json exactly as it was at the parent revision of that commit, that is, the commit immediately before it. The current version of the file and the version at the update commit itself do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://huggingface\\.co/Qwen/Qwen3-1\\.7B/resolve/(?:d3e258980a49b060055ea9038dad99d75923f7c4|d3e258980a49b060055ea9038dad99d75923f7c|d3e258980a49b060055ea9038dad99d75923f7|d3e258980a49b060055ea9038dad99d75923f|d3e258980a49b060055ea9038dad99d75923|d3e258980a49b060055ea9038dad99d7592|d3e258980a49b060055ea9038dad99d759|d3e258980a49b060055ea9038dad99d75|d3e258980a49b060055ea9038dad99d7|d3e258980a49b060055ea9038dad99d|d3e258980a49b060055ea9038dad99|d3e258980a49b060055ea9038dad9|d3e258980a49b060055ea9038dad|d3e258980a49b060055ea9038da|d3e258980a49b060055ea9038d|d3e258980a49b060055ea9038|d3e258980a49b060055ea903|d3e258980a49b060055ea90|d3e258980a49b060055ea9|d3e258980a49b060055ea|d3e258980a49b060055e|d3e258980a49b060055|d3e258980a49b06005|d3e258980a49b0600|d3e258980a49b060|d3e258980a49b06|d3e258980a49b0|d3e258980a49b|d3e258980a49|d3e258980a4|d3e258980a|d3e258980|d3e25898|d3e2589)/tokenizer_config\\.json(?:\\?download=true)?$",
+    "method": "GET"
+  },
+  "time_limit": 15
+}

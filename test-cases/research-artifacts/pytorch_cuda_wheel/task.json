@@ -1,0 +1,8 @@
+{
+  "instruction": "From the official PyTorch wheel index at download.pytorch.org, download the torch 2.2.1 wheel built for CUDA 12.1, CPython 3.11 and 64-bit x86 Linux. CPU-only builds, other CUDA versions, other Python versions and other torch versions do not qualify. A saved file is not required; the outcome is initiation of the correct download.",
+  "eval_schema": {
+    "url_pattern": "^https://download(?:-r2)?\\.pytorch\\.org/whl/cu121/torch-2\\.2\\.1(?:%2B|\\+)cu121-cp311-cp311-linux_x86_64\\.whl$",
+    "method": "GET"
+  },
+  "time_limit": 10
+}
