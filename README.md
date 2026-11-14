@@ -356,6 +356,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and contributor recogn
 - **Questions and bugs:** [GitHub issues](https://github.com/TIGER-AI-Lab/ClawBench/issues/new/choose), the fastest route to a maintainer.
 - **中文社区：**[微信群](assets/community/wechat_grp_422.jpg)，研究者、开发者、贡献者交流。
 - **Dataset and leaderboard:** [Hugging Face discussions](https://huggingface.co/datasets/NAIL-Group/ClawBench/discussions), next to the data.
+- **Featured in:** [![Featured in Awesome AI Agents](https://img.shields.io/badge/Featured_in-Awesome_AI_Agents-2ea44f)](https://github.com/NipunaRanasinghe/awesome-ai-agents)
 
 <a id="citation"></a>
 
