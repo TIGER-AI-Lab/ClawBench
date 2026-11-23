@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - `clawbench-rescore` retries malformed judge caches, writes replacement verdicts atomically, and reports incomplete rescoring as an error.
+- The TUI's model edit screen keeps the settings it does not render (`api_keys`, `temperature`, `max_tokens`, and any other schema field) instead of rebuilding the entry from its four visible fields, and `save_models` writes `models.yaml` through a temporary file so an interrupted save cannot truncate it.
 
 ## [v0.11.0]
 ### Added

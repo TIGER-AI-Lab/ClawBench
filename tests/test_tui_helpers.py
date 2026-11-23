@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import io
 import subprocess
 import sys
 import types
@@ -10,6 +11,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+import yaml
+from rich.console import Console
 
 from clawbench import tui
 
@@ -151,6 +154,125 @@ def test_tui_theme_save_and_load_round_trips(
     assert tui._load_saved_theme() == "light"
     config_file.write_text('{"theme": "invalid"}', encoding="utf-8")
     assert tui._load_saved_theme() is None
+
+
+def _silence_console(monkeypatch: pytest.MonkeyPatch) -> io.StringIO:
+    buffer = io.StringIO()
+    monkeypatch.setattr(tui, "console", Console(file=buffer, width=100))
+    return buffer
+
+
+def _install_models_yaml(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    entries: dict,
+) -> Path:
+    models_yaml = tmp_path / "models" / "models.yaml"
+    models_yaml.parent.mkdir(parents=True, exist_ok=True)
+    models_yaml.write_text(yaml.safe_dump(entries, sort_keys=False))
+    monkeypatch.setattr(tui, "MODELS_YAML", models_yaml)
+    return models_yaml
+
+
+def test_tui_edit_model_keeps_fields_the_screen_does_not_show(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    models_yaml = _install_models_yaml(
+        monkeypatch,
+        tmp_path,
+        {
+            "model-a": {
+                "api_key": "old-secret",
+                "base_url": "https://old.example.test/v1",
+                "api_type": "openai-completions",
+                "thinking_level": "high",
+                "api_keys": ["key-1", "key-2"],
+                "temperature": 0.3,
+                "max_tokens": 4096,
+            }
+        },
+    )
+    output = _silence_console(monkeypatch)
+    # Only the base URL is edited; every other prompt keeps its current value.
+    driver = _QuestionaryDriver(
+        select=["model-a", "openai-completions", "high"],
+        text=["https://new.example.test/v1", "old-secret"],
+    )
+    monkeypatch.setattr(tui.questionary, "select", driver.select)
+    monkeypatch.setattr(tui.questionary, "text", driver.text)
+
+    tui._edit_model(tui.load_models_data())
+
+    saved = yaml.safe_load(models_yaml.read_text())["model-a"]
+    assert saved["base_url"] == "https://new.example.test/v1"
+    assert saved["api_type"] == "openai-completions"
+    assert saved["api_keys"] == ["key-1", "key-2"]
+    assert saved["temperature"] == 0.3
+    assert saved["max_tokens"] == 4096
+    assert "api_keys, max_tokens, temperature" in output.getvalue()
+    assert "take precedence over api_key" in output.getvalue()
+    driver.assert_done()
+
+
+def test_tui_edit_model_keeps_api_keys_only_entry_keyless(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    models_yaml = _install_models_yaml(
+        monkeypatch,
+        tmp_path,
+        {
+            "model-a": {
+                "api_keys": ["key-1", "key-2"],
+                "base_url": "https://old.example.test/v1",
+                "api_type": "openai-completions",
+                "thinking_level": "medium",
+            }
+        },
+    )
+    _silence_console(monkeypatch)
+    driver = _QuestionaryDriver(
+        select=["model-a", "openai-completions", "medium"],
+        text=["https://new.example.test/v1", ""],
+    )
+    monkeypatch.setattr(tui.questionary, "select", driver.select)
+    monkeypatch.setattr(tui.questionary, "text", driver.text)
+
+    tui._edit_model(tui.load_models_data())
+
+    saved = yaml.safe_load(models_yaml.read_text())["model-a"]
+    assert "api_key" not in saved
+    assert saved["api_keys"] == ["key-1", "key-2"]
+    driver.assert_done()
+
+
+def test_tui_save_models_replaces_the_file_atomically(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    models_yaml = _install_models_yaml(monkeypatch, tmp_path, {"model-a": {"x": 1}})
+    replacements: list[tuple[str, Path]] = []
+    real_replace = tui.os.replace
+
+    def tracking_replace(src: str, dst: Path) -> None:
+        replacements.append((src, dst))
+        real_replace(src, dst)
+
+    monkeypatch.setattr(tui.os, "replace", tracking_replace)
+
+    tui.save_models({"model-a": {"x": 2}, "model-b": {"y": 3}})
+
+    assert len(replacements) == 1
+    source, destination = replacements[0]
+    assert destination == models_yaml
+    assert Path(source).parent == models_yaml.parent
+    assert not Path(source).exists()
+    assert sorted(p.name for p in models_yaml.parent.iterdir()) == ["models.yaml"]
+    assert yaml.safe_load(models_yaml.read_text()) == {
+        "model-a": {"x": 2},
+        "model-b": {"y": 3},
+    }
 
 
 def test_tui_select_default_only_places_cursor() -> None:

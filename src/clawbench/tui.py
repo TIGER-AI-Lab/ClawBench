@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import questionary
@@ -349,8 +350,27 @@ def load_models_data() -> dict:
 
 
 def save_models(data: dict) -> None:
+    # Write through a temporary file in the same directory so an interrupted
+    # save leaves the previous models.yaml intact instead of a truncated one.
     MODELS_YAML.parent.mkdir(parents=True, exist_ok=True)
-    MODELS_YAML.write_text(yaml.safe_dump(data, sort_keys=False))
+    temporary: str | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=MODELS_YAML.parent,
+            prefix=f".{MODELS_YAML.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as fp:
+            temporary = fp.name
+            fp.write(yaml.safe_dump(data, sort_keys=False))
+            fp.flush()
+            os.fsync(fp.fileno())
+        os.replace(temporary, MODELS_YAML)
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def load_models() -> list[str]:
@@ -1031,6 +1051,25 @@ def _edit_model(data: dict) -> None:
     cfg = data[name]
     console.print(f"\n  Editing [bold]{name}[/] — press Enter to keep current value.\n")
 
+    # Fields this screen does not render (api_keys, temperature, max_tokens, …)
+    # are carried over untouched; editing one value must not drop the rest.
+    preserved = {
+        key: value
+        for key, value in cfg.items()
+        if key not in ("api_key", "base_url", "api_type", "thinking_level")
+    }
+    if preserved:
+        console.print(
+            "  [dim]Keeping settings this screen does not edit: "
+            f"{', '.join(sorted(preserved))}[/]\n"
+        )
+    if "api_keys" in preserved:
+        # load_model_config prefers api_keys over api_key, so say it here
+        # rather than let an edited api_key look effective when it is not.
+        console.print(
+            "  [dim]This entry lists api_keys, which take precedence over api_key.[/]\n"
+        )
+
     base_url = questionary.text(
         "Base URL:",
         default=cfg.get("base_url", ""),
@@ -1065,12 +1104,16 @@ def _edit_model(data: dict) -> None:
     if thinking_level is None:
         return
 
-    data[name] = {
-        "api_key": api_key.strip(),
-        "base_url": base_url.strip(),
-        "api_type": api_type,
-        "thinking_level": thinking_level,
-    }
+    updated: dict = {}
+    # An entry that authenticates through api_keys has no api_key to show; do
+    # not invent an empty one when the prompt is left blank.
+    if api_key.strip() or "api_key" in cfg:
+        updated["api_key"] = api_key.strip()
+    updated["base_url"] = base_url.strip()
+    updated["api_type"] = api_type
+    updated["thinking_level"] = thinking_level
+    updated.update(preserved)
+    data[name] = updated
     save_models(data)
     console.print(f"\n  [green bold]Updated[/] {name}\n")
 
